@@ -1,5 +1,6 @@
 package gift.member.api;
 
+import gift.auth.KakaoProperties;
 import gift.global.pagination.dto.PageResponse;
 import gift.product.dto.ProductResponse;
 import gift.wishlist.api.WishesController;
@@ -28,13 +29,16 @@ public class MemberController {
     private final MemberService memberService;
     private final ProductController productController;
     private final WishesController wishesController;
+    private final KakaoProperties kakaoProperties;
 
     public MemberController(MemberService memberService,
                             ProductController productController,
-                            WishesController wishesController) {
+                            WishesController wishesController,
+                            KakaoProperties kakaoProperties) {
         this.memberService = memberService;
         this.productController = productController;
         this.wishesController = wishesController;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping("/register")
@@ -49,7 +53,8 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String showLoginView() {
+    public String showLoginView(Model model) {
+        model.addAttribute("clientId", kakaoProperties.getClientId());
         return "login";
     }
 
