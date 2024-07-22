@@ -13,7 +13,7 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
 
     List<Option> findAllByProductId(Long productId);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Lock(LockModeType.OPTIMISTIC)
     @Query("SELECT o FROM Option o WHERE o.id = :id")
     Optional<Option> findByIdWithLock(@Param("id") Long id);
 }
