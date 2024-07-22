@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/product/{productId}")
+@RequestMapping("/api/products/{productId}/options")
 public class ApiOptionController {
 
     private final OptionService optionService;
@@ -34,21 +34,21 @@ public class ApiOptionController {
         return optionService.getAllOptions(productId, pageable);
     }
 
-    @PostMapping("/option")
+    @PostMapping
     public ResponseEntity<String> registerOption(@PathVariable Long productId, @RequestBody OptionDTO optionDTO) {
         System.out.println("[ApiOptionController] getAllOptions()");
         optionService.registerOption(productId, optionDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Option registered successfully");
     }
 
-    @PutMapping("/option/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateOption(@PathVariable Long id, @RequestBody OptionDTO optionDTO) {
         System.out.println("[ApiOptionController] getAllOptions()");
         optionService.updateOption(id, optionDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body("Option update successfully");
     }
 
-    @DeleteMapping("/option/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOption(@PathVariable Long id, @PathVariable Long productId) {
         System.out.println("[ApiOptionController] getAllOptions()");
         optionService.deleteOption(id, productId);
