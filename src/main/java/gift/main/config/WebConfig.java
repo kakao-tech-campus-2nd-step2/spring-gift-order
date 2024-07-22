@@ -31,7 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
         // CustomInterceptor를 등록하고, 모든 URL에 대해 인터셉터를 적용하도록 설정
         registry.addInterceptor(authLoginInterceptor)
                 .excludePathPatterns("/members/login", "/members/join", "", "/", "/**");
-//                .addPathPatterns("/**");
     }
 
 }
