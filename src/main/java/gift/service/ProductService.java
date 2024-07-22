@@ -57,12 +57,4 @@ public class ProductService {
     public void DeleteProduct(Long id){
         productRepository.deleteById(id);
     }
-
-    public Category findCategory(String categoryName) {
-        Optional<Category> category = categoryRepository.findByCategoryName(categoryName);
-        if (category.isPresent()) {
-            return category.get();
-        }
-        return categoryRepository.save(new Category(categoryName));
-    }
 }
