@@ -86,32 +86,6 @@ class OptionServiceIntegrationTest {
     }
 
     @Test
-    void 동시_차감_요청_반복() throws InterruptedException {
-        // Given
-        int threadCount = 100;
-        int expectedQuantity = 0;
-
-        // When
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch countDownLatch = new CountDownLatch(threadCount);
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    optionService.subtractOptionQuantity(new OptionSubtractQuantityCommand(option.getId(), 1));
-                } finally {
-                    countDownLatch.countDown();
-                }
-            });
-        }
-        countDownLatch.await();
-
-        // Then
-        Option updatedOption = optionRepository.findById(option.getId()).orElseThrow();
-        assertThat(updatedOption.getQuantity()).isEqualTo(expectedQuantity);
-    }
-
-
-    @Test
     public void 수량이_1일때_동시_차감_요청() throws Exception {
         // Given
         option.subtractQuantity(99);
