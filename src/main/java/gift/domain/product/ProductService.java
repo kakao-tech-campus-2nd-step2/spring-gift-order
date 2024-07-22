@@ -19,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 
 @Service
-@Validated
 public class ProductService {
 
     private final JpaProductRepository productRepository;
@@ -40,7 +39,7 @@ public class ProductService {
     /**
      * 상품 추가
      */
-    public void createProduct(@Valid ProductDTO productDTO) {
+    public void createProduct(ProductDTO productDTO) {
         validateUniqueName(productDTO.name());
         validateCategoryExists(productDTO.categoryId());
 
