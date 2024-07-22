@@ -35,11 +35,11 @@ public class RestTemplateTest {
 
     private static LinkedMultiValueMap<String, String> createBody() {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        KakaoProperties properties = new KakaoProperties("79408c79ad016f0254f5e58e524dc521", "http://localhost:8080");
+        KakaoProperties properties = new KakaoProperties("clientID", "http://localhost:8080");
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
         body.add("redirect_url", properties.redirectUrl());
-        body.add("code", "JBg6JRaFDtaTfJJD6YZEeDX5Xf6AoLyMNXcEmOTIDJm6fgRwswrsPwAAAAQKKcleAAABkNgix7Gi-KZYUq23DA");
+        
         return body;
     }
 }
