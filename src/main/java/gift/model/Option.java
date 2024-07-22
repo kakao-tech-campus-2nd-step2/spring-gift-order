@@ -4,17 +4,15 @@ import jakarta.persistence.*;
 
 @Entity
 public class Option {
-    private static final double MAX_OPTION_NUM = 100000000;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
 
-    @Column(name = "quantity", columnDefinition = "integer not null")
+    @Column(name = "quantity", columnDefinition = "integer", nullable = false)
     private long quantity;
 
-    @Column(name = "name", columnDefinition = "varchar(255) not null")
+    @Column(name = "name", columnDefinition = "varchar(255)", nullable = false)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -25,15 +23,15 @@ public class Option {
     }
 
     public Option(String name, long quantity, Product product){
-        isCorrectOptionName(name);
-        isCorrectQuantityUpdate(quantity);
+        this.updateName(name);
+        this.updateQuantity(quantity);
         this.product = product;
     }
 
     public Option(Long id, String name, long quantity, Product product){
         this.id = id;
-        isCorrectOptionName(name);
-        isCorrectQuantityUpdate(quantity);
+        this.updateName(name);
+        this.updateQuantity(quantity);
         this.product = product;
     }
 
@@ -53,36 +51,21 @@ public class Option {
         return product;
     }
 
-    private void isCorrectQuantityUpdate(long quantity){
-        if(quantity < 1 || quantity >= MAX_OPTION_NUM){
-            throw new IllegalArgumentException("옵션은 1개 이상 1억개 미만이어야 합니다.");
-
-        }
-        this.quantity = quantity;
+    public void updateName(String name){
+        OptionName optionName = new OptionName(name);
+        this.name = optionName.getName();
     }
-
-    private void isCorrectOptionName(String name){
-        if(name.length()>50){
-            throw new IllegalArgumentException("옵션은 최대 50자까지만 입력이 가능합니다.");
-        }
-        String letters = "()[]+-&/_ ";
-        for(int i=0; i<name.length(); i++){
-            char one = name.charAt(i);
-            if(!Character.isLetterOrDigit(one) && !letters.contains(Character.toString(one))){
-                throw new IllegalArgumentException("옵션 내 특수문자로는 (),[],+,-,&,/,_만 사용 가능합니다.");
-
-            }
-        }
-        this.name = name;
-    }
-
     public Option update(String name){
-        isCorrectOptionName(name);
+        this.updateName(name);
         return this;
+    }
+    public void updateQuantity(long quantity){
+        Quantity OptionQuantity = new Quantity(quantity);
+        this.quantity = OptionQuantity.getQuantity();
     }
 
     public Option quantityUpdate(int num){
-        isCorrectQuantityUpdate(this.quantity + num);
+        this.updateQuantity(this.quantity + num);
         return this;
     }
 }
