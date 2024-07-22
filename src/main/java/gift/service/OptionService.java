@@ -32,11 +32,9 @@ public class OptionService {
     }
 
     public void subtractAmount(Long optionId, int amount){
-        Optional<Option> optionalOption = optionRepository.findById(optionId);
-        if (optionalOption.isEmpty()){
-            throw new ValueNotFoundException("Option not found with ID");
-        }
-        Option option = optionalOption.get();
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
+
         if(isProductEnough(option.getAmount(), amount)){
             optionRepository.subtractById(optionId,amount);
         }

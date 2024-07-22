@@ -37,11 +37,10 @@ public class MemberService {
 
     public String loginMember(MemberDto memberDto) {
         Member member = new Member(memberDto.email(),memberDto.password(), memberDto.role());
-        Optional<Member> registeredMember = memberRepository.findByEmail(member.getEmail());
-        if (registeredMember.isEmpty()){
-            throw new AuthenticationException("Member not exists in Database");
-        }
-        if (!member.isPasswordEqual(registeredMember.get().getPassword())){
+        Member registeredMember = memberRepository.findByEmail(member.getEmail())
+                .orElseThrow(() -> new AuthenticationException("Member not exists in Database"));
+
+        if (!member.isPasswordEqual(registeredMember.getPassword())){
             throw new AuthenticationException("Incorrect password");
         }
         return jwtTokenProvider.generateToken(member);

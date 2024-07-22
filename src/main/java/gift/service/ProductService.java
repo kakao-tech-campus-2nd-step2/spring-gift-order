@@ -37,16 +37,13 @@ public class ProductService {
     }
 
     public void updateProduct(Long id, ProductDto productDto) {
-        Optional<Product> product = productRepository.findById(id);
-        if(product.isEmpty()){
-            throw new ValueNotFoundException("Product not exists in Database");
-        }
-        Product updateProduct = product.get();
+        Product product = productRepository.findById(id).
+                orElseThrow(() -> new ValueNotFoundException("Product not exists in Database"));
         Category category = findCategory(productDto.categoryName());
 
         Product newProduct = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
-        updateProduct.updateProduct(newProduct);
-        productRepository.save(updateProduct);
+        product.updateProduct(newProduct);
+        productRepository.save(product);
     }
 
     public Product selectProduct(Long id) {

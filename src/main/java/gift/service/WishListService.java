@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class WishListService {
     private final WishRepository wishRepository;
@@ -24,11 +22,10 @@ public class WishListService {
     }
 
     public Page<Wish> getAllWishes(MemberDto memberDto, Pageable pageable) {
-        Optional<Member> member = memberRepository.findByEmail(memberDto.email());
-        if(member.isEmpty()){
-            throw new ValueNotFoundException("Member not exists in Database");
-        }
-        return wishRepository.findAllByMemberId(member.get().getId(), pageable);
+        Member member = memberRepository.findByEmail(memberDto.email()).
+                orElseThrow(() -> new ValueNotFoundException("Member not exists in Database"));
+
+        return wishRepository.findAllByMemberId(member.getId(), pageable);
     }
 
     public void insertWish(WishDto wishDto) {
