@@ -7,6 +7,8 @@ import gift.model.product.Product;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -34,14 +36,9 @@ public class OptionService {
     public void subtractAmount(Long optionId, int amount){
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
-        if(isProductEnough(option.getAmount(), amount)){
-            optionRepository.subtractById(optionId,amount);
+        if(option.isProductEnough(amount)){
+            option.updateAmount(amount);
+            optionRepository.save(option);
         }
-    }
-    public boolean isProductEnough(int totalAmount, int purchaseAmount){
-        if(totalAmount >= purchaseAmount){
-            return true;
-        }
-        throw new RuntimeException("Not enough product available");
     }
 }

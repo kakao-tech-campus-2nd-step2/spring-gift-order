@@ -11,10 +11,4 @@ import java.util.List;
 
 public interface OptionRepository extends JpaRepository<Option, Long> {
     List<Option> findByProductId(Long productId);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Option o SET o.amount = o.amount - :amount WHERE o.id = :id")
-    void subtractById(@Param("id") long id, @Param("amount") int amount);
-
 }

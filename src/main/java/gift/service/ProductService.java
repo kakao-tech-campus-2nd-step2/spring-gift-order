@@ -58,7 +58,7 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    private synchronized Category findElseSaveCategory(String categoryName) {
+    private Category findElseSaveCategory(String categoryName) {
         return categoryRepository.findByCategoryName(categoryName)
                 .orElseGet(() -> categoryRepository.save(new Category(categoryName)));
     }
