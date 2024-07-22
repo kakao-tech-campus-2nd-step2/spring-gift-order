@@ -20,7 +20,7 @@
         <button type="button" onclick="login()" class="btn btn-primary btn-xs" style="width:100%">로그인</button>
       </div>
       <div>
-        <a th:href="|https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id=${clientId}|">
+        <a th:href="@{/oauth/kakao}">
           <img src="/images/kakao_login_medium_narrow.png" alt="kakao login image">
         </a>
       </div>
