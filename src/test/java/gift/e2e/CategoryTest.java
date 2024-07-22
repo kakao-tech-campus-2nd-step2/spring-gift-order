@@ -7,10 +7,13 @@ import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 import gift.auth.Login;
 import gift.domain.Category.CreateCategory;
 import gift.domain.Category.UpdateCategory;
+import gift.domain.Product.CreateProduct;
+import gift.domain.Product.UpdateProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,18 +34,14 @@ class CategoryTest {
 
     private String url = "http://localhost:";
 
-    private final TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private String token;
 
     private HttpHeaders headers = new HttpHeaders();
 
-    private String commonPath = "/api/category";
-
-    @Autowired
-    public CategoryTest(TestRestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private String commonPath="/api/category";
 
     @BeforeEach
     public void setUp() {
@@ -66,8 +65,7 @@ class CategoryTest {
     @DisplayName("없는 카테고리 조회")
     public void NotFoundCategoryId() {
         HttpEntity<Long> requestEntity = new HttpEntity(null, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/1000",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/1000",
             GET,
             requestEntity, String.class);
 
@@ -82,11 +80,11 @@ class CategoryTest {
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
 
         restTemplate.exchange(
-            url + port + commonPath, POST,
+            url + port + commonPath , POST,
             requestEntity, String.class);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath, POST,
+            url + port + commonPath , POST,
             requestEntity, String.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -100,7 +98,7 @@ class CategoryTest {
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/1", PUT,
+            url + port + commonPath  + "/1" , PUT,
             requestEntity, String.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);
@@ -114,7 +112,7 @@ class CategoryTest {
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/0", PUT,
+            url + port + commonPath  + "/0" , PUT,
             requestEntity, String.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -126,7 +124,7 @@ class CategoryTest {
         HttpEntity<Long> requestEntity = new HttpEntity(null, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/0", DELETE,
+            url + port + commonPath  + "/0" , DELETE,
             requestEntity, String.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(NOT_FOUND);
@@ -138,7 +136,7 @@ class CategoryTest {
         HttpEntity<Long> requestEntity = new HttpEntity(null, headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/1", DELETE,
+            url + port + commonPath  + "/1" , DELETE,
             requestEntity, String.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(FORBIDDEN);

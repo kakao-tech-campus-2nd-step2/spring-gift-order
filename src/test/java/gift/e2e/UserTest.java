@@ -31,18 +31,14 @@ class UserTest {
 
     private String url = "http://localhost:";
 
-    private final TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private String token;
 
     private HttpHeaders headers = new HttpHeaders();
 
-    private String commonPath = "/api/user";
-
-    @Autowired
-    public UserTest(TestRestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private String commonPath="/api/user";
 
     @BeforeEach
     public void setUp() {
@@ -68,8 +64,7 @@ class UserTest {
         UpdateUser body = new UpdateUser("123456789");
 
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/1",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath +"/1",
             PUT, requestEntity, String.class);
 
         System.out.println(responseEntity);
@@ -82,8 +77,7 @@ class UserTest {
         UpdateUser body = new UpdateUser("123456789");
 
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/0",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/0",
             PUT, requestEntity, String.class);
 
         System.out.println(responseEntity);
@@ -122,8 +116,7 @@ class UserTest {
     @DisplayName("유저 삭제")
     public void removeUser() {
         HttpEntity<Long> requestEntity = new HttpEntity(null, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/2",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/2",
             DELETE, requestEntity, String.class);
 
         System.out.println(responseEntity);
@@ -134,8 +127,7 @@ class UserTest {
     @DisplayName("유저 삭제(유저 없음)")
     public void NotFoundRemoveUser() {
         HttpEntity<Long> requestEntity = new HttpEntity(null, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/0",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/0",
             DELETE, requestEntity, String.class);
 
         System.out.println(responseEntity);

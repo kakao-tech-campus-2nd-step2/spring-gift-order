@@ -8,14 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductOptionCreator {
 
-    private final ProductOptionService productOptionService;
-
     @Autowired
-    public ProductOptionCreator(ProductOptionService productOptionService) {
-        this.productOptionService = productOptionService;
-    }
+    private ProductOptionService productOptionService;
 
-    public void creator() {
+    public void ProductOptionCreator() {
         productOptionService.createProductOption(1L, new CreateOption("option20", 100L));
         productOptionService.createProductOption(2L, new CreateOption("option20", 100L));
         productOptionService.createProductOption(3L, new CreateOption("option20", 100L));

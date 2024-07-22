@@ -8,14 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class CategoryCreator {
 
-    private final CategoryService categoryService;
-
     @Autowired
-    public CategoryCreator(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
+    private CategoryService categoryService;
 
-    public void creator() {
+    public void CategoryCreator() {
         categoryService.createCategory(new CreateCategory("Test1"));
         categoryService.createCategory(new CreateCategory("Test2"));
         categoryService.createCategory(new CreateCategory("Test3"));

@@ -1,11 +1,17 @@
 package gift.e2e;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import gift.auth.Login;
+import gift.domain.Category.CreateCategory;
+import gift.domain.Category.UpdateCategory;
 import gift.domain.ProductOrder.decreaseProductOption;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,18 +33,14 @@ class ProductOrderTest {
 
     private String url = "http://localhost:";
 
-    private final TestRestTemplate restTemplate;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     private String token;
 
     private HttpHeaders headers = new HttpHeaders();
 
-    private String commonPath = "/api/product/1/order";
-
-    @Autowired
-    public ProductOrderTest(TestRestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private String commonPath="/api/product/1/order";
 
     @BeforeEach
     public void setUp() {
@@ -63,8 +65,7 @@ class ProductOrderTest {
     public void NotFoundProductOption() {
         decreaseProductOption body = new decreaseProductOption(1L);
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/0",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/0",
             POST,
             requestEntity, String.class);
 
@@ -76,8 +77,7 @@ class ProductOrderTest {
     public void OverFlowProductOptionQuantity() {
         decreaseProductOption body = new decreaseProductOption(100000L);
         HttpEntity<Long> requestEntity = new HttpEntity(body, headers);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
-            url + port + commonPath + "/1",
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url + port + commonPath + "/1",
             POST,
             requestEntity, String.class);
 

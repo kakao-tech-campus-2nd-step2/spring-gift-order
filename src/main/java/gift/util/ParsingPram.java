@@ -8,14 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ParsingPram {
 
-
-    private final JwtToken jwtToken;
+    @Autowired
+    private JwtToken jwtToken;
     private static final String AUTHORIZATION_HEADER = "Authorization";
 
-    @Autowired
-    public ParsingPram(JwtToken jwtToken) {
-        this.jwtToken = jwtToken;
-    }
 
     public Long getId(HttpServletRequest request) {
         String token = request.getHeader(AUTHORIZATION_HEADER);

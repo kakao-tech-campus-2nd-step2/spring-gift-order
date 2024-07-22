@@ -5,9 +5,9 @@ import gift.domain.User.CreateUser;
 import gift.domain.User.UpdateUser;
 import gift.domain.User.UserSimple;
 import gift.entity.UserEntity;
+import gift.util.errorException.BaseHandler;
 import gift.mapper.UserMapper;
 import gift.repository.UserRepository;
-import gift.util.errorException.BaseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -17,14 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final UserMapper userMapper;
-
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
+    private UserRepository userRepository;
+    @Autowired
+    private UserMapper userMapper;
 
     public Page<UserSimple> getUserList(User.getList param) {
         return userMapper.toSimpleList(userRepository.findAllByIsDelete(0, param.toPageable()));

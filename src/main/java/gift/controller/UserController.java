@@ -3,10 +3,10 @@ package gift.controller;
 import gift.domain.User;
 import gift.domain.User.UserSimple;
 import gift.entity.UserEntity;
-import gift.service.UserService;
 import gift.util.page.PageMapper;
 import gift.util.page.PageResult;
 import gift.util.page.SingleResult;
+import gift.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,12 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private final UserService userService;
-
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     @GetMapping
     public PageResult<UserSimple> getUserList(@Valid User.getList param) {

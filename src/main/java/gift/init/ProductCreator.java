@@ -8,15 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductCreator {
 
-
-    private final ProductService productService;
-
     @Autowired
-    public ProductCreator(ProductService productService) {
-        this.productService = productService;
-    }
+    private ProductService productService;
 
-    public void creator() {
+    public void ProductCreator() {
         productService.createProduct(
             new CreateProduct("Product A", 1000, "image1.jpg", 1L, "option1", 1L));
         productService.createProduct(

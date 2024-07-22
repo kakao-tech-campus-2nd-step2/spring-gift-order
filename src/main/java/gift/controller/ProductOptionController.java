@@ -21,43 +21,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/products/{productId}/options")
+@RequestMapping("/api/products/{ProductId}/options")
 public class ProductOptionController {
 
-    private final ProductOptionService productOptionService;
-
     @Autowired
-    public ProductOptionController(ProductOptionService productOptionService) {
-        this.productOptionService = productOptionService;
-    }
+    private ProductOptionService productOptionService;
 
     @GetMapping
-    public PageResult<optionSimple> getProductOptionList(@PathVariable long productId,
+    public PageResult<optionSimple> getProductOptionList(@PathVariable long ProductId,
         @Valid getList req) {
-        return PageMapper.toPageResult(productOptionService.getProductOptionList(productId, req));
+        return PageMapper.toPageResult(productOptionService.getProductOptionList(ProductId, req));
     }
 
     @GetMapping("/{id}")
-    public SingleResult<optionDetail> getProductOption(@PathVariable long productId,
+    public SingleResult<optionDetail> getProductOption(@PathVariable long ProductId,
         @PathVariable long id) {
-        return new SingleResult<>(productOptionService.getProductOption(productId, id));
+        return new SingleResult<>(productOptionService.getProductOption(ProductId, id));
     }
 
     @PostMapping
-    public SingleResult<Long> createProductOption(@PathVariable long productId,
+    public SingleResult<Long> createProductOption(@PathVariable long ProductId,
         @Valid @RequestBody CreateOption create) {
-        return new SingleResult<>(productOptionService.createProductOption(productId, create));
+        return new SingleResult<>(productOptionService.createProductOption(ProductId, create));
     }
 
     @PutMapping("/{id}")
-    public SingleResult<Long> updateProductOption(@PathVariable long productId,
+    public SingleResult<Long> updateProductOption(@PathVariable long ProductId,
         @PathVariable long id, @Valid @RequestBody UpdateOption update) {
-        return new SingleResult<>(productOptionService.updateProductOption(productId, id, update));
+        return new SingleResult<>(productOptionService.updateProductOption(ProductId, id, update));
     }
 
     @DeleteMapping("/{id}")
-    public SingleResult<Long> deleteProductOption(@PathVariable long productId,
+    public SingleResult<Long> deleteProductOption(@PathVariable long ProductId,
         @PathVariable long id) {
-        return new SingleResult<>(productOptionService.deleteProductOption(productId, id));
+        return new SingleResult<>(productOptionService.deleteProductOption(ProductId, id));
     }
 }

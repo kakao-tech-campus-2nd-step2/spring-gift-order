@@ -3,8 +3,9 @@ package gift.controller;
 import gift.domain.Product;
 import gift.domain.Product.ProductDetail;
 import gift.domain.Product.ProductSimple;
-import gift.service.ProductService;
+import gift.entity.ProductEntity;
 import gift.util.page.PageMapper;
+import gift.service.ProductService;
 import gift.util.page.PageResult;
 import gift.util.page.SingleResult;
 import jakarta.validation.Valid;
@@ -23,12 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
-
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
+    private ProductService productService;
 
     @GetMapping
     public PageResult<ProductDetail> getProductList(@Valid Product.getList param) {

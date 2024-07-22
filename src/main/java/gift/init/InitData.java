@@ -2,10 +2,8 @@ package gift.init;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-@Profile("dev")
 @Component
 public class InitData {
 
@@ -31,16 +29,16 @@ public class InitData {
     @PostConstruct
     public void init() {
 //        유저 생성
-        userCreator.creator();
+        userCreator.UserCreator();
 //        카테고리 생성
-        categoryCreator.creator();
+        categoryCreator.CategoryCreator();
 //        상품 생성
-        productCreator.creator();
+        productCreator.ProductCreator();
 //        위시리스트 생성
-        wishCreator.creator();
+        wishCreator.WishCreator();
 //        상품의 옵션 추가
-        productOptionCreator.creator();
+        productOptionCreator.ProductOptionCreator();
 //        상품의 옵션 재고 증감(상품주문)
-        productOrderCreator.creator();
+        productOrderCreator.ProductCreator();
     }
 }

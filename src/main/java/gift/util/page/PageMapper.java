@@ -1,5 +1,6 @@
 package gift.util.page;
 
+import gift.util.page.PageResult;
 import org.springframework.data.domain.Page;
 
 public class PageMapper {
