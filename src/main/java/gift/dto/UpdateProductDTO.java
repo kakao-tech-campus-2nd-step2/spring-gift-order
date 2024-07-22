@@ -40,16 +40,6 @@ public class UpdateProductDTO {
         this.imageUrl = imageUrl;
     }
 
-    @Override
-    public String toString() {
-        return "SaveProductDTO{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", category='" + category + '\'' +
-                '}';
-    }
-
     public String getName() {
         return name;
     }
@@ -65,4 +55,15 @@ public class UpdateProductDTO {
     public String getCategory() {
         return category;
     }
+
+    @Override
+    public String toString() {
+        return "SaveProductDTO{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
+
 }

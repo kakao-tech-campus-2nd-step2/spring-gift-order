@@ -30,8 +30,8 @@ public class OptionService {
         }
         optionReposityory.deleteByName(option);
 
-        List<Option> NewOptionList = optionReposityory.findAllByProduct_Id(productId);
-        updateQuantity(-1, NewOptionList);
+        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productId);
+        updateQuantity(-1, newOptionList);
     }
 
     public void addOptions(String options, Long productID){
@@ -51,6 +51,7 @@ public class OptionService {
         }
     }
 
+    @Transactional
     public void addOption(String name, Long productID){
         List<Option> optionList = optionReposityory.findAll();
         List<String> optionNameList = optionList.stream()
@@ -67,11 +68,11 @@ public class OptionService {
                 product
         );
         optionReposityory.save(addOption);
-        List<Option> NewOptionList = optionReposityory.findAllByProduct_Id(productID);
-        updateQuantity(1, NewOptionList);
+        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productID);
+        updateQuantity(1, newOptionList);
     }
 
-    public void updateOption(String oldName, String newName, long productID){
+        public void updateOption(String oldName, String newName, long productID){
         Option updateOption = optionReposityory.findByName(oldName)
                 .orElseThrow(() -> new NoSuchElementException("해당 옵션이 없습니다."));
         List<Option> optionList = optionReposityory.findAllByProduct_Id(productID);
@@ -85,6 +86,7 @@ public class OptionService {
         optionReposityory.save(newOption);
     }
 
+    @Transactional
     public void removeOption(Long productId, int num){
         List<Option> optionList = optionReposityory.findAllByProduct_Id(productId);
         if(optionList.size() <= 1){
@@ -96,8 +98,8 @@ public class OptionService {
         for(int i=0; i<num; i++){
             optionReposityory.deleteById(optionIdList.get(i));
         }
-        List<Option> NewOptionList = optionReposityory.findAllByProduct_Id(productId);
-        updateQuantity(num, NewOptionList);
+        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productId);
+        updateQuantity(num, newOptionList);
     }
 
     public GetOptionDTO getOptions(Long productId){
