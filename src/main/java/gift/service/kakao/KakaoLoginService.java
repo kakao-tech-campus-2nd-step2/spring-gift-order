@@ -3,21 +3,19 @@ package gift.service.kakao;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 @Service
 public class KakaoLoginService {
 
     private final KakaoProperties properties;
-    private final RestClient client;
+    private final RestTemplate restTemplate;
 
-    public KakaoLoginService(KakaoProperties properties) {
+    public KakaoLoginService(KakaoProperties properties, RestTemplate restTemplate) {
         this.properties = properties;
-        this.client = RestClient.create();
+        this.restTemplate = restTemplate;
     }
 
     public HttpHeaders getRedirectHeaders() {
@@ -40,12 +38,7 @@ public class KakaoLoginService {
         body.add("redirect_uri", properties.redirectUrl());
         body.add("code", code);
 
-        KakaoTokenInfoResponse tokenResponse = client.post()
-                .uri(URI.create(url))
-                .contentType(APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .body(KakaoTokenInfoResponse.class);
+        KakaoTokenInfoResponse tokenResponse = restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class);
 
         return tokenResponse.getAccessToken();
     }
