@@ -8,9 +8,11 @@ import gift.dto.user.LoginDTO;
 import gift.dto.user.SignUpDTO;
 import gift.dto.user.Token;
 
+import gift.service.KakaoService;
 import gift.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @Autowired
     UserService userService;
-
+    @Autowired
+    KakaoService kakaoService;
     @Autowired
     ObjectMapper objectMapper;
 
@@ -50,5 +53,10 @@ public class UserController {
         return objectMapper.writeValueAsString(token);
     }
 
+    @GetMapping("/api/kakao/token")
+    @ResponseBody
+    public String getToken(){
+        return kakaoService.getToken();
+    }
 
 }
