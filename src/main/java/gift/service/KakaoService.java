@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -21,6 +22,7 @@ public class KakaoService {
     String redirect_uri;
     String code = "";
     ObjectMapper objectMapper = new ObjectMapper();
+    RestTemplate restTemplate = new RestTemplate();
 
     public String getToken() throws JsonProcessingException {
         var url = "https://kauth.kakao.com/oauth/token";
@@ -31,9 +33,14 @@ public class KakaoService {
         body.add("client_id", client_id);
         body.add("redirect_uri", redirect_uri);
         body.add("code", code);
+
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        ResponseEntity<String> response;
+        try {
+            response= restTemplate.postForEntity(url, request, String.class);
+        }catch(HttpClientErrorException e){
+            throw new BadRequestException("잘못된 요청");
+        }
         if(response.getStatusCode()==HttpStatus.UNAUTHORIZED)
             throw new UnAuthException("인증되지 않은 요청");
         if(response.getStatusCode()!=HttpStatus.OK)
