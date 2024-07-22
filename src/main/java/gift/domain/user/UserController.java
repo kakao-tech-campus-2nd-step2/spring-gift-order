@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,7 +22,11 @@ public class UserController {
     private static final String RESPONSE_TYPE = "code"; // 기본적으로 "code"로 설정
 
     @GetMapping("/login")
-    public String loginPage() {
+    public String loginPage(Model model) {
+        String url = String.format("%s?client_id=%s&redirect_uri=%s&response_type=%s",
+            KAKAO_AUTH_URL, clientId, redirectUri, RESPONSE_TYPE);
+
+        model.addAttribute("kakaoLoginUrl", url);
         return "login";
     }
 

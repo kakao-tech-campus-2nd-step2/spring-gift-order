@@ -66,9 +66,12 @@ public class UserRestController {
 
             String jwt = JwtProvider.generateToken(findUser);
             System.out.println("jwt = " + jwt);
+
+            // TODO 커스텀 헤더 포함 응답하는 메서드만들어서 홈 화면으로 리다이렉트 처리 필요
             return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "로그인에 성공했습니다.", jwt);
 
         }
+        // TODO 커스텀 헤더 포함 응답하는 메서드만들어서 홈 화면으로 리다이렉트 처리필요
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "로그인 과정이 취소되었습니다.");
     }
 
