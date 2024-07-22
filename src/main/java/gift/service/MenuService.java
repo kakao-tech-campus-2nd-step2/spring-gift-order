@@ -63,7 +63,7 @@ public class MenuService {
     }
 
     public Set<Option> getOptions(Long id) {
-        return menuRepository.getOptionsById(id);
+        return menuRepository.getOptionsByMenuId(id);
     }
 
     public void addOptions(Long id, OptionRequest optionRequest){

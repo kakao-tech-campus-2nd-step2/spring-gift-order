@@ -45,4 +45,7 @@ public class Option {
         return Objects.hash(name);
     }
 
+    public String getName() {
+        return this.name;
+    }
 }
