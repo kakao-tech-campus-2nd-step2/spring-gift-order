@@ -33,9 +33,9 @@ public class RestClientTest {
     private static LinkedMultiValueMap<String, String> createBody() {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "79408c79ad016f0254f5e58e524dc521");
+        body.add("client_id", "client_id");
         body.add("redirect_url", "http://localhost:8080");
-        body.add("code", "JReGKLu56ZMTaxDnEdILctKB1bR3fKd0gNPjQGW-pVRfKNteAprkoQAAAAQKKcjZAAABkNg8xEN-jFVpBnvzXw");
+        body.add("code", "인가코드");
         return body;
     }
 
