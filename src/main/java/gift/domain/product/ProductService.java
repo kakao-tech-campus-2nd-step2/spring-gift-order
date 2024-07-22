@@ -8,20 +8,15 @@ import gift.global.exception.ErrorCode;
 import gift.global.exception.category.CategoryNotFoundException;
 import gift.global.exception.product.ProductDuplicateException;
 import gift.global.exception.product.ProductNotFoundException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Service
 @Validated
@@ -30,18 +25,15 @@ public class ProductService {
     private final JpaProductRepository productRepository;
     private final JpaCategoryRepository categoryRepository;
     private final OptionService optionService;
-    private final Validator validator;
 
     @Autowired
     public ProductService(
         JpaProductRepository jpaProductRepository,
         JpaCategoryRepository jpaCategoryRepository,
-        Validator validator,
         OptionService optionService
     ) {
         this.productRepository = jpaProductRepository;
         this.categoryRepository = jpaCategoryRepository;
-        this.validator = validator;
         this.optionService = optionService;
     }
 
@@ -49,12 +41,8 @@ public class ProductService {
      * 상품 추가
      */
     public void createProduct(@Valid ProductDTO productDTO) {
-        if (productRepository.existsByName(productDTO.name())) {
-            throw new ProductDuplicateException(productDTO.name());
-        }
-        if (categoryRepository.findById(productDTO.categoryId()).isEmpty()) {
-            throw new CategoryNotFoundException(productDTO.categoryId());
-        }
+        validateUniqueName(productDTO.name());
+        validateCategoryExists(productDTO.categoryId());
 
         Product product = new Product(
             productDTO.name(),
@@ -62,8 +50,6 @@ public class ProductService {
             productDTO.price(),
             productDTO.imageUrl()
         );
-
-        validateProduct(product);
 
         Product savedProduct = productRepository.save(product);
         // 옵션 저장
@@ -86,19 +72,14 @@ public class ProductService {
     public void updateProduct(Long id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ProductNotFoundException(id));
-        if (productRepository.existsByName(productDTO.name())) {
-            throw new ProductDuplicateException(productDTO.name());
-        }
+        validateUniqueNameWithoutMe(id, productDTO.name());
 
-        Optional<Category> category = categoryRepository.findById(productDTO.categoryId());
-        if (category.isEmpty()) {
-            throw new CategoryNotFoundException(productDTO.categoryId());
-        }
+        Category category = categoryRepository.findById(productDTO.categoryId())
+            .orElseThrow(() -> new CategoryNotFoundException(productDTO.categoryId()));
 
-        product.update(productDTO.name(), category.get(), productDTO.price(),
+
+        product.update(productDTO.name(), category, productDTO.price(),
             productDTO.imageUrl());
-
-        validateProduct(product);
 
         productRepository.save(product);
     }
@@ -111,7 +92,7 @@ public class ProductService {
     }
 
     /**
-     * 해당 ID 리스트에 속한 상품들 삭제
+     * 다수의 상품 삭제
      */
     public void deleteProductsByIds(List<Long> productIds) {
         if (productIds.isEmpty()) {
@@ -121,19 +102,26 @@ public class ProductService {
         productRepository.deleteAllByIdIn(productIds);
     }
 
-    /**
-     * 비즈니스 제약 사항 검사
-     */
-    public void validateProduct(Product product) {
-        Set<ConstraintViolation<Product>> violations = validator.validate(product);
-        if (!violations.isEmpty()) {
-            String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(", "));
-            throw new BusinessException(ErrorCode.BAD_REQUEST, message);
+
+    private void validateUniqueName(String productName) {
+        if (productRepository.existsByName(productName)) {
+            throw new ProductDuplicateException(productName);
         }
     }
 
+    private void validateUniqueNameWithoutMe(Long productId, String productName) {
+        productRepository.findByName(productName)
+            .filter(product -> !product.getId().equals(productId))
+            .ifPresent(product -> {
+                throw new ProductDuplicateException(productName);
+            });
+    }
+
+    private void validateCategoryExists(Long categoryId) {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new CategoryNotFoundException(categoryId);
+        }
+    }
 }
 
 
