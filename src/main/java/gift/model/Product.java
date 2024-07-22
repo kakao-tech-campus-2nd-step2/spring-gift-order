@@ -85,8 +85,8 @@ public class Product {
         return imageUrl;
     }
 
-    public Long getCategoryId() {
-        return category.getId();
+    public Category getCategory() {
+        return category;
     }
 
     public List<GiftOption> getGiftOptionList() {

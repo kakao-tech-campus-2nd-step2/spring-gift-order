@@ -45,6 +45,10 @@ public class Category {
         this.imageUrl = imageUrl;
     }
 
+    public void deleteProduct(Product product) {
+        productList.remove(product);
+    }
+
     //getter
     public Long getId() {
         return id;
