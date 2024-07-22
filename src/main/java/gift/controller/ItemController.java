@@ -55,7 +55,7 @@ public class ItemController {
         }
         ItemDTO itemDTO = new ItemDTO(form.getName(), form.getPrice(), form.getImgUrl(),
             form.getCategoryId());
-        Long itemId = itemService.insertItem(itemDTO,form.getOptions(),result);
+        Long itemId = itemService.insertItem(itemDTO,form.getOptions());
         return ResponseEntity.ok(itemId);
     }
 
