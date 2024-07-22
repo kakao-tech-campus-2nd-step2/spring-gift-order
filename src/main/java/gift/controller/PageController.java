@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /*
- * 관리자 페이지 기본 화면 연결을 위한 Controller
+ * 페이지 연결을 위한 Controller
  */
 @Controller
 public class PageController {
