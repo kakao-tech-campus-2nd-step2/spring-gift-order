@@ -16,11 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class OptionService {
 
     private final OptionRepository optionRepository;
-    private final ProductService productService;
 
-    public OptionService(OptionRepository optionRepository, ProductService productService) {
+    public OptionService(OptionRepository optionRepository) {
         this.optionRepository = optionRepository;
-        this.productService = productService;
     }
 
     private boolean isDuplicateName(Option option) {
@@ -32,12 +30,12 @@ public class OptionService {
 
     public void addOption(Option option) {
         if (isDuplicateName(option)) {
-            throw new IllegalArgumentException("asdfasdf");
+            throw new IllegalArgumentException("중복Option이름 사용 불가능");
         }
         optionRepository.save(option);
     }
 
-    public void updateOption(Option option,Long optionId) {
+    public void updateOption(Option option, Long optionId) {
         Option update = getOptionById(optionId);
         update.setName(option.getName());
         update.setQuantity(option.getQuantity());
@@ -47,10 +45,6 @@ public class OptionService {
     public void deleteOption(Long id) {
         getOptionById(id);
         optionRepository.deleteById(id);
-    }
-
-    public Product findProductById(Long id) {
-        return productService.getProductById(id);
     }
 
     public Option getOptionById(Long id) {

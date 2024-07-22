@@ -3,6 +3,7 @@ package gift.controller;
 import gift.dto.OptionDTO;
 import gift.entity.Option;
 import gift.entity.Product;
+import gift.service.OptionFacadeService;
 import gift.service.OptionService;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/option")
 public class OptionController {
 
-    private final OptionService optionService;
+    private final OptionFacadeService optionService;
 
-    public OptionController(OptionService optionService) {
+    public OptionController(OptionFacadeService optionService) {
         this.optionService = optionService;
     }
 

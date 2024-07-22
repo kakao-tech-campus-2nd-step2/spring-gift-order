@@ -48,7 +48,6 @@ public class ProductFacadeService {
 
     public void updateProduct(Product product, Long id) {
         productService.updateProduct(product, id);
-
     }
 
     public void deleteProduct(Long id) {
@@ -67,6 +66,5 @@ public class ProductFacadeService {
     public List<Category> findAllCategory() {
         return categoryService.findAll();
     }
-
 
 }
