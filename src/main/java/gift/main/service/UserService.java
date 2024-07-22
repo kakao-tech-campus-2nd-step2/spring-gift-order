@@ -39,4 +39,10 @@ public class UserService {
         return jwtUtil.createToken(user);
     }
 
+    @Transactional
+    public String loginKakaoUser(UserJoinRequest userJoinRequest) {
+        User user = userRepository.findByEmail(userJoinRequest.email())
+                .orElseGet(() -> userRepository.save(new User(userJoinRequest)));
+        return jwtUtil.createToken(user);
+    }
 }
