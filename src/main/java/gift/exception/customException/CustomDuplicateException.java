@@ -1,12 +1,10 @@
 package gift.exception.customException;
 
 import gift.exception.ErrorCode;
-import org.springframework.validation.BindingResult;
 
-public class CustomDuplicateException extends CustomArgumentNotValidException {
+public class CustomDuplicateException extends CustomException {
 
-    public CustomDuplicateException(
-        BindingResult bindingResult, ErrorCode errorCode) {
-        super(bindingResult, errorCode);
+    public CustomDuplicateException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }
