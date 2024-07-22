@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class Option {
 
-    private final String regex = "[\\w\\s\\(\\)\\[\\]\\+\\-\\&\\/가-힣]*";
+    private final static String regex = "[\\w\\s\\(\\)\\[\\]\\+\\-\\&\\/가-힣]*";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,20 +44,32 @@ public class Option {
     }
 
     public Option(Long id, String name, int quantity, Product product) {
-        if (!name.matches(regex)) {
-            throw new OptionNameValidException("특수 문자는 '(), [], +, -, &, /, _ '만 사용가능 합니다.");
-        }
-        if (quantity < 1 || quantity >= 100_000_000) {
-            throw new OptionQuantityValidException("수량은 1개 이상 1억개 미만으로 설정해주세요.");
-        }
-        if (name.length() > 50) {
-            throw new OptionNameValidException("옵션 이름 50자 초과");
-        }
+        validAllowedCharacter(name);
+        validNameLength(name);
+        validQuantity(quantity);
 
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.product = product;
+    }
+
+    private static void validNameLength(String name) {
+        if (name.length() > 50) {
+            throw new OptionNameValidException("옵션 이름 50자 초과");
+        }
+    }
+
+    private static void validQuantity(int quantity) {
+        if (quantity < 1 || quantity >= 100_000_000) {
+            throw new OptionQuantityValidException("수량은 1개 이상 1억개 미만으로 설정해주세요.");
+        }
+    }
+
+    private static void validAllowedCharacter(String name) {
+        if (!name.matches(regex)) {
+            throw new OptionNameValidException("특수 문자는 '(), [], +, -, &, /, _ '만 사용가능 합니다.");
+        }
     }
 
     public Long getId() {
