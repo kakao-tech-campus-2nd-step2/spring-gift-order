@@ -52,6 +52,7 @@ public class OptionService {
         optionsRepository.save(options);
     }
 
+    @Transactional
     public int deductQuantity(int product_id, int id) {
         var options = findByProduct_Id(product_id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
         var currentQuantity = optionRepository.searchQuantityById(id);
@@ -60,7 +61,6 @@ public class OptionService {
         } else {
             throw new IllegalArgumentException("남은 수량이 없습니다.");
         }
-        optionsRepository.save(options);
         return currentQuantity - 1;
     }
 }
