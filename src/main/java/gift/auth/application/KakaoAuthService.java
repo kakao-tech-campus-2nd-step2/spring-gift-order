@@ -13,9 +13,12 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoAuthService {
 
+    private final RestClient restClient;
     private final KakaoProperties kakaoProperties;
 
-    public KakaoAuthService(KakaoProperties kakaoProperties) {
+    public KakaoAuthService(RestClient restClient,
+                            KakaoProperties kakaoProperties) {
+        this.restClient = restClient;
         this.kakaoProperties = kakaoProperties;
     }
 
@@ -60,8 +63,7 @@ public class KakaoAuthService {
 
     private String getResponseJsonWithPost(String url,
                                            LinkedMultiValueMap<String, String> requestBody) {
-        return RestClient.create()
-                .post()
+        return restClient.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(requestBody)
@@ -70,8 +72,7 @@ public class KakaoAuthService {
     }
 
     private String getResponseJsonWithGet(String url, String token) {
-        return RestClient.create()
-                .get()
+        return restClient.get()
                 .uri(url)
                 .header(HttpHeaders.AUTHORIZATION, JwtFilter.BEAR_PREFIX + token)
                 .retrieve()
