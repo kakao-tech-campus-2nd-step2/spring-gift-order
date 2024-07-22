@@ -23,6 +23,7 @@ public class Category {
         validateName(name);
         validateColor(color);
         validateImageUrl(imageUrl);
+        validateDescription(description);
 
         this.name = name;
         this.color = color;
@@ -46,6 +47,11 @@ public class Category {
     public void validateImageUrl(String imageUrl) {
         if (imageUrl == null || imageUrl.isBlank())
             throw new IllegalArgumentException("imageUrl를 입력해주세요");
+    }
+
+    public void validateDescription(String description) {
+        if (description == null)
+            throw new IllegalArgumentException("description의 값은 null이면 안됩니다");
     }
 
     public Long getId() {
