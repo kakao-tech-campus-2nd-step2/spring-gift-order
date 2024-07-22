@@ -14,6 +14,7 @@ import gift.category.Category;
 import gift.option.OptionTestCase.OptionNameAllowedCharacterError;
 import gift.option.OptionTestCase.OptionNameLengthError;
 import gift.option.OptionTestCase.OptionQuantitySizeError;
+import gift.option.entity.Option;
 import gift.product.Product;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
