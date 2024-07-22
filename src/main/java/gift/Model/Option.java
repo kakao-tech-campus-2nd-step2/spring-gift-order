@@ -40,7 +40,7 @@ public class Option {
         if (name.length() > 50)
             throw new IllegalArgumentException("옵션 이름의 길이는 공백포함 최대 50자 입니다");
 
-        if (name.isBlank() || name == null)
+        if (name == null || name.isBlank())
             throw new IllegalArgumentException("옵션 이름은 필수입니다");
 
         if (!NAME_PATTERN.matcher(name).matches())

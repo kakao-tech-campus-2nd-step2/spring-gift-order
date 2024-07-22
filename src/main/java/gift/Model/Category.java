@@ -31,12 +31,12 @@ public class Category {
     }
 
     public void validateName(String name) {
-        if (name.isBlank() || name == null)
+        if (name == null|| name.isBlank())
             throw new IllegalArgumentException("카테고리 이름은 필수입니다");
     }
 
     public void validateColor(String color) {
-        if (color.isBlank() || color == null)
+        if (color == null || color.isBlank())
             throw new IllegalArgumentException("카테고리 색상 값은 필수입니다");
 
         if (color.length() != 7)

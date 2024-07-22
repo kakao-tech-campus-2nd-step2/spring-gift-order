@@ -43,12 +43,11 @@ public class Product {
     }
 
     public void validateName(String name) {
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("상품 이름은 필수입니다");
+
         if (name.length() > 15)
             throw new IllegalArgumentException("상품 이름의 길이는 공백포함 최대 15자 입니다");
-
-
-        if (name.isBlank() || name == null)
-            throw new IllegalArgumentException("상품 이름은 필수입니다");
 
         if (!NAME_PATTERN.matcher(name).matches())
             throw new IllegalArgumentException("상품 이름에는 허용된 특수 문자만 포함될 수 있습니다: (), [], +, -, &, /, _");
