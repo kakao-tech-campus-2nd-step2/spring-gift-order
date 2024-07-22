@@ -1,6 +1,6 @@
 package gift.Controller;
 
-import gift.Model.RequestProductPost;
+import gift.DTO.RequestProductPost;
 import gift.Service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
 import gift.Model.Product;
-import gift.Model.RequestProduct;
+import gift.DTO.RequestProduct;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 

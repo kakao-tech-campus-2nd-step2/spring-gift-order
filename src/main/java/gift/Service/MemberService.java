@@ -3,13 +3,11 @@ package gift.Service;
 import gift.Exception.ForbiddenException;
 import gift.Exception.MemberNotFoundException;
 import gift.Model.Member;
-import gift.Model.RequestMember;
+import gift.DTO.RequestMember;
 import gift.Repository.MemberRepository;
 import gift.Util.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 public class MemberService {

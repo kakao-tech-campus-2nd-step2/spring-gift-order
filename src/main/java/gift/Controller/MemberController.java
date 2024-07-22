@@ -1,7 +1,7 @@
 package gift.Controller;
 
-import gift.Model.RequestMember;
-import gift.Model.ResponseLoginDTO;
+import gift.DTO.RequestMember;
+import gift.DTO.ResponseLoginDTO;
 import gift.Service.MemberService;
 import org.springframework.web.bind.annotation.*;
 

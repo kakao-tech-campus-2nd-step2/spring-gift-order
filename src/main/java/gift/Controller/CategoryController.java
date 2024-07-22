@@ -2,8 +2,8 @@ package gift.Controller;
 
 
 import gift.Model.Category;
-import gift.Model.RequestCategory;
-import gift.Model.ResponseCategoryDTO;
+import gift.DTO.RequestCategory;
+import gift.DTO.ResponseCategoryDTO;
 import gift.Service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

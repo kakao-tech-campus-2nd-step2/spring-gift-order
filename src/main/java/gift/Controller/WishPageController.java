@@ -1,5 +1,6 @@
 package gift.Controller;
 
+import gift.DTO.RequestWishDTO;
 import gift.Model.*;
 import gift.Service.ProductService;
 import org.springframework.data.domain.Pageable;

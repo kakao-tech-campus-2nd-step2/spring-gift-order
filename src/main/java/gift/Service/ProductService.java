@@ -1,5 +1,7 @@
 package gift.Service;
 
+import gift.DTO.RequestProduct;
+import gift.DTO.RequestProductPost;
 import gift.Exception.CategoryNotFoundException;
 import gift.Exception.ProductNotFoundException;
 import gift.Model.*;
@@ -10,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 public class ProductService {

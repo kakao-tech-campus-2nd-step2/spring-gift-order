@@ -1,4 +1,4 @@
-package gift.Model;
+package gift.DTO;
 
 public class ResponseCategoryDTO {
     private Long id;

@@ -1,4 +1,4 @@
-package gift.Model;
+package gift.DTO;
 
 public class ResponseLoginDTO {
     private String token;

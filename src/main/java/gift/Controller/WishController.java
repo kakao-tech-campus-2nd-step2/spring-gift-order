@@ -1,7 +1,7 @@
 package gift.Controller;
 
-import gift.Model.RequestWishDTO;
-import gift.Model.ResponseWishDTO;
+import gift.DTO.RequestWishDTO;
+import gift.DTO.ResponseWishDTO;
 import gift.Model.Member;
 import gift.Service.WishService;
 import gift.annotation.ValidUser;

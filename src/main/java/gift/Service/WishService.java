@@ -1,5 +1,7 @@
 package gift.Service;
 
+import gift.DTO.RequestWishDTO;
+import gift.DTO.ResponseWishDTO;
 import gift.Exception.ProductNotFoundException;
 import gift.Exception.WishNotFoundException;
 import gift.Model.*;

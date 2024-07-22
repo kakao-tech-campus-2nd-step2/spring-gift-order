@@ -2,15 +2,13 @@ package gift.Service;
 
 import gift.Exception.CategoryNotFoundException;
 import gift.Model.Category;
-import gift.Model.RequestCategory;
-import gift.Model.ResponseCategoryDTO;
+import gift.DTO.RequestCategory;
+import gift.DTO.ResponseCategoryDTO;
 import gift.Repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 
 @Service

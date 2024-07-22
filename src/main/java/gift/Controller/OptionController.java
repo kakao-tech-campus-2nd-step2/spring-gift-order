@@ -1,8 +1,8 @@
 package gift.Controller;
 
 import gift.Model.Option;
-import gift.Model.RequestOption;
-import gift.Model.ResponseOptionDTO;
+import gift.DTO.RequestOption;
+import gift.DTO.ResponseOptionDTO;
 import gift.Service.OptionService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

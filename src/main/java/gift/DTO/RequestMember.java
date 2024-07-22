@@ -1,4 +1,4 @@
-package gift.Model;
+package gift.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

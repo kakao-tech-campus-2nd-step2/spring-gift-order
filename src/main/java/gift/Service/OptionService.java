@@ -4,15 +4,14 @@ import gift.Exception.OptionNotFoundException;
 import gift.Exception.ProductNotFoundException;
 import gift.Model.Option;
 import gift.Model.Product;
-import gift.Model.RequestOption;
-import gift.Model.ResponseOptionDTO;
+import gift.DTO.RequestOption;
+import gift.DTO.ResponseOptionDTO;
 import gift.Repository.OptionRepository;
 import gift.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class OptionService {
