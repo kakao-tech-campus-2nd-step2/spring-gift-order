@@ -82,6 +82,8 @@ public class Option {
     }
 
     public void subtract(int quantity){
+        if (this.quantity - quantity < 1)
+            throw new IllegalArgumentException("옵션 수량은 최소 1개이상이여야 합니다. 빼려는 수량을 조절해 주십시오.");
         this.quantity -= quantity;
     }
 
