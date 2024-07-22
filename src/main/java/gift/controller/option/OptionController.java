@@ -37,7 +37,7 @@ public class OptionController {
 
     @PostMapping("/options/{id}")
     public ResponseEntity<String> addOptionToGift(@PathVariable("id") Long giftId,
-                                                  @Valid @RequestBody OptionRequest optionRequest) {
+                                                  @Valid @RequestBody OptionRequest.Create optionRequest) {
         optionService.addOptionToGift(giftId, optionRequest);
         return ResponseEntity.ok("옵션이 상품에 추가되었습니다!");
     }
@@ -45,7 +45,7 @@ public class OptionController {
     @PutMapping("/options/{giftId}/{optionId}")
     public ResponseEntity<String> updateOptionToGift(@PathVariable("giftId") Long giftId,
                                                      @PathVariable("optionId") Long optionId,
-                                                     @Valid @RequestBody OptionRequest optionRequest) {
+                                                     @Valid @RequestBody OptionRequest.Update optionRequest) {
         optionService.updateOptionToGift(giftId, optionId, optionRequest);
         return ResponseEntity.ok(giftId + "번 상품에서" + optionId + "번 옵션이 변경되었습니다!");
     }

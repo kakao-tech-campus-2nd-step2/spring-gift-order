@@ -41,7 +41,7 @@ class OptionServiceTest {
     @DisplayName("중복값을 넣었을때 에러가 잘 뜨는지 테스트")
     void testAddOptionWithDuplicateName() {
         // given
-        OptionRequest duplicateOptionRequest = new OptionRequest("testOption", 10);
+        OptionRequest.Create duplicateOptionRequest = new OptionRequest.Create("testOption", 10);
         when(giftRepository.findById(gift.getId())).thenReturn(Optional.of(gift));
 
         // when & then

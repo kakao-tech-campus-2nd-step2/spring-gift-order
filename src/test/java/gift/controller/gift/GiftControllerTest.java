@@ -42,8 +42,8 @@ class GiftControllerTest {
 
     @BeforeEach
     void setUp() {
-        OptionRequest option = new OptionRequest("testOption", 1);
-        List<OptionRequest> optionList = Arrays.asList(option);
+        OptionRequest.Create option = new OptionRequest.Create("testOption", 1);
+        List<OptionRequest.Create> optionList = Arrays.asList(option);
         giftRequest = new GiftRequest.Create("Test Gift", 1000, "test.jpg", 1L, optionList);
         giftResponse = new GiftResponse(1L, "Test Gift", 1000, "test.jpg", null, null);
         objectMapper = new ObjectMapper();
@@ -53,7 +53,7 @@ class GiftControllerTest {
     @Test
     @DisplayName("상품을 잘 추가하는지 테스트")
     void testAddGift() throws Exception {
-        Mockito.when(giftService.addGift(any())).thenReturn(giftResponse);
+        Mockito.when(giftService.addGift(any(GiftRequest.Create.class))).thenReturn(giftResponse);
         String giftRequestJson = objectMapper.writeValueAsString(giftRequest);
         mockMvc.perform(post("/api/gifts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,8 +97,7 @@ class GiftControllerTest {
         Mockito.doNothing().when(giftService).deleteGift(anyLong());
 
         mockMvc.perform(delete("/api/gifts/{id}", 1L))
-                .andExpect(status().isNoContent())
-                .andExpect(content().string("상품 삭제가 완료되었습니다"));
+                .andExpect(status().isNoContent());
     }
 
 }

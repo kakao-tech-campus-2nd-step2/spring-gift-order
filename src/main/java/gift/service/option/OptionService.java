@@ -29,7 +29,7 @@ public class OptionService {
     }
 
     @Transactional
-    public void addOptionToGift(Long giftId, OptionRequest optionRequest) {
+    public void addOptionToGift(Long giftId, OptionRequest.Create optionRequest) {
         Gift gift = giftRepository.findById(giftId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
         Option option = optionRequest.toEntity();
@@ -59,7 +59,7 @@ public class OptionService {
     }
 
     @Transactional
-    public void updateOptionToGift(Long giftId, Long optionId, OptionRequest optionRequest) {
+    public void updateOptionToGift(Long giftId, Long optionId, OptionRequest.Update optionRequest) {
         Gift gift = giftRepository.findById(giftId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
         Option option = optionRepository.findById(optionId)
@@ -68,7 +68,7 @@ public class OptionService {
         checkOptionInGift(gift, optionId);
         checkDuplicateOptionName(gift, option.getName());
 
-        option.modify(optionRequest.getName(), optionRequest.getQuantity());
+        option.modify(optionRequest.name(), optionRequest.quantity());
 
     }
 

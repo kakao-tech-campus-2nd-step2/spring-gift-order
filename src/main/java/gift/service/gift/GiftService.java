@@ -56,7 +56,7 @@ public class GiftService {
         Category category = categoryRepository.findById(giftRequest.categoryId())
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리 id가 없습니다."));
 
-        List<Option> options = giftRequest.options().stream().map(OptionRequest::toEntity).toList();
+        List<Option> options = giftRequest.options().stream().map(OptionRequest.Create::toEntity).toList();
 
         Gift gift = new Gift(giftRequest.name(), giftRequest.price(), giftRequest.imageUrl(), category, options);
         return GiftResponse.from(giftRepository.save(gift));

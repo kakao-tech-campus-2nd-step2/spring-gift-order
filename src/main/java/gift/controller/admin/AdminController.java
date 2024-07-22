@@ -54,7 +54,7 @@ public class AdminController {
     @PostMapping("/admin/gift/create")
     public String giftCreate(@Valid @ModelAttribute GiftRequest.Create giftRequest) {
         GiftResponse giftResponse = giftService.addGift(giftRequest);
-        for (OptionRequest optionRequest : giftRequest.options()) {
+        for (OptionRequest.Create optionRequest : giftRequest.options()) {
             optionService.addOptionToGift(giftResponse.getId(), optionRequest);
         }
         return "redirect:/admin";
@@ -95,7 +95,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin/gift/{giftId}/option/create")
-    public String createOption(@PathVariable Long giftId, @Valid @ModelAttribute OptionRequest optionRequest) {
+    public String createOption(@PathVariable Long giftId, @Valid @ModelAttribute OptionRequest.Create optionRequest) {
         optionService.addOptionToGift(giftId, optionRequest);
         return "redirect:/admin/gift/detail/" + giftId;
     }

@@ -21,7 +21,7 @@ public class GiftRequest {
             Long categoryId,
             @NotEmpty(message = "옵션은 최소 하나 이상 포함되어야 합니다.")
             @Valid
-            List<OptionRequest> options
+            List<OptionRequest.Create> options
     ){
 
     }
