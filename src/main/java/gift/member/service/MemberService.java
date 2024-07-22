@@ -94,4 +94,11 @@ public class MemberService {
             throw MemberAlreadyExistsByEmailException.EXCEPTION;
         }
     }
+
+    public MemberResDto loginOrRegisterByEmail(String email, String accessToken) {
+        Member member = memberRepository.findByEmail(email)
+                        .orElseGet(() -> memberRepository.save(new Member(email, "1234")));
+        member.changeKakaoAccessToken(accessToken);
+        return new MemberResDto(member);
+    }
 }
