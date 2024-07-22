@@ -19,7 +19,7 @@ public class Wish {
     @JoinColumn(name = "members_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false, columnDefinition = "integer")
+    @Column(nullable = false, columnDefinition = "integer COMMENT '장바구니에 담은 상품 개수'")
     private int amount;
 
     protected Wish(){

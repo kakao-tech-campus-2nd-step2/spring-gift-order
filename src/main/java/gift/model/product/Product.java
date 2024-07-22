@@ -14,14 +14,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, length = 15, columnDefinition = "VARCHAR(15)")
+    @Column(nullable = false, length = 15, columnDefinition = "VARCHAR(15) COMMENT '상품명'")
     @Embedded
     private ProductName name;
 
-    @Column(nullable = false, columnDefinition = "integer")
+    @Column(nullable = false, columnDefinition = "integer COMMENT '상품 가격'")
     private int price;
 
-    @Column(nullable = false , columnDefinition = "VARCHAR(255)")
+    @Column(nullable = false , columnDefinition = "VARCHAR(255) COMMENT '상품 이미지 주소")
     private String imageUrl;
 
     protected Product(){

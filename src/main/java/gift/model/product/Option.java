@@ -17,12 +17,12 @@ public class Option {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(255)")
+    @Column(unique = true, nullable = false, columnDefinition = "VARCHAR(255) COMMENT '옵션명, 지정된 특수문자만 사용 가능'")
     @Pattern(regexp = "^[a-zA-Z0-9가-힣\\s()\\[\\]+\\-&/_]*$")
     @Size(max = 50)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "integer")
+    @Column(nullable = false, columnDefinition = "integer COMMENT '상품 수량'")
     @Min(value = 1)
     @Max(value = 100000000 - 1)
     private  int amount;

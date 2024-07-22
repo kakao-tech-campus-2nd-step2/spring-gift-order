@@ -12,13 +12,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(255) COMMENT '고객 이메일'")
     private String email;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(255)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) COMMENT '고객 비밀번호'")
     private String password;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(255)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) COMMENT '권한'")
     private String role;
 
     protected Member() {

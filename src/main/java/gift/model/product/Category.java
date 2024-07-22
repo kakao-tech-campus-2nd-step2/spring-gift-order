@@ -9,7 +9,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(255)")
+    @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(255) COMMENT '카테고리명'")
     private String categoryName;
 
     protected Category(){
