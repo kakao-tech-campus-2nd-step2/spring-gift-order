@@ -14,10 +14,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class Interceptor implements HandlerInterceptor {
 
-    @Autowired
-    private JwtToken jwtToken;
+    private final JwtToken jwtToken;
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+
+    @Autowired
+    public Interceptor(JwtToken jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
         Object handler) throws Exception {

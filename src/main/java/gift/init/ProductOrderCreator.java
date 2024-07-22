@@ -8,8 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductOrderCreator {
 
+    private final ProductOrderService productOrderService;
+
     @Autowired
-    private ProductOrderService productOrderService;
+    public ProductOrderCreator(ProductOrderService productOrderService) {
+        this.productOrderService = productOrderService;
+    }
 
     public void creator() {
         productOrderService.decreaseProductOption(1L, 1L, new decreaseProductOption(1L));
