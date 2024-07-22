@@ -55,7 +55,7 @@ public class UserController {
 
     @GetMapping("/api/kakao/token")
     @ResponseBody
-    public String getToken(){
+    public String getToken() throws JsonProcessingException {
         return kakaoService.getToken();
     }
 

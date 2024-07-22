@@ -23,7 +23,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/api/products")

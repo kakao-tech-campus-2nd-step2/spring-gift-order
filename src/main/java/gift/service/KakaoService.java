@@ -1,5 +1,8 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.dto.user.KakaoToken;
 import gift.exception.exception.BadRequestException;
 import gift.exception.exception.UnAuthException;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +20,9 @@ public class KakaoService {
     @Value("${kakao.redirect_uri}")
     String redirect_uri;
     String code = "";
+    ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getToken() {
+    public String getToken() throws JsonProcessingException {
         var url = "https://kauth.kakao.com/oauth/token";
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
@@ -34,7 +38,7 @@ public class KakaoService {
             throw new UnAuthException("인증되지 않은 요청");
         if(response.getStatusCode()!=HttpStatus.OK)
             throw new BadRequestException("잘못된 요청");
-
-        return response.getBody();
+        KakaoToken kakaoToken = objectMapper.readValue(response.getBody(), KakaoToken.class);
+        return kakaoToken.access_token();
     }
 }

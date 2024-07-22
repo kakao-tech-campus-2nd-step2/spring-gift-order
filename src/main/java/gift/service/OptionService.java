@@ -19,6 +19,7 @@ public class OptionService {
     ProductRepository productRepository;
     @Autowired
     OptionRepository optionRepository;
+
     @Transactional
     public void refill(OptionQuantityDTO optionQuantityDTO) {
         Option option = optionRepository.findById(optionQuantityDTO.id()).orElseThrow(() -> new NotFoundException("해당 옵션이 없음"));
