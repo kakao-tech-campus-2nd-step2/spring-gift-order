@@ -1,9 +1,9 @@
 package gift.RepositoryTest;
 
-import gift.Model.Category;
-import gift.Model.Member;
-import gift.Model.Product;
-import gift.Model.Wish;
+import gift.Model.Entity.Category;
+import gift.Model.Entity.Member;
+import gift.Model.Entity.Product;
+import gift.Model.Entity.Wish;
 import gift.Repository.CategoryRepository;
 import gift.Repository.MemberRepository;
 import gift.Repository.ProductRepository;

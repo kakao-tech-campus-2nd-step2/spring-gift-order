@@ -4,7 +4,7 @@ import gift.Exception.InvalidTokenException;
 import gift.Exception.TokenExpiredException;
 import gift.Exception.NullTokenException;
 import gift.Exception.NotValidTokenException;
-import gift.Model.Member;
+import gift.Model.Entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;

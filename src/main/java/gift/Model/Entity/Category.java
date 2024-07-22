@@ -1,4 +1,4 @@
-package gift.Model;
+package gift.Model.Entity;
 
 
 import jakarta.persistence.*;

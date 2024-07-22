@@ -1,6 +1,6 @@
 package gift.RepositoryTest;
 
-import gift.Model.Member;
+import gift.Model.Entity.Member;
 import gift.Repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

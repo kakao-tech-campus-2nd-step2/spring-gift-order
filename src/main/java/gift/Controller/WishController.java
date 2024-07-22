@@ -2,7 +2,7 @@ package gift.Controller;
 
 import gift.DTO.RequestWishDTO;
 import gift.DTO.ResponseWishDTO;
-import gift.Model.Member;
+import gift.Model.Entity.Member;
 import gift.Service.WishService;
 import gift.annotation.ValidUser;
 import jakarta.validation.Valid;

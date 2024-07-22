@@ -1,7 +1,7 @@
 package gift.RepositoryTest;
 
-import gift.Model.Category;
-import gift.Model.Product;
+import gift.Model.Entity.Category;
+import gift.Model.Entity.Product;
 import gift.Repository.CategoryRepository;
 import gift.Repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;

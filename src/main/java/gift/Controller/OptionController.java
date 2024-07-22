@@ -1,6 +1,6 @@
 package gift.Controller;
 
-import gift.Model.Option;
+import gift.Model.Entity.Option;
 import gift.DTO.RequestOptionDTO;
 import gift.DTO.ResponseOptionDTO;
 import gift.Service.OptionService;

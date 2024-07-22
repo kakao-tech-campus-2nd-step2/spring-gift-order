@@ -1,7 +1,7 @@
 package gift.Service;
 
 import gift.Exception.CategoryNotFoundException;
-import gift.Model.Category;
+import gift.Model.Entity.Category;
 import gift.DTO.RequestCategoryDTO;
 import gift.DTO.ResponseCategoryDTO;
 import gift.Repository.CategoryRepository;

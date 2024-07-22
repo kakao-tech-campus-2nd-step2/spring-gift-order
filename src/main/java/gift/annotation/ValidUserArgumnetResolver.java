@@ -1,6 +1,6 @@
 package gift.annotation;
 
-import gift.Model.Member;
+import gift.Model.Entity.Member;
 import gift.Service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

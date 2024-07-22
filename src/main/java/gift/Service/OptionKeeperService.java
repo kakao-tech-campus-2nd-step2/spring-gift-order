@@ -1,10 +1,9 @@
 package gift.Service;
 
 import gift.Exception.OptionValidationException;
-import gift.Model.Option;
-import gift.Model.Product;
+import gift.Model.Entity.Option;
+import gift.Model.Entity.Product;
 import gift.Repository.OptionRepository;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

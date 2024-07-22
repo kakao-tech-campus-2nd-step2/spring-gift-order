@@ -1,6 +1,6 @@
 package gift.RepositoryTest;
 
-import gift.Model.Category;
+import gift.Model.Entity.Category;
 import gift.Repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

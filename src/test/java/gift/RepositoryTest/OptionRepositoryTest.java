@@ -1,8 +1,8 @@
 package gift.RepositoryTest;
 
-import gift.Model.Category;
-import gift.Model.Option;
-import gift.Model.Product;
+import gift.Model.Entity.Category;
+import gift.Model.Entity.Option;
+import gift.Model.Entity.Product;
 import gift.Repository.CategoryRepository;
 import gift.Repository.OptionRepository;
 import gift.Repository.ProductRepository;

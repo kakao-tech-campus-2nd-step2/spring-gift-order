@@ -1,7 +1,9 @@
 package gift.Controller;
 
 import gift.DTO.RequestWishDTO;
-import gift.Model.*;
+import gift.Model.Entity.Member;
+import gift.Model.Entity.Product;
+import gift.Model.Entity.Wish;
 import gift.Service.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

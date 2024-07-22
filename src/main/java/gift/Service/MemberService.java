@@ -2,7 +2,7 @@ package gift.Service;
 
 import gift.Exception.ForbiddenException;
 import gift.Exception.MemberNotFoundException;
-import gift.Model.Member;
+import gift.Model.Entity.Member;
 import gift.DTO.RequestMemberDTO;
 import gift.Repository.MemberRepository;
 import gift.Util.JwtUtil;

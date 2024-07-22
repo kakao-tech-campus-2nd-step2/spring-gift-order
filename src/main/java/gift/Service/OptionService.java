@@ -2,8 +2,8 @@ package gift.Service;
 
 import gift.Exception.OptionNotFoundException;
 import gift.Exception.ProductNotFoundException;
-import gift.Model.Option;
-import gift.Model.Product;
+import gift.Model.Entity.Option;
+import gift.Model.Entity.Product;
 import gift.DTO.RequestOptionDTO;
 import gift.DTO.ResponseOptionDTO;
 import gift.Repository.OptionRepository;

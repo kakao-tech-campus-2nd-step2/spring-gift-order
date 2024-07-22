@@ -1,9 +1,9 @@
 package gift.EntityTest;
 
-import gift.Model.Category;
-import gift.Model.Member;
-import gift.Model.Product;
-import gift.Model.Wish;
+import gift.Model.Entity.Category;
+import gift.Model.Entity.Member;
+import gift.Model.Entity.Product;
+import gift.Model.Entity.Wish;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
-import gift.Model.Product;
+import gift.Model.Entity.Product;
 import gift.DTO.RequestProductDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
