@@ -2,7 +2,7 @@ package gift.Controller;
 
 
 import gift.Model.Category;
-import gift.DTO.RequestCategory;
+import gift.DTO.RequestCategoryDTO;
 import gift.DTO.ResponseCategoryDTO;
 import gift.Service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,8 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addCategory(@RequestBody RequestCategory requestCategory){
-        Category category = categoryService.addCategory(requestCategory);
+    public ResponseEntity<String> addCategory(@RequestBody RequestCategoryDTO requestCategoryDTO){
+        Category category = categoryService.addCategory(requestCategoryDTO);
         return ResponseEntity.created(URI.create("api/categories/"+ category.getId())).body("카테고리가 정상적으로 추가되었습니다");
     }
 
@@ -34,8 +34,8 @@ public class CategoryController {
     }
 
     @PutMapping
-    public ResponseEntity <String> editCategory(@RequestBody RequestCategory requestCategory){
-        categoryService.editCategory(requestCategory);
+    public ResponseEntity <String> editCategory(@RequestBody RequestCategoryDTO requestCategoryDTO){
+        categoryService.editCategory(requestCategoryDTO);
         return ResponseEntity.ok("카테고리를 정상적으로 수정하였습니다");
     }
 

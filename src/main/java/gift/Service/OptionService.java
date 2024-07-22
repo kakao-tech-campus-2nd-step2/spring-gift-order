@@ -4,7 +4,7 @@ import gift.Exception.OptionNotFoundException;
 import gift.Exception.ProductNotFoundException;
 import gift.Model.Option;
 import gift.Model.Product;
-import gift.DTO.RequestOption;
+import gift.DTO.RequestOptionDTO;
 import gift.DTO.ResponseOptionDTO;
 import gift.Repository.OptionRepository;
 import gift.Repository.ProductRepository;
@@ -26,10 +26,10 @@ public class OptionService {
     }
 
     @Transactional
-    public Option addOption(Long productId, RequestOption requestOption){
+    public Option addOption(Long productId, RequestOptionDTO requestOptionDTO){
         Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException("매칭되는 product가 없습니다"));
-        optionKeeperService.checkUniqueOptionName(product, requestOption.name());
-        Option option = new Option(requestOption.name(), requestOption.quantity(), product);
+        optionKeeperService.checkUniqueOptionName(product, requestOptionDTO.name());
+        Option option = new Option(requestOptionDTO.name(), requestOptionDTO.quantity(), product);
         return optionRepository.save(option);
     }
 
@@ -46,13 +46,13 @@ public class OptionService {
     }
 
     @Transactional
-    public void editOption(Long productId, Long optionId, RequestOption requestOption) {
+    public void editOption(Long productId, Long optionId, RequestOptionDTO requestOptionDTO) {
         Option option = optionRepository.findById(optionId).orElseThrow(()-> new OptionNotFoundException("매칭되는 옵션이 없습니다"));
         if (!(option.isBelongToProduct(productId)))
             throw new OptionNotFoundException("해당 옵션은 해당 상품에 속하지 않는 옵션입니다");
-        if(!(option.hasSameName(requestOption.name()))) //옵션의 name을 변경하려고 한다면 이미 존재하는 name이 있는지 체크
-            optionKeeperService.checkUniqueOptionName(option.getProduct(), requestOption.name());
-        option.update(requestOption.name(), requestOption.quantity());
+        if(!(option.hasSameName(requestOptionDTO.name()))) //옵션의 name을 변경하려고 한다면 이미 존재하는 name이 있는지 체크
+            optionKeeperService.checkUniqueOptionName(option.getProduct(), requestOptionDTO.name());
+        option.update(requestOptionDTO.name(), requestOptionDTO.quantity());
     }
 
     @Transactional

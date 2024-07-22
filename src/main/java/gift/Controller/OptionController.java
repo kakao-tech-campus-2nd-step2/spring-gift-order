@@ -1,7 +1,7 @@
 package gift.Controller;
 
 import gift.Model.Option;
-import gift.DTO.RequestOption;
+import gift.DTO.RequestOptionDTO;
 import gift.DTO.ResponseOptionDTO;
 import gift.Service.OptionService;
 import jakarta.validation.Valid;
@@ -22,8 +22,8 @@ public class OptionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addOption (@PathVariable("product-id") Long productId, @Valid @RequestBody RequestOption requestOption){
-        Option option = optionService.addOption(productId, requestOption);
+    public ResponseEntity<String> addOption (@PathVariable("product-id") Long productId, @Valid @RequestBody RequestOptionDTO requestOptionDTO){
+        Option option = optionService.addOption(productId, requestOptionDTO);
         return ResponseEntity.created(URI.create("/api/products/"+productId+"/options/"+ option.getId())).body("옵션이 정상적으로 추가되었습니다");
     }
 
@@ -34,8 +34,8 @@ public class OptionController {
     }
 
     @PutMapping("/{option-id}")
-    public ResponseEntity<String> editOption(@PathVariable("product-id") Long productId, @PathVariable("option-id") Long optionId, @Valid @RequestBody RequestOption requestOption){
-        optionService.editOption(productId, optionId, requestOption);
+    public ResponseEntity<String> editOption(@PathVariable("product-id") Long productId, @PathVariable("option-id") Long optionId, @Valid @RequestBody RequestOptionDTO requestOptionDTO){
+        optionService.editOption(productId, optionId, requestOptionDTO);
         return ResponseEntity.ok("옵션이 정상적으로 수정되었습니다");
     }
 

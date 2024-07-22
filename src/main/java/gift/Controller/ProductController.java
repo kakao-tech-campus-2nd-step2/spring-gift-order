@@ -1,6 +1,6 @@
 package gift.Controller;
 
-import gift.DTO.RequestProductPost;
+import gift.DTO.RequestProductPostDTO;
 import gift.Service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
 import gift.Model.Product;
-import gift.DTO.RequestProduct;
+import gift.DTO.RequestProductDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,27 +44,27 @@ public class ProductController {
 
     @GetMapping("/products/new")
     public String newProductForm(Model model) {
-        model.addAttribute("product", new RequestProductPost("", 0, "", 0L, "",1));
+        model.addAttribute("product", new RequestProductPostDTO("", 0, "", 0L, "",1));
         return "new-product";
     }
 
     @PostMapping("/products")
-    public String newProduct(@Valid @ModelAttribute RequestProductPost requestProductPost) {
-        productService.addProduct(requestProductPost);
+    public String newProduct(@Valid @ModelAttribute RequestProductPostDTO requestProductPostDTO) {
+        productService.addProduct(requestProductPostDTO);
         return "redirect:/api/products";
     }
 
     @GetMapping("/products/edit/{id}")
     public String editProductForm(@PathVariable("id") Long id, Model model) {
         Product product = productService.selectProduct(id);
-        model.addAttribute("product", new RequestProduct(product.getName(), product.getPrice(), product.getImageUrl(), product.getCategory().getId()));
+        model.addAttribute("product", new RequestProductDTO(product.getName(), product.getPrice(), product.getImageUrl(), product.getCategory().getId()));
         model.addAttribute("id", id);
         return "edit-product";
     }
 
     @PutMapping("/products/edit/{id}")
-    public String updateProduct(@PathVariable("id") Long id, @Valid @ModelAttribute RequestProduct requestProduct) {
-        productService.editProduct(id, requestProduct);
+    public String updateProduct(@PathVariable("id") Long id, @Valid @ModelAttribute RequestProductDTO requestProductDTO) {
+        productService.editProduct(id, requestProductDTO);
         return "redirect:/api/products";
     }
 

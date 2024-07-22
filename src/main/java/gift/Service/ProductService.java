@@ -1,7 +1,7 @@
 package gift.Service;
 
-import gift.DTO.RequestProduct;
-import gift.DTO.RequestProductPost;
+import gift.DTO.RequestProductDTO;
+import gift.DTO.RequestProductPostDTO;
 import gift.Exception.CategoryNotFoundException;
 import gift.Exception.ProductNotFoundException;
 import gift.Model.*;
@@ -34,12 +34,12 @@ public class ProductService {
     }
 
     @Transactional
-    public void addProduct(RequestProductPost requestProductPost) {
-        Category category = categoryRepository.findById(requestProductPost.categoryId())
+    public void addProduct(RequestProductPostDTO requestProductPostDTO) {
+        Category category = categoryRepository.findById(requestProductPostDTO.categoryId())
                 .orElseThrow(()-> new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
-        Product product = new Product(requestProductPost.name(), requestProductPost.price(), requestProductPost.imageUrl(), category);
+        Product product = new Product(requestProductPostDTO.name(), requestProductPostDTO.price(), requestProductPostDTO.imageUrl(), category);
         productRepository.save(product);
-        optionRepository.save(new Option(requestProductPost.name(), requestProductPost.optionQuantity(), product));
+        optionRepository.save(new Option(requestProductPostDTO.name(), requestProductPostDTO.optionQuantity(), product));
     }
 
     @Transactional(readOnly = true)
@@ -49,12 +49,12 @@ public class ProductService {
     }
 
     @Transactional
-    public void editProduct(long id, RequestProduct requestProduct) {
+    public void editProduct(long id, RequestProductDTO requestProductDTO) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("매칭되는 product가 없습니다"));
-        product.setName(requestProduct.name());
-        product.setPrice(requestProduct.price());
-        product.setImageUrl(requestProduct.imageUrl());
-        Category category = categoryRepository.findById(requestProduct.categoryId())
+        product.setName(requestProductDTO.name());
+        product.setPrice(requestProductDTO.price());
+        product.setImageUrl(requestProductDTO.imageUrl());
+        Category category = categoryRepository.findById(requestProductDTO.categoryId())
                         .orElseThrow(()->new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
         product.setCategory(category);
     }

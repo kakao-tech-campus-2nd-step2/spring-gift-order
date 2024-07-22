@@ -2,7 +2,7 @@ package gift.DTO;
 
 import jakarta.validation.constraints.*;
 
-public record RequestProductPost (
+public record RequestProductPostDTO(
         @Pattern(
                 regexp = "^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ()\\[\\]+\\-\\&/_]*$",
                 message = "상품 이름에는 허용된 특수 문자만 포함될 수 있습니다: (), [], +, -, &, /, _"

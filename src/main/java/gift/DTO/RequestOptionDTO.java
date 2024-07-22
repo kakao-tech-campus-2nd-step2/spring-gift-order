@@ -2,7 +2,7 @@ package gift.DTO;
 
 import jakarta.validation.constraints.*;
 
-public record RequestOption (
+public record RequestOptionDTO(
         @Pattern(
                 regexp = "^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ()\\[\\]+\\-\\&/_]*$",
                 message = "옵션 이름에는 허용된 특수 문자만 포함될 수 있습니다: (), [], +, -, &, /, _"

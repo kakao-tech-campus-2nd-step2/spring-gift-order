@@ -1,6 +1,6 @@
 package gift.Controller;
 
-import gift.DTO.RequestMember;
+import gift.DTO.RequestMemberDTO;
 import gift.DTO.ResponseLoginDTO;
 import gift.Service.MemberService;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +16,14 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody RequestMember member){
+    public String registerUser(@RequestBody RequestMemberDTO member){
         memberService.signUpUser(member);
         return "signUp successed";
     }
 
 
     @PostMapping("/login")
-    public ResponseLoginDTO loginUser(@RequestBody RequestMember member) {
+    public ResponseLoginDTO loginUser(@RequestBody RequestMemberDTO member) {
         return new ResponseLoginDTO(memberService.loginUser(member));
     }
 
