@@ -52,23 +52,23 @@ public class GiftService {
     }
 
     @Transactional
-    public GiftResponse addGift(GiftRequest giftRequest) {
-        Category category = categoryRepository.findById(giftRequest.getCategoryId())
+    public GiftResponse addGift(GiftRequest.Create giftRequest) {
+        Category category = categoryRepository.findById(giftRequest.categoryId())
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리 id가 없습니다."));
 
-        List<Option> options = giftRequest.getOptions().stream().map(OptionRequest::toEntity).toList();
+        List<Option> options = giftRequest.options().stream().map(OptionRequest::toEntity).toList();
 
-        Gift gift = new Gift(giftRequest.getName(), giftRequest.getPrice(), giftRequest.getImageUrl(), category, options);
+        Gift gift = new Gift(giftRequest.name(), giftRequest.price(), giftRequest.imageUrl(), category, options);
         return GiftResponse.from(giftRepository.save(gift));
     }
 
     @Transactional
-    public void updateGift(GiftRequest giftRequest, Long id) {
-        Category category = categoryRepository.findById(giftRequest.getCategoryId())
+    public void updateGift(GiftRequest.Create giftRequest, Long id) {
+        Category category = categoryRepository.findById(giftRequest.categoryId())
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리 id가 없습니다."));
         Gift gift = giftRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 Gift가 없습니다. id : " + id));
-        gift.modify(giftRequest.getName(), giftRequest.getPrice(), giftRequest.getImageUrl(), category);
+        gift.modify(giftRequest.name(), giftRequest.price(), giftRequest.imageUrl(), category);
         giftRepository.save(gift);
     }
 

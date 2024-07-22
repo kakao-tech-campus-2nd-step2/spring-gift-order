@@ -27,7 +27,7 @@ public class GiftController {
 
 
     @PostMapping
-    public ResponseEntity<String> addGift(@Valid @RequestBody GiftRequest giftRequest) {
+    public ResponseEntity<String> addGift(@Valid @RequestBody GiftRequest.Create giftRequest) {
         giftService.addGift(giftRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body("Gift created");
     }
@@ -45,7 +45,7 @@ public class GiftController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateGift(@PathVariable Long id, @RequestBody GiftRequest giftRequest) {
+    public ResponseEntity<String> updateGift(@PathVariable Long id, @RequestBody GiftRequest.Create giftRequest) {
         giftService.updateGift(giftRequest, id);
         return ResponseEntity.ok("상품 수정이 완료되었습니다.");
     }

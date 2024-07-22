@@ -35,7 +35,7 @@ class GiftControllerTest {
     @MockBean
     private OptionService optionService;
 
-    private GiftRequest giftRequest;
+    private GiftRequest.Create giftRequest;
 
     private GiftResponse giftResponse;
     private ObjectMapper objectMapper;
@@ -44,7 +44,7 @@ class GiftControllerTest {
     void setUp() {
         OptionRequest option = new OptionRequest("testOption", 1);
         List<OptionRequest> optionList = Arrays.asList(option);
-        giftRequest = new GiftRequest("Test Gift", 1000, "test.jpg", 1L, optionList);
+        giftRequest = new GiftRequest.Create("Test Gift", 1000, "test.jpg", 1L, optionList);
         giftResponse = new GiftResponse(1L, "Test Gift", 1000, "test.jpg", null, null);
         objectMapper = new ObjectMapper();
 
@@ -61,22 +61,20 @@ class GiftControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().string("Gift created"));
 
-        Mockito.verify(giftService).addGift(any(GiftRequest.class));
+        Mockito.verify(giftService).addGift(any(GiftRequest.Create.class));
     }
 
     @Test
-    @DisplayName("옵션없이 상품을 추가했을때 오류 메시지가 잘 뜨는지 테스트")
+    @DisplayName("옵션 없이 상품을 추가했을 때 오류 메시지가 잘 뜨는지 테스트")
     void testAddGiftNoOption() throws Exception {
-        Mockito.when(giftService.addGift(any())).thenReturn(giftResponse);
-        giftRequest.setOptions(null);
-        String giftRequestJson = objectMapper.writeValueAsString(giftRequest);
+        GiftRequest.Create invalidGiftRequest = new GiftRequest.Create("Test Gift", 1000, "test.jpg", 1L, null);
+        String giftRequestJson = objectMapper.writeValueAsString(invalidGiftRequest);
         mockMvc.perform(post("/api/gifts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(giftRequestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.options").value("옵션은 최소 하나 이상 포함되어야 합니다."));
     }
-
     @Test
     @DisplayName("상품 업데이트 메서드가 잘 동작하는지 테스트")
     void testupdateGift() throws Exception {
@@ -90,7 +88,7 @@ class GiftControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("상품 수정이 완료되었습니다."));
 
-        Mockito.verify(giftService).updateGift(any(GiftRequest.class), anyLong());
+        Mockito.verify(giftService).updateGift(any(GiftRequest.Create.class), anyLong());
     }
 
     @Test

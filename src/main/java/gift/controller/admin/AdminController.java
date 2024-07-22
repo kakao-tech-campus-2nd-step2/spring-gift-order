@@ -52,9 +52,9 @@ public class AdminController {
     }
 
     @PostMapping("/admin/gift/create")
-    public String giftCreate(@Valid @ModelAttribute GiftRequest giftRequest) {
+    public String giftCreate(@Valid @ModelAttribute GiftRequest.Create giftRequest) {
         GiftResponse giftResponse = giftService.addGift(giftRequest);
-        for (OptionRequest optionRequest : giftRequest.getOptions()) {
+        for (OptionRequest optionRequest : giftRequest.options()) {
             optionService.addOptionToGift(giftResponse.getId(), optionRequest);
         }
         return "redirect:/admin";
@@ -77,7 +77,7 @@ public class AdminController {
     }
 
     @PutMapping("/admin/gift/modify/{id}")
-    public String giftModify(@PathVariable("id") Long id, @ModelAttribute GiftRequest giftRequest) {
+    public String giftModify(@PathVariable("id") Long id, @ModelAttribute GiftRequest.Create giftRequest) {
         giftService.updateGift(giftRequest, id);
         return "redirect:/admin";
     }
