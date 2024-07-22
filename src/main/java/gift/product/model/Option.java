@@ -24,7 +24,7 @@ public class Option {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private final Product product;
     @Column(nullable = false)
-    private int quantity;
+    private final int quantity;
 
     protected Option() {
         this(null, null, 0, null);
@@ -49,10 +49,6 @@ public class Option {
         return name;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
     public Product getProduct() {
         return product;
     }
@@ -64,7 +60,6 @@ public class Option {
             throw new IllegalArgumentException("차감 가능한 최대 옵션 수량을 초과하였습니다.");
         }
 
-        this.quantity = amountResult;
-        return this;
+        return new Option(id, name, amountResult, product);
     }
 }
