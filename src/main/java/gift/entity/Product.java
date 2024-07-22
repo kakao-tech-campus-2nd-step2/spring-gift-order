@@ -75,7 +75,7 @@ public class Product {
 
     public void checkDuplicateOptionName(String newOptionName) {
         boolean isDuplicate = options.stream()
-                .anyMatch(option -> option.getName().equals(newOptionName));
+                .anyMatch(option -> option.isSameName(newOptionName));
 
         if (isDuplicate) {
             throw new OptionDuplicateException(newOptionName);

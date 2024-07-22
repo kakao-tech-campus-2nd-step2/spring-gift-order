@@ -50,4 +50,8 @@ public class Option {
         }
         this.quantity -= subtractQuantity;
     }
+
+    public boolean isSameName(String newOptionName) {
+        return name.equals(newOptionName);
+    }
 }
