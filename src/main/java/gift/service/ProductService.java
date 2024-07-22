@@ -30,7 +30,7 @@ public class ProductService {
         if (productRepository.existsByName(new ProductName(productDto.name()))) {
             throw new ValueAlreadyExistsException("ProductName already exists in Database");
         }
-        Category category = findCategory(productDto.categoryName());
+        Category category = findElseSaveCategory(productDto.categoryName());
         Product product = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
 
         productRepository.save(product);
@@ -39,7 +39,7 @@ public class ProductService {
     public void updateProduct(Long id, ProductDto productDto) {
         Product product = productRepository.findById(id).
                 orElseThrow(() -> new ValueNotFoundException("Product not exists in Database"));
-        Category category = findCategory(productDto.categoryName());
+        Category category = findElseSaveCategory(productDto.categoryName());
 
         Product newProduct = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
         product.updateProduct(newProduct);
@@ -56,5 +56,10 @@ public class ProductService {
 
     public void DeleteProduct(Long id){
         productRepository.deleteById(id);
+    }
+
+    private synchronized Category findElseSaveCategory(String categoryName) {
+        return categoryRepository.findByCategoryName(categoryName)
+                .orElseGet(() -> categoryRepository.save(new Category(categoryName)));
     }
 }
