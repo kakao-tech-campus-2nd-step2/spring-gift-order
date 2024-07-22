@@ -11,7 +11,7 @@ public class UserCreator {
     @Autowired
     private UserService userService;
 
-    public void UserCreator() {
+    public void creator() {
         userService.createUser(new CreateUser("kakao1@kakao.com", "1234"));
         userService.createUser(new CreateUser("kakao2@kakao.com", "123456"));
         userService.createUser(new CreateUser("kakao3@kakao.com", "1234"));

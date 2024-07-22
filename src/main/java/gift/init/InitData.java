@@ -31,16 +31,16 @@ public class InitData {
     @PostConstruct
     public void init() {
 //        유저 생성
-        userCreator.UserCreator();
+        userCreator.creator();
 //        카테고리 생성
-        categoryCreator.CategoryCreator();
+        categoryCreator.creator();
 //        상품 생성
-        productCreator.ProductCreator();
+        productCreator.creator();
 //        위시리스트 생성
-        wishCreator.WishCreator();
+        wishCreator.creator();
 //        상품의 옵션 추가
-        productOptionCreator.ProductOptionCreator();
+        productOptionCreator.creator();
 //        상품의 옵션 재고 증감(상품주문)
-        productOrderCreator.ProductCreator();
+        productOrderCreator.creator();
     }
 }

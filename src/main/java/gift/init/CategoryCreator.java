@@ -11,7 +11,7 @@ public class CategoryCreator {
     @Autowired
     private CategoryService categoryService;
 
-    public void CategoryCreator() {
+    public void creator() {
         categoryService.createCategory(new CreateCategory("Test1"));
         categoryService.createCategory(new CreateCategory("Test2"));
         categoryService.createCategory(new CreateCategory("Test3"));

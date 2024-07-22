@@ -11,7 +11,7 @@ public class WishCreator {
     @Autowired
     private WishService wishService;
 
-    public void WishCreator() {
+    public void creator() {
         wishService.createWish(1L, new createWish(1L));
         wishService.createWish(1L, new createWish(2L));
         wishService.createWish(2L, new createWish(3L));

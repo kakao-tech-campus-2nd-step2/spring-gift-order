@@ -11,7 +11,7 @@ public class ProductCreator {
     @Autowired
     private ProductService productService;
 
-    public void ProductCreator() {
+    public void creator() {
         productService.createProduct(
             new CreateProduct("Product A", 1000, "image1.jpg", 1L, "option1", 1L));
         productService.createProduct(
