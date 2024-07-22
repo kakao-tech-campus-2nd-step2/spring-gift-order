@@ -1,20 +1,13 @@
 package gift.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import gift.model.Category;
 import gift.model.Product;
 import gift.model.ProductName;
 
 public class ProductDTO {
-    @JsonProperty
     private long id;
-    @JsonProperty
     private String name;
-    @JsonProperty
     private Integer price;
-    @JsonProperty
     private String imageUrl;
-    @JsonProperty
     private String category;
 
     public ProductDTO(long id, String name, int price, String imageUrl, String category) {

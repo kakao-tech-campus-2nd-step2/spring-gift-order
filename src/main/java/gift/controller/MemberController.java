@@ -1,7 +1,6 @@
 package gift.controller;
 
 import gift.dto.LogInMemberDTO;
-import gift.model.Member;
 import gift.service.MemberService;
 import org.springframework.web.bind.annotation.*;
 

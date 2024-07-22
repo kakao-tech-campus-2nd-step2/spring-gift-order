@@ -1,7 +1,6 @@
 package gift.controller;
 
 import gift.dto.CategoryDTO;
-import gift.model.Category;
 import gift.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 

@@ -26,7 +26,7 @@ public class ProductService {
     }
 
     //전체 조회
-    public Page<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO){
+    public Page<ProductDTO> getAllProducts(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage(),
                 pageRequestDTO.getSize(), pageRequestDTO.getSort());
         Page<Product> productPage = productRepository.findAll(pageable);
@@ -57,15 +57,13 @@ public class ProductService {
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리가 없습니다."));
 
         String optionString = inputProductDTO.getOption();
-        //Option option = new Option(inputProductDTO.getOption());
-        //optionReposityory.save(option);
 
         Product product = new Product(
                 inputProductDTO.getName(),
                 inputProductDTO.getPrice(),
                 inputProductDTO.getImageUrl(),
                 category
-                );
+        );
         productRepository.save(product);
 
         Long productID = productRepository.findByName(inputProductDTO.getName()).get().getId();

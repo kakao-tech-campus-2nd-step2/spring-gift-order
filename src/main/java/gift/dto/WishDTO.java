@@ -1,14 +1,10 @@
 package gift.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import gift.model.Wish;
 
 public class WishDTO {
-    @JsonProperty
     private long id;
-    @JsonProperty
     private MemberDTO member;
-    @JsonProperty
     private ProductDTO product;
 
     public WishDTO(long id, MemberDTO memberDTO, ProductDTO productDTO) {

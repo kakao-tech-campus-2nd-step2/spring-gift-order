@@ -1,9 +1,6 @@
 package gift.dto;
 
 import gift.model.ProductName;
-import org.slf4j.LoggerFactory;
-
-import java.util.logging.Logger;
 
 public class UpdateProductDTO {
     private String name;

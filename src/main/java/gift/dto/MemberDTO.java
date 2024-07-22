@@ -1,14 +1,10 @@
 package gift.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import gift.model.Member;
 
 public class MemberDTO {
-    @JsonProperty
     private Long id;
-    @JsonProperty
     private String email;
-    @JsonProperty
     private String password;
 
     public MemberDTO(Long id, String email, String password){
