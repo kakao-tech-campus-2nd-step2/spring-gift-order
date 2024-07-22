@@ -20,7 +20,7 @@ public class KakaoController {
         return "redirect:" + kakaoService.getAuthCode();
     }
 
-    @GetMapping
+    @GetMapping(params = "code")
     public ResponseEntity<String> login(@RequestParam("code") String code) {
         String accessToken = kakaoService.getAccessToken(code);
         return ResponseEntity.ok()
