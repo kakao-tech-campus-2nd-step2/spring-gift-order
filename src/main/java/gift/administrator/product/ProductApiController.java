@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,26 +50,18 @@ public class ProductApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO,
-        BindingResult bindingResult) throws NotFoundException {
-        productService.existsByNamePutResult(productDTO.getName(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
+        productService.existsByNameAddingProducts(productDTO);
         ProductDTO result = productService.addProduct(productDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProduct(@PathVariable("id") Long id,
-        @Valid @RequestBody ProductDTO productDTO, BindingResult bindingResult) throws NotFoundException {
+        @Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
         productDTO.setId(id);
-        productService.existsByNameAndIdPutResult(productDTO.getName(), productDTO.getId(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(bindingResult.getAllErrors().toString());
-        }
+        productService.existsByNameAndId(productDTO.getName(), productDTO.getId());
+
         ProductDTO result = productService.updateProduct(productDTO);
         return ResponseEntity.ok().body(result);
     }

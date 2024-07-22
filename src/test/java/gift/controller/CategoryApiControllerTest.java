@@ -11,12 +11,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.administrator.category.CategoryApiController;
 import gift.administrator.category.CategoryDTO;
 import gift.administrator.category.CategoryService;
+import gift.error.GlobalExceptionRestController;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +30,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryApiControllerTest {
 
     private final CategoryService categoryService = mock(CategoryService.class);
@@ -40,6 +41,7 @@ public class CategoryApiControllerTest {
     void beforeEach() {
         categoryApiController = new CategoryApiController(categoryService);
         mvc = MockMvcBuilders.standaloneSetup(categoryApiController)
+            .setControllerAdvice(new GlobalExceptionRestController())
             .defaultResponseCharacterEncoding(UTF_8)
             .build();
         objectMapper = new ObjectMapper();
@@ -88,15 +90,14 @@ public class CategoryApiControllerTest {
     void addCategory() throws Exception {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", "image.jpg", "");
-        doNothing().when(categoryService).existsByNamePutResult(any(), any());
+        doNothing().when(categoryService).existsByNameThrowException(any());
         given(categoryService.addCategory(categoryDTO)).willReturn(categoryDTO);
 
         //when
         ResultActions resultActions = mvc.perform(
             MockMvcRequestBuilders.post("/api/categories")
                 .contentType("application/json")
-                .content(objectMapper.writeValueAsString(categoryDTO)))
-            .andDo(print());
+                .content(objectMapper.writeValueAsString(categoryDTO)));
 
         //then
         resultActions.andExpect(status().isCreated());
@@ -107,7 +108,7 @@ public class CategoryApiControllerTest {
     void addCategoryNotValid() throws Exception {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#", "image.jpg", "");
-        doNothing().when(categoryService).existsByNamePutResult(any(), any());
+        doNothing().when(categoryService).existsByNameThrowException(any());
 
         //when
         ResultActions resultActions = mvc.perform(
@@ -117,7 +118,7 @@ public class CategoryApiControllerTest {
 
         //then
         resultActions.andExpect(status().isBadRequest())
-            .andExpect(content().string(org.hamcrest.Matchers.containsString("컬러코드가 아닙니다.")));
+            .andExpect(jsonPath("$.errors[0].reason").value("컬러코드가 아닙니다."));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class CategoryApiControllerTest {
     void updateCategory() throws Exception {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", "image.jpg", "");
-        doNothing().when(categoryService).existsByNameAndIdPutResult(anyString(), anyLong(), any());
+        doNothing().when(categoryService).existsByNameAndId(anyString(), anyLong());
         given(categoryService.updateCategory(any(CategoryDTO.class))).willReturn(categoryDTO);
 
         //when

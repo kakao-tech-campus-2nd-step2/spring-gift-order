@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,27 +37,18 @@ public class CategoryApiController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO categoryDTO,
-        BindingResult bindingResult) {
-        categoryService.existsByNamePutResult(categoryDTO.getName(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(bindingResult.getAllErrors().toString());
-        }
+    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        categoryService.existsByNameThrowException(categoryDTO.getName());
         CategoryDTO result = categoryService.addCategory(categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
-        @Valid @RequestBody CategoryDTO categoryDTO, BindingResult bindingResult)
+        @Valid @RequestBody CategoryDTO categoryDTO)
         throws NotFoundException {
         categoryDTO.setId(id);
-        categoryService.existsByNameAndIdPutResult(categoryDTO.getName(), categoryDTO.getId(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(bindingResult.getAllErrors().toString());
-        }
+        categoryService.existsByNameAndId(categoryDTO.getName(), categoryDTO.getId());
         CategoryDTO result = categoryService.updateCategory(categoryDTO);
         return ResponseEntity.ok(result);
     }
@@ -66,7 +56,6 @@ public class CategoryApiController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable("id") Long id)
         throws NotFoundException {
-        CategoryDTO categoryDTO = categoryService.getCategoryById(id);
         categoryService.deleteCategory(id);
         return ResponseEntity.ok().build();
     }

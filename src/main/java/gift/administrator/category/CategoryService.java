@@ -54,16 +54,15 @@ public class CategoryService {
         return categoryRepository.existsByName(name);
     }
 
-    public void existsByNamePutResult(String name, BindingResult result) {
-        if (existsByName(name)) {
-            result.addError(new FieldError("category", "name", "존재하는 이름입니다."));
+    public void existsByNameThrowException(String name){
+        if(existsByName(name)){
+            throw new IllegalArgumentException("존재하는 이름입니다.");
         }
     }
-
-    public void existsByNameAndIdPutResult(String name, long id, BindingResult result)
+    public void existsByNameAndId(String name, long id)
         throws NotFoundException {
         if (existsByName(name) && !Objects.equals(getCategoryById(id).getName(), name)) {
-            result.addError(new FieldError("category", "name", "존재하는 이름입니다."));
+            throw new IllegalArgumentException("존재하는 이름입니다.");
         }
     }
 }

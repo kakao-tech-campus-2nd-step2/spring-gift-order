@@ -24,7 +24,7 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();
 
     public Product() {
@@ -47,12 +47,11 @@ public class Product {
         this.options = options;
     }
 
-    public void update(String name, int price, String imageUrl, Category category, List<Option> options) {
+    public void update(String name, int price, String imageUrl, Category category) {
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;
         this.category = category;
-        this.options = options;
     }
 
     public Long getId() {

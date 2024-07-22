@@ -1,6 +1,7 @@
 package gift.administrator.category;
 
 import gift.administrator.product.Product;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ public class Category {
     private String color;
     private String imageUrl;
     private String description;
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
     public Category() {
@@ -82,8 +83,14 @@ public class Category {
         product.setCategory(this);
     }
 
-    public void removeProducts(Product product) {
+    public void removeProduct(Product product) {
         products.remove(product);
         product.setCategory(null);
+    }
+
+    public void removeProducts(List<Product> products) {
+        for(Product product : new ArrayList<>(products)){
+            removeProduct(product);
+        }
     }
 }
