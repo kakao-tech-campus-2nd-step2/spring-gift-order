@@ -19,6 +19,10 @@ public class OptionIn {
         String name,
         Integer quantity
     ) {
+
+        public Option toOption() {
+            return new Option(name, quantity);
+        }
     }
 
     public record Subtract(

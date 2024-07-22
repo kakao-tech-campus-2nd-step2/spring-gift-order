@@ -16,6 +16,9 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
@@ -97,8 +100,35 @@ public class Product extends BaseTimeEntity {
     }
 
     public void addOptions(List<Option> options) {
+        Set<String> optionNames = this.options.stream()
+            .map(Option::getName)
+            .collect(Collectors.toSet());
+        optionNames.addAll(options.stream()
+            .map(Option::getName)
+            .collect(Collectors.toSet()));
+
+        if (optionNames.size() != this.options.size() + options.size()) {
+            throw new IllegalArgumentException("Option names are duplicated");
+        }
+
         options.forEach(option -> option.setProduct(this));
         this.options.addAll(options);
+    }
+
+    public void updateOptions(Map<Long, Option> optionMap) {
+        Set<String> optionNames = optionMap.values().stream()
+            .map(Option::getName)
+            .collect(Collectors.toSet());
+        if (optionNames.size() != optionMap.size()) {
+            throw new IllegalArgumentException("Option names are duplicated");
+        }
+
+        options.stream()
+            .filter(option -> optionMap.containsKey(option.getId()))
+            .forEach(option -> {
+                var updatedOption = optionMap.get(option.getId());
+                option.update(updatedOption.getName(), updatedOption.getQuantity());
+            });
     }
 
     public void deleteOptions(List<Long> optionIds) {

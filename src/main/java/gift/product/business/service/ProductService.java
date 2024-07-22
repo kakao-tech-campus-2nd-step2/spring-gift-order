@@ -4,10 +4,13 @@ import gift.product.business.dto.OptionIn;
 import gift.product.business.dto.ProductIn;
 import gift.product.business.dto.ProductOut;
 import gift.product.business.pojo.PojoOptions;
+import gift.product.persistence.entity.Option;
 import gift.product.persistence.entity.Product;
 import gift.product.persistence.repository.CategoryRepository;
 import gift.product.persistence.repository.ProductRepository;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,7 +43,6 @@ public class ProductService {
 
     @Transactional
     public Long createProduct(ProductIn.Create productInCreate) {
-        checkOptionNamesDuplicate(productInCreate.options(), OptionIn.Create::name);
         var category = categoryRepository.getReferencedCategory(productInCreate.categoryId());
         var product = productInCreate.toProduct(category);
         var options = productInCreate.options().stream()
@@ -72,10 +74,7 @@ public class ProductService {
 
     @Transactional
     public void addOptions(List<OptionIn.Create> optionInCreates, Long productId) {
-        checkOptionNamesDuplicate(optionInCreates, OptionIn.Create::name);
         var product = productRepository.getProductById(productId);
-        var pojoOptions = new PojoOptions(product.getOptions());
-        pojoOptions.checkWithExist(optionInCreates);
         var newOptions = optionInCreates.stream()
             .map(OptionIn.Create::toOption)
             .toList();
@@ -85,10 +84,10 @@ public class ProductService {
 
     @Transactional
     public void updateOptions(List<OptionIn.Update> optionInUpdates, Long productId) {
-        checkOptionNamesDuplicate(optionInUpdates, OptionIn.Update::name);
         var product = productRepository.getProductById(productId);
-        var pojoOptions = new PojoOptions(product.getOptions());
-        pojoOptions.updateOptions(optionInUpdates);
+        Map<Long, Option> optionMap = optionInUpdates.stream()
+            .collect(Collectors.toMap(OptionIn.Update::id, OptionIn.Update::toOption));
+        product.updateOptions(optionMap);
         productRepository.saveProduct(product);
     }
 
@@ -106,14 +105,4 @@ public class ProductService {
         productRepository.saveProduct(product);
     }
 
-    private <T> void checkOptionNamesDuplicate(List<T> optionDtos, Function<T, String> nameExtractor) {
-        boolean isDuplicate = optionDtos.stream()
-            .map(nameExtractor)
-            .distinct()
-            .count() != optionDtos.size();
-
-        if (isDuplicate) {
-            throw new IllegalArgumentException("옵션 이름이 중복되었습니다.");
-        }
-    }
 }
