@@ -1,27 +1,24 @@
 package gift;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import gift.DTO.Category;
 import gift.DTO.Option;
+import gift.DTO.Product;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class OptionTest {
-
-  @Mock
-  private Option option;
 
   @Test
   void subtractTest() {
-    Option option = mock(Option.class);
-    when(option.subtract(1)).thenReturn(true);
+    Option option = new Option(1L, "옵션1", 2,
+      new Product(1L, "product1", 300, "fadsklf",
+        new Category(1L, "교환권", "#6c95d1", "image_url", "교환권 카테고리")));
 
-    boolean bool = option.subtract(1);
-    assertThat(bool).isEqualTo(true);
+    assertThrows(IllegalAccessException.class, () -> {
+      option.subtract(3);
+    });
   }
 }
