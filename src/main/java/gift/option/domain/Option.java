@@ -21,6 +21,9 @@ public class Option {
     @Column(nullable = false)
     private int quantity;
 
+    @Version
+    private Long version;
+
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
