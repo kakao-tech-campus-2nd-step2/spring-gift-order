@@ -36,7 +36,6 @@ public class JwtUtil {
         long expirationTimeMillis = 1000 * 60 * 60; // 밀리초 -> 초 -> 분 -> 시간 (단위 변경, default=ms)
         Date issuedAt = new Date();
         Date expiration = new Date(issuedAt.getTime() + expirationTimeMillis);
-
         return Jwts.builder()
             .setSubject(email)
             .setIssuedAt(issuedAt)
@@ -81,10 +80,8 @@ public class JwtUtil {
     // HTTP 헤더 인증정보 확인하여 올바른 형식이면 토큰 반환
     public String checkAuthorization(String authorizationHeader) {
         System.out.println("[JwtUtil] checkAuthorization()");
-
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
             throw new UnauthorizedException("인증에 필요한 정보가 HTTP 헤더에 존재하지 않습니다.");
-
         String token = authorizationHeader.substring(7);
         if (!isValidToken(token))
             throw new UnauthorizedException("인증 토큰에 대한 정보가 존재하지 않습니다.");
@@ -96,7 +93,6 @@ public class JwtUtil {
     public Member identification(String authorization) {
         String token = checkAuthorization(authorization);
         String email = extractClaims(token).getSubject();
-
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
     }

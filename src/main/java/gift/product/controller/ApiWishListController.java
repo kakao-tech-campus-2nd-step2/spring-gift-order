@@ -34,7 +34,6 @@ public class ApiWishListController {
         Pageable pageable
     ) {
         System.out.println("[ApiWishListController] showProductList()");
-
         return wishListService.getAllProducts(authorization, pageable);
     }
 
@@ -44,9 +43,7 @@ public class ApiWishListController {
             @RequestBody Map<String, Long> requestBody
     ) {
         System.out.println("[ApiWishListController] registerWishProduct()");
-
         wishListService.registerWishProduct(authorization, requestBody);
-
         return ResponseEntity.status(HttpStatus.CREATED).body("WishProduct registered successfully");
     }
 
@@ -56,9 +53,7 @@ public class ApiWishListController {
             @PathVariable Long id
     ) {
         System.out.println("[ApiWishListController] deleteWishProduct()");
-
         wishListService.deleteWishProduct(authorization, id);
-
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body("delete WishProduct successfully");
     }
 }

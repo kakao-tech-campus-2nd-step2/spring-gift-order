@@ -43,12 +43,15 @@ public class Option {
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
+
     public int getQuantity() {
         return quantity;
     }
+
     public Product getProduct() {
         return product;
     }
@@ -56,6 +59,7 @@ public class Option {
     public boolean isSameName(String name) {
         return this.name.equals(name);
     }
+
     public void subtractQuantity(int quantity) {
         this.quantity -= quantity;
     }

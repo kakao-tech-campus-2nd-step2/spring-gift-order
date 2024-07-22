@@ -31,11 +31,9 @@ public class ApiMemberController {
             BindingResult bindingResult
     ) {
         System.out.println("[ApiMemberController] signUp()");
-
         if(bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
         }
-
         return new ResponseEntity<>(memberService.signUp(memberDTO), HttpStatus.OK);
     }
 
@@ -45,11 +43,9 @@ public class ApiMemberController {
             BindingResult bindingResult
     ) {
         System.out.println("[ApiMemberController] login()");
-
         if(bindingResult.hasErrors()) {
             throw new ValidationException(bindingResult.getFieldError().getDefaultMessage());
         }
-
         return new ResponseEntity<>(memberService.login(memberDTO), HttpStatus.OK);
     }
 }

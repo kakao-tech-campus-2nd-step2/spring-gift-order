@@ -34,22 +34,17 @@ public class WishListValidation {
     }
 
     public Wish registerValidation(String authorization, Long productId) {
-
         Member member = jwtUtil.identification(authorization);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-
         return new Wish(member, product);
     }
 
     public void deleteValidation(String authorization, Long id) {
         System.out.println("[WishListValidation] deleteValidation()");
-
         Member member = jwtUtil.identification(authorization);
-
         Wish wish = wishListRepository.findById(id)
                 .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-
         if(!Objects.equals(wish.getMember().getId(), member.getId()))
             throw new UnauthorizedException(NO_PERMISSION);
     }
