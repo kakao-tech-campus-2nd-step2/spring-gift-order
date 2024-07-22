@@ -45,7 +45,7 @@ public class OptionService {
 
     public void addOption(Long productId, OptionRequestDTO optionRequest) {
         Product product = productService.getProductEntityById(productId);
-        Option option = new Option(optionRequest.getName(), optionRequest.getQuantity(), product);
+        Option option = new Option(optionRequest.name(), optionRequest.quantity(), product);
         optionRepository.save(option);
     }
 
