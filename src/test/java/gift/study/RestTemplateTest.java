@@ -11,7 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class RestTemplateTest {
-
+    //강의내용 실습입니다!
     private final RestTemplate client = new RestTemplateBuilder().build();
 
     @Test

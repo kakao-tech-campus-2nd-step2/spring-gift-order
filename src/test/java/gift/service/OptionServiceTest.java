@@ -14,6 +14,7 @@ import gift.repository.ProductRepository;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,11 +32,21 @@ class OptionServiceTest {
 
     @InjectMocks
     private OptionService optionService;
-    Product product = mock(Product.class);
-    Option option = new Option("option", 1, product);
-    Option option1 = new Option("option1", 2, product);
+
 
     private final Long fakeOptionId = 1L;
+
+    Option option;
+    Option option1;
+    Product product;
+
+    @BeforeEach
+    void setUp() {
+        product = mock(Product.class);
+        option = new Option("option", 1, product);
+        option1 = new Option("option1", 2, product);
+
+    }
 
     @Test
     void addOptionTest() {
