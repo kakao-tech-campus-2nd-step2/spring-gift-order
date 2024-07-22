@@ -1,8 +1,5 @@
 package gift.model.option;
 
-import gift.exception.ErrorCode;
-import gift.exception.customException.CustomArgumentNotValidException;
-import gift.exception.customException.CustomOutOfStockException;
 import gift.model.item.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -65,15 +62,12 @@ public class Option {
         return new OptionDTO(id, name, quantity);
     }
 
-    public void update(String name, Long quantity) throws CustomArgumentNotValidException {
+    public boolean update(String name, Long quantity) {
+        if (quantity < 1 || quantity > 100_000_000) {
+            return false;
+        }
         this.name = name;
         this.quantity = quantity;
-    }
-
-    public void decreaseQuantity(Long quantity) throws CustomOutOfStockException {
-        if (this.quantity - quantity < 1) {
-            throw new CustomOutOfStockException(ErrorCode.QUANTITY_EXCEEDS_AVAILABLE_STOCK);
-        }
-        this.quantity -= quantity;
+        return true;
     }
 }

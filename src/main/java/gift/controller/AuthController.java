@@ -3,7 +3,6 @@ package gift.controller;
 import gift.exception.ErrorCode;
 import gift.exception.customException.CustomArgumentNotValidException;
 import gift.exception.customException.CustomDuplicateException;
-import gift.exception.customException.CustomException;
 import gift.exception.customException.PassWordMissMatchException;
 import gift.model.user.UserForm;
 import gift.service.JwtProvider;
@@ -48,13 +47,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> handleSignUpRequest(@Valid @RequestBody UserForm userForm,
-        BindingResult result) throws CustomException, CustomArgumentNotValidException {
+        BindingResult result) throws MethodArgumentNotValidException {
         if (result.hasErrors()) {
             throw new CustomArgumentNotValidException(result, ErrorCode.BAD_REQUEST);
         }
         if (userService.existsEmail(userForm.getEmail())) {
             result.rejectValue("email", "", ErrorCode.DUPLICATE_EMAIL.getMessage());
-            throw new CustomDuplicateException(ErrorCode.DUPLICATE_EMAIL);
+            throw new CustomDuplicateException(result, ErrorCode.DUPLICATE_EMAIL);
         }
         Long id = userService.insertUser(userForm);
         return ResponseEntity.ok(id);

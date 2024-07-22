@@ -40,7 +40,7 @@ public class OptionController {
         if (result.hasErrors()) {
             throw new CustomArgumentNotValidException(result, ErrorCode.INVALID_INPUT);
         }
-        return ResponseEntity.ok(itemService.insertOption(itemId, optionDTO));
+        return ResponseEntity.ok(itemService.insertOption(itemId, optionDTO, result));
     }
 
     @PutMapping("/{id}")
@@ -50,7 +50,7 @@ public class OptionController {
         if (result.hasErrors()) {
             throw new CustomArgumentNotValidException(result, ErrorCode.INVALID_INPUT);
         }
-        return ResponseEntity.ok(itemService.updateOption(itemId, optionDTO));
+        return ResponseEntity.ok(itemService.updateOption(itemId, optionDTO, result));
     }
 
     @DeleteMapping("/{item_id}/{option_id}")

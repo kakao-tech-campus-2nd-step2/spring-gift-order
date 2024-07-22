@@ -12,10 +12,12 @@ import gift.model.option.OptionDTO;
 import gift.repository.CategoryRepository;
 import gift.repository.ItemRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 @Service
 public class ItemService {
@@ -29,31 +31,33 @@ public class ItemService {
     }
 
     @Transactional
-    public Long insertItem(ItemDTO itemDTO, List<OptionDTO> options)
+    public Long insertItem(ItemDTO itemDTO, List<OptionDTO> options, BindingResult result)
         throws CustomDuplicateException {
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
             .orElseThrow(() -> new CustomNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
         Item item = new Item(itemDTO.getName(), itemDTO.getPrice(), itemDTO.getImgUrl(), category);
 
-        if (validateOptions(options)) {
-            throw new CustomDuplicateException(ErrorCode.DUPLICATE_NAME);
-        }
+        validateOptions(options, result);
 
-        List<Option> optionList = options.stream()
-            .map(o -> new Option(o.getName(), o.getQuantity(), item)).toList();
-        item.addOptionList(optionList);
+        item.getOptions().addAll(
+            options.stream().map(o -> new Option(o.getName(), o.getQuantity(), item)).collect(
+                Collectors.toSet()));
 
         return itemRepository.save(item).getId();
     }
 
     @Transactional
-    public Long insertOption(Long itemId, OptionDTO optionDTO)
+    public Long insertOption(Long itemId, OptionDTO optionDTO, BindingResult result)
         throws CustomDuplicateException {
         Item item = findItemById(itemId);
-        item.checkDuplicateOptionName(optionDTO.getName());
+        if (item.getOptions().stream().map(Option::getName).toList()
+            .contains(optionDTO.getName())) {
+            result.rejectValue("name", "", ErrorCode.DUPLICATE_NAME.getMessage());
+            throw new CustomDuplicateException(result, ErrorCode.DUPLICATE_NAME);
+        }
         Option option = new Option(optionDTO.getName(), optionDTO.getQuantity(), item);
-        item.addOption(option);
-        return itemId;
+        item.getOptions().add(option);
+        return itemRepository.save(item).getId();
     }
 
     @Transactional(readOnly = true)
@@ -75,30 +79,29 @@ public class ItemService {
     public Long updateItem(ItemDTO itemDTO) {
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
             .orElseThrow(() -> new CustomNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
-        Item item = findItemById(itemDTO.getId());
-        item.update(itemDTO, category);
-        return item.getId();
+        Item item = new Item(itemDTO.getId(), itemDTO.getName(), itemDTO.getPrice(),
+            itemDTO.getImgUrl(), category);
+        return itemRepository.save(item).getId();
     }
 
     @Transactional
-    public Long updateOption(Long itemId, OptionDTO optionDTO)
+    public Long updateOption(Long itemId, OptionDTO optionDTO, BindingResult result)
         throws CustomArgumentNotValidException {
         Item item = findItemById(itemId);
-        Option option = item.getOptionByOptionId(optionDTO.getId());
-        option.update(optionDTO.getName(), optionDTO.getQuantity());
-        return itemId;
+        Option option = item.getOptions().stream()
+            .filter(o -> o.getId().equals(optionDTO.getId()))
+            .findFirst()
+            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.OPTION_NOT_FOUND));
+        if (!option.update(optionDTO.getName(), optionDTO.getQuantity())) {
+            throw new CustomArgumentNotValidException(result, ErrorCode.INVALID_INPUT);
+        }
+        return itemRepository.save(item).getId();
     }
 
     @Transactional(readOnly = true)
     public List<OptionDTO> getOptionList(Long itemId) {
         Item item = findItemById(itemId);
         return item.getOptions().stream().map(Option::toDTO).toList();
-    }
-
-    @Transactional(readOnly = true)
-    public OptionDTO getOption(Long itemId, Long optionId) {
-        Item item = findItemById(itemId);
-        return item.getOptionByOptionId(optionId).toDTO();
     }
 
     @Transactional
@@ -109,16 +112,12 @@ public class ItemService {
     @Transactional
     public void deleteOption(Long itemId, Long optionId) {
         Item item = findItemById(itemId);
-        Option option = item.getOptionByOptionId(optionId);
+        Option option = item.getOptions().stream()
+            .filter(o -> o.getId().equals(optionId))
+            .findFirst()
+            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.OPTION_NOT_FOUND));
         item.getOptions().remove(option);
-    }
-
-    @Transactional
-    public void decreaseOptionQuantity(Long itemId, Long optionId, Long quantity) {
-        Item item = itemRepository.findItemByIdWithPLock(itemId)
-            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.ITEM_NOT_FOUND));
-        Option option = item.getOptionByOptionId(optionId);
-        option.decreaseQuantity(quantity);
+        itemRepository.save(item);
     }
 
     @Transactional(readOnly = true)
@@ -127,11 +126,18 @@ public class ItemService {
             ErrorCode.ITEM_NOT_FOUND));
     }
 
-    private boolean validateOptions(List<OptionDTO> options) {
+    private boolean isDuplicateInOptionName(List<OptionDTO> options) {
         return options.stream()
             .map(OptionDTO::getName)
             .distinct()
             .count() != options.size();
     }
 
+    private void validateOptions(List<OptionDTO> options, BindingResult result)
+        throws CustomDuplicateException {
+        if (isDuplicateInOptionName(options)) {
+            result.rejectValue("options", "", ErrorCode.DUPLICATE_NAME.getMessage());
+            throw new CustomDuplicateException(result, ErrorCode.DUPLICATE_NAME);
+        }
+    }
 }

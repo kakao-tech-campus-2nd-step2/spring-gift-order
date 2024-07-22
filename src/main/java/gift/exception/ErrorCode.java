@@ -19,9 +19,7 @@ public enum ErrorCode {
     PASSWORD_MISMATCH(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다."),
 
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
-    DUPLICATE_NAME(HttpStatus.BAD_REQUEST, "이미 존재하는 이름입니다."),
-
-    QUANTITY_EXCEEDS_AVAILABLE_STOCK(HttpStatus.BAD_REQUEST,"재고가 부족합니다.");
+    DUPLICATE_NAME(HttpStatus.BAD_REQUEST, "이미 존재하는 이름입니다.");
 
     private final HttpStatus status;
     private final String message;
