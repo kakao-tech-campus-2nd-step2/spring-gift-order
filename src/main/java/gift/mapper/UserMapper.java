@@ -15,8 +15,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
+    private final PasswordCrypto passwordCrypto;
+
     @Autowired
-    PasswordCrypto passwordCrypto;
+    public UserMapper(PasswordCrypto passwordCrypto) {
+        this.passwordCrypto = passwordCrypto;
+    }
 
     public Page<UserSimple> toSimpleList(Page<UserEntity> all) {
         List<UserSimple> simpleList = all.stream()

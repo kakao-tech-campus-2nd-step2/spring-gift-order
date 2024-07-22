@@ -8,8 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class WishCreator {
 
-    @Autowired
     private WishService wishService;
+
+    @Autowired
+    public WishCreator(WishService wishService) {
+        this.wishService = wishService;
+    }
 
     public void creator() {
         wishService.createWish(1L, new createWish(1L));

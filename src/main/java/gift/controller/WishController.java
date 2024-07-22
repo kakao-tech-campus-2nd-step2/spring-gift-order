@@ -3,9 +3,9 @@ package gift.controller;
 import gift.domain.Wish;
 import gift.domain.Wish.wishDetail;
 import gift.domain.Wish.wishSimple;
-import gift.util.page.PageMapper;
 import gift.service.WishService;
 import gift.util.ParsingPram;
+import gift.util.page.PageMapper;
 import gift.util.page.PageResult;
 import gift.util.page.SingleResult;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/wish")
 public class WishController {
 
+    private final WishService wishListService;
+    private final ParsingPram parsingPram;
+
     @Autowired
-    private WishService wishListService;
-    @Autowired
-    private ParsingPram parsingPram;
+    public WishController(WishService wishListService, ParsingPram parsingPram) {
+        this.wishListService = wishListService;
+        this.parsingPram = parsingPram;
+    }
 
     //    Wish id로 상세정보 반환
     //    wish id 검증

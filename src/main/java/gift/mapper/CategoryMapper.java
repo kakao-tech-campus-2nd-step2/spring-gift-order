@@ -1,6 +1,5 @@
 package gift.mapper;
 
-import gift.domain.Category.CreateCategory;
 import gift.domain.Category.DetailCategory;
 import gift.domain.Category.SimpleCategory;
 import gift.entity.CategoryEntity;

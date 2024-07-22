@@ -30,14 +30,18 @@ class ProductTest {
 
     private String url = "http://localhost:";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private final TestRestTemplate restTemplate;
 
     private String token;
 
     private HttpHeaders headers = new HttpHeaders();
 
     private String commonPath = "/api/products";
+
+    @Autowired
+    public ProductTest(TestRestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @BeforeEach
     public void setUp() {

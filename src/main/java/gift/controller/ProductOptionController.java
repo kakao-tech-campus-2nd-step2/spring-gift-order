@@ -24,8 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products/{productId}/options")
 public class ProductOptionController {
 
+    private final ProductOptionService productOptionService;
+
     @Autowired
-    private ProductOptionService productOptionService;
+    public ProductOptionController(ProductOptionService productOptionService) {
+        this.productOptionService = productOptionService;
+    }
 
     @GetMapping
     public PageResult<optionSimple> getProductOptionList(@PathVariable long productId,

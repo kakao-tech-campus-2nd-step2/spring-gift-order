@@ -8,8 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserCreator {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserCreator(UserService userService) {
+        this.userService = userService;
+    }
 
     public void creator() {
         userService.createUser(new CreateUser("kakao1@kakao.com", "1234"));

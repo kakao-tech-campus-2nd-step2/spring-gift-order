@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/login")
 public class LoginController {
 
+
+    private final LoginService loginService;
+
     @Autowired
-    private LoginService loginService;
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
 
     @PostMapping
     public SingleResult<Token> Login(@Valid @RequestBody Login login) {
