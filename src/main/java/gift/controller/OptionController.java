@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.OptionRequestDTO;
 import gift.dto.OptionResponseDTO;
 import gift.service.OptionService;
 import org.springframework.http.HttpStatus;
@@ -32,10 +33,8 @@ public class OptionController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addOption(@PathVariable Long productId, @RequestBody Map<String, Object> optionRequest) {
-        String name = (String) optionRequest.get("name");
-        int quantity = (Integer) optionRequest.get("quantity");
-        optionService.addOption(productId, name, quantity);
+    public ResponseEntity<Void> addOption(@PathVariable Long productId, @RequestBody OptionRequestDTO optionRequest) {
+        optionService.addOption(productId, optionRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

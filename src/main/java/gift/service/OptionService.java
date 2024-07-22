@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.domain.Option;
 import gift.domain.Product;
+import gift.dto.OptionRequestDTO;
 import gift.dto.OptionResponseDTO;
 import gift.repository.OptionRepository;
 import org.springframework.stereotype.Service;
@@ -42,9 +43,9 @@ public class OptionService {
                 .collect(Collectors.toList());
     }
 
-    public void addOption(Long productId, String name, int quantity) {
+    public void addOption(Long productId, OptionRequestDTO optionRequest) {
         Product product = productService.getProductEntityById(productId);
-        Option option = new Option(null, name, quantity, product);
+        Option option = new Option(optionRequest.getName(), optionRequest.getQuantity(), product);
         optionRepository.save(option);
     }
 
