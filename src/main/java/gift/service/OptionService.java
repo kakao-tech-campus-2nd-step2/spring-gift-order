@@ -1,8 +1,8 @@
 package gift.service;
 
 
-import gift.dto.OptionRequestDTO;
-import gift.dto.OptionResponseDTO;
+import gift.dto.request.OptionRequestDTO;
+import gift.dto.response.OptionResponseDTO;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.exception.ProductException;
@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Description;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

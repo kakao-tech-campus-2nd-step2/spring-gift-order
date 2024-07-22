@@ -1,6 +1,4 @@
-package gift.dto;
-
-import jakarta.validation.constraints.*;
+package gift.dto.request;
 
 public record OptionRequestDTO(
         Long productId,

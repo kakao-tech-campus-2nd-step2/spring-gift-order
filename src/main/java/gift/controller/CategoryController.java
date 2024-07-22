@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.dto.CategoryRequestDTO;
-import gift.dto.CategoryResponseDTO;
+import gift.dto.request.CategoryRequestDTO;
+import gift.dto.response.CategoryResponseDTO;
 import gift.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

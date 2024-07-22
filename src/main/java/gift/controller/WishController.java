@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.dto.TokenLoginRequestDTO;
-import gift.dto.WishResponseDTO;
+import gift.dto.request.TokenLoginRequestDTO;
+import gift.dto.response.WishResponseDTO;
 import gift.service.LoginMember;
 import gift.service.WishService;
 import org.springframework.data.domain.Page;

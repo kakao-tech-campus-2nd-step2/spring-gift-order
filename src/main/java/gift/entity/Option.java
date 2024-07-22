@@ -1,6 +1,6 @@
 package gift.entity;
 
-import gift.dto.OptionRequestDTO;
+import gift.dto.request.OptionRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

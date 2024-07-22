@@ -2,7 +2,7 @@ package gift.service;
 
 
 import gift.authorization.JwtUtil;
-import gift.dto.TokenLoginRequestDTO;
+import gift.dto.request.TokenLoginRequestDTO;
 import jdk.jfr.Description;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;

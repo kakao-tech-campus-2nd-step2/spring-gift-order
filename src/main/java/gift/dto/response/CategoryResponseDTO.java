@@ -1,6 +1,4 @@
-package gift.dto;
-
-import gift.entity.Product;
+package gift.dto.response;
 
 import java.util.List;
 

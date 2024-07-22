@@ -1,8 +1,8 @@
 package gift.service;
 
 import gift.authorization.JwtUtil;
-import gift.dto.MemberDTO;
-import gift.dto.TokenLoginRequestDTO;
+import gift.dto.request.MemberRequestDTO;
+import gift.dto.request.TokenLoginRequestDTO;
 import gift.entity.Member;
 import gift.exception.DuplicateValueException;
 import gift.repository.MemberRepository;
@@ -24,21 +24,21 @@ public class MemberService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String signUp(MemberDTO memberDTO) {
-        String email = memberDTO.email();
+    public String signUp(MemberRequestDTO memberRequestDTO) {
+        String email = memberRequestDTO.email();
         repository.findByEmail(email)
                 .ifPresent(value -> {
                     throw new DuplicateValueException("중복된 id입니다");
                 });
-        Member member = toEntity(memberDTO);
+        Member member = toEntity(memberRequestDTO);
         repository.save(member);
         String token = jwtUtil.generateToken(member);
         return token;
     }
 
-    public String login(MemberDTO memberDTO) {
-        String email = memberDTO.email();
-        String password = memberDTO.password();
+    public String login(MemberRequestDTO memberRequestDTO) {
+        String email = memberRequestDTO.email();
+        String password = memberRequestDTO.password();
         Member existingMember = repository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new DuplicateValueException("로그인이 실패하였습니다."));
         String token = jwtUtil.generateToken(existingMember);
@@ -56,7 +56,7 @@ public class MemberService {
         return repository.findAll();
     }
 
-    private Member toEntity(MemberDTO dto) {
+    private Member toEntity(MemberRequestDTO dto) {
         Member member = new Member();
         member.setEmail(dto.email());
         member.setPassword(dto.password());

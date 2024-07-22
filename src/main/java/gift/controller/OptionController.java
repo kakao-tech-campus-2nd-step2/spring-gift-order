@@ -1,17 +1,13 @@
 package gift.controller;
 
 
-import gift.dto.OptionRequestDTO;
-import gift.dto.OptionResponseDTO;
-import gift.entity.Option;
-import gift.repository.OptionRepository;
+import gift.dto.request.OptionRequestDTO;
+import gift.dto.response.OptionResponseDTO;
 import gift.service.OptionService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

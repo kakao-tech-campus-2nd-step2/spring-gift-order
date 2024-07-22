@@ -1,7 +1,7 @@
 package gift.service;
 
-import gift.dto.CategoryRequestDTO;
-import gift.dto.CategoryResponseDTO;
+import gift.dto.request.CategoryRequestDTO;
+import gift.dto.response.CategoryResponseDTO;
 import gift.entity.Product;
 import gift.entity.Category;
 import gift.exception.categortException.CategoryNotFoundException;

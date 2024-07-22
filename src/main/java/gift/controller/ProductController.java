@@ -1,17 +1,15 @@
 package gift.controller;
 
-import gift.dto.ProductRequestDTO;
-import gift.dto.ProductResponseDTO;
+import gift.dto.request.ProductRequestDTO;
+import gift.dto.response.ProductResponseDTO;
 import gift.entity.Product;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
-import jdk.jfr.Description;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController

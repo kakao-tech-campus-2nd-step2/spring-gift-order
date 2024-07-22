@@ -1,11 +1,10 @@
 package gift.service;
 
-import gift.dto.ProductRequestDTO;
-import gift.dto.ProductResponseDTO;
+import gift.dto.request.ProductRequestDTO;
+import gift.dto.response.ProductResponseDTO;
 import gift.entity.Category;
 import gift.entity.Product;
 import gift.exception.categortException.CategoryNotFoundException;
-import gift.exception.ProductException;
 import gift.exception.productException.ProductNotFoundException;
 import gift.repository.CategoryRepository;
 import gift.repository.ProductRepository;
