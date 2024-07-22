@@ -76,7 +76,7 @@ public class ItemService {
         Category category = categoryRepository.findById(itemDTO.getCategoryId())
             .orElseThrow(() -> new CustomNotFoundException(ErrorCode.CATEGORY_NOT_FOUND));
         Item item = findItemById(itemDTO.getId());
-        item.update(itemDTO,category);
+        item.update(itemDTO, category);
         return item.getId();
     }
 
@@ -95,6 +95,12 @@ public class ItemService {
         return item.getOptions().stream().map(Option::toDTO).toList();
     }
 
+    @Transactional(readOnly = true)
+    public OptionDTO getOption(Long itemId, Long optionId) {
+        Item item = findItemById(itemId);
+        return item.getOptionByOptionId(optionId).toDTO();
+    }
+
     @Transactional
     public void deleteItem(Long id) {
         itemRepository.deleteById(id);
@@ -105,6 +111,14 @@ public class ItemService {
         Item item = findItemById(itemId);
         Option option = item.getOptionByOptionId(optionId);
         item.getOptions().remove(option);
+    }
+
+    @Transactional
+    public void decreaseOptionQuantity(Long itemId, Long optionId, Long quantity) {
+        Item item = itemRepository.findItemByIdWithPLock(itemId)
+            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.ITEM_NOT_FOUND));
+        Option option = item.getOptionByOptionId(optionId);
+        option.decreaseQuantity(quantity);
     }
 
     @Transactional(readOnly = true)
@@ -119,4 +133,5 @@ public class ItemService {
             .distinct()
             .count() != options.size();
     }
+
 }
