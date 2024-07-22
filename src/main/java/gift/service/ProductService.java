@@ -12,8 +12,7 @@ import gift.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -26,14 +25,19 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     public void addNewProduct(ProductDto productDto){
-        if (productRepository.existsByName(new ProductName(productDto.name()))) {
-            throw new ValueAlreadyExistsException("ProductName already exists in Database");
-        }
-        Category category = findElseSaveCategory(productDto.categoryName());
-        Product product = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
+        boolean updated = false;
+        while (!updated) {
+            if (productRepository.existsByName(new ProductName(productDto.name()))) {
+                throw new ValueAlreadyExistsException("ProductName already exists in Database");
+            }
+            Category category = findElseSaveCategory(productDto.categoryName());
+            Product product = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
 
-        productRepository.save(product);
+            productRepository.save(product);
+            updated = true;
+        }
     }
 
     public void updateProduct(Long id, ProductDto productDto) {

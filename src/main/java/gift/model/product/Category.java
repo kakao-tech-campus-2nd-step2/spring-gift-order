@@ -12,6 +12,9 @@ public class Category {
     @Column(nullable = false, unique = true, columnDefinition = "VARCHAR(255) COMMENT '카테고리명'")
     private String categoryName;
 
+    @Version
+    private Long version;
+
     protected Category(){
     }
     public Category(String categoryName){

@@ -27,6 +27,9 @@ public class Option {
     @Max(value = 100000000 - 1)
     private  int amount;
 
+    @Version
+    private Long version;
+
     protected Option(){
     }
 

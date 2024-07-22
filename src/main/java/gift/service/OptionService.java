@@ -7,11 +7,9 @@ import gift.model.product.Product;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OptionService {
@@ -33,12 +31,17 @@ public class OptionService {
         optionRepository.save(option);
     }
 
+    @Transactional
     public void subtractAmount(Long optionId, int amount){
-        Option option = optionRepository.findById(optionId)
-                .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
-        if(option.isProductEnough(amount)){
-            option.updateAmount(amount);
-            optionRepository.save(option);
+        boolean updated = false;
+        while (!updated) {
+            Option option = optionRepository.findById(optionId)
+                    .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
+            if(option.isProductEnough(amount)){
+                option.updateAmount(amount);
+                optionRepository.save(option);
+                updated = true;
+            }
         }
     }
 }
