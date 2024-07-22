@@ -5,6 +5,7 @@ import gift.Model.ResponseWishDTO;
 import gift.Model.Member;
 import gift.Service.WishService;
 import gift.annotation.ValidUser;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class WishController {
     }
 
     @PostMapping("/wishes")
-    public void addWish(@ValidUser Member member, @RequestBody RequestWishDTO requestWishDTO) {
+    public void addWish(@ValidUser Member member, @Valid @RequestBody RequestWishDTO requestWishDTO) {
         wishService.addWish(member, requestWishDTO);
     }
 
@@ -36,7 +37,7 @@ public class WishController {
     }
 
     @PutMapping("/wishes")
-    public ResponseEntity<Map<String, List<ResponseWishDTO>>> editWish(@ValidUser Member member, @RequestBody RequestWishDTO requestWishDTO) {
+    public ResponseEntity<Map<String, List<ResponseWishDTO>>> editWish(@ValidUser Member member, @Valid @RequestBody RequestWishDTO requestWishDTO) {
         List<ResponseWishDTO> list = wishService.editWish(member, requestWishDTO);
         Map<String, List<ResponseWishDTO>> response = new HashMap<>();
         response.put("wish", list);
@@ -45,7 +46,7 @@ public class WishController {
     }
 
     @DeleteMapping("/wishes")
-    public ResponseEntity<Map<String, List<ResponseWishDTO>>> deleteWish(@ValidUser Member member, @RequestBody RequestWishDTO requestWishDTO) {
+    public ResponseEntity<Map<String, List<ResponseWishDTO>>> deleteWish(@ValidUser Member member, @Valid @RequestBody RequestWishDTO requestWishDTO) {
         List<ResponseWishDTO> list = wishService.deleteWish(member, requestWishDTO);
         Map<String, List<ResponseWishDTO>> response = new HashMap<>();
         response.put("wish", list);
