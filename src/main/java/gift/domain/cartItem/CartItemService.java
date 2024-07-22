@@ -72,14 +72,7 @@ public class CartItemService {
 
         List<CartItemDTO> cartItemDTOS = cartItemsPage.getContent().stream()
             .map(cartItem -> {
-                return new CartItemDTO(
-                    cartItem.getId(),
-                    cartItem.getProduct().getId(),
-                    cartItem.getProduct().getName(),
-                    cartItem.getProduct().getPrice(),
-                    cartItem.getProduct().getImageUrl(),
-                    cartItem.getCount()
-                );
+                return new CartItemDTO(cartItem);
             })
             .toList();
 
@@ -88,7 +81,7 @@ public class CartItemService {
     }
 
     /**
-     * 장바구니 상품 삭제
+     * 장바구니 상품 삭제`
      */
     public void deleteCartItem(Long cartItemId) {
         cartItemRepository.deleteById(cartItemId);

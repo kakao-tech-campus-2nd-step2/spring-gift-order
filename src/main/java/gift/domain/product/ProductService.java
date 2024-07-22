@@ -49,25 +49,25 @@ public class ProductService {
      * 상품 추가
      */
     public void createProduct(@Valid ProductDTO productDTO) {
-        if (productRepository.existsByName(productDTO.getName())) {
-            throw new ProductDuplicateException(productDTO.getName());
+        if (productRepository.existsByName(productDTO.name())) {
+            throw new ProductDuplicateException(productDTO.name());
         }
-        if (categoryRepository.findById(productDTO.getCategoryId()).isEmpty()) {
-            throw new CategoryNotFoundException(productDTO.getCategoryId());
+        if (categoryRepository.findById(productDTO.categoryId()).isEmpty()) {
+            throw new CategoryNotFoundException(productDTO.categoryId());
         }
 
         Product product = new Product(
-            productDTO.getName(),
-            categoryRepository.findById(productDTO.getCategoryId()).get(),
-            productDTO.getPrice(),
-            productDTO.getImageUrl()
+            productDTO.name(),
+            categoryRepository.findById(productDTO.categoryId()).get(),
+            productDTO.price(),
+            productDTO.imageUrl()
         );
 
         validateProduct(product);
 
         Product savedProduct = productRepository.save(product);
         // 옵션 저장
-        optionService.addOption(savedProduct, productDTO.getOption());
+        optionService.addOption(savedProduct, productDTO.option());
     }
 
     /**
@@ -86,17 +86,17 @@ public class ProductService {
     public void updateProduct(Long id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ProductNotFoundException(id));
-        if (productRepository.existsByName(productDTO.getName())) {
-            throw new ProductDuplicateException(productDTO.getName());
+        if (productRepository.existsByName(productDTO.name())) {
+            throw new ProductDuplicateException(productDTO.name());
         }
 
-        Optional<Category> category = categoryRepository.findById(productDTO.getCategoryId());
+        Optional<Category> category = categoryRepository.findById(productDTO.categoryId());
         if (category.isEmpty()) {
-            throw new CategoryNotFoundException(productDTO.getCategoryId());
+            throw new CategoryNotFoundException(productDTO.categoryId());
         }
 
-        product.update(productDTO.getName(), category.get(), productDTO.getPrice(),
-            productDTO.getImageUrl());
+        product.update(productDTO.name(), category.get(), productDTO.price(),
+            productDTO.imageUrl());
 
         validateProduct(product);
 

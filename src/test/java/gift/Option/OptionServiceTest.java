@@ -82,9 +82,9 @@ public class OptionServiceTest {
         // then
         assertThat(product.getOptions()).hasSize(1);
         assertThat(product.getOptions().get(0).getName())
-            .isEqualTo(optionRequestDTO.getName());
+            .isEqualTo(optionRequestDTO.name());
         assertThat(product.getOptions().get(0).getQuantity())
-            .isEqualTo(optionRequestDTO.getQuantity());
+            .isEqualTo(optionRequestDTO.quantity());
     }
 
     @Test
@@ -101,9 +101,9 @@ public class OptionServiceTest {
         // then
         assertThat(findProduct.getOptions()).hasSize(3);
         assertThat(findProduct.getOptions().get(2).getName())
-            .isEqualTo(optionRequestDTO.getName());
+            .isEqualTo(optionRequestDTO.name());
         assertThat(findProduct.getOptions().get(2).getQuantity())
-            .isEqualTo(optionRequestDTO.getQuantity());
+            .isEqualTo(optionRequestDTO.quantity());
     }
 
     @Test
@@ -118,8 +118,8 @@ public class OptionServiceTest {
         Option findOption = optionRepository.findById(option1.getId()).get();
 
         // then
-        assertThat(findOption.getName()).isEqualTo(optionRequestDTO.getName());
-        assertThat(findOption.getQuantity()).isEqualTo(optionRequestDTO.getQuantity());
+        assertThat(findOption.getName()).isEqualTo(optionRequestDTO.name());
+        assertThat(findOption.getQuantity()).isEqualTo(optionRequestDTO.quantity());
     }
 
     @Test

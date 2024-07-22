@@ -20,11 +20,11 @@ public class CategoryService {
     }
 
     public void createCategory(CategoryDTO categoryDTO) {
-        if (categoryRepository.existsByName(categoryDTO.getName())) {
-            throw new CategoryDuplicateException(categoryDTO.getName());
+        if (categoryRepository.existsByName(categoryDTO.name())) {
+            throw new CategoryDuplicateException(categoryDTO.name());
         }
 
-        Category category = new Category(categoryDTO.getName(), categoryDTO.getDescription());
+        Category category = new Category(categoryDTO.name(), categoryDTO.description());
         categoryRepository.save(category);
     }
 
@@ -42,11 +42,11 @@ public class CategoryService {
             .orElseThrow(() -> new CategoryNotFoundException(id));
 
         // 이름 중복 검사, 중복되면서 id 가 자신이 아닐 때
-        if (hasDuplicateName(id, categoryDTO.getName())) {
-            throw new CategoryDuplicateException(categoryDTO.getName());
+        if (hasDuplicateName(id, categoryDTO.name())) {
+            throw new CategoryDuplicateException(categoryDTO.name());
 
         }
-        findCategory.update(categoryDTO.getName(), categoryDTO.getDescription());
+        findCategory.update(categoryDTO.name(), categoryDTO.description());
     }
 
     /**

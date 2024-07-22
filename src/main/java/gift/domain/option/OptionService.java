@@ -9,6 +9,7 @@ import gift.global.exception.option.OptionDuplicateException;
 import gift.global.exception.option.OptionNotFoundException;
 import gift.global.exception.product.ProductNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +43,12 @@ public class OptionService {
         List<Option> options = optionRepository.findAllByProductId(productId);
 
         for (Option option : options) {
-            if (option.getName().equals(optionRequestDTO.getName())) {
-                throw new OptionDuplicateException(optionRequestDTO.getName());
+            if (option.getName().equals(optionRequestDTO.name())) {
+                throw new OptionDuplicateException(optionRequestDTO.name());
             }
         }
 
-        Option option = new Option(optionRequestDTO.getName(), optionRequestDTO.getQuantity(),
+        Option option = new Option(optionRequestDTO.name(), optionRequestDTO.quantity(),
             product);
 
         optionRepository.save(option);
@@ -57,7 +58,7 @@ public class OptionService {
     public void addOption(Product product, OptionRequestDTO optionRequestDTO) {
         List<Option> options = optionRepository.findAllByProduct(product);
 
-        Option option = new Option(optionRequestDTO.getName(), optionRequestDTO.getQuantity(),
+        Option option = new Option(optionRequestDTO.name(), optionRequestDTO.quantity(),
             product);
 
         optionRepository.save(option);
@@ -72,15 +73,15 @@ public class OptionService {
         List<Option> options = optionRepository.findAllByProductId(productId);
 
         for (Option option : options) {
-            if (option.getName().equals(optionRequestDTO.getName()) && option.getId() != optionId) {
-                throw new OptionDuplicateException(optionRequestDTO.getName());
+            if (option.getName().equals(optionRequestDTO.name()) && option.getId() != optionId) {
+                throw new OptionDuplicateException(optionRequestDTO.name());
             }
         }
 
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new OptionNotFoundException(optionId));
 
-        option.update(optionRequestDTO.getName(), optionRequestDTO.getQuantity());
+        option.update(optionRequestDTO.name(), optionRequestDTO.quantity());
 
         optionRepository.save(option);
     }
@@ -97,9 +98,9 @@ public class OptionService {
             throw new BusinessException(ErrorCode.BAD_REQUEST, "차감할 수량의 값이 올바르지 않습니다.");
         }
 
-        if (option.getQuantity() == quantity) {
+        if (Objects.equals(option.getQuantity(), quantity)) {
             // 상품에 옵션이 1개밖에 없을 때 - 옵션, 해당 옵션의 상품 모두 삭제
-            if (product.getOptions().size() == 1) {
+            if (product.hasOneOption()) {
                 productRepository.deleteById(productId); // Cascade 로 옵션도 삭제됨
                 return;
             }
@@ -110,4 +111,5 @@ public class OptionService {
         // 수량만 차감
         option.decrease(quantity);
     }
+
 }

@@ -1,21 +1,23 @@
 package gift.domain.cartItem.dto;
 
-public class CartItemDTO {
+import gift.domain.cartItem.CartItem;
 
-    private Long id; // cartItem id;
-    private Long productId;
-    private String name;
-    private Integer price;
-    private String imageUrl;
-    private Integer count;
-
-    public CartItemDTO(Long id, Long productId, String name, Integer price, String imageUrl,
-        Integer count) {
-        this.id = id;
-        this.productId = productId;
-        this.name = name;
-        this.price = price;
-        this.imageUrl = imageUrl;
-        this.count = count;
+public record CartItemDTO(
+    Long id,
+    Long productId,
+    String name,
+    Integer price,
+    String imageUrl,
+    Integer count
+) {
+    public CartItemDTO(CartItem cartItem) {
+        this(
+            cartItem.getId(),
+            cartItem.getProduct().getId(),
+            cartItem.getProduct().getName(),
+            cartItem.getProduct().getPrice(),
+            cartItem.getProduct().getImageUrl(),
+            cartItem.getCount()
+        );
     }
 }

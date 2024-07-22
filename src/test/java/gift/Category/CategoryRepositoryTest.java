@@ -58,15 +58,15 @@ public class CategoryRepositoryTest {
 
         // when
         Category findCategory = categoryRepository.findById(savedCategory.getId()).get();
-        findCategory.update(categoryDTO.getName(), categoryDTO.getDescription());
+        findCategory.update(categoryDTO.name(), categoryDTO.description());
         categoryRepository.saveAndFlush(findCategory);
         clear();
 
         // then
         Category modifiedCategory = categoryRepository.findById(findCategory.getId()).get();
 
-        assertThat(modifiedCategory.getName()).isEqualTo(categoryDTO.getName());
-        assertThat(modifiedCategory.getDescription()).isEqualTo(categoryDTO.getDescription());
+        assertThat(modifiedCategory.getName()).isEqualTo(categoryDTO.name());
+        assertThat(modifiedCategory.getDescription()).isEqualTo(categoryDTO.description());
     }
 
     @Test

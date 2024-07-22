@@ -150,4 +150,11 @@ public class Product extends BaseTimeEntity {
     public List<Option> getOptions() {
         return options;
     }
+
+    public boolean hasOneOption() {
+        if (options.size() == 1) {
+            return true;
+        }
+        return false;
+    }
 }
