@@ -18,17 +18,29 @@ public class Wish {
 
     protected Wish(){}
 
-    public Wish(Long id,Member member, Product product, int count) {
+    public Wish(Member member, Product product, int count) {
+        validateMember(member);
+        validateProduct(product);
+        validateCount(count);
+
         this.member = member;
-        this.id = id;
         this.product = product;
         this.count = count;
     }
 
-    public Wish(Member member, Product product, int count) {
-        this.member = member;
-        this.product = product;
-        this.count = count;
+    public void validateMember(Member member){
+        if (member == null)
+            throw new IllegalArgumentException("wish에 member는 필수입니다");
+    }
+
+    public void validateProduct(Product product) {
+        if (product == null)
+            throw new IllegalArgumentException("wish에 product는 필수입니다");
+    }
+
+    public void validateCount(int count) {
+        if (count < 0 )
+            throw new IllegalArgumentException("wish의 count값은 0이상이여야 합니다");
     }
 
     public Long getId() {
