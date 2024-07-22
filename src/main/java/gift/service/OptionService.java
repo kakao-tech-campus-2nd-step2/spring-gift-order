@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.dto.GetOptionDTO;
 import gift.model.Option;
+import gift.model.OptionList;
 import gift.model.Product;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
@@ -35,7 +36,8 @@ public class OptionService {
 
     public void addOptions(String options, Long productID){
         List<String> optionList = List.of(options.split(","));
-        if(optionList.size() != new HashSet<>(optionList).size()){
+        OptionList optionListWrapper = new OptionList(optionList);
+        if(optionListWrapper.hasDuplicates()){
             throw new IllegalArgumentException("옵션은 중복될 수 없습니다.");
         }
         Product product = productRepository.findById(productID)
