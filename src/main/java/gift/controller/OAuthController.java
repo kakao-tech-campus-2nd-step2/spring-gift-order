@@ -38,5 +38,16 @@ public class OAuthController {
         body.add("code", code);
 
         RequestEntity<LinkedMultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        try {
+            JsonNode responseBody = objectMapper.readTree(response.getBody());
+            String scope = responseBody.get("scope") != null ? responseBody.get("scope").asText() : "";
+            if (!scope.contains("talk_message")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
+            }
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 내부 오류: " + e.getMessage());
+        }
+        return response;
     }
 }
