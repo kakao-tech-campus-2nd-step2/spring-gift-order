@@ -8,7 +8,8 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND),
     BAD_REQUEST(HttpStatus.BAD_REQUEST),
     JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
+    FORBIDDEN(HttpStatus.FORBIDDEN);
 
     private final HttpStatus httpStatus;
 
