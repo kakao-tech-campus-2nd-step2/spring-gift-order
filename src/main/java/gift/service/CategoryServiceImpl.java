@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.database.JpaCategoryRepository;
+import gift.database.repository.JpaCategoryRepository;
 import gift.dto.CategoryRequest;
 import gift.dto.CategoryResponse;
 import gift.model.Category;

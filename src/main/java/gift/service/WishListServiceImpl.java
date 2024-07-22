@@ -1,13 +1,11 @@
 package gift.service;
 
 
-import gift.database.JpaMemberRepository;
-import gift.database.JpaProductRepository;
-import gift.database.JpaWishRepository;
+import gift.database.repository.JpaMemberRepository;
+import gift.database.repository.JpaProductRepository;
+import gift.database.repository.JpaWishRepository;
 import gift.dto.WishListResponse;
-import gift.exceptionAdvisor.exceptions.MemberNoSuchException;
-import gift.exceptionAdvisor.exceptions.ProductNoSuchException;
-import gift.exceptionAdvisor.exceptions.WishNoSuchException;
+import gift.exceptionAdvisor.exceptions.GiftNotFoundException;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wish;
@@ -36,7 +34,7 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public void addProduct(long memberId, long productId) {
         Member member = jpaMemberRepository.findById(memberId)
-            .orElseThrow(MemberNoSuchException::new);
+            .orElseThrow(()->new GiftNotFoundException("회원이 존재하지 않습니다."));
         Product product = jpaProductRepository.findById(productId).orElseThrow();
         Wish wish = new Wish(member, product);
         member.addWish(wish);
@@ -46,11 +44,11 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public void deleteProduct(long memberId, long productId) {
         Member member = jpaMemberRepository.findById(memberId)
-            .orElseThrow(MemberNoSuchException::new);
+            .orElseThrow(()-> new GiftNotFoundException("회원이 존재하지 않습니다."));
         Product product = jpaProductRepository.findById(productId)
-            .orElseThrow(ProductNoSuchException::new);
+            .orElseThrow(()-> new GiftNotFoundException("상품이 존재하지 않습니다."));
         Wish wish = jpaWishRepository.findByMemberIdAndProductId(memberId, productId)
-            .orElseThrow(WishNoSuchException::new);
+            .orElseThrow(()-> new GiftNotFoundException("wish가 존재하지 않습니다."));
         member.delWish(wish);
         jpaWishRepository.delete(wish);
     }
@@ -58,7 +56,7 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public void updateProduct(long memberId, long productId, int productValue) {
         Wish wish = jpaWishRepository.findByMemberIdAndProductId(memberId, productId)
-            .orElseThrow(WishNoSuchException::new);
+            .orElseThrow(()-> new GiftNotFoundException("wish가 존재하지 않습니다."));
 
         wish.productCountUpdate(productValue);
 
@@ -67,7 +65,7 @@ public class WishListServiceImpl implements WishListService {
     @Override
     public WishListResponse getWishList(long memberId) {
         Member member = jpaMemberRepository.findById(memberId)
-            .orElseThrow(MemberNoSuchException::new);
+            .orElseThrow(()-> new GiftNotFoundException("회원이 존재하지 않습니다."));
         Map<String, Integer> wishList = member.getWishList().stream()
             .collect(Collectors.toMap(Wish::getProductName, Wish::getProductCount));
         return new WishListResponse(member.getId(), wishList);
