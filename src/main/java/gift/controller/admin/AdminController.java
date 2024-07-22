@@ -77,7 +77,7 @@ public class AdminController {
     }
 
     @PutMapping("/admin/gift/modify/{id}")
-    public String giftModify(@PathVariable("id") Long id, @ModelAttribute GiftRequest.Create giftRequest) {
+    public String giftModify(@PathVariable("id") Long id, @ModelAttribute GiftRequest.Update giftRequest) {
         giftService.updateGift(giftRequest, id);
         return "redirect:/admin";
     }

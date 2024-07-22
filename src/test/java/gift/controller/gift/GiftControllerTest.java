@@ -88,7 +88,7 @@ class GiftControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("상품 수정이 완료되었습니다."));
 
-        Mockito.verify(giftService).updateGift(any(GiftRequest.Create.class), anyLong());
+        Mockito.verify(giftService).updateGift(any(GiftRequest.Update.class), anyLong());
     }
 
     @Test

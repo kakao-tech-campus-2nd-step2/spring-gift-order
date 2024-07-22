@@ -45,7 +45,7 @@ public class GiftController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateGift(@PathVariable Long id, @RequestBody GiftRequest.Create giftRequest) {
+    public ResponseEntity<String> updateGift(@PathVariable Long id, @RequestBody GiftRequest.Update giftRequest) {
         giftService.updateGift(giftRequest, id);
         return ResponseEntity.ok("상품 수정이 완료되었습니다.");
     }

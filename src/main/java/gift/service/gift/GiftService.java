@@ -63,7 +63,7 @@ public class GiftService {
     }
 
     @Transactional
-    public void updateGift(GiftRequest.Create giftRequest, Long id) {
+    public void updateGift(GiftRequest.Update giftRequest, Long id) {
         Category category = categoryRepository.findById(giftRequest.categoryId())
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리 id가 없습니다."));
         Gift gift = giftRepository.findById(id)
