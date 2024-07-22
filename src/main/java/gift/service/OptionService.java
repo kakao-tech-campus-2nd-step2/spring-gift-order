@@ -28,7 +28,7 @@ public class OptionService {
     }
 
     public List<OptionResponse> getOptionsByProductId(Long productId) {
-        List<Option> options = optionRepository.findByProductId(productId);
+        List<Option> options = optionRepository.findByProduct_Id(productId);
         return options.stream()
             .map(this::convertToDTO)
             .toList();
@@ -93,7 +93,7 @@ public class OptionService {
             throw new OptionNotFoundException(OPTION_NOT_FOUND + optionId);
         }
 
-        if (optionRepository.findByProductId(productId).size() == 1) {
+        if (optionRepository.findByProduct_Id(productId).size() == 1) {
             throw new IllegalArgumentException(OPTION_REQUIRED);
         }
 
@@ -105,7 +105,7 @@ public class OptionService {
         String optionName,
         Long optionIdToExclude
     ) {
-        List<Option> options = optionRepository.findByProductId(productId);
+        List<Option> options = optionRepository.findByProduct_Id(productId);
         for (Option option : options) {
             if (!option.getId().equals(optionIdToExclude) && option.isNameMatching(optionName)) {
                 throw new IllegalArgumentException(OPTION_NAME_DUPLICATE);
@@ -114,7 +114,7 @@ public class OptionService {
     }
 
     public void subtractOptionQuantity(Long productId, Long optionId, int quantity) {
-        Option option = optionRepository.findByIdAndProductIdWithLock(productId, optionId)
+        Option option = optionRepository.findByIdAndProduct_IdWithLock(productId, optionId)
             .orElseThrow(() -> new OptionNotFoundException(OPTION_NOT_FOUND + optionId));
 
         if (option.getQuantity() < quantity) {
