@@ -82,13 +82,13 @@ public class OptionService {
 
     //옵션 수량 감소 기능
     @Transactional
-    public void subQuantity(Long id, Long quantity) {
+    public void subQuantity(Long id, Long amoutToSubtract) {
         OptionEntity optionEntity = optionRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Option not found"));
-        if(optionEntity.getQuantity() < quantity) {
+        if(optionEntity.getQuantity() < amoutToSubtract) {
             throw new IllegalArgumentException("옵션 수량이 줄이고자 하는 수량보다 적습니다.");
         }
-        optionEntity.subtract(quantity);
+        optionEntity.subtractQuantity(amoutToSubtract);
         optionRepository.save(optionEntity);
     }
 

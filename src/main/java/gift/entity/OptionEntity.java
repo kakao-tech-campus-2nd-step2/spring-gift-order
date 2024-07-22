@@ -60,8 +60,11 @@ public class OptionEntity {
         this.productEntity = productEntity;
     }
 
-    public void subtract(Long quantity) {
-        this.quantity-=quantity;
+    public void subtractQuantity(Long amountToSubtract) {
+        if(amountToSubtract < 0){
+            throw new IllegalArgumentException("Input value should to be positive");
+        }
+        this.quantity-=amountToSubtract;
     }
 
     public static Option toDto(OptionEntity optionEntity) {
