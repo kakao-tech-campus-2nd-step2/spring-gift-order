@@ -174,9 +174,9 @@ API 호출은 axios 라이브러리 사용
 
 ## Step 1
 
-* 카카오톡 로그인 API 
+* 카카오톡 로그인 화면으로 Redirect 및 코드 발급 기능 구현 
 
-* 다양한 예외 핸들링
+* 코드 발급 후 redirect 된 곳에서 AccessToken 발급 기능 구현
 
 * 테스트 코드 작성
 
