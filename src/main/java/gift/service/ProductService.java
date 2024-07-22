@@ -2,19 +2,15 @@ package gift.service;
 
 import gift.dto.*;
 import gift.model.Category;
-import gift.model.Option;
 import gift.model.Product;
 import gift.repository.CategoryRepository;
-import gift.repository.OptionReposityory;
 import gift.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ProductService {

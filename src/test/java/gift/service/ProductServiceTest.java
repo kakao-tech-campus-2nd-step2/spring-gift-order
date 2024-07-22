@@ -6,7 +6,7 @@ import gift.model.Category;
 import gift.model.Option;
 import gift.model.Product;
 import gift.repository.CategoryRepository;
-import gift.repository.OptionReposityory;
+import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ class ProductServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private OptionReposityory optionReposityory;
+    private OptionRepository optionRepository;
 
     @InjectMocks
     private ProductService productService;

@@ -22,7 +22,7 @@ public class ProductRepositoryTest {
     private CategoryRepository categories;
 
     @Autowired
-    private OptionReposityory optionReposityory;
+    private OptionRepository optionRepository;
 
     @DisplayName("새로운 상품 저장")
     @Test
@@ -30,7 +30,7 @@ public class ProductRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option = new Option("optionA, optionB");
-        optionReposityory.save(option);
+        optionRepository.save(option);
 
         Product expected = new Product("newProduct", 1000, "newimg.img", category, option);
         Product actual = products.save(expected);
@@ -43,11 +43,11 @@ public class ProductRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option1 = new Option("optionA, optionB");
-        optionReposityory.save(option1);
+        optionRepository.save(option1);
         Option option2 = new Option("optionA, optionB");
-        optionReposityory.save(option2);
+        optionRepository.save(option2);
         Option option3 = new Option("optionA, optionB");
-        optionReposityory.save(option3);
+        optionRepository.save(option3);
 
         products.save(new Product("Product1", 1000, "1.img", category, option1));
         products.save(new Product("Product2", 5000, "2.img", category, option2));
@@ -65,7 +65,7 @@ public class ProductRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option = new Option("optionA, optionB");
-        optionReposityory.save(option);
+        optionRepository.save(option);
 
         Product expected = new Product("Product1", 1000, "1.img", category, option);
         products.save(expected);
@@ -79,7 +79,7 @@ public class ProductRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option = new Option("optionA, optionB");
-        optionReposityory.save(option);
+        optionRepository.save(option);
 
         products.save(new Product("Product1", 1000, "1.img", category, option));
         Product expected = products.findByName("Product1").orElseThrow();
@@ -93,7 +93,7 @@ public class ProductRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option = new Option("optionA, optionB");
-        optionReposityory.save(option);
+        optionRepository.save(option);
 
         products.save(new Product("Product1", 1000, "1.img", category, option));
         Product product = products.findByName("Product1").orElseThrow();

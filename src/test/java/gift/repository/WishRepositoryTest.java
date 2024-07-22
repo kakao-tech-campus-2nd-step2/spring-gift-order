@@ -28,7 +28,7 @@ public class WishRepositoryTest {
     private CategoryRepository categories;
 
     @Autowired
-    private OptionReposityory optionReposityory;
+    private OptionRepository optionRepository;
 
     @DisplayName("wish 저장")
     @Test
@@ -36,7 +36,7 @@ public class WishRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option = new Option("optionA, optionB");
-        optionReposityory.save(option);
+        optionRepository.save(option);
 
         members.save(new Member("test.gamil.com", "test1234"));
         products.save(new Product("Product1", 1000, "1.img", category, option));
@@ -53,9 +53,9 @@ public class WishRepositoryTest {
         Category category = new Category("category");
         categories.save(category);
         Option option1 = new Option("optionA, optionB");
-        optionReposityory.save(option1);
+        optionRepository.save(option1);
         Option option2 = new Option("optionA, optionB");
-        optionReposityory.save(option2);
+        optionRepository.save(option2);
 
         members.save(new Member("test.gamil.com", "test1234"));
         products.save(new Product("Product1", 1000, "1.img", category, option1));

@@ -3,7 +3,7 @@ package gift.service;
 import gift.dto.GetOptionDTO;
 import gift.model.Option;
 import gift.model.Product;
-import gift.repository.OptionReposityory;
+import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,23 +14,22 @@ import java.util.NoSuchElementException;
 
 @Service
 public class OptionService {
-    private final OptionReposityory optionReposityory;
+    private final OptionRepository optionRepository;
     private final ProductRepository productRepository;
 
-    public OptionService(OptionReposityory optionReposityory, ProductRepository productRepository) {
-        this.optionReposityory = optionReposityory;
+    public OptionService(OptionRepository optionRepository, ProductRepository productRepository) {
+        this.optionRepository = optionRepository;
         this.productRepository = productRepository;
     }
 
     @Transactional
     public void deleteOption(String option, Long productId){
-        List<Option> optionList = optionReposityory.findAllByProduct_Id(productId);
+        List<Option> optionList = optionRepository.findAllByProduct_Id(productId);
         if(optionList.size() <= 1){
             throw new IllegalArgumentException("옵션은 한개 이상 존재해야 합니다.");
         }
-        optionReposityory.deleteByName(option);
-
-        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productId);
+        optionRepository.deleteByName(option);
+        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
         updateQuantity(-1, newOptionList);
     }
 
@@ -47,35 +46,35 @@ public class OptionService {
                     optionList.size(),
                     product
             );
-            optionReposityory.save(addOption);
+            optionRepository.save(addOption);
         }
     }
 
     @Transactional
-    public void addOption(String name, Long productID){
-        List<Option> optionList = optionReposityory.findAll();
+    public void addOption(String name, Long productId){
+        List<Option> optionList = optionRepository.findAll();
         List<String> optionNameList = optionList.stream()
                 .map(Option::getName)
                 .toList();
         if(optionNameList.contains(name)){
             throw new IllegalArgumentException("옵션은 중복될 수 없습니다.");
         }
-        Product product = productRepository.findById(productID)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품이 없습니다."));
         Option addOption = new Option(
                 name,
                 optionList.get(0).getQuantity() + 1,
                 product
         );
-        optionReposityory.save(addOption);
-        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productID);
+        optionRepository.save(addOption);
+        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
         updateQuantity(1, newOptionList);
     }
 
         public void updateOption(String oldName, String newName, long productID){
-        Option updateOption = optionReposityory.findByName(oldName)
+        Option updateOption = optionRepository.findByName(oldName)
                 .orElseThrow(() -> new NoSuchElementException("해당 옵션이 없습니다."));
-        List<Option> optionList = optionReposityory.findAllByProduct_Id(productID);
+        List<Option> optionList = optionRepository.findAllByProduct_Id(productID);
         List<String> optionNameList = optionList.stream()
                 .map(Option::getName)
                 .toList();
@@ -83,12 +82,12 @@ public class OptionService {
             throw new IllegalArgumentException("옵션은 중복될 수 없습니다.");
         }
         Option newOption = updateOption.update(newName);
-        optionReposityory.save(newOption);
+        optionRepository.save(newOption);
     }
 
     @Transactional
     public void removeOption(Long productId, int num){
-        List<Option> optionList = optionReposityory.findAllByProduct_Id(productId);
+        List<Option> optionList = optionRepository.findAllByProduct_Id(productId);
         if(optionList.size() <= 1){
             throw new IllegalArgumentException("옵션은 한개 이상 존재해야 합니다.");
         }
@@ -96,14 +95,14 @@ public class OptionService {
                 .map(Option::getId)
                 .toList();
         for(int i=0; i<num; i++){
-            optionReposityory.deleteById(optionIdList.get(i));
+            optionRepository.deleteById(optionIdList.get(i));
         }
-        List<Option> newOptionList = optionReposityory.findAllByProduct_Id(productId);
+        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
         updateQuantity(num, newOptionList);
     }
 
     public GetOptionDTO getOptions(Long productId){
-        List<Option> optionList = optionReposityory.findAllByProduct_Id(productId);
+        List<Option> optionList = optionRepository.findAllByProduct_Id(productId);
         List<String> optionNameList = optionList.stream()
                 .map(Option::getName)
                 .toList();
@@ -117,7 +116,7 @@ public class OptionService {
     private void updateQuantity(int num, List<Option> optionList){
         for(int i=0; i<optionList.size(); i++){
             Option newOption = optionList.get(i).quantityUpdate(num);
-            optionReposityory.save(newOption);
+            optionRepository.save(newOption);
         }
     }
 }
