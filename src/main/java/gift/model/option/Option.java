@@ -65,6 +65,14 @@ public class Option {
         this.quantity = quantity;
     }
 
+    public void modify(String name) {
+        this.name = name;
+    }
+
+    public void modify(int quantity) {
+        this.quantity = quantity;
+    }
+
     public void subtract(int quantity) {
         if (this.quantity < quantity) {
             throw new IllegalArgumentException("차감할 수량이 현재 수량보다 많습니다.");

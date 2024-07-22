@@ -66,10 +66,13 @@ public class OptionService {
                 .orElseThrow(() -> new NoSuchElementException("해당 옵션을 찾을 수 없습니다 id :  " + optionId));
 
         checkOptionInGift(gift, optionId);
-        checkDuplicateOptionName(gift, option.getName());
-
-        option.modify(optionRequest.name(), optionRequest.quantity());
-
+        if (optionRequest.name() != null) {
+            checkDuplicateOptionName(gift, optionRequest.name());
+            option.modify(optionRequest.name());
+        }
+        if (optionRequest.quantity() != null) {
+            option.modify(optionRequest.quantity());
+        }
     }
 
     @Transactional
