@@ -2,8 +2,15 @@ package gift.Model;
 
 import jakarta.persistence.*;
 
+import java.util.regex.Pattern;
+
 @Entity
 public class Member {
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    );
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
@@ -23,12 +30,14 @@ public class Member {
     }
 
     public void validateEmail(String email){
-        if (email.isBlank() || email == null)
+        if (email == null|| email.isBlank())
             throw new IllegalArgumentException("이메일 값은 필수입니다.");
+        if (!EMAIL_PATTERN.matcher(email).matches())
+            throw new IllegalArgumentException("이메일 양식을 다시 확인해주세요");
     }
 
     public void validatePassword(String password) {
-        if (password.isBlank() || password == null)
+        if (password == null || password.isBlank())
             throw new IllegalArgumentException("패스워드 값은 필수입니다");
     }
 
