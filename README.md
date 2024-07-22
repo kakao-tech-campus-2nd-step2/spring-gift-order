@@ -26,3 +26,28 @@ wishList 삭제하기
 옵션 기능 추가
 옵션 엔티티 생성
 menu와 연관관계 매핑하기
+
+5주차 과제
+[X] 테스트코드 작성하기
+
+-> [X] MenuRepositoryTest
+-> [X] MemberRepositoryTest
+-> [X] OptionRepositoryTest
+-> [X] WishListRepositoryTest
+-> [X] CategoryRepositoryTest
+
+-> [X] MenuServiceTest
+-> [X] MemberServiceTest
+-> [X] OptionServiceTest
+-> [X] WishListServiceTest
+-> [X] CategoryServiceTest
+
+-> [X] MenuControllerTest
+-> [X] MemberControllerTest
+-> [X] OptionControllerTest
+-> [X] WishListControllerTest
+-> [X] CategoryControllerTest
+
+
+[X] 카카오 로그인 기능 구현
+
