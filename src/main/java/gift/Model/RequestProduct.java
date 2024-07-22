@@ -1,8 +1,6 @@
 package gift.Model;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record RequestProduct(
         @Pattern(
@@ -11,12 +9,13 @@ public record RequestProduct(
         )
         @Pattern(regexp = "^(?!.*카카오).*$",
                 message = "상품 이름에 '카카오'가 포함된 문구는 담당 MD와 협의가 필요합니다.")
-        @NotNull(message = "상품 이름은 필수입니다")
+        @NotBlank(message = "상품 이름은 필수입니다")
         @Size(max = 15, message = "상품 이름은 최대 15자 입니다.")
         String name,
         int price,
         String imageUrl,
         @NotNull(message = "카테고리 Id값은 필수입니다")
+        @Min(value = 1, message = "카테고리Id값은 최소 1이상입니다")
         Long categoryId
 ) {
 }

@@ -9,7 +9,7 @@ public record RequestOption (
         )
         @Size(max = 50,
                 message = "옵션 이름의 길이는 공백을 포함하여 최대 50자 입니다")
-        @NotNull (message =  "옵션 이름은 필수입니다")
+        @NotBlank (message =  "옵션 이름은 필수입니다")
         String name,
 
         @Min(value = 1, message = "상품 옵션의 수량은 최소 1개이상이여야 합니다")

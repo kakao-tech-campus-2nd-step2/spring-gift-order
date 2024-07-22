@@ -13,11 +13,14 @@ public record RequestProductPost (
         @Size(max = 15, message = "상품 이름은 최대 15자 입니다.")
         String name,
 
+        @Min(value = 1, message = "상품 가격은 최소한 1원 이상입니다")
         int price,
 
+        @NotBlank(message = "imageUrl값은 필수입니다")
         String imageUrl,
 
         @NotNull(message = "카테고리 Id값은 필수입니다")
+        @Min( value = 1, message = "categoryId값은 최소 1이상입니다")
         Long categoryId,
 
         @Pattern(
