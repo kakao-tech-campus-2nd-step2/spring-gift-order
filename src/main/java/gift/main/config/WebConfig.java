@@ -32,6 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authLoginInterceptor)
                 .excludePathPatterns("/members/login", "/members/join", "/kakao", "/", "/kakao","/kakao/login")
                 .addPathPatterns("/**");
+
     }
 
 }
