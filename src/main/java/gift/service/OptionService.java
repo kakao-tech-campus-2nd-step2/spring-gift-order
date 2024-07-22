@@ -30,8 +30,7 @@ public class OptionService {
             throw new IllegalArgumentException("옵션은 한개 이상 존재해야 합니다.");
         }
         optionRepository.deleteByName(option);
-        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
-        updateQuantity(-1, newOptionList);
+        optionRepository.updateQuantityByProductId(productId, -1);
     }
 
     public void addOptions(String options, Long productID){
@@ -65,12 +64,11 @@ public class OptionService {
                 .orElseThrow(() -> new NoSuchElementException("해당 상품이 없습니다."));
         Option addOption = new Option(
                 name,
-                optionList.get(0).getQuantity() + 1,
+                optionList.get(0).getQuantity(),
                 product
         );
         optionRepository.save(addOption);
-        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
-        updateQuantity(1, newOptionList);
+        optionRepository.updateQuantityByProductId(productId, 1);
     }
 
         public void updateOption(String oldName, String newName, long productID){
@@ -99,8 +97,8 @@ public class OptionService {
         for(int i=0; i<num; i++){
             optionRepository.deleteById(optionIdList.get(i));
         }
-        List<Option> newOptionList = optionRepository.findAllByProduct_Id(productId);
-        updateQuantity(num, newOptionList);
+        optionRepository.updateQuantityByProductId(productId, -num);
+
     }
 
     public GetOptionDTO getOptions(Long productId){
@@ -113,12 +111,5 @@ public class OptionService {
                 optionNameList
         );
         return getOptionDTO;
-    }
-
-    private void updateQuantity(int num, List<Option> optionList){
-        for(int i=0; i<optionList.size(); i++){
-            Option newOption = optionList.get(i).quantityUpdate(num);
-            optionRepository.save(newOption);
-        }
     }
 }
