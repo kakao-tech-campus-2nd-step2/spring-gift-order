@@ -21,7 +21,7 @@ public class Product {
     @Column(nullable = false, columnDefinition = "integer COMMENT '상품 가격'")
     private int price;
 
-    @Column(nullable = false , columnDefinition = "VARCHAR(255) COMMENT '상품 이미지 주소")
+    @Column(nullable = false , columnDefinition = "VARCHAR(255) COMMENT '상품 이미지 주소'")
     private String imageUrl;
 
     protected Product(){
