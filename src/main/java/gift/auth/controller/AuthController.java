@@ -3,7 +3,6 @@ package gift.auth.controller;
 import gift.auth.dto.LoginReqDto;
 import gift.auth.service.AuthService;
 import gift.auth.token.AuthToken;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +29,7 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<AuthToken> login(@RequestParam("code") String code, HttpServletResponse response) {
+    public ResponseEntity<AuthToken> login(@RequestParam("code") String code) {
         AuthToken token = authService.login(code);
         return ResponseEntity.ok(token);
     }
