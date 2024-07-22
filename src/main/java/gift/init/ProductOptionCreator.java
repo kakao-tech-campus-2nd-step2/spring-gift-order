@@ -11,7 +11,7 @@ public class ProductOptionCreator {
     @Autowired
     private ProductOptionService productOptionService;
 
-    public void ProductOptionCreator() {
+    public void creator() {
         productOptionService.createProductOption(1L, new CreateOption("option20", 100L));
         productOptionService.createProductOption(2L, new CreateOption("option20", 100L));
         productOptionService.createProductOption(3L, new CreateOption("option20", 100L));
