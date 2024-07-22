@@ -98,7 +98,6 @@ public class OptionService {
             optionRepository.deleteById(optionIdList.get(i));
         }
         optionRepository.updateQuantityByProductId(productId, -num);
-
     }
 
     public GetOptionDTO getOptions(Long productId){

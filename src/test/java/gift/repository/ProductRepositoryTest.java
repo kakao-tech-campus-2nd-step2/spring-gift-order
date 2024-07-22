@@ -1,7 +1,6 @@
 package gift.repository;
 
 import gift.model.Category;
-import gift.model.Option;
 import gift.model.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +28,8 @@ public class ProductRepositoryTest {
     void save(){
         Category category = new Category("category");
         categories.save(category);
-        Option option = new Option("optionA, optionB");
-        optionRepository.save(option);
 
-        Product expected = new Product("newProduct", 1000, "newimg.img", category, option);
+        Product expected = new Product("newProduct", 1000, "newimg.img", category);
         Product actual = products.save(expected);
         assertThat(actual).isEqualTo(expected);
     }
@@ -42,20 +39,14 @@ public class ProductRepositoryTest {
     void getAllProduct(){
         Category category = new Category("category");
         categories.save(category);
-        Option option1 = new Option("optionA, optionB");
-        optionRepository.save(option1);
-        Option option2 = new Option("optionA, optionB");
-        optionRepository.save(option2);
-        Option option3 = new Option("optionA, optionB");
-        optionRepository.save(option3);
 
-        products.save(new Product("Product1", 1000, "1.img", category, option1));
-        products.save(new Product("Product2", 5000, "2.img", category, option2));
-        products.save(new Product("Product3", 15000, "3.img", category, option3));
+        products.save(new Product("Product1", 1000, "1.img", category));
+        products.save(new Product("Product2", 5000, "2.img", category));
+        products.save(new Product("Product3", 15000, "3.img", category));
         List<Product> actual = products.findAll();
-        List<Product> expected = List.of(new Product("Product1", 1000, "1.img", category, option1),
-                new Product("Product2", 5000, "2.img", category, option2),
-                new Product("Product3", 15000, "3.img", category, option3));
+        List<Product> expected = List.of(new Product("Product1", 1000, "1.img", category),
+                new Product("Product2", 5000, "2.img", category),
+                new Product("Product3", 15000, "3.img", category));
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -64,10 +55,7 @@ public class ProductRepositoryTest {
     void getProductByName(){
         Category category = new Category("category");
         categories.save(category);
-        Option option = new Option("optionA, optionB");
-        optionRepository.save(option);
-
-        Product expected = new Product("Product1", 1000, "1.img", category, option);
+        Product expected = new Product("Product1", 1000, "1.img", category);
         products.save(expected);
         Product actual = products.findByName("Product1").orElseThrow();
         assertThat(actual).isEqualTo(expected);
@@ -78,10 +66,8 @@ public class ProductRepositoryTest {
     void getProductByID(){
         Category category = new Category("category");
         categories.save(category);
-        Option option = new Option("optionA, optionB");
-        optionRepository.save(option);
 
-        products.save(new Product("Product1", 1000, "1.img", category, option));
+        products.save(new Product("Product1", 1000, "1.img", category));
         Product expected = products.findByName("Product1").orElseThrow();
         Product actual = products.findById(expected.getId()).orElseThrow();
         assertThat(actual).isEqualTo(expected);
@@ -92,10 +78,8 @@ public class ProductRepositoryTest {
     void deleteByID(){
         Category category = new Category("category");
         categories.save(category);
-        Option option = new Option("optionA, optionB");
-        optionRepository.save(option);
 
-        products.save(new Product("Product1", 1000, "1.img", category, option));
+        products.save(new Product("Product1", 1000, "1.img", category));
         Product product = products.findByName("Product1").orElseThrow();
         products.deleteById(product.getId());
         assertThat(products.existsById(product.getId())).isFalse();

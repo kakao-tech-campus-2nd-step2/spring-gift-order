@@ -35,11 +35,9 @@ public class WishRepositoryTest {
     void save(){
         Category category = new Category("category");
         categories.save(category);
-        Option option = new Option("optionA, optionB");
-        optionRepository.save(option);
 
         members.save(new Member("test.gamil.com", "test1234"));
-        products.save(new Product("Product1", 1000, "1.img", category, option));
+        products.save(new Product("Product1", 1000, "1.img", category));
         Member member = members.findByEmail("test.gamil.com").orElseThrow();
         Product product = products.findByName("Product1").orElseThrow();
         Wish expected = new Wish(member, product);
@@ -52,14 +50,10 @@ public class WishRepositoryTest {
     void getWishsbyMemberId(){
         Category category = new Category("category");
         categories.save(category);
-        Option option1 = new Option("optionA, optionB");
-        optionRepository.save(option1);
-        Option option2 = new Option("optionA, optionB");
-        optionRepository.save(option2);
 
         members.save(new Member("test.gamil.com", "test1234"));
-        products.save(new Product("Product1", 1000, "1.img", category, option1));
-        products.save(new Product("Product2", 5000, "2.img", category, option2));
+        products.save(new Product("Product1", 1000, "1.img", category));
+        products.save(new Product("Product2", 5000, "2.img", category));
         Member member = members.findByEmail("test.gamil.com").orElseThrow();
         Product product1 = products.findByName("Product1").orElseThrow();
         Product product2 = products.findByName("Product2").orElseThrow();
