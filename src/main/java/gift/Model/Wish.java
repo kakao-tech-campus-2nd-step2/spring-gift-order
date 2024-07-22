@@ -39,8 +39,8 @@ public class Wish {
     }
 
     public void validateCount(int count) {
-        if (count < 0 )
-            throw new IllegalArgumentException("wish의 count값은 0이상이여야 합니다");
+        if (count < 1 )
+            throw new IllegalArgumentException("wish의 count값은 1이상이여야 합니다");
     }
 
     public Long getId() {
