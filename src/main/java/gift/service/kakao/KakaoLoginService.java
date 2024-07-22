@@ -7,9 +7,7 @@ import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
 @Service
 public class KakaoLoginService {
@@ -23,8 +21,8 @@ public class KakaoLoginService {
     }
 
     public HttpHeaders getRedirectHeaders() {
-        String url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri="
-                + properties.redirectUrl()
+        String url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code"
+                + "&redirect_uri=" + properties.redirectUrl()
                 + "&client_id=" + properties.clientId();
 
         HttpHeaders headers = new HttpHeaders();
@@ -34,10 +32,7 @@ public class KakaoLoginService {
     }
 
     public String getAccessToken(String code) {
-        var url = "https://kauth.kakao.com/oauth/token";
-
-        var headers = new HttpHeaders();
-        headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
+        String url = "https://kauth.kakao.com/oauth/token";
 
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
