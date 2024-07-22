@@ -1,7 +1,6 @@
 package gift.Controller;
 
 import gift.DTO.KakaoJwtToken;
-import gift.DTO.KakaoMember;
 import gift.DTO.KakaoMemberDto;
 import gift.Service.KakaoMemberService;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +12,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/kakao")
 public class KakaoMemberController {
-  private KakaoMemberService kakaoMemberService;
 
-  public KakaoMemberController(KakaoMemberService kakaoMemberService){
-    this.kakaoMemberService=kakaoMemberService;
+  private final KakaoMemberService kakaoMemberService;
+
+  public KakaoMemberController(KakaoMemberService kakaoMemberService) {
+    this.kakaoMemberService = kakaoMemberService;
   }
 
   @PostMapping("/token")
-  public ResponseEntity<KakaoJwtToken> getToken(@RequestBody KakaoMemberDto kakaoMemberDto){
+  public ResponseEntity<KakaoJwtToken> getToken(@RequestBody KakaoMemberDto kakaoMemberDto) {
     KakaoJwtToken kakaoJwtToken = kakaoMemberService.getToken(kakaoMemberDto);
     return ResponseEntity.ok(kakaoJwtToken);
   }

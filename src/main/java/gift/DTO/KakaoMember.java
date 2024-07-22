@@ -1,8 +1,6 @@
 package gift.DTO;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -26,7 +24,7 @@ public class KakaoMember {
     return this.clientId;
   }
 
-  public String getCode(){
+  public String getCode() {
     return this.code;
   }
 

@@ -2,13 +2,13 @@ package gift.DTO;
 
 public class KakaoJwtToken {
 
-  private String accessToken;
+  private final String accessToken;
 
-  private String tokenType;
-  private String refreshToken;
-  private int expiresIn;
-  private String scope;
-  private int refreshTokenExpiresIn;
+  private final String tokenType;
+  private final String refreshToken;
+  private final int expiresIn;
+  private final String scope;
+  private final int refreshTokenExpiresIn;
 
   public KakaoJwtToken(String accessToken, String tokenType, String refreshToken, int expiresIn,
     String scope, int refreshTokenExpiresIn) {
