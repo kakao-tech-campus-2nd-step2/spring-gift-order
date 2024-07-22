@@ -7,19 +7,23 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-@Component
+@ConfigurationProperties("jwt")
 public class JwtUtil {
-    @Value("${jwt.secretKey}")
-    private String secretKey;
 
-    @Value("${jwt.jwtExpirationInMs}")
-    private Long jwtExpirationInMs;
+    private final String secretKey;
+    private final Long jwtExpirationInMs;
+
+    @ConstructorBinding
+    public JwtUtil(String secretKey, Long jwtExpirationInMs) {
+        this.secretKey = secretKey;
+        this.jwtExpirationInMs = jwtExpirationInMs;
+    }
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
