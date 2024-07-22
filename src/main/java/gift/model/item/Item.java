@@ -1,5 +1,8 @@
 package gift.model.item;
 
+import gift.exception.ErrorCode;
+import gift.exception.customException.CustomDuplicateException;
+import gift.exception.customException.CustomNotFoundException;
 import gift.model.categories.Category;
 import gift.model.option.Option;
 import gift.model.wishList.WishItem;
@@ -16,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
@@ -82,6 +86,33 @@ public class Item {
 
     public List<Option> getOptions() {
         return options;
+    }
+
+    public void update(ItemDTO itemDTO, Category category) {
+        this.name = itemDTO.getName();
+        this.price = itemDTO.getPrice();
+        this.imgUrl = itemDTO.getImgUrl();
+        this.category = category;
+    }
+
+    public void addOption(Option option) throws CustomDuplicateException {
+        if (checkDuplicateOptionName(option.getName())) {
+            throw new CustomDuplicateException(ErrorCode.DUPLICATE_NAME);
+        }
+        options.add(option);
+    }
+
+    public void addOptionList(List<Option> options) {
+        this.options.addAll(options.stream().collect(Collectors.toList()));
+    }
+
+    public Option getOptionByOptionId(Long optionId) {
+        return options.stream().filter(o -> o.getId().equals(optionId)).findFirst()
+            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.OPTION_NOT_FOUND));
+    }
+
+    public boolean checkDuplicateOptionName(String name) {
+        return options.stream().map(Option::getName).toList().contains(name);
     }
 
     public ItemDTO toDTO() {
