@@ -122,14 +122,14 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
 
 - [ ] 클라이언트의 카카오 로그인 요청 처리
 
-- [ ] 클라이언트의 요청을 `GET /oauth/authorize`로 redirect
+- [x] 클라이언트의 요청을 `GET /oauth/authorize`로 redirect
 
   * 이후 동의 등 로그인 과정은 API에서 처리
   * 인가코드를 쿼리 파라미터로 포함한 리디렉션 url로 이동
 
-- [ ] 리디렉션 uri에서 code 추출
+- [x] 리디렉션 uri에서 code 추출
 
-- [ ] code를 포함한 request body를 만들어 token 발급 요청
+- [x] code를 포함한 request body를 만들어 token 발급 요청
 
   ```http
   POST https://kauth.kakao.com/oauth/token HTTP/1.1
