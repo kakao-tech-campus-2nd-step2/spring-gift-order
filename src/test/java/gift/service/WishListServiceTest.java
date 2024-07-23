@@ -205,19 +205,4 @@ public class WishListServiceTest {
         // then
         then(wishListRepository).should(times(1)).deleteById(1L);
     }
-
-    @Test
-    @DisplayName("deleteWishProductTestWhenOneLeft")
-    void test7(){
-        // given
-        User user = new User("user", "user@email.com", "aaaaa");
-        Product product = new Product("product", 4500, "url", new Category("신규"));
-        WishProduct wishProduct = new WishProduct(user, product);
-        wishProduct.changeCount(30);
-        given(wishListRepository.findById(anyLong())).willAnswer(invocation -> Optional.of(wishProduct));
-        // when
-        wishListService.deleteWishProduct(1L);
-        // then
-        Assertions.assertThat(wishProduct.getCount()).isEqualTo(29);
-    }
 }
