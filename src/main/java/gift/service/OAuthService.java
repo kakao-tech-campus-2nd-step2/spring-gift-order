@@ -51,6 +51,20 @@ public class OAuthService {
                 });
     }
 
+    public String getKakaoMemberInfo(String accessToken) {
+        return client.post()
+                .uri(URI.create(properties.memberInfoUrl()))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .exchange((request, response) -> {
+                    if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
+                        return "Kakao_" + objectMapper.readValue(response.getBody(), KakaoInfoDto.class)
+                                .id();
+                    }
+                    throw new AuthenticationException("Kakao login failed");
+                });
+    }
+
     private @NotNull LinkedMultiValueMap<String, String> createBodyForAccessToken(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
