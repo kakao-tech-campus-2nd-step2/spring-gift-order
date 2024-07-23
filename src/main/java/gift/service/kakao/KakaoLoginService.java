@@ -19,12 +19,8 @@ public class KakaoLoginService {
     }
 
     public HttpHeaders getRedirectHeaders() {
-        String url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code"
-                + "&redirect_uri=" + properties.redirectUrl()
-                + "&client_id=" + properties.clientId();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(url));
+        String url = createLoginUrl();
+        HttpHeaders headers = createRedirectHeaders(url);
 
         return headers;
     }
@@ -32,15 +28,32 @@ public class KakaoLoginService {
     public String getAccessToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
 
+        LinkedMultiValueMap<String, String> body = createFormBody(code);
+        KakaoTokenInfoResponse tokenResponse = restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class);
+
+        return tokenResponse.getAccessToken();
+    }
+
+    private HttpHeaders createRedirectHeaders(String url) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create(url));
+        return headers;
+    }
+
+    private String createLoginUrl() {
+        String url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code"
+                + "&redirect_uri=" + properties.redirectUrl()
+                + "&client_id=" + properties.clientId();
+        return url;
+    }
+
+    private LinkedMultiValueMap<String, String> createFormBody(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
         body.add("redirect_uri", properties.redirectUrl());
         body.add("code", code);
-
-        KakaoTokenInfoResponse tokenResponse = restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class);
-
-        return tokenResponse.getAccessToken();
+        return body;
     }
 
 }
