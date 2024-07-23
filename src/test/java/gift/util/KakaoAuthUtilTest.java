@@ -1,6 +1,5 @@
 package gift.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.auth.util.KakaoAuthUtil;
 import gift.auth.vo.KakaoProperties;
 import gift.global.security.JwtFilter;
@@ -97,18 +96,6 @@ class KakaoAuthUtilTest {
         assertThat(request.getHeaders()
                 .get(HttpHeaders.AUTHORIZATION)
                 .getFirst()).isEqualTo(authHeader);
-    }
-
-    @Test
-    @DisplayName("JSON 문자열 값 추출 기능 테스트")
-    void extractValueFromJson() throws JsonProcessingException {
-        String responseBody = "{ \"access_token\": \"test-token\"}";
-        String key = "access_token";
-        String value = "test-token";
-
-        String valueFromJson = kakaoAuthUtil.extractValueFromJson(responseBody, key);
-
-        assertThat(valueFromJson).isEqualTo(value);
     }
 
 }

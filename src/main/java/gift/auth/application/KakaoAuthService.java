@@ -1,8 +1,11 @@
 package gift.auth.application;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.auth.dto.AuthResponse;
+import gift.auth.dto.KakaoTokenResponse;
+import gift.auth.dto.KakaoUserInfoResponse;
 import gift.auth.util.KakaoAuthUtil;
+import gift.global.error.CustomException;
+import gift.global.error.ErrorCode;
 import gift.member.application.MemberService;
 import gift.member.dto.MemberDto;
 import org.springframework.http.HttpMethod;
@@ -29,37 +32,45 @@ public class KakaoAuthService {
         return kakaoAuthUtil.getKakaoAuthUrl();
     }
 
-    public String getKakaoUserEmail(String userInfo) {
-        return kakaoAuthUtil.generateKakaoEmail(userInfo);
+    public String getKakaoUserEmail(Long userId) {
+        return kakaoAuthUtil.generateKakaoEmail(userId);
     }
 
-    public String getAccessToken(String authCode) throws Exception {
+    public String getAccessToken(String authCode) {
         String url = "https://kauth.kakao.com/oauth/token";
-        String responseJson = restTemplate.postForObject(
+        KakaoTokenResponse response = restTemplate.postForObject(
                 url,
                 kakaoAuthUtil.getRequestWithPost(url, authCode),
-                String.class
+                KakaoTokenResponse.class
         );
 
-        return kakaoAuthUtil.extractValueFromJson(responseJson, "access_token");
+        if (response == null) {
+            throw new CustomException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
+        }
+
+        return response.accessToken();
     }
 
-    public String getUserId(String token) throws JsonProcessingException {
+    public Long getUserId(String token) {
         String url = "https://kapi.kakao.com/v2/user/me";
-        String responseJson = restTemplate.exchange(
+        KakaoUserInfoResponse response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 kakaoAuthUtil.getRequestWithGet(url, token),
-                String.class
+                KakaoUserInfoResponse.class
         ).getBody();
 
-        return kakaoAuthUtil.extractValueFromJson(responseJson, "id");
+        if (response == null) {
+            throw new CustomException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
+        }
+
+        return response.id();
     }
 
     public ResponseEntity<Object> getResponseOfKakaoLogin(String code) {
         try {
             String accessToken = getAccessToken(code);
-            String kakaoUserId = getUserId(accessToken);
+            Long kakaoUserId = getUserId(accessToken);
             String email = getKakaoUserEmail(kakaoUserId);
 
             MemberDto member = memberService.getMemberByEmail(email)

@@ -1,7 +1,5 @@
 package gift.auth.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.auth.vo.KakaoProperties;
 import gift.global.security.JwtFilter;
 import org.springframework.http.HttpHeaders;
@@ -28,9 +26,9 @@ public class KakaoAuthUtil {
                 "&client_id="    + kakaoProperties.clientId();
     }
 
-    public String generateKakaoEmail(String userInfo) {
+    public String generateKakaoEmail(Long userId) {
         return "kakao_user" +
-                userInfo +
+                userId +
                 "@kakao.com";
     }
 
@@ -55,13 +53,6 @@ public class KakaoAuthUtil {
         requestBody.add("redirect_uri", kakaoProperties.redirectUri());
         requestBody.add("code", authCode);
         return requestBody;
-    }
-
-    public String extractValueFromJson(String json,
-                                       String key) throws JsonProcessingException {
-        return new ObjectMapper().readTree(json)
-                .get(key)
-                .asText();
     }
 
     public String generateTemporaryPassword() {

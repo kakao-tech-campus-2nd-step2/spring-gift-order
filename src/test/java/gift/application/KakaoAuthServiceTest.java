@@ -3,7 +3,7 @@ package gift.application;
 import gift.auth.application.KakaoAuthService;
 import gift.auth.util.KakaoAuthUtil;
 import gift.global.config.RestTemplateConfig;
-import gift.global.security.JwtFilter;
+import gift.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +36,9 @@ class KakaoAuthServiceTest {
     @MockBean
     private KakaoAuthUtil kakaoAuthUtil;
 
+    @MockBean
+    private MemberService memberService;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -65,7 +68,7 @@ class KakaoAuthServiceTest {
 
     @Test
     @DisplayName("액세스 토큰 발급 확인 테스트")
-    void getAccessToken() throws Exception {
+    void getAccessToken() {
         String code = "test-code";
         String responseBody = "{ \"access_token\": \"test-token\"}";
         String responseToken = "test-token";
@@ -76,8 +79,6 @@ class KakaoAuthServiceTest {
                 .body(new LinkedMultiValueMap<String, String>());
         given(kakaoAuthUtil.getRequestWithPost(anyString(), anyString()))
                 .willReturn(requestBody);
-        given(kakaoAuthUtil.extractValueFromJson(anyString(), anyString()))
-                .willReturn(responseToken);
 
         server.expect(requestTo(url))
                 .andExpect(method(HttpMethod.POST))
@@ -88,7 +89,6 @@ class KakaoAuthServiceTest {
 
         assertThat(token).isEqualTo(responseToken);
         verify(kakaoAuthUtil).getRequestWithPost(url, code);
-        verify(kakaoAuthUtil).extractValueFromJson(responseBody, "access_token");
         server.verify();
     }
 
@@ -107,19 +107,16 @@ class KakaoAuthServiceTest {
 
         given(kakaoAuthUtil.getRequestWithGet(anyString(), anyString()))
                 .willReturn(requestBody);
-        given(kakaoAuthUtil.extractValueFromJson(anyString(), anyString()))
-                .willReturn(userInfoId);
 
         server.expect(requestTo(url))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, authHeader))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        String userInfoResponse = kakaoAuthService.getUserId(token);
+        Long userInfoResponse = kakaoAuthService.getUserId(token);
 
         assertThat(userInfoResponse).isEqualTo(userInfoId);
         verify(kakaoAuthUtil).getRequestWithGet(url, token);
-        verify(kakaoAuthUtil).extractValueFromJson(responseBody, "id");
         server.verify();
     }
 
