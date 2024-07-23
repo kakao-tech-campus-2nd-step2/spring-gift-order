@@ -7,7 +7,7 @@ import gift.product.repository.ProductJpaRepository;
 import gift.user.entity.User;
 import gift.user.repository.UserJpaRepository;
 import gift.util.mapper.WishMapper;
-import gift.wish.dto.request.AddWishRequest;
+import gift.wish.dto.request.CreateWishRequest;
 import gift.wish.dto.request.UpdateWishRequest;
 import gift.wish.dto.response.WishResponse;
 import gift.wish.entity.Wish;
@@ -40,7 +40,7 @@ public class WishService {
     }
 
     @Transactional
-    public Long addWish(Long userId, AddWishRequest request) {
+    public Long createWish(Long userId, CreateWishRequest request) {
         Product product = productRepository.findById(request.productId())
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         User user = userRepository.findById(userId)

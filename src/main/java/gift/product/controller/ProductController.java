@@ -52,7 +52,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createProduct(@RequestBody @Valid CreateProductRequest request) {
+    public ResponseEntity<Long> addProduct(@RequestBody @Valid CreateProductRequest request) {
         Long productId = productService.createProduct(request);
         return new ResponseEntity<>(productId, getProductLocationHeader(productId),
             HttpStatus.CREATED);

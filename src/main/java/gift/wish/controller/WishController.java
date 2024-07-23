@@ -2,7 +2,7 @@ package gift.wish.controller;
 
 import gift.annotation.LoginUserId;
 import gift.config.PageConfig;
-import gift.wish.dto.request.AddWishRequest;
+import gift.wish.dto.request.CreateWishRequest;
 import gift.wish.dto.request.UpdateWishRequest;
 import gift.wish.dto.response.WishResponse;
 import gift.wish.service.WishService;
@@ -46,9 +46,9 @@ public class WishController {
 
     @PostMapping
     public ResponseEntity<Long> addWish(
-        @LoginUserId Long userId, @RequestBody @Valid AddWishRequest request
+        @LoginUserId Long userId, @RequestBody @Valid CreateWishRequest request
     ) {
-        return ResponseEntity.ok(wishService.addWish(userId, request));
+        return ResponseEntity.ok(wishService.createWish(userId, request));
     }
 
     @PatchMapping

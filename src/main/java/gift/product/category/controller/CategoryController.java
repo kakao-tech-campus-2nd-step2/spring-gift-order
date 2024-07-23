@@ -40,7 +40,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCategory(@RequestBody @Valid CreateCategoryRequest request) {
+    public ResponseEntity<Long> addCategory(@RequestBody @Valid CreateCategoryRequest request) {
         Long categoryId = categoryService.createCategory(request);
         URI location = UriComponentsBuilder.newInstance()
             .path("/api/categories/{id}")
