@@ -4,6 +4,7 @@ import gift.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("JWT 생성 테스트")
     void testCreateJWT() {
         String id = "testId";
         String jwt = jwtService.createJWT(id);
@@ -38,6 +40,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("JWT GET 테스트")
     void testGetJWT() {
         String token = "Bearer testToken";
         when(httpServletRequest.getHeader("Authorization")).thenReturn(token);
@@ -50,6 +53,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("JWT 토큰으로 멤버 아이디 가져오기")
     void testGetMemberId() {
         String id = "testId";
         String jwt = jwtService.createJWT(id);
@@ -63,6 +67,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 토큰으로 MemberId 가져오기")
     void testGetMemberIdWithInvalidToken() {
         when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer invalidToken");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
@@ -72,6 +77,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("null 토큰으로 MemberId 가져오기")
     void testGetMemberIdWithNullToken() {
         when(httpServletRequest.getHeader("Authorization")).thenReturn(null);
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
@@ -82,6 +88,7 @@ class JwtServiceTest {
     }
 
     @Test
+    @DisplayName("빈 토큰으로 MemberId 가져오기")
     void testGetMemberIdWithEmptyToken() {
         when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer ");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
