@@ -32,6 +32,12 @@ class WishlistRepositoryTest {
     CategoryRepository categoryRepository;
 
     @Autowired
+<<<<<<< HEAD
+=======
+    CategoryRepository categoryRepository;
+
+    @Autowired
+>>>>>>> 099b5e8 (init (#32))
     private WishlistRepository wishlistRepository;
     @BeforeEach
     public void setUp() {
