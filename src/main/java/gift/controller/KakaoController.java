@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.domain.KakaoProperties;
+import gift.domain.KakaoTokenResponsed;
 import gift.service.KakaoService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,9 +34,15 @@ public class KakaoController {
         response.sendRedirect(url);
     }
 
+//    @GetMapping("/token")
+//    public ResponseEntity<String> getAccessToken(@RequestParam String code){
+//        String token = kakaoService.getAccessToken(code);
+//        return new ResponseEntity<>(token, HttpStatus.OK);
+//    }
+
     @GetMapping("/token")
-    public ResponseEntity<String> getAccessToken(@RequestParam String code){
-        String token = kakaoService.getAccessToken(code);
+    public ResponseEntity<KakaoTokenResponsed> getAccessToken(@RequestParam String code){
+        KakaoTokenResponsed token = kakaoService.getTokeResponse(code);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 

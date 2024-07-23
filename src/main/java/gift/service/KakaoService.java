@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.domain.KakaoProperties;
+import gift.domain.KakaoTokenResponsed;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,7 @@ public class KakaoService {
         this.client = RestClient.builder().build();
     }
 
-
-
-    public String getAccessToken(String code){
+    public KakaoTokenResponsed getTokeResponse(String code){
         var url = "https://kauth.kakao.com/oauth/token";
         var body = createBody(code);
         var response = client.post()
@@ -31,9 +30,22 @@ public class KakaoService {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)    //이 body는 request
             .retrieve()
-            .body(Map.class);
-        return response.get("access_token").toString();
+            .body(KakaoTokenResponsed.class);
+        return response;
     }
+
+
+//    public String getAccessToken(String code){
+//        var url = "https://kauth.kakao.com/oauth/token";
+//        var body = createBody(code);
+//        var response = client.post()
+//            .uri(URI.create(url))
+//            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+//            .body(body)    //이 body는 request
+//            .retrieve()
+//            .body(Map.class);
+//        return response.get("access_token").toString();
+//    }
 
     private LinkedMultiValueMap<String, String> createBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
