@@ -12,14 +12,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
-    @Column(nullable = false)
     private String password;
+    @Column(unique = true)
+    private String kakaoId;
     @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<WishList> wishes = new ArrayList<>();
 
     public User() {
+    }
+
+    public User(String kakaoId) {
+        this.kakaoId = kakaoId;
     }
 
     public User(String email, String password) {
@@ -43,6 +48,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
     }
 
     public List<WishList> getWishes() {
