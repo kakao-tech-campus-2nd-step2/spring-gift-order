@@ -160,34 +160,6 @@ public class OptionServiceTest {
     }
 
     @Test
-    @DisplayName("옵션 저장")
-    void addOption(){
-        //given
-        given(optionRepository.save(any())).willReturn(option);
-
-        //when
-        OptionDTO actual = optionService.addOption(OptionDTO.fromOption(option), product);
-
-        //then
-        then(optionRepository).should().save(any());
-        assertThat(actual)
-            .extracting(OptionDTO::getName, OptionDTO::getQuantity, OptionDTO::getProductId)
-            .containsExactly(expected.getName(), expected.getQuantity(), expected.getProductId());
-    }
-
-    @Test
-    @DisplayName("상품 아이디로 옵션 삭제")
-    void deleteOptionByProductId(){
-        //given
-
-        //when
-        optionService.deleteOptionByProductId(1L);
-
-        //then
-        then(optionRepository).should().deleteByProductId(1L);
-    }
-
-    @Test
     @DisplayName("옵션 아이디로 옵션 삭제")
     void deleteOptionByOptionId() throws NotFoundException {
         //given

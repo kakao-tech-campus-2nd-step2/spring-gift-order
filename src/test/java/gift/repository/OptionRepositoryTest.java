@@ -170,20 +170,6 @@ public class OptionRepositoryTest {
     }
 
     @Test
-    @DisplayName("상품 아이디로 삭제하기")
-    void deleteByProductId(){
-        //given
-        product = productRepository.save(product);
-
-        //when
-        optionRepository.deleteByProductId(product.getId());
-        List<Option> actual = optionRepository.findAllByProductId(product.getId());
-
-        //then
-        assertThat(actual).isEmpty();
-    }
-
-    @Test
     @DisplayName("옵션 아이디로 삭제하기")
     void deleteById(){
         //given

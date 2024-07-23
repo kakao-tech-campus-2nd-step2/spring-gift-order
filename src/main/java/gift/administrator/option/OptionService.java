@@ -53,13 +53,6 @@ public class OptionService {
             optionRepository.findById(optionId).orElseThrow(NotFoundException::new));
     }
 
-    public OptionDTO addOption(OptionDTO optionDTO, Product product) {
-        Option option = optionDTO.toOption(product);
-        option.setProduct(product);
-        Option savedOption = optionRepository.save(option);
-        return OptionDTO.fromOption(savedOption);
-    }
-
     public Option subtractOptionQuantity(long optionId, int quantity) throws NotFoundException {
         Option option = optionRepository.findById(optionId).orElseThrow(NotFoundException::new);
         if (option.getQuantity() < quantity) {
@@ -67,10 +60,6 @@ public class OptionService {
         }
         option.subtract(quantity);
         return option;
-    }
-
-    public void deleteOptionByProductId(long productId) {
-        optionRepository.deleteByProductId(productId);
     }
 
     public void deleteAllWhenUpdatingProduct(List<Option> options, Product product) {

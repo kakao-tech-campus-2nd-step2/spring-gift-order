@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.users.user.UserService;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -14,14 +13,14 @@ import org.springframework.web.client.RestClient;
 public class KakaoAuthService {
 
     private final KakaoProperties kakaoProperties;
-    private final RestClient restClient;
+    private final RestClient.Builder restClientBuilder;
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
-    public KakaoAuthService(KakaoProperties kakaoProperties, RestClient restClient, ObjectMapper objectMapper,
+    public KakaoAuthService(KakaoProperties kakaoProperties, RestClient.Builder restClientBuilder, ObjectMapper objectMapper,
         UserService userService) {
         this.kakaoProperties = kakaoProperties;
-        this.restClient = restClient;
+        this.restClientBuilder = restClientBuilder;
         this.objectMapper = objectMapper;
         this.userService = userService;
     }
@@ -38,11 +37,12 @@ public class KakaoAuthService {
     }
 
     private Long getKakaoUser(String token) throws JsonProcessingException {
-        String response = restClient.post()
+        String response = restClientBuilder.build().post()
             .uri(kakaoProperties.userUrl())
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .body(String.class);
+
         Long kakaoId = parseJson(response).get("id").asLong();
         return userService.findByKakaoIdAndRegisterIfNotExists(kakaoId.toString());
     }
@@ -54,7 +54,7 @@ public class KakaoAuthService {
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
 
-        String response = restClient.post()
+        String response = restClientBuilder.build().post()
             .uri(kakaoProperties.tokenUrl())
             .body(body)
             .retrieve()
