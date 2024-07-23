@@ -3,6 +3,8 @@ package gift.domain.user;
 import gift.domain.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,18 +26,23 @@ public class User extends BaseTimeEntity {
     @NotNull
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
     protected User() {
     }
 
-    public User(Long id, String email, String password) {
+    public User(Long id, String email, String password, UserRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.role = UserRole.USER;
     }
 
     public Long getId() {
