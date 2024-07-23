@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import gift.auth.jwt.JwtProvider;
-import gift.auth.jwt.Token;
+import gift.auth.dto.Token;
 import gift.domain.user.repository.UserJpaRepository;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;

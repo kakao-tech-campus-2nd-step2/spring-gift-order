@@ -1,4 +1,4 @@
-package gift.auth.jwt;
+package gift.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
