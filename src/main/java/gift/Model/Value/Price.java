@@ -1,6 +1,5 @@
 package gift.Model.Value;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
@@ -44,6 +43,11 @@ public class Price {
     @Override
     public int hashCode() {
         return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(value);
     }
 
 }
