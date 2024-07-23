@@ -38,4 +38,8 @@ public class Token {
     public Token() {
 
     }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
