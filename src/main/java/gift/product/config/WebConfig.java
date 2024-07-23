@@ -2,6 +2,7 @@ package gift.product.config;
 
 import gift.product.JwtCookieToHeaderInterceptor;
 import gift.product.TokenValidationInterceptor;
+import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
 import gift.product.repository.CategoryRepository;
 import gift.product.repository.OptionRepository;
@@ -25,16 +26,18 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthRepository authRepository;
     private final CategoryRepository categoryRepository;
     private final OptionRepository optionRepository;
+    private final KakaoProperties kakaoProperties;
 
 
     public WebConfig(ProductRepository productRepository, WishRepository wishRepository,
         AuthRepository authRepository, CategoryRepository categoryRepository,
-        OptionRepository optionRepository) {
+        OptionRepository optionRepository, KakaoProperties kakaoProperties) {
         this.productRepository = productRepository;
         this.wishRepository = wishRepository;
         this.authRepository = authRepository;
         this.categoryRepository = categoryRepository;
         this.optionRepository = optionRepository;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @Bean
@@ -49,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public AuthService authService() {
-        return new AuthService(authRepository);
+        return new AuthService(authRepository, kakaoProperties);
     }
 
     @Bean
