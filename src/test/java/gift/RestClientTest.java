@@ -1,13 +1,13 @@
-package study;
+package gift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.common.properties.KakaoProperties;
 import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
@@ -19,15 +19,6 @@ import org.springframework.web.client.RestClient;
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-@ConfigurationPropertiesScan
-@ConfigurationProperties(prefix = "kakao")
-record KakaoProperties(
-        String clientId,
-        String redirectUrl,
-        String tokenUrl,
-        String memberInfoUrl
-) {}
 
 @ActiveProfiles("test")
 @SpringBootTest

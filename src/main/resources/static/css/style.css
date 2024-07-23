@@ -21,3 +21,13 @@ button a {
 .active {
     background-color: darkgray;
 }
+
+.kakao-login-button {
+    display: inline-block;
+    background: url('../images/kakao_login_medium_narrow.png') no-repeat;
+    width: 200px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}

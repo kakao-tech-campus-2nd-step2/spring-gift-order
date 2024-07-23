@@ -52,7 +52,6 @@ public class AdminInterceptor implements HandlerInterceptor {
 
     private void checkRole(HttpServletRequest request, String role) {
         if(!role.equals(Role.ADMIN.toString())) {
-            System.out.println(role);
             throw new AuthorizationException("You do not have permissions to access this resource");
         }
         request.setAttribute("ROLE", role);

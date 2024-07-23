@@ -72,6 +72,26 @@ class MemberRepositoryTest {
         assertThat(member.getRole()).isEqualTo(Role.USER);
     }
 
+    @Test
+    @DisplayName("email이 있을 경우 저장 안하는 테스트[성공]")
+    void saveIfEntityExist() {
+        // given
+        String email = "test@gmail.com";
+        String password = "password";
+        memberRepository.save(new Member(email, password, Role.USER));
+
+        // when
+        Member member = memberRepository.findByEmail(email)
+                .orElseGet(() -> memberRepository.save(new Member(email, "456", Role.USER)));
+
+        // then
+        assertThat(member).isNotNull();
+        assertThat(member.getId()).isNotNull();
+        assertThat(member.getEmail()).isEqualTo(email);
+        assertThat(member.getPassword()).isEqualTo(password);
+        assertThat(member.getRole()).isEqualTo(Role.USER);
+    }
+
     void save(String email, String password, Role role) {
         // given
         Member member = new Member(email, password, role);

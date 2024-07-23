@@ -37,21 +37,23 @@ public class OAuthService {
     }
 
     public TokenResponse signIn(String code) {
-        String accessToken = getKakaoAccessToken(code);
+        return signIn(code, properties.redirectUrl());
+    }
+
+    public TokenResponse signIn(String code, String redirectUrl) {
+        String accessToken = getKakaoAccessToken(code, redirectUrl);
         String email = getKakaoMemberInfo(accessToken);
-
         Member member = memberRepository.findByEmail(email)
-                .orElse(memberRepository.save(new Member(email, "", Role.USER)));
-
+                .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER)));
         String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
         return TokenResponse.from(token);
     }
 
-    public String getKakaoAccessToken(String code) {
+    public String getKakaoAccessToken(String code, String redirectUrl) {
         return client.post()
                 .uri(URI.create(properties.tokenUrl()))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(createBodyForAccessToken(code))
+                .body(createBodyForAccessToken(code, redirectUrl))
                 .exchange((request, response) -> {
                     if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
                         return objectMapper.readValue(response.getBody(), KakaoTokenDto.class)
@@ -68,18 +70,17 @@ public class OAuthService {
                 .header("Authorization", "Bearer " + accessToken)
                 .exchange((request, response) -> {
                     if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
-                        return "Kakao_" + objectMapper.readValue(response.getBody(), KakaoInfoDto.class)
-                                .id();
+                        return objectMapper.readValue(response.getBody(), KakaoInfoDto.class).id() + "@Kakao";
                     }
-                    throw new AuthenticationException("Kakao login failed");
+                    throw new AuthenticationException("Kakao Info failed");
                 });
     }
 
-    private @NotNull LinkedMultiValueMap<String, String> createBodyForAccessToken(String code) {
+    private @NotNull LinkedMultiValueMap<String, String> createBodyForAccessToken(String code, String redirectUrl) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
-        body.add("redirect_uri", properties.redirectUrl());
+        body.add("redirect_uri", redirectUrl);
         body.add("code", code);
         return body;
     }
