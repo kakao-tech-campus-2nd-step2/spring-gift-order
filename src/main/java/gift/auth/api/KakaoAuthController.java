@@ -2,10 +2,10 @@ package gift.auth.api;
 
 import gift.auth.application.KakaoAuthService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/oauth/kakao")
@@ -23,11 +23,10 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/callback")
-    public String kakaoCallback(@RequestParam("code") String code, Model model) throws Exception {
+    @ResponseBody
+    public String kakaoCallback(@RequestParam("code") String code) throws Exception {
         String token = kakaoAuthService.getAccessToken(code);
-        model.addAttribute("token", token);
-        model.addAttribute("userInfo", kakaoAuthService.getUserInfo(token));
-        return "redirect:/members/login";
+        return kakaoAuthService.getUserInfo(token);
     }
 
 }
