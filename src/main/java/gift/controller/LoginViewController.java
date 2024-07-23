@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-@RequestMapping("/login")
+@RequestMapping("/loginView")
 public class LoginViewController {
 
     @GetMapping
