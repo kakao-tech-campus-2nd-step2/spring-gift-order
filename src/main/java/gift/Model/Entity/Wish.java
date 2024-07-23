@@ -53,9 +53,7 @@ public class Wish {
         return count;
     }
 
-    public void update(Member member, Product product, Count count){
-        this.member = member;
-        this.product = product;
+    public void update(Count count){
         this.count = count;
     }
 }
