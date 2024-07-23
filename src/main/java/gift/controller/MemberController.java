@@ -46,7 +46,6 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).body("로그인 성공");
     }
 
-
     @PostMapping("/loginByKakao")
     public ResponseEntity<String> loginByKakao(){
         var url = "https://kauth.kakao.com/oauth/token";

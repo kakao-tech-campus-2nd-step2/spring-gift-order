@@ -19,7 +19,6 @@ public class JwtService {
     public JwtService() {
     }
 
-
     public String createJWT(String id) {
         return Jwts.builder()
                 .claim("id", id)
@@ -46,7 +45,6 @@ public class JwtService {
     public String getMemberId() {
         String accessToken = getJWT();
         System.out.println(accessToken);
-
         if (accessToken.isEmpty()) {
             throw new JwtException("토큰이 유효하지 않습니다.");
         }
