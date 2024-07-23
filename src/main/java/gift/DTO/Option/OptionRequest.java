@@ -1,5 +1,7 @@
 package gift.DTO.Option;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -8,7 +10,8 @@ public class OptionRequest {
     @Pattern(regexp = "^[가-힣a-zA-Z0-9\\s\\(\\)\\[\\]\\+\\-\\&\\/\\_]+$",
             message = "특수문자는 ( ), [ ], +, -, &, /, _ 만 허용되며, 한글, 영어, 숫자만 입력 가능합니다.")
     String name;
-    @Size(min=1, max=99999999, message = "옵션 수량은 최소 1개 이상 1억 개 미만이어야 합니다")
+    @Min(1L)
+    @Max(99999999L)
     Long quantity;
 
     public OptionRequest(){
