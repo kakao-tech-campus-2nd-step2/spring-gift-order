@@ -1,10 +1,10 @@
 # spring-gift-ordergit
 
 ### 준비사항
-- [ ] 카카오 API를 사용하기 위한 애플리케이션을 등록
-- [ ] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 활성화 설정 ON (카카오 로그인 활성화 설정)
-- [ ] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > Redirect URI 등록 > http://localhost:8080 저장 (Redirect URI 등록)
-- [ ] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 동의항목 > 접근권한 > 카카오톡 메시지 전송 > 선택 동의 (접근권한 동의항목)
+- [x] 카카오 API를 사용하기 위한 애플리케이션을 등록
+- [x] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 활성화 설정 ON (카카오 로그인 활성화 설정)
+- [x] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > Redirect URI 등록 > http://localhost:8080 저장 (Redirect URI 등록)
+- [x] 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 동의항목 > 접근권한 > 카카오톡 메시지 전송 > 선택 동의 (접근권한 동의항목)
 
 # 기능목록 
 
@@ -12,8 +12,8 @@
 - [ ] 인가 코드 획득 
   * 클라이언트가 없는 상황에서는 아래와 같은 방법으로 인가 코드를 획득한다.
       - [ ] 내 애플리케이션 > 앱 설정 > 앱 키로 이동하여 REST API 키를 복사한다.
-      - [ ] https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id={REST_API_KEY}에 접속하여 카카오톡 메시지 전송에 동의한다.
-      - [ ] http://localhost:8080/?code={AUTHORIZATION_CODE}에서 인가 코드를 추출한다.
+      - [ ] https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id={REST_API_KEY} 에 접속하여 카카오톡 메시지 전송에 동의한다.
+      - [ ] http://localhost:8080/?code={AUTHORIZATION_CODE} 에서 인가 코드를 추출한다.
 - [ ] 카카오계정 로그인을 통해 인증 코드를 받는다. 
 - [ ] 토큰 받기를 읽고 액세스 토큰을 추출한다.
   * 앱 키, 인가 코드가 절대 유출되지 않도록 한다.
