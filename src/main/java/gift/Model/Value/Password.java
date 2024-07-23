@@ -8,7 +8,6 @@ import java.util.Objects;
 @Embeddable
 public class Password {
 
-    @Column(nullable = false)
     private String value;
 
     public Password(String value) {

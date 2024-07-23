@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 @Embeddable
 public class Name {
 
-    @Column(nullable = false)
     private String value;
 
     public Name(String value) {

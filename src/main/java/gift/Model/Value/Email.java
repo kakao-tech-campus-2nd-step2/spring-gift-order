@@ -12,7 +12,6 @@ public class Email {
             "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     );
 
-    @Column(nullable = false, unique = true)
     private String value;
 
     public Email(String value) {

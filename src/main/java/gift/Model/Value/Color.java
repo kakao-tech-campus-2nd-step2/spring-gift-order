@@ -8,7 +8,6 @@ import java.util.Objects;
 @Embeddable
 public class Color {
 
-    @Column(nullable = false)
     private String value;
 
     public Color(String value){

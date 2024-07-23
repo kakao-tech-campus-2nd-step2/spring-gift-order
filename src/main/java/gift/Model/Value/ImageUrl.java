@@ -8,7 +8,6 @@ import java.util.Objects;
 @Embeddable
 public class ImageUrl {
 
-    @Column(nullable = false)
     private String value;
 
     public ImageUrl(String value) {

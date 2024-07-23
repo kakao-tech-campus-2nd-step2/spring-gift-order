@@ -8,7 +8,6 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
-    @Column(nullable = false)
     private int value;
 
     public Price(int value) {
