@@ -48,8 +48,8 @@ public class KakaoAuthUtil {
         return requestBody;
     }
 
-    public String getValueOfJsonByKey(String json,
-                                      String key) throws JsonProcessingException {
+    public String extractValueFromJson(String json,
+                                       String key) throws JsonProcessingException {
         return new ObjectMapper().readTree(json)
                 .get(key)
                 .asText();

@@ -76,7 +76,7 @@ class KakaoAuthServiceTest {
                 .body(new LinkedMultiValueMap<String, String>());
         given(kakaoAuthUtil.getRequestWithPost(anyString(), anyString()))
                 .willReturn(requestBody);
-        given(kakaoAuthUtil.getValueOfJsonByKey(anyString(), anyString()))
+        given(kakaoAuthUtil.extractValueFromJson(anyString(), anyString()))
                 .willReturn(responseToken);
 
         server.expect(requestTo(url))
@@ -88,7 +88,7 @@ class KakaoAuthServiceTest {
 
         assertThat(token).isEqualTo(responseToken);
         verify(kakaoAuthUtil).getRequestWithPost(url, code);
-        verify(kakaoAuthUtil).getValueOfJsonByKey(responseBody, "access_token");
+        verify(kakaoAuthUtil).extractValueFromJson(responseBody, "access_token");
         server.verify();
     }
 
@@ -107,7 +107,7 @@ class KakaoAuthServiceTest {
 
         given(kakaoAuthUtil.getRequestWithGet(anyString(), anyString()))
                 .willReturn(requestBody);
-        given(kakaoAuthUtil.getValueOfJsonByKey(anyString(), anyString()))
+        given(kakaoAuthUtil.extractValueFromJson(anyString(), anyString()))
                 .willReturn(userInfoId);
 
         server.expect(requestTo(url))
@@ -119,7 +119,7 @@ class KakaoAuthServiceTest {
 
         assertThat(userInfoResponse).isEqualTo(userInfoId);
         verify(kakaoAuthUtil).getRequestWithGet(url, token);
-        verify(kakaoAuthUtil).getValueOfJsonByKey(responseBody, "id");
+        verify(kakaoAuthUtil).extractValueFromJson(responseBody, "id");
         server.verify();
     }
 

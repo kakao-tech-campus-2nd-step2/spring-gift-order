@@ -30,7 +30,7 @@ public class KakaoAuthService {
                 String.class
         );
 
-        return kakaoAuthUtil.getValueOfJsonByKey(responseJson, "access_token");
+        return kakaoAuthUtil.extractValueFromJson(responseJson, "access_token");
     }
 
     public String getUserInfo(String token) throws JsonProcessingException {
@@ -42,7 +42,7 @@ public class KakaoAuthService {
                 String.class
         ).getBody();
 
-        return kakaoAuthUtil.getValueOfJsonByKey(responseJson, "id");
+        return kakaoAuthUtil.extractValueFromJson(responseJson, "id");
     }
 
 }
