@@ -1,5 +1,8 @@
 package gift.security;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +21,7 @@ public class KakaoTokenProvider {
         this.kakaoProperties = kakaoProperties;
     }
 
-    public ResponseEntity<String> getToken(String code){
+    public String getToken(String code) throws JsonProcessingException {
         var url = "https://kauth.kakao.com/oauth/token";
         var body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -26,11 +29,17 @@ public class KakaoTokenProvider {
         body.add("redirect_url", kakaoProperties.getRedirectUrl());
         body.add("code", code);
 
-        return client.post()
+        ResponseEntity<String> entity = client.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
                 .retrieve()
                 .toEntity(String.class);
+
+        String resBody = entity.getBody();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(resBody);
+
+        return jsonNode.get("access_token").asText();
     }
 }
