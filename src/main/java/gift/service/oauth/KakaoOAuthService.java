@@ -2,8 +2,10 @@ package gift.service.oauth;
 
 import gift.config.KakaoProperties;
 import gift.dto.oauth.KakaoTokenResponse;
+import gift.dto.oauth.KakaoUnlinkResponse;
 import java.net.URI;
 import java.util.Map;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,28 @@ public class KakaoOAuthService {
             }
         } catch (RestClientResponseException e) {
             throw new RuntimeException("토큰 발급에 실패했습니다.", e);
+        }
+    }
+
+    public KakaoUnlinkResponse unlinkUser(String accessToken) {
+        String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
+
+        try {
+            ResponseEntity<Map> response = client.post()
+                .uri(URI.create(kakaoUnlinkUrl))
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .toEntity(Map.class);
+            Map<String, Object> responseBody = response.getBody();
+
+            if (responseBody != null) {
+                Long id = ((Number) responseBody.get("id")).longValue();
+                return new KakaoUnlinkResponse(id);
+            } else {
+                throw new RuntimeException("연결 끊기 응답이 올바르지 않습니다.");
+            }
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException("연결 끊기에 실패했습니다.", e);
         }
     }
 }
