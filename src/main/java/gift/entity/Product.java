@@ -1,6 +1,7 @@
 package gift.entity;
 
 
+import gift.exception.MinimumOptionException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -86,7 +87,10 @@ public class Product {
         return options;
     }
 
-    public void removeOption(Option option) {
+    public void removeOption(Option option, Product product) {
+        if (product.optionAmount() <= 1) {
+            throw new MinimumOptionException("상품의 옵션이 1개 이하인 경우 옵션을 삭제할 수 없습니다.");
+        }
         this.options.remove(option);
     }
 
