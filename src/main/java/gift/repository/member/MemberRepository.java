@@ -19,4 +19,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                     " where m.email=:email "
     )
     Optional<Member> findMemberWithRelation(@Param("email") String email);
+
+    Optional<Member> findMemberByKakaoId(String kakaoId);
 }
