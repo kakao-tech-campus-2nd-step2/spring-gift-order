@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.domain.User;
 import gift.dto.common.apiResponse.ApiResponseBody.SuccessBody;
 import gift.dto.common.apiResponse.ApiResponseGenerator;
 import gift.dto.requestdto.UserLoginRequestDTO;
@@ -37,8 +38,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
-        userService.findByEmail(userLoginRequestDTO);
-        UserResponseDTO userResponseDTO = authService.login(userLoginRequestDTO);
+        User user = userService.findByEmail(userLoginRequestDTO);
+        UserResponseDTO userResponseDTO = authService.login(user, userLoginRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "로그인에 성공했습니다.", userResponseDTO);
     }
 }
