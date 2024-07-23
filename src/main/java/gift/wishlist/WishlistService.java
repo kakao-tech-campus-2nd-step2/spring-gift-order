@@ -14,9 +14,11 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
+@Transactional
 public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
@@ -33,6 +35,7 @@ public class WishlistService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<Product> getAllWishlists(MemberTokenDTO memberTokenDTO, Pageable pageable) {
         Member member = memberTokenDTOToMember(memberTokenDTO);
 
@@ -41,6 +44,7 @@ public class WishlistService {
             .map(Wishlist::getProduct);
     }
 
+    @Transactional(readOnly = true)
     public List<Product> getAllWishlists(MemberTokenDTO memberTokenDTO) {
         Member member = memberTokenDTOToMember(memberTokenDTO);
 
