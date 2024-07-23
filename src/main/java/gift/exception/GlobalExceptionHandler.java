@@ -156,4 +156,14 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Duplicate Option Name");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<ProblemDetail> handleKakaoApiException(
+        KakaoApiException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setType(URI.create("/errors/kakao-api-exception"));
+        problemDetail.setTitle("Kakao API Exception");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+    }
 }
