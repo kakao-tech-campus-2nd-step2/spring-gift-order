@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 
 @ControllerAdvice
 public class ExceptionController {
@@ -84,6 +85,20 @@ public class ExceptionController {
     @ResponseBody
     @ExceptionHandler(OptionQuantityNotMinusException.class)
     public ResponseEntity<ErrorResult> optionQuantityHandler(OptionQuantityNotMinusException e){
+        ErrorResult errorResult = new ErrorResult("400", e.getMessage());
+        return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ResponseEntity<ErrorResult> httpClientHandler(HttpClientErrorException e){
+        ErrorResult errorResult = new ErrorResult(e.getStatusCode().toString(), "OAuth 로그인 중 오류가 발생 했습니다.");
+        return new ResponseEntity<>(errorResult, e.getStatusCode());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(JsonException.class)
+    public ResponseEntity<ErrorResult> jsonProcessingHandler(JsonException e){
         ErrorResult errorResult = new ErrorResult("400", e.getMessage());
         return new ResponseEntity<>(errorResult, HttpStatus.BAD_REQUEST);
     }
