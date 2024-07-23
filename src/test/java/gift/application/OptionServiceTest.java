@@ -76,7 +76,7 @@ class OptionServiceTest {
     @DisplayName("상품 옵션 추가 기능 테스트")
     void addOptionToProduct() {
         OptionRequest request = new OptionRequest("옵션", 10);
-        given(productRepository.findById(anyLong()))
+        given(productRepository.findProductAndOptionsById(anyLong()))
                 .willReturn(Optional.of(product));
 
         OptionResponse response = optionService.addOptionToProduct(productId, request);
@@ -90,7 +90,7 @@ class OptionServiceTest {
     void addOptionToProductFailed() {
         OptionRequest request = new OptionRequest("옵션", 10);
         product.addOptionOrElseFalse(OptionMapper.toEntity(request, product));
-        given(productRepository.findById(anyLong()))
+        given(productRepository.findProductAndOptionsById(anyLong()))
                 .willReturn(Optional.of(product));
 
         assertThatThrownBy(() -> optionService.addOptionToProduct(productId, request))
