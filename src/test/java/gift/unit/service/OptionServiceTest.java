@@ -283,7 +283,8 @@ public class OptionServiceTest {
     void optionsSubtractOverQuantity() {
         // given
         Option option1 = new Option("a", 100, null);
-        given(optionRepository.findById(any())).willReturn(Optional.of(option1));
+        given(optionRepository.findByIdWithPessimisticLocking(any())).willReturn(
+            Optional.of(option1));
 
         // when & then
         assertThatThrownBy(() -> optionService.subtractOptionQuantity(1L, 1000))
@@ -295,13 +296,14 @@ public class OptionServiceTest {
     void optionSubtractTest() {
         // given
         Option option1 = new Option("a", 100, null);
-        given(optionRepository.findById(any())).willReturn(Optional.of(option1));
+        given(optionRepository.findByIdWithPessimisticLocking(any())).willReturn(
+            Optional.of(option1));
 
         // when
         optionService.subtractOptionQuantity(1L, 30);
 
         // then
-        then(optionRepository).should().findById(any());
+        then(optionRepository).should().findByIdWithPessimisticLocking(any());
         assertThat(option1.getQuantity()).isEqualTo(70);
     }
 
