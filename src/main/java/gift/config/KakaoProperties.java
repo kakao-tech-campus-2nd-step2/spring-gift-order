@@ -18,4 +18,11 @@ public class KakaoProperties {
         return redirectUri;
     }
 
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
+    }
 }
