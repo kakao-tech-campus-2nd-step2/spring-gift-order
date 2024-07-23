@@ -138,7 +138,7 @@
                 Authorization: 'Bearer ' + localStorage.getItem("token"),
             },
             success : function(res){
-                location.reload();
+                getOptions(currentPage);
             },
             error : function(err){
                 var text = err.responseJSON;
