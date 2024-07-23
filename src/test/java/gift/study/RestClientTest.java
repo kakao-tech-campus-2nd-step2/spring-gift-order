@@ -35,7 +35,9 @@ class RestClientTest {
                 .retrieve()
                 .toEntity(String.class);
 
+        // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
         System.out.println(response);
     }
 
@@ -44,7 +46,7 @@ class RestClientTest {
         body.add("grant_type", properties.grantType()); // authorization_code로 고정
         body.add("client_id", properties.clientId()); // REST API 키
         body.add("redirect_uri", properties.redirectUri()); // 인가 코드가 리다이렉트된 URI
-        body.add("code", properties.authorizationCode()); // 토큰 발급 시, 보안을 강화하기 위해 추가 확인하는 코드
+        body.add("code", properties.authorizationCode()); // 인가 코드
 
         return body;
     }
