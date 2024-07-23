@@ -41,9 +41,10 @@ public class KakaoController {
 //    }
 
     @GetMapping("/token")
-    public ResponseEntity<KakaoTokenResponsed> getAccessToken(@RequestParam String code){
+    public ResponseEntity<String> getAccessToken(@RequestParam String code){
         KakaoTokenResponsed token = kakaoService.getTokeResponse(code);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        String jwt = kakaoService.LoginWithKakao(token.accessToken());
+        return new ResponseEntity<>(jwt, HttpStatus.OK);
     }
 
 
