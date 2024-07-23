@@ -1,3 +1,0 @@
-kakao:
-  client_id: dd82d71cc0702f401d71d63311247183
-  redirect_uri: http://localhost:8080/api/kakao/callback
