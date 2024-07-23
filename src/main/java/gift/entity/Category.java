@@ -56,40 +56,20 @@ public class Category {
         return products;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getColor() {
         return color;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public void updateCategory(CategoryRequestDTO categoryRequestDTO){
