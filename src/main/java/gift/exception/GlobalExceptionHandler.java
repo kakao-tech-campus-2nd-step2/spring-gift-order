@@ -2,6 +2,7 @@ package gift.exception;
 
 import gift.exception.auth.UnauthorizedException;
 import gift.exception.user.MemberNotFoundException;
+import org.apache.logging.log4j.util.InternalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,5 +43,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OutOfStockException.class)
     public ResponseEntity<String> handleOutOfStockException(OutOfStockException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
+    @ExceptionHandler(InternalException.class)
+    public ResponseEntity<String> handleInternalException(InternalException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }
