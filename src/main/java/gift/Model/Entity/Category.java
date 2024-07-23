@@ -14,7 +14,7 @@ public class Category {
     private Long id;
 
     @Embedded
-    @Column(nullable = false, unique = true)
+    @AttributeOverride(name = "name", column = @Column(nullable = false, length = 15))
     private Name name;
 
     @Embedded
