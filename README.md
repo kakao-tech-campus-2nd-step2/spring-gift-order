@@ -30,17 +30,18 @@ menu와 연관관계 매핑하기
 5주차 과제
 [X] 테스트코드 작성하기
 
--> [X] MenuRepositoryTest
--> [X] MemberRepositoryTest
--> [X] OptionRepositoryTest
--> [X] WishListRepositoryTest
--> [X] CategoryRepositoryTest
+-> [O] MenuRepositoryTest
+-> [O] MemberRepositoryTest
+-> [O] OptionRepositoryTest
+-> [O] WishListRepositoryTest
+-> [O] CategoryRepositoryTest
 
 -> [X] MenuServiceTest
--> [X] MemberServiceTest
+-> [O] MemberServiceTest
 -> [X] OptionServiceTest
 -> [X] WishListServiceTest
 -> [X] CategoryServiceTest
+-> [O] JPAServiceTest
 
 -> [X] MenuControllerTest
 -> [X] MemberControllerTest
