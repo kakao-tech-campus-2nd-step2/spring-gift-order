@@ -54,7 +54,7 @@ class KakaoControllerTest {
         String code = "test_code";
         String accessToken = "test_access_token";
 
-        given(kakaoLoginService.getAccessToken(code)).willReturn(accessToken);
+        given(kakaoLoginService.processKakaoAuth(code)).willReturn(accessToken);
 
         //when
         ResultActions result = mvc.perform(get("/kakao/oauth")
@@ -65,7 +65,7 @@ class KakaoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("access_token").value(accessToken));
 
-        then(kakaoLoginService).should().getAccessToken(code);
+        then(kakaoLoginService).should().processKakaoAuth(code);
     }
 
 }

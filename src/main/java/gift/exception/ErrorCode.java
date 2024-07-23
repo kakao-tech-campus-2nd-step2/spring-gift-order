@@ -39,6 +39,7 @@ public enum ErrorCode {
     AT_LEAST_ONE_OPTION_REQUIRED("상품에는 반드시 하나 이상의 옵션이 있어야 합니다.", HttpStatus.BAD_REQUEST),
 
     /* KakaoLoginService */
+    KAKAO_TOKEN_ISSUANCE_FAILED("카카오 토큰 발급에 실패했습니다.", HttpStatus.BAD_REQUEST),
     KAKAO_USER_RETRIEVAL_FAILED("카카오 유저 정보 조회에 실패했습니다.", HttpStatus.BAD_REQUEST),
     JSON_PARSING_FAILED("JSON 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 

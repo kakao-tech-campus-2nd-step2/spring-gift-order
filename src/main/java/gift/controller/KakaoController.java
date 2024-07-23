@@ -31,7 +31,7 @@ public class KakaoController {
 
     @GetMapping("/oauth")
     public ResponseEntity<TokenResponse> login(@RequestParam String code) {
-        TokenResponse tokenResponse = loginService.getAccessToken(code);
+        TokenResponse tokenResponse = loginService.processKakaoAuth(code);
 
         return ResponseEntity.ok()
                 .body(tokenResponse);

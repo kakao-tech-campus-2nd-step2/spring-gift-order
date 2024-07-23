@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.Optional;
 
 @Service
 public class KakaoLoginService {
@@ -37,30 +38,28 @@ public class KakaoLoginService {
 
     public HttpHeaders getRedirectHeaders() {
         String url = createLoginUrl();
-        HttpHeaders headers = createRedirectHeaders(url);
-
-        return headers;
+        return createRedirectHeaders(url);
     }
 
-    public TokenResponse getAccessToken(String code) {
+    public TokenResponse processKakaoAuth(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
-
         LinkedMultiValueMap<String, String> body = createFormBody(code);
-        String accessToken = restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class).getAccessToken();
+
+        String accessToken = getAccessTokenFromKakao(url, body);
         Member kakaoMember = getKakaoMember(accessToken);
         String jwt = jwtProvider.create(kakaoMember);
 
-        TokenResponse tokenResponse = new TokenResponse(accessToken, jwt);
+        return new TokenResponse(accessToken, jwt);
+    }
 
-        return tokenResponse;
+    private String getAccessTokenFromKakao(String url, LinkedMultiValueMap<String, String> body) {
+        return Optional.ofNullable(restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class))
+                .map(KakaoTokenInfoResponse::getAccessToken)
+                .orElseThrow(() -> new GiftException(ErrorCode.KAKAO_TOKEN_ISSUANCE_FAILED));
     }
 
     private Member getKakaoMember(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-
-        HttpEntity<Void> request = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = getKakaoUserResponse(accessToken);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new GiftException(ErrorCode.KAKAO_USER_RETRIEVAL_FAILED);
@@ -70,17 +69,24 @@ public class KakaoLoginService {
         Long kakaoId = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
-        Member member = memberRepository.findByKakaoId(kakaoId)
-                .orElseGet(() -> {
-                    Member m = new Member.MemberBuilder()
-                            .kakaoId(kakaoId)
-                            .name(nickname)
-                            .build();
+        return memberRepository.findByKakaoId(kakaoId)
+                .orElseGet(() -> createAndSaveMember(kakaoId, nickname));
+    }
 
-                    return memberRepository.save(m);
-                });
+    private ResponseEntity<String> getKakaoUserResponse(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        return member;
+        return restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, request, String.class);
+    }
+
+    private Member createAndSaveMember(Long kakaoId, String nickname) {
+        Member newMember = new Member.MemberBuilder()
+                .kakaoId(kakaoId)
+                .name(nickname)
+                .build();
+        return memberRepository.save(newMember);
     }
 
     private JsonNode parseJson(String body) {
@@ -98,10 +104,9 @@ public class KakaoLoginService {
     }
 
     private String createLoginUrl() {
-        String url = "https://kauth.kakao.com/oauth/authorize?&response_type=code"
+        return "https://kauth.kakao.com/oauth/authorize?&response_type=code"
                 + "&redirect_uri=" + properties.redirectUrl()
                 + "&client_id=" + properties.clientId();
-        return url;
     }
 
     private LinkedMultiValueMap<String, String> createFormBody(String code) {

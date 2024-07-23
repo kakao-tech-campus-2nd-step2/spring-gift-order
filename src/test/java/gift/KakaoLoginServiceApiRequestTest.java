@@ -53,7 +53,7 @@ public class KakaoLoginServiceApiRequestTest {
                 .andRespond(withSuccess(expectedResponseBody, MediaType.APPLICATION_JSON));
 
         //when
-        String accessToken = kakaoLoginService.getAccessToken(code);
+        String accessToken = kakaoLoginService.processKakaoAuth(code);
 
         //then
         assertThat(accessToken).isEqualTo("test-access-token");
