@@ -43,7 +43,7 @@ public class MemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("메뉴 FindById 테스트")
+    @DisplayName("멤버 FindById 테스트")
     void testFindById_NotFound() {
         //when
         Optional<Member> foundMember = memberRepository.findById("nonexistent_member");
@@ -52,6 +52,7 @@ public class MemberRepositoryTest {
     }
     
     @Test
+    @DisplayName("멤버 FindById 테스트")
     void testDeleteMember() {
         //when
         memberRepository.deleteById("member2");
