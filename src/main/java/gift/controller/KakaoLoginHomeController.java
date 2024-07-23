@@ -15,6 +15,6 @@ public class KakaoLoginHomeController {
     public String kakaoLoginPage(Model model) {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri;
         model.addAttribute("kakaoAuthUrl", kakaoAuthUrl);
-        return "kakao-login";
+        return "kakao-login-home";
     }
 }
