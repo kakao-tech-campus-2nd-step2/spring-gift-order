@@ -38,7 +38,7 @@ public class OptionService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND));
         Option option = new Option(optionCreate.name(), optionCreate.quantity(), product);
-        Option.Validator.validateName(optionRepository.findAllByProductId(productId), option);
+        Option.Validator.validateName(product.getOptions(), option);
         optionRepository.save(option);
         return option.getId();
     }

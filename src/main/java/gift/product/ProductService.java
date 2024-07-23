@@ -49,7 +49,7 @@ public class ProductService {
             .orElseThrow(() -> new CategoryException(CategoryErrorCode.NOT_FOUND));
         Product product = new Product(productCreate.name(), productCreate.price(),
             productCreate.imageUrl(), category);
-        List<Option> options = productCreate.optionCreates()
+        List<Option> options = productCreate.optionCreateRequests()
             .stream()
             .map(it -> new Option(it.name(), it.quantity(), product))
             .toList();
