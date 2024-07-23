@@ -10,6 +10,9 @@ public class Price {
 
     private int value;
 
+    protected Price() {
+    }
+
     public Price(int value) {
         validatePrice(value);
 

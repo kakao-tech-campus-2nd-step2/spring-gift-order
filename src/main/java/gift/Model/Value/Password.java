@@ -10,6 +10,9 @@ public class Password {
 
     private String value;
 
+    protected Password() {
+    }
+
     public Password(String value) {
         validatePassword(value);
 

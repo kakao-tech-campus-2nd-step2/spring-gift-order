@@ -10,6 +10,9 @@ public class Count {
 
     private int value;
 
+    protected Count() {
+    }
+
     public Count(int value) {
         validateCount(value);
 

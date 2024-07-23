@@ -8,6 +8,9 @@ import java.util.Objects;
 public class Quantity {
     private int value;
 
+    protected Quantity() {
+    }
+
     public Quantity(int value) {
         validateQuantity(value);
 

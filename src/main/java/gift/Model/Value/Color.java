@@ -10,6 +10,8 @@ public class Color {
 
     private String value;
 
+    protected Color() {}
+
     public Color(String value){
         validateColor(value);
 

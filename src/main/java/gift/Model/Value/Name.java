@@ -11,6 +11,8 @@ public class Name {
 
     private String value;
 
+    protected Name() {}
+
     public Name(String value) {
         validateName(value);
 

@@ -10,6 +10,9 @@ public class Description {
 
     private String value;
 
+    protected Description() {
+    }
+
     public Description(String value) {
         validateDescription(value);
 

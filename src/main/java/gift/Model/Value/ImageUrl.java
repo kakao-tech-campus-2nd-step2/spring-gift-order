@@ -10,6 +10,8 @@ public class ImageUrl {
 
     private String value;
 
+    protected ImageUrl() {}
+
     public ImageUrl(String value) {
         validateImageUrl(value);
 

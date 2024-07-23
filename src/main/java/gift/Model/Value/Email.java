@@ -14,6 +14,8 @@ public class Email {
 
     private String value;
 
+    protected Email() {}
+
     public Email(String value) {
         validateEmail(value);
         this.value = value;
