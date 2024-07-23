@@ -33,7 +33,7 @@ public class KakaoController {
     }
 
     //카카오 로그인 화면 보여주기
-    @GetMapping("")
+    @GetMapping("/login")
     public void requestKakaoLoginScreen(HttpServletResponse response) throws IOException {
         String url = kakaoProperties.codeRequestUri() +
                 "?client_id=" + kakaoProperties.clientId() +
@@ -44,7 +44,7 @@ public class KakaoController {
     }
 
     //카카오 로그인+유저정보등록+jwt발급하기
-    @GetMapping("/login")
+    @GetMapping("/login/callback")
     public ResponseEntity<?> getKakaoCode(@RequestParam("code") String code, HttpServletResponse response) {
         Map<String, Object> responseBody = new HashMap<>();
         KakaoTokenResponse tokenResponse = kakaoService.receiveKakaoToken(code);
