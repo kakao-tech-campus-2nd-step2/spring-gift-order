@@ -1,7 +1,9 @@
 package gift.config;
 
 import java.util.List;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -18,11 +20,16 @@ public class WebConfig implements WebMvcConfigurer {
         this.loginUserArgumentResolver = loginUserArgumentResolver;
     }
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
             .addPathPatterns("/**")
-            .excludePathPatterns("/users/**", "/admin/**", "/css/**");
+            .excludePathPatterns("/users/**", "/admin/**", "/css/**", "/kakao/**");
     }
 
     @Override
