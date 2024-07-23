@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
+import gift.exception.KakaoApiException;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,6 +45,9 @@ public class KakaoUserService {
         ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request,
             KakaoTokenResponse.class);
 
+        if(!response.getStatusCode().is2xxSuccessful()){
+            throw new KakaoApiException("kakao API 응답 오류가 발생하였습니다.");
+        }
         return response.getBody();
     }
 }
