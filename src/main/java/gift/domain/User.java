@@ -13,6 +13,8 @@ public class User extends BaseEntity{
     private String password;
     @Column(nullable = false)
     private Boolean admin;
+    @Column
+    private String token;
 
     protected User(){
         super();
@@ -51,6 +53,14 @@ public class User extends BaseEntity{
 
     public void setAdmin(Boolean admin) {
         this.admin = admin;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void insertToken(String token) {
+        this.token = token;
     }
 
     public void updateEntity(String email, String password){

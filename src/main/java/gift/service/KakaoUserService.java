@@ -65,6 +65,7 @@ public class KakaoUserService {
             return userRepository.findByUserId(id);
         }
         User user = new User(id,id+"@email.com", UUID.randomUUID().toString());
+        user.insertToken(access_token);
         userRepository.save(user);
 
         return user;
