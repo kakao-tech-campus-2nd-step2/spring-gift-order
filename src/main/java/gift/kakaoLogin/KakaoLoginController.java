@@ -2,7 +2,8 @@ package gift.kakaoLogin;
 
 import gift.product.ProductService;
 import gift.user.LoginDTO;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@Slf4j
 public class KakaoLoginController {
 
     @Value("${kakao.client-id}")
@@ -21,6 +21,7 @@ public class KakaoLoginController {
 
     private final KakaoLoginService kakaoLoginService;
     private final ProductService productService;
+    private static final Logger log = LoggerFactory.getLogger(KakaoLoginController.class);
 
     public KakaoLoginController(KakaoLoginService kakaoLoginService, ProductService productService) {
         this.kakaoLoginService = kakaoLoginService;
@@ -42,7 +43,5 @@ public class KakaoLoginController {
         model.addAttribute("products", productService.findAllProducts());
         return "MainView";
     }
-
-
 
 }

@@ -2,7 +2,8 @@ package gift.kakaoLogin;
 
 import gift.exception.ErrorCode;
 import gift.exception.KakaoException;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +18,6 @@ import java.net.URI;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class KakaoLoginService {
 
     @Value("${kakao.client-id}")
@@ -25,6 +25,7 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-url}")
     private String REDIRECT_URI;
     private final RestClient kakaoRestClient;
+    private static final Logger log = LoggerFactory.getLogger(KakaoLoginService.class);
 
     public KakaoLoginService(RestClient kakaoRestClient) {
         this.kakaoRestClient = kakaoRestClient;
@@ -42,7 +43,6 @@ public class KakaoLoginService {
                 .retrieve()
                 .onStatus(status -> status.value() != 200, ((request, response1) -> {
                     log.info("[ERROR] " + response1.getStatusCode());
-
                     ErrorCode errorCode = getKauthErrorCode(response1);
                     throw new KakaoException(errorCode);
                 }))
@@ -52,6 +52,10 @@ public class KakaoLoginService {
     }
 
     private static ErrorCode getKauthErrorCode(ClientHttpResponse response) throws IOException {
+        if(!response.getHeaders().containsKey("WWW-Authenticate")){
+            return new ErrorCode(HttpStatus.valueOf(response.getStatusCode().value()), response.getStatusCode().toString(), response.getStatusText());
+
+        }
         String[] split = response.getHeaders().get("WWW-Authenticate").get(0).split(",");
         String error = split[1].split("=")[1].replaceAll("\"", "");
         String errorDescription = split[2].split("=")[1].replaceAll("\"", "");
