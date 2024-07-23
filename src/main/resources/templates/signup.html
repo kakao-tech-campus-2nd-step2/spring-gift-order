@@ -15,6 +15,7 @@
     <br>
     <button type="submit">Signup</button>
 </form>
+<a id="kakao-login">Kakao Signup &rarr;</a>
 <div id="message"></div>
 
 <script>
@@ -22,6 +23,17 @@
 
     const loginForm = document.getElementById('loginForm');
     const messageDiv = document.getElementById('message');
+
+    const kakaoButton = document.getElementById('kakao-login')
+
+    const kakaoParams = {
+        client_id: "7e91870429d8d9503459b3e9a78892cb",
+        redirect_uri: "http://localhost:8080/kakao",
+        response_type: "code",
+    }
+    const paramK = new URLSearchParams(kakaoParams).toString();
+
+    kakaoButton.href = `https://kauth.kakao.com/oauth/authorize?${paramK}`;
 
     loginForm.addEventListener('submit', async function (event) {
         event.preventDefault();
