@@ -39,6 +39,25 @@ public class AuthService {
         return MemberResponseDto.from(savedMember);
     }
 
+    @Transactional
+    public MemberResponseDto kakaoMemberLogin(String kakaoId){
+        return memberRepository.findMemberByKakaoId(kakaoId).map(MemberResponseDto::from)
+                .orElseGet(() -> memberKakaoJoin(kakaoId));
+    }
+
+    @Transactional
+    public MemberResponseDto memberKakaoJoin(String kakaoId){
+        Member member = new Member.Builder()
+                .email(kakaoId+"@kakao.com")
+                .password(kakaoId+"@kakao.com")
+                .kakaoId(kakaoId)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        return MemberResponseDto.from(savedMember);
+    }
+
     public MemberResponseDto findOneByEmailAndPassword(MemberRequestDto memberRequestDto){
         Member findMember = memberRepository.findMemberByEmailAndPassword(memberRequestDto.email(), memberRequestDto.password())
                 .orElseThrow(MemberNotFoundException::new);
