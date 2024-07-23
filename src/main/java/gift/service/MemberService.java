@@ -2,9 +2,10 @@ package gift.service;
 
 import gift.domain.Member;
 import gift.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.security.SecureRandom;
 
+import java.util.Base64;
 import java.util.Objects;
 
 @Service
@@ -42,6 +43,17 @@ public class MemberService {
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email);
+    }
+
+    public String generateToken(Member member) {
+        return jwtService.generateToken(member);
+    }
+
+    public String generateTemporaryPassword() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[24];
+        random.nextBytes(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
 }
