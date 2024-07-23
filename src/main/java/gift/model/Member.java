@@ -74,8 +74,4 @@ public class Member extends BasicEntity {
     public Role getRole() {
         return role;
     }
-
-    public SocialLoginType getLoginType() {
-        return loginType;
-    }
 }

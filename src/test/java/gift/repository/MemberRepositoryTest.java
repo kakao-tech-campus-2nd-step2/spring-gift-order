@@ -45,7 +45,6 @@ class MemberRepositoryTest {
         // given
         String email = "test@gmail.com";
         String password = "password";
-        Role role = Role.USER;
         memberRepository.save(new Member(email, password, Role.USER));
 
         // when
