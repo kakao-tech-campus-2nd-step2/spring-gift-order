@@ -4,9 +4,13 @@ import static gift.service.KakaoLoginService.TOKEN_REQUEST_URI;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.exception.kakao.KakaoAuthException;
+import gift.exception.kakao.KakaoTokenException;
 import gift.response.KakaoTokenResponse;
 import gift.service.KakaoLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -16,10 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 @Controller
@@ -27,13 +33,10 @@ import org.springframework.web.client.RestClient;
 public class KakaoLoginApiController {
 
     private final KakaoLoginService kakaoLoginService;
-    private final RestClient client = RestClient.builder().build();
-    private final ObjectMapper mapper;
 
     @Autowired
     public KakaoLoginApiController(KakaoLoginService kakaoLoginService, ObjectMapper mapper) {
         this.kakaoLoginService = kakaoLoginService;
-        this.mapper = mapper;
     }
 
     @Value("${kakao.client-id}")
@@ -50,18 +53,17 @@ public class KakaoLoginApiController {
 
     @RequestMapping("/kakao/login/oauth2/code")
     @ResponseBody
-    public ResponseEntity<KakaoTokenResponse> getToken(@RequestParam("code") String code)
-        throws JsonProcessingException {
-        ResponseEntity<String> tokenResponse = client.post()
-            .uri(URI.create(TOKEN_REQUEST_URI))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(kakaoLoginService.createTokenRequest(clientId, redirectUri, code))
-            .retrieve()
-            .toEntity(String.class);
+    public ResponseEntity<KakaoTokenResponse> getToken(
+        @RequestParam MultiValueMap<String, Object> params) throws JsonProcessingException {
 
-        KakaoTokenResponse dto = mapper.readValue(tokenResponse.getBody(),
-            KakaoTokenResponse.class);
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        kakaoLoginService.checkRedirectUriParams(params);
+        try {
+            String code = params.get("code").toString();
+            KakaoTokenResponse dto = kakaoLoginService.getToken(clientId, redirectUri, code);
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+        } catch (HttpClientErrorException e) {
+            throw new KakaoTokenException(e);
+        }
     }
 
 
