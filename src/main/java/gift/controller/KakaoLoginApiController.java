@@ -2,6 +2,9 @@ package gift.controller;
 
 import static gift.service.KakaoLoginService.TOKEN_REQUEST_URI;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.response.KakaoTokenResponse;
 import gift.service.KakaoLoginService;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +28,12 @@ public class KakaoLoginApiController {
 
     private final KakaoLoginService kakaoLoginService;
     private final RestClient client = RestClient.builder().build();
+    private final ObjectMapper mapper;
 
     @Autowired
-    public KakaoLoginApiController(KakaoLoginService kakaoLoginService) {
+    public KakaoLoginApiController(KakaoLoginService kakaoLoginService, ObjectMapper mapper) {
         this.kakaoLoginService = kakaoLoginService;
+        this.mapper = mapper;
     }
 
     @Value("${kakao.client-id}")
@@ -45,14 +50,18 @@ public class KakaoLoginApiController {
 
     @RequestMapping("/kakao/login/oauth2/code")
     @ResponseBody
-    public ResponseEntity<String> getToken(@RequestParam("code") String code) {
+    public ResponseEntity<KakaoTokenResponse> getToken(@RequestParam("code") String code)
+        throws JsonProcessingException {
         ResponseEntity<String> tokenResponse = client.post()
             .uri(URI.create(TOKEN_REQUEST_URI))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(kakaoLoginService.createTokenRequest(clientId, redirectUri, code))
             .retrieve()
             .toEntity(String.class);
-        return new ResponseEntity<>(tokenResponse.getBody(), HttpStatus.OK);
+
+        KakaoTokenResponse dto = mapper.readValue(tokenResponse.getBody(),
+            KakaoTokenResponse.class);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
 
