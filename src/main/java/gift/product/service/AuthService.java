@@ -17,6 +17,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,6 +147,9 @@ public class AuthService {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("토큰 발급 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
             .toEntity(String.class);
 
         try {
@@ -166,6 +170,9 @@ public class AuthService {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .header("Authorization", "Bearer " + accessToken)
             .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("카카오 유저 정보 조회 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
             .toEntity(String.class);
 
         try {
