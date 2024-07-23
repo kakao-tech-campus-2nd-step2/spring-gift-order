@@ -33,9 +33,13 @@ public class Option {
         return this.id;
     }
 
+    public Long getQuantity() {
+        return quantity;
+    }
+
     public void subtract(Long subtractNumber) throws IllegalAccessException {
         quantity -= subtractNumber;
-        if(quantity <= 0 || quantity > 1000000000){
+        if(quantity <= 0 || quantity > 1_000_000_000){
             throw new IllegalAccessException("옵션의 수량은 1이상이거나, 1억 이하여야 합니다.");
         }
     }
