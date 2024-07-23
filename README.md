@@ -17,7 +17,7 @@
 
 실제 카카오 로그인은 아래 그림과 같이 진행된다.
 
-![img.png](src/main/resources/static/img.png)
+![img.png](src/main/resources/static/images/img.png)
 하지만 지금과 같이 클라이언트가 없는 상황에서는 아래와 같은 방법으로 인가 코드를 획득한다.
 
 1. 내 애플리케이션 > 앱 설정 > 앱 키로 이동하여 REST API 키를 복사한다.
