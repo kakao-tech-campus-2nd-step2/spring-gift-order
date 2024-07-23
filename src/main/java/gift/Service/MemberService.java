@@ -4,6 +4,7 @@ import gift.Exception.ForbiddenException;
 import gift.Exception.MemberNotFoundException;
 import gift.Model.Entity.Member;
 import gift.DTO.RequestMemberDTO;
+import gift.Model.Value.Email;
 import gift.Repository.MemberRepository;
 import gift.Util.JwtUtil;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public String loginUser(RequestMemberDTO requestMemberDTO) throws ForbiddenException {
-        Member member = memberRepository.findByEmail(requestMemberDTO.email()).orElseThrow(() -> new MemberNotFoundException("매칭되는 멤버가 없습니다."));
+        Member member = memberRepository.findByEmail(new Email(requestMemberDTO.email())).orElseThrow(() -> new MemberNotFoundException("매칭되는 멤버가 없습니다."));
         String temp = member.getPassword().getValue();
         if (!(temp.equals(requestMemberDTO.password())))
             throw new ForbiddenException("잘못된 로그인입니다");
@@ -38,6 +39,6 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member getUserByToken(String token) {
-        return memberRepository.findByEmail(jwtUtil.getSubject(token)).orElseThrow(()-> new MemberNotFoundException("매칭되는 멤버가 없습니다"));
+        return memberRepository.findByEmail(new Email(jwtUtil.getSubject(token))).orElseThrow(()-> new MemberNotFoundException("매칭되는 멤버가 없습니다"));
     }
 }
