@@ -6,6 +6,7 @@ import gift.wish.domain.WishlistDTO;
 import gift.wish.domain.WishlistItem;
 import gift.product.service.ProductService;
 import gift.user.service.UserService;
+import gift.wish.domain.WishlistResponse;
 import gift.wish.service.WishlistService;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,9 +41,14 @@ public class WishlistViewController {
                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<WishlistItem> wishlists = wishlistService.getWishlistByUserId(userId, pageable);
+        Page<WishlistResponse> wishlists = wishlistService.getWishlistResponseByUserId(userId, pageable);
         model.addAttribute("wishlists", wishlists);
         model.addAttribute("id", userId);
+        //wishlistResponse
+            //wishlist_id
+            //user_id
+            //productDTO
+            //amount
         return "wishlist";
     }
 
