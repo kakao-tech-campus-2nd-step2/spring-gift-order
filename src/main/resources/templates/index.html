@@ -97,7 +97,6 @@
     $(document).ready(function() {
         if($('#token').val() !== 'null')
             localStorage.setItem('token', $('#token').val());
-        console.log($('#token').val());
         getProducts(currentPage);
 
         $('#prevPage').click(function() {
@@ -143,7 +142,7 @@
 
     function logoutFunction(){
         localStorage.removeItem('token');
-        location.href = "localhost:8080"
+        location.href = "/";
     }
 </script>
 </html>
