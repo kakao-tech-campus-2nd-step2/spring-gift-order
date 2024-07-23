@@ -22,8 +22,8 @@ public class KakaoOauthConfigure {
         return clientId;
     }
 
-    public void setClientId(String cliendId) {
-        this.clientId = cliendId;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public String getRedirectURL() {

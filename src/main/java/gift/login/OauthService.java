@@ -2,8 +2,8 @@ package gift.login;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
-import gift.exception.FailedLoginException;
 import java.net.URI;
+import java.util.Objects;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,7 +32,7 @@ public class OauthService {
 
     private String generateKakaoLoginURL() {
         return UriComponentsBuilder.fromHttpUrl(kakaoOauthConfigure.getAuthorizeCodeURL())
-            .queryParam("client_id", kakaoOauthConfigure.getCliendId())
+            .queryParam("client_id", kakaoOauthConfigure.getClientId())
             .queryParam("redirect_uri", kakaoOauthConfigure.getRedirectURL())
             .queryParam("response_type", "code").toUriString();
     }
@@ -46,18 +46,14 @@ public class OauthService {
             .toEntity(KakaoTokenResponseDTO.class)
             .getBody();
 
-        if (response == null) {
-            throw new FailedLoginException("Kakao token not found");
-        }
-
-        return response.getAccessToken();
+        return Objects.requireNonNull(response).getAccessToken();
     }
 
     private LinkedMultiValueMap<String, String> generateBodyToKakao(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", code);
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoOauthConfigure.getCliendId());
+        body.add("client_id", kakaoOauthConfigure.getClientId());
         body.add("redirect_uri", kakaoOauthConfigure.getRedirectURL());
         return body;
     }
