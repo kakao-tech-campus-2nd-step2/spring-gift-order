@@ -40,7 +40,7 @@ public class WishService {
     }
 
     @Transactional
-    public Long createWish(Long userId, CreateWishRequest request) {
+    public WishResponse createWish(Long userId, CreateWishRequest request) {
         Product product = productRepository.findById(request.productId())
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         User user = userRepository.findById(userId)
@@ -48,8 +48,7 @@ public class WishService {
 
         Wish wish = new Wish(user, product, request.quantity());
 
-        Wish savedWish = wishRepository.save(wish);
-        return savedWish.getId();
+        return WishMapper.toResponse(wishRepository.save(wish));
     }
 
     @Transactional

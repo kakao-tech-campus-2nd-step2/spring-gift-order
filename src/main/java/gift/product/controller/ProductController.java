@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,10 +50,13 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> addProduct(@RequestBody @Valid CreateProductRequest request) {
-        Long productId = productService.createProduct(request);
-        return new ResponseEntity<>(productId, getProductLocationHeader(productId),
-            HttpStatus.CREATED);
+    public ResponseEntity<ProductResponse> addProduct(
+        @RequestBody @Valid CreateProductRequest request) {
+        ProductResponse response = productService.createProduct(request);
+        URI location = UriComponentsBuilder.fromPath("/api/products/{id}")
+            .buildAndExpand(response.id())
+            .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @PutMapping("{id}")
@@ -71,13 +72,4 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
-    private HttpHeaders getProductLocationHeader(Long productId) {
-        HttpHeaders headers = new HttpHeaders();
-        URI location = UriComponentsBuilder.newInstance()
-            .path("/api/products/{id}")
-            .buildAndExpand(productId)
-            .toUri();
-        headers.setLocation(location);
-        return headers;
-    }
 }

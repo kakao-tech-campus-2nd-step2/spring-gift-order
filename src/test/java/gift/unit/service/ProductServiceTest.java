@@ -15,6 +15,7 @@ import gift.product.dto.request.NewOption;
 import gift.product.dto.request.UpdateProductRequest;
 import gift.product.dto.response.ProductResponse;
 import gift.product.entity.Product;
+import gift.product.option.dto.response.OptionResponse;
 import gift.product.option.service.OptionService;
 import gift.product.repository.ProductJpaRepository;
 import gift.product.service.ProductService;
@@ -136,7 +137,7 @@ class ProductServiceTest {
             .imageUrl("http://example.com/images/product_a.jpg").category(category).build();
         given(productRepository.save(any(Product.class))).willReturn(savedProduct);
         given(categoryRepository.findById(any(Long.class))).willReturn(Optional.of(category));
-        given(optionService.createOption(any())).willReturn(1L);
+        given(optionService.createOption(any())).willReturn(new OptionResponse(1L, "option 1", 100));
 
         // when
         productService.createProduct(request);

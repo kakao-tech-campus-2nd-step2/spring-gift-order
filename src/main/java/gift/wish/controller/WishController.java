@@ -7,6 +7,7 @@ import gift.wish.dto.request.UpdateWishRequest;
 import gift.wish.dto.response.WishResponse;
 import gift.wish.service.WishService;
 import jakarta.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/wishes")
@@ -45,10 +47,14 @@ public class WishController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> addWish(
+    public ResponseEntity<WishResponse> addWish(
         @LoginUserId Long userId, @RequestBody @Valid CreateWishRequest request
     ) {
-        return ResponseEntity.ok(wishService.createWish(userId, request));
+        WishResponse response = wishService.createWish(userId, request);
+        URI location = UriComponentsBuilder.fromPath("/api/wishes/{id}")
+            .buildAndExpand(response.id())
+            .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @PatchMapping

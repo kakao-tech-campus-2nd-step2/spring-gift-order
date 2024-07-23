@@ -39,7 +39,7 @@ public class OptionService {
     }
 
     @Transactional
-    public Long createOption(CreateOptionRequest request) {
+    public OptionResponse createOption(CreateOptionRequest request) {
         Product product = productRepository.findById(request.productId())
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         Option option = new Option(request.name(), request.quantity(), product);
@@ -47,7 +47,7 @@ public class OptionService {
         product.addOption(option);
         Option saved = optionRepository.save(option);
 
-        return saved.getId();
+        return OptionMapper.toResponse(saved);
     }
 
     @Transactional

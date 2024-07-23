@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/products/{product_id}/options")
@@ -34,11 +35,13 @@ public class OptionController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> addOption(@PathVariable("product_id") Long productId,
+    public ResponseEntity<OptionResponse> addOption(@PathVariable("product_id") Long productId,
         @RequestBody @Valid CreateOptionRequest request) {
-        Long id = optionService.createOption(request);
-        URI location = URI.create("/api/products/" + productId + "/options/" + id);
-        return ResponseEntity.created(location).body(id);
+        OptionResponse response = optionService.createOption(request);
+        URI location = UriComponentsBuilder.fromPath("/api/products/{productId}/options/{id}")
+            .buildAndExpand(productId, response.id())
+            .toUri();
+        return ResponseEntity.created(location).body(response);
     }
 
     @PutMapping("{id}")

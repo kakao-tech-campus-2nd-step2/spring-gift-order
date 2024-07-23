@@ -46,7 +46,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Long createProduct(CreateProductRequest request) {
+    public ProductResponse createProduct(CreateProductRequest request) {
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -58,7 +58,7 @@ public class ProductService {
             optionService.createOption(optionRequest);
         }
 
-        return product.getId();
+        return ProductMapper.toResponse(product);
     }
 
     @Transactional

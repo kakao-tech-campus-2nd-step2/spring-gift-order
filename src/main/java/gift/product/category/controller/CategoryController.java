@@ -40,14 +40,14 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> addCategory(@RequestBody @Valid CreateCategoryRequest request) {
-        Long categoryId = categoryService.createCategory(request);
-        URI location = UriComponentsBuilder.newInstance()
-            .path("/api/categories/{id}")
-            .buildAndExpand(categoryId)
+    public ResponseEntity<CategoryResponse> addCategory(
+        @RequestBody @Valid CreateCategoryRequest request) {
+        CategoryResponse response = categoryService.createCategory(request);
+        URI location = UriComponentsBuilder.fromPath("/api/categories/{id}")
+            .buildAndExpand(response.id())
             .toUri();
         return ResponseEntity.created(location)
-            .body(categoryId);
+            .body(response);
     }
 
     @PatchMapping("{id}")

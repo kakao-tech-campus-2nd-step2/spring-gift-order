@@ -38,14 +38,16 @@ public class CategoryService {
     }
 
     @Transactional
-    public Long createCategory(CreateCategoryRequest request) {
+    public CategoryResponse createCategory(CreateCategoryRequest request) {
         Category newCategory = new Category(request.name(), request.color(), request.description(),
             request.imageUrl());
 
         Categories categories = new Categories(categoryRepository.findAll());
         categories.validate(newCategory);
 
-        return categoryRepository.save(newCategory).getId();
+        Category category = categoryRepository.save(newCategory);
+
+        return CategoryMapper.toResponse(category);
     }
 
     @Transactional
