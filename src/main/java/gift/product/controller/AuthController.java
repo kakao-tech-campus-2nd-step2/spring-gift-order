@@ -1,10 +1,12 @@
 package gift.product.controller;
 
+import gift.product.dto.AccessAndRefreshToken;
 import gift.product.dto.JwtResponse;
 import gift.product.dto.MemberDto;
 import gift.product.dto.RegisterSuccessResponse;
 import gift.product.property.KakaoProperties;
 import gift.product.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -46,5 +48,17 @@ public class AuthController {
     @GetMapping("/members/login/kakao")
     public RedirectView loginKakao() {
         return new RedirectView(authService.getKakaoAuthCodeUrl());
+    }
+
+    @ResponseBody
+    @GetMapping
+    public ResponseEntity<AccessAndRefreshToken> getKakaoJwt(@RequestParam(name = "code") String code) {
+        AccessAndRefreshToken accessAndRefreshToken = authService.getAccessAndRefreshToken(code);
+        return ResponseEntity.ok(accessAndRefreshToken);
+    }
+
+    @PostMapping("/members/login/kakao/unlink")
+    public ResponseEntity<Long> unlinkKakaoAccount(@RequestParam(name = "accessToken") String accessToken) {
+        return ResponseEntity.ok(authService.unlinkKakaoAccount(accessToken));
     }
 }
