@@ -67,10 +67,10 @@ public class WishRepositoryTest {
         Wish wish2 = wishRepository.save(new Wish(member, product2, 2));
         List<Wish> actual = wishRepository.findWishListByMember(member);
         assertAll(
-                ()->assertThat(actual.get(0).getProduct().getName()).isEqualTo("아메리카노"),
-                ()->assertThat(actual.get(0).getCount()).isEqualTo(1),
-                ()->assertThat(actual.get(1).getProduct().getName()).isEqualTo("카푸치노"),
-                ()->assertThat(actual.get(1).getCount()).isEqualTo(2)
+                ()->assertThat(actual.get(0).getProduct().getName().getValue()).isEqualTo("아메리카노"),
+                ()->assertThat(actual.get(0).getCount().getValue()).isEqualTo(1),
+                ()->assertThat(actual.get(1).getProduct().getName().getValue()).isEqualTo("카푸치노"),
+                ()->assertThat(actual.get(1).getCount().getValue()).isEqualTo(2)
         );
     }
 
@@ -81,7 +81,7 @@ public class WishRepositoryTest {
         Optional<Wish> actual = wishRepository.findByMemberAndProduct(member, product1);
         assertAll(
                 ()->assertThat(actual).isPresent(),
-                ()->assertThat(actual.get().getCount()).isEqualTo(1),
+                ()->assertThat(actual.get().getCount().getValue()).isEqualTo(1),
                 ()->assertThat(actual.get().getId()).isEqualTo(wish1.getId())
         );
     }
@@ -91,10 +91,10 @@ public class WishRepositoryTest {
         Wish wish1 = wishRepository.save(new Wish(member, product1, 1));
         Optional<Wish> optionalWish = wishRepository.findById(wish1.getId());
         Wish wish = optionalWish.get();
-        wish.setCount(5);
+        wish.update(5);
 
         var actual = wishRepository.findById(wish.getId());
-        assertThat(actual.get().getCount()).isEqualTo(5);
+        assertThat(actual.get().getCount().getValue()).isEqualTo(5);
     }
 
     @Test

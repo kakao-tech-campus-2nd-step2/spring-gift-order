@@ -28,7 +28,7 @@ public class MemberRepositoryTest {
         Member member = new Member("woo6388@naver.com", "12345678");
         memberRepository.save(member);
         Optional<Member> actual = memberRepository.findByEmail(member.getEmail());
-        assertThat(actual.get().getEmail()).isEqualTo("woo6388@naver.com");
+        assertThat(actual.get().getEmail().getValue()).isEqualTo("woo6388@naver.com");
     }
 
     @Test
@@ -36,10 +36,10 @@ public class MemberRepositoryTest {
         Member member1 = memberRepository.save(new Member("woo6388@naver.com", "12345678"));
         Optional<Member> optionalMember = memberRepository.findByEmail(member1.getEmail());
         Member member = optionalMember.get();
-        member.setPassword("0000");
+        member.update("qoo6388@naver.com", "0000");
 
         var actual = memberRepository.findByEmail(member1.getEmail());
-        assertThat(actual.get().getPassword()).isEqualTo("0000");
+        assertThat(actual.get().getPassword().getValue()).isEqualTo("0000");
     }
 
     @Test

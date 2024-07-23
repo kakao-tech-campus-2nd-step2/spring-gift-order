@@ -23,9 +23,9 @@ public class ProductTest {
     void creationTest() {
         Product product= new Product("아메리카노", 4000, "아메리카노url",category);
         assertAll(
-                () -> assertThat(product.getName()).isEqualTo("아메리카노"),
-                () -> assertThat(product.getPrice()).isEqualTo(4000),
-                () -> assertThat(product.getImageUrl()).isEqualTo("아메리카노url"),
+                () -> assertThat(product.getName().getValue()).isEqualTo("아메리카노"),
+                () -> assertThat(product.getPrice().getValue()).isEqualTo(4000),
+                () -> assertThat(product.getImageUrl().getValue()).isEqualTo("아메리카노url"),
                 ()-> assertThat(product.getCategory()).isEqualTo(category)
         );
     }
@@ -33,15 +33,12 @@ public class ProductTest {
     @Test
     void setterTest() {
         Product product = new Product("아메리카노", 4000, "아메리카노url", category);
-        product.setName("카푸치노");
-        product.setPrice(5000);
-        product.setImageUrl("카푸치노url");
-        product.setCategory(category2);
+        product.update("카푸치노", 5000, "카푸치노url", category2);
 
         assertAll(
-                () -> assertThat(product.getName()).isEqualTo("카푸치노"),
-                () -> assertThat(product.getPrice()).isEqualTo(5000),
-                () -> assertThat(product.getImageUrl()).isEqualTo("카푸치노url"),
+                () -> assertThat(product.getName().getValue()).isEqualTo("카푸치노"),
+                () -> assertThat(product.getPrice().getValue()).isEqualTo(5000),
+                () -> assertThat(product.getImageUrl().getValue()).isEqualTo("카푸치노url"),
                 () -> assertThat(product.getCategory()).isEqualTo(category2)
         );
     }

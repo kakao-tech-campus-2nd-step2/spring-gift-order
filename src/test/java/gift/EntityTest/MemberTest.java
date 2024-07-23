@@ -13,8 +13,8 @@ public class MemberTest {
         Member member = new Member("woo6388@naver.com", "123456789");
 
         assertAll(
-                ()->assertThat(member.getEmail()).isEqualTo("woo6388@naver.com"),
-                () -> assertThat(member.getPassword()).isEqualTo("123456789")
+                ()->assertThat(member.getEmail().getValue()).isEqualTo("woo6388@naver.com"),
+                () -> assertThat(member.getPassword().getValue()).isEqualTo("123456789")
         );
     }
 
@@ -22,12 +22,11 @@ public class MemberTest {
     void setterTest(){
         Member member = new Member("woo6388@naver.com", "123456789");
 
-        member.setEmail("qoo6388@naver.com");
-        member.setPassword("0000");
+        member.update("qoo6388@naver.com", "0000");
 
         assertAll(
-                () -> assertThat(member.getEmail()).isEqualTo("qoo6388@naver.com"),
-                () -> assertThat(member.getPassword()).isEqualTo("0000")
+                () -> assertThat(member.getEmail().getValue()).isEqualTo("qoo6388@naver.com"),
+                () -> assertThat(member.getPassword().getValue()).isEqualTo("0000")
         );
 
     }

@@ -49,7 +49,7 @@ public class OptionRepositoryTest {
         Option option = optionRepository.save(new Option("옵션1", 1, product));
         Optional<Option> actual = optionRepository.findById(option.getId());
 
-        assertThat(actual.get().getName()).isEqualTo("옵션1");
+        assertThat(actual.get().getName().getValue()).isEqualTo("옵션1");
     }
 
     @Test
@@ -59,10 +59,10 @@ public class OptionRepositoryTest {
         List<Option> actual = optionRepository.findByProduct(product);
 
         assertAll(
-                ()-> assertThat(actual.get(0).getName()).isEqualTo("옵션1"),
-                () -> assertThat(actual.get(0).getQuantity()).isEqualTo(1),
-                () -> assertThat(actual.get(1).getName()).isEqualTo("옵션2"),
-                () -> assertThat(actual.get(1).getQuantity()).isEqualTo(2)
+                ()-> assertThat(actual.get(0).getName().getValue()).isEqualTo("옵션1"),
+                () -> assertThat(actual.get(0).getQuantity().getValue()).isEqualTo(1),
+                () -> assertThat(actual.get(1).getName().getValue()).isEqualTo("옵션2"),
+                () -> assertThat(actual.get(1).getQuantity().getValue()).isEqualTo(2)
         );
     }
 
@@ -76,8 +76,8 @@ public class OptionRepositoryTest {
         Optional<Option> actualOptionalOption = optionRepository.findById(option1.getId());
         Option actual = actualOptionalOption.get();
         assertAll(
-                () -> assertThat(actual.getName()).isEqualTo("옵션2"),
-                () -> assertThat(actual.getQuantity()).isEqualTo(2)
+                () -> assertThat(actual.getName().getValue()).isEqualTo("옵션2"),
+                () -> assertThat(actual.getQuantity().getValue()).isEqualTo(2)
         );
     }
 
