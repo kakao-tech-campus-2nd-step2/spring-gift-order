@@ -26,6 +26,11 @@ public class Category {
         return this.id;
     }
 
+    public Category(String name) {
+        this.name = name;
+        this.menus = new LinkedList<>();
+    }
+
     public Category(Long id, String name, LinkedList<Menu> menus) {
         this.id = id;
         this.name = name;
@@ -37,7 +42,6 @@ public class Category {
     }
 
     public Category() {
-
     }
 
     @Override

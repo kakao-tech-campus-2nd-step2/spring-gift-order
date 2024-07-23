@@ -36,7 +36,7 @@ public class CategoryService {
                 .orElseThrow(() -> new NoSuchElementException("해당하는 카테고리가 존재하지 않습니다."));
         List<Menu> menuList = category.getMenus();
 
-        Category defaultCategory = categoryRepository.save(new Category(null,"기본카테고리",new LinkedList<Menu>()));
+        Category defaultCategory = categoryRepository.save(new Category("기본카테고리"));
 
         for (Menu menu : menuList) {
             menu.setCategory(defaultCategory);
