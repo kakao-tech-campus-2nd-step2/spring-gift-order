@@ -8,7 +8,6 @@ public class WishProductResponse {
     Long id;
     UserResponse user;
     ProductResponse product;
-    int count;
 
     public WishProductResponse(){
 
@@ -18,7 +17,6 @@ public class WishProductResponse {
         this.id = wishProduct.getId();
         this.user = new UserResponse(wishProduct.getUser());
         this.product = new ProductResponse(wishProduct.getProduct());
-        this.count = wishProduct.getCount();
     }
 
     public Long getId(){
@@ -30,8 +28,5 @@ public class WishProductResponse {
 
     public ProductResponse getProduct() {
         return product;
-    }
-    public int getCount(){
-        return count;
     }
 }

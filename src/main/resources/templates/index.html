@@ -22,6 +22,7 @@
         <th scope="col">Image</th>
         <th scope="col">Category </th>
         <th scope="col">Choose</th>
+        <th scope="col">Buy</th>
     </tr>
     </thead>
     <tbody id="product-tbody">
@@ -77,6 +78,9 @@
                             <td>${product.category.name}</td>
                             <td>
                                 <a href="#" onclick="chooseFunction(${product.id})">추가</a>
+                            </td>
+                            <td>
+                                <a href="/orders?product_id=${product.id}">구매</a>
                             </td>
                         </tr>
                     `;

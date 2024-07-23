@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class WishListController {
     private final WishListService wishListService;
-    private final ProductService ps;
+    private final ProductService productService;
 
-    public WishListController(WishListService wishListService, ProductService ps){
+    public WishListController(WishListService wishListService, ProductService productService){
         this.wishListService = wishListService;
-        this.ps = ps;
+        this.productService = productService;
     }
     /*
      * 위시리스트 내용 추가
@@ -31,7 +31,7 @@ public class WishListController {
     public ResponseEntity<Void> createWishList(
             @PathVariable("productId") Long id, @AuthenticateMember UserResponse userRes
     ){
-        ProductResponse productRes = ps.readOneProduct(id);
+        ProductResponse productRes = productService.readOneProduct(id);
 
         WishProductRequest wishProduct = new WishProductRequest(userRes, productRes);
         wishListService.addWishList(wishProduct);
@@ -68,11 +68,10 @@ public class WishListController {
     @PutMapping("api/wishes/{productId}")
     public ResponseEntity<Void> updateWishProduct(
             @PathVariable("productId") Long productId,
-            @AuthenticateMember UserResponse user,
-            @RequestParam int count
+            @AuthenticateMember UserResponse user
     ){
         Long id = user.getId();
-        wishListService.updateWishProduct(id, productId, count);
+        wishListService.updateWishProduct(id, productId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -45,7 +45,7 @@ public class WishListServiceTest {
 
     @Test
     @DisplayName("saveTestWhenNew")
-    void test1(){
+    void test1() {
         User user = new User("userid", "user1@email.com", "aaaaa");
         TestUtil.setId(user, 1L);
         Product product = new Product("product", 15000, "url", new Category("물품"));
@@ -73,7 +73,6 @@ public class WishListServiceTest {
         Assertions.assertThat(savedWishProduct.getUser().getUserId()).isEqualTo(user.getUserId());
         Assertions.assertThat(savedWishProduct.getUser().getEmail()).isEqualTo(user.getEmail());
         Assertions.assertThat(savedWishProduct.getUser().getPassword()).isEqualTo(user.getPassword());
-        Assertions.assertThat(savedWishProduct.getCount()).isEqualTo(1);
     }
 
     @Test
@@ -106,7 +105,6 @@ public class WishListServiceTest {
         Assertions.assertThat(savedWishProduct.getUser().getUserId()).isEqualTo(user.getUserId());
         Assertions.assertThat(savedWishProduct.getUser().getEmail()).isEqualTo(user.getEmail());
         Assertions.assertThat(savedWishProduct.getUser().getPassword()).isEqualTo(user.getPassword());
-        Assertions.assertThat(savedWishProduct.getCount()).isEqualTo(2);
     }
 
     @Test
@@ -188,11 +186,10 @@ public class WishListServiceTest {
                 invocation -> wishProduct
         );
         // when
-        wishListService.updateWishProduct(1L, 1L, 350);
+        wishListService.updateWishProduct(1L, 1L);
         // then
         Assertions.assertThat(wishProduct.getProduct()).isEqualTo(product);
         Assertions.assertThat(wishProduct.getUser()).isEqualTo(user);
-        Assertions.assertThat(wishProduct.getCount()).isEqualTo(350);
     }
 
     @Test

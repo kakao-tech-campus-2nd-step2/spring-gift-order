@@ -63,17 +63,12 @@ public class WishListService {
         Long id = wishProductRequest.getUser().getId();
         Long productId = wishProductRequest.getProduct().getId();
 
-        if(wishListRepository.existsByUserIdAndProductId(id, productId)){
-            WishProduct wishProduct = wishListRepository.findByUserIdAndProductId(id, productId);
-            wishProduct.changeCount(wishProduct.getCount() + 1);
 
-            return new WishProductResponse(wishProduct);
-        }
-
-        User byId = userRepository.findById(id).orElseThrow(NullPointerException::new);
-        Product byProductId = productRepository.findById(productId).orElseThrow(NullPointerException::new);
-        WishProduct wishProduct = new WishProduct(byId, byProductId);
-        wishListRepository.save(wishProduct);
+        User savedUser = userRepository.findById(id).orElseThrow(NullPointerException::new);
+        Product savedProduct = productRepository.findById(productId).orElseThrow(NullPointerException::new);
+        WishProduct wishProduct = new WishProduct(savedUser, savedProduct);
+        if(!wishListRepository.existsByUserIdAndProductId(id, productId))
+            wishListRepository.save(wishProduct);
 
         return new WishProductResponse(wishProduct);
     }
@@ -81,9 +76,8 @@ public class WishListService {
      * 특정 유저의 특정 위시리스트 물품의 수량을 변경하는 로직
      */
     @Transactional
-    public void updateWishProduct(Long userId, Long productId, int count){
+    public void updateWishProduct(Long userId, Long productId){
         WishProduct wish = wishListRepository.findByUserIdAndProductId(userId, productId);
-        wish.changeCount(count);
         wishListRepository.save(wish);
     }
     /*
@@ -91,12 +85,7 @@ public class WishListService {
      */
     @Transactional
     public void deleteWishProduct(Long wishId){
-        WishProduct wish = wishListRepository.findById(wishId).orElseThrow(NullPointerException::new);
-        if(wish.getCount() == 1) {
-            wishListRepository.deleteById(wishId);
-            return;
-        }
-        wish.changeCount(wish.getCount() - 1);
+        wishListRepository.deleteById(wishId);
     }
 
 }
