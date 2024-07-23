@@ -1,15 +1,14 @@
 package gift.domain.user;
 
-import gift.domain.user.dto.kakao.KaKaoToken;
 import gift.domain.user.dto.UserDTO;
-import gift.domain.user.dto.UserInfo;
-import gift.global.exception.ErrorCode;
+import gift.domain.user.dto.kakao.KaKaoToken;
 import gift.global.jwt.JwtProvider;
-import gift.global.resolver.LoginInfo;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,11 +22,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserRestController {
 
     private final UserService userService;
+    private final KaKaoUserService kaKaoUserService;
     private final JwtProvider jwtProvider;
 
-    public UserRestController(UserService userService, JwtProvider jwtProvider) {
+    public UserRestController(UserService userService, JwtProvider jwtProvider,
+        KaKaoUserService kaKaoUserService) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
+        this.kaKaoUserService = kaKaoUserService;
     }
 
     /**
@@ -53,29 +55,33 @@ public class UserRestController {
     /**
      * 카카오 회원 로그인
      */
-    @GetMapping("kakaoLogin")
+    @GetMapping("/kakaoLogin")
     public ResponseEntity<SimpleResultResponseDto> kakaoLogin(
         @RequestParam(value = "code", required = false) String authorizedCode, // 없으면 null
         @RequestParam(value = "error", required = false) String error // 없으면 null
     ) {
         if (authorizedCode != null) {
-            KaKaoToken kaKaoToken = userService.getToken(authorizedCode);
+            KaKaoToken kaKaoToken = kaKaoUserService.getKaKaoToken(authorizedCode);
 
-            User findUser = userService.findUserByKakaoAccessToken(
-                kaKaoToken.accessToken());
+            User findUser = kaKaoUserService.findUserByKaKaoAccessToken(kaKaoToken.accessToken());
 
             String jwt = JwtProvider.generateToken(findUser);
             System.out.println("jwt = " + jwt);
 
-            // TODO 커스텀 헤더 포함 응답하는 메서드만들어서 홈 화면으로 리다이렉트 처리 필요
-            return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "로그인에 성공했습니다.", jwt);
+            ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwt)
+                .httpOnly(true)
+                .path("/")
+                .build();
+
+            return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header(HttpHeaders.LOCATION, "/")
+                .build();
 
         }
-        // TODO 커스텀 헤더 포함 응답하는 메서드만들어서 홈 화면으로 리다이렉트 처리필요
-        return ResponseMaker.createSimpleResponse(HttpStatus.OK, "로그인 과정이 취소되었습니다.");
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .header(HttpHeaders.LOCATION, "/")
+            .build();
     }
 
-    @GetMapping("kakaoLogin/refresh")
-    public void kakaoLoginRefresh(@LoginInfo UserInfo userInfo) {
-    }
 }

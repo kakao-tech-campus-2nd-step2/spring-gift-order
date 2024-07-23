@@ -30,12 +30,4 @@ public class UserController {
         return "login";
     }
 
-    @GetMapping("/kakaoLogin")
-    public void kakaoLogin(HttpServletResponse response) throws IOException {
-        String url = String.format("%s?client_id=%s&redirect_uri=%s&response_type=%s",
-            KAKAO_AUTH_URL, clientId, redirectUri, RESPONSE_TYPE);
-
-        // 브라우저를 카카오 로그인 페이지로 리다이렉트
-        response.sendRedirect(url);
-    }
 }
