@@ -36,6 +36,16 @@ public class OAuthService {
         this.properties = kakaoProperties;
     }
 
+    public TokenResponse signIn(String code) {
+        String accessToken = getKakaoAccessToken(code);
+        String email = getKakaoMemberInfo(accessToken);
+
+        Member member = memberRepository.findByEmail(email)
+                .orElse(memberRepository.save(new Member(email, "", Role.USER)));
+
+        String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        return TokenResponse.from(token);
+    }
 
     public String getKakaoAccessToken(String code) {
         return client.post()
