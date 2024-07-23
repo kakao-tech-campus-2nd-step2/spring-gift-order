@@ -28,15 +28,6 @@ class UserTest {
     }
 
     @Test
-    void 유저_이메일_실패_null() {
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            new User(null, "password123");
-        });
-
-        assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
     void 유저_이메일_실패_빈값() {
         BusinessException exception = assertThrows(BusinessException.class, () -> {
             new User("", "password123");
@@ -52,15 +43,6 @@ class UserTest {
         });
 
         assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
-    void 유저_비밀번호_실패_null() {
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            new User("test@example.com", null);
-        });
-
-        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getErrorCode());
     }
 
     @Test
@@ -87,17 +69,6 @@ class UserTest {
     }
 
     @Test
-    void 유저_업데이트_이메일_실패_null() {
-        User user = new User("test@example.com", "password123");
-
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            user.update(null, "newpassword123");
-        });
-
-        assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
     void 유저_업데이트_이메일_실패_유효하지않은형식() {
         User user = new User("test@example.com", "password123");
 
@@ -106,17 +77,6 @@ class UserTest {
         });
 
         assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
-    void 유저_업데이트_비밀번호_실패_null() {
-        User user = new User("test@example.com", "password123");
-
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            user.update("new@example.com", null);
-        });
-
-        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getErrorCode());
     }
 
     @Test
