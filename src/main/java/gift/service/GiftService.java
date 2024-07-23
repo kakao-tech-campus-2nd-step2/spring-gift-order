@@ -8,7 +8,6 @@ import gift.domain.Category;
 import gift.domain.Option;
 import gift.domain.Product;
 import gift.repository.CategoryRepository;
-import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import gift.utils.error.CategoryNotFoundException;
 import gift.utils.error.NotpermitNameException;

@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.utils.error.CategoryNotFoundException;
 import gift.utils.error.DuplicateOptionException;
+import gift.utils.error.KakaoLoginException;
 import gift.utils.error.NotpermitNameException;
 import gift.utils.error.OptionNameDuplicationException;
 import gift.utils.error.OptionNotFoundException;
@@ -105,5 +106,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleOptionNotFoundException(OptionNotFoundException ex,
         WebRequest request){
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(KakaoLoginException.class)
+    public ResponseEntity<?> handleKakaoLoginException(KakaoLoginException ex,
+        WebRequest request){
+        return new ResponseEntity<>(ex.getMessage(),HttpStatus.BAD_REQUEST);
     }
 }
