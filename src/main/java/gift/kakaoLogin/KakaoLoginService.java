@@ -63,7 +63,7 @@ public class KakaoLoginService {
     private LinkedMultiValueMap<String, String> createBody(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", ".");
+        body.add("client_id", REST_API_KEY);
         body.add("redirect_url", REDIRECT_URI);
         body.add("code", code);
         return body;
