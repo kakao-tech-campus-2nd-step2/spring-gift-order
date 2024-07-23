@@ -4,6 +4,7 @@
 ## 목차
 
 0. 이번 주차
+   1. [1단계(카카오 로그인)](#1단계카카오-로그인-요구사항)
 
 1. [1주차 - product](#1주차-과제-요구사항spring-gift-product)
    1. [1단계(상품 API)](#1단계상품-api-요구사항)
@@ -37,7 +38,7 @@
   - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > **Redirect URI 등록 > `http://localhost:8080` 저장** ([Redirect URI 등록](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-redirect-uri))
   - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 동의항목 > 접근권한 > **카카오톡 메시지 전송 > 선택 동의** ([접근권한 동의항목](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#permission))
 
-## 기능 요구 사항
+### 기능 요구 사항
 
 카카오 로그인을 통해 인가 코드를 받고, 인가 코드를 사용해 토큰을 받은 후 향후 카카오 API 사용을 준비한다.
 
@@ -112,6 +113,60 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
 - 응답 시간이 길면 어떻게 할까? 몇 초가 적당할까?
 - 오류 코드는 어떻게 처리해야 할까?
 - 응답 값을 파싱할 때 문제가 발생하면 어떻게 할까?
+
+
+
+### 1단계 기능 목록
+
+#### [기능 구현]
+
+- [ ] 클라이언트의 카카오 로그인 요청 처리
+
+- [ ] 클라이언트의 요청을 `GET /oauth/authorize`로 redirect
+
+  * 이후 동의 등 로그인 과정은 API에서 처리
+  * 인가코드를 쿼리 파라미터로 포함한 리디렉션 url로 이동
+
+- [ ] 리디렉션 uri에서 code 추출
+
+- [ ] code를 포함한 request body를 만들어 token 발급 요청
+
+  ```http
+  POST https://kauth.kakao.com/oauth/token HTTP/1.1
+  Content-Type: application/x-www-form-urlencoded;charset=utf-8
+  
+  {
+    "grant_type": "authorization_code",
+    "client_id": "${REST-API-KEY}",
+    "redirect_uri": "${REDIRECT-URI}",
+    "code": validation code from oauth request
+  }
+  ```
+
+- [ ] 발급된 토큰으로 사용자 정보 요청
+
+  ```http
+  GET https://kapi.kakao.com/v2/user/me?property_keys=kakao_account.email HTTP/1.1
+  Authorization: Bearer ${ACCESS_TOKEN}
+  Content-type: application/x-www-form-urlencoded;charset=utf-8
+  ```
+
+- [ ] Response 데이터 처리
+
+  - [ ] 최초 1회 회원가입 - User 테이블에 저장
+  - [ ] 이후 로그인 - User 테이블에서 데이터 호출하여 대조
+
+- [ ] 유저 정보를 바탕으로 jwt token 발급하여 클라이언트에 반환
+
+
+
+#### [테스트]
+
+- [ ] 서비스 서버 기능 통합 테스트
+  * Kakao API를 mock객체로 주입하여 기능 테스트
+  * [ ] Kakao API에서 에러를 반환하는 경우
+  * [ ] Happy Case
+
 
 
 
