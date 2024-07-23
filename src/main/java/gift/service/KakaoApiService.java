@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.controller.dto.KakaoApiDTO;
 import gift.utils.ExternalApiService;
 import gift.utils.config.KakaoProperties;
 import gift.utils.error.KakaoLoginException;

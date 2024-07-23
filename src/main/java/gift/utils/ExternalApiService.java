@@ -1,9 +1,6 @@
 package gift.utils;
 
-import gift.controller.dto.KakaoApiDTO;
-import gift.controller.dto.KakaoApiDTO.KakaoCode;
 import gift.utils.config.KakaoProperties;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,11 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class ExternalApiService {
