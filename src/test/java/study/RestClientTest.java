@@ -1,5 +1,8 @@
 package study;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
@@ -22,13 +25,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ConfigurationProperties(prefix = "kakao")
 record KakaoProperties(
         String clientId,
-        String redirectUrl
+        String redirectUrl,
+        String tokenUrl,
+        String memberInfoUrl
 ) {}
 
 @ActiveProfiles("test")
 @SpringBootTest
 public class RestClientTest {
     private final RestClient client = RestClient.builder().build();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private KakaoProperties properties;
@@ -38,27 +44,30 @@ public class RestClientTest {
 
 
     @Test
-    void test2() {
+    void test0() {
         System.out.println(properties);
     }
 
     @Test
     void test1() {
-        var url = "https://kauth.kakao.com/oauth/token";
-        final var body = createBody();
+        var url = properties.tokenUrl();
+        var code = "78RmEworRfRtyhb6EanyFU_9RWox5DRxHVObH3128eHaCTIV-FEinAAAAAQKKiWQAAABkN8NH4oh5oEAb4_jFQ";
+        final var body = createBody(code);
         var response = client.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)     // request body
-                .retrieve()
-                .toEntity(String.class);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+                .exchange((req, res) -> {
+                    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+            if (res.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
+                return objectMapper.readValue(res.getBody(), KakaoTokenDto.class);
+            }
+            return "";
+        });
         System.out.println(response);
     }
 
-    private @NotNull LinkedMultiValueMap<String, String> createBody() {
-        var code = "ylvvgf83RQzWp0Q9c77urGLMZ54lUEQMbZ3JDsWojGHv0FFFjdkFzgAAAAQKPXPsAAABkNg9ZbzRDLJpR7eCqA";
+    private @NotNull LinkedMultiValueMap<String, String> createBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
