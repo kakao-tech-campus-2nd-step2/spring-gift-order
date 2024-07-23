@@ -11,9 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
 
     private final UserUtility userUtility;
     private final UserService userService;
@@ -34,5 +38,17 @@ public class UserController {
     public ResponseEntity<Object> login(@RequestBody @Valid UserDTO form) {
         String accessToken = userService.login(form);
         return ResponseEntity.ok().body(userUtility.accessTokenToObject(accessToken));
+    }
+
+    @PostMapping("/kakao")
+    public ResponseEntity<Map<String, String>> kakaoLogin(@RequestBody Map<String, String> request) {
+        String code = request.get("code");
+
+        String accessToken = userService.kakaoLogin(code);
+
+        Map<String, String> data = new HashMap<>();
+        data.put("access_token", accessToken);
+
+        return ResponseEntity.ok().body(data);
     }
 }
