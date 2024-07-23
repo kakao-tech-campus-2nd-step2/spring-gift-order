@@ -1,6 +1,5 @@
 package gift.global.exception;
 
-import gift.global.response.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {

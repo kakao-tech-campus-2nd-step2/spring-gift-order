@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+
     private final JpaUserRepository userRepository;
 
     public UserService(JpaUserRepository jpaUserRepository) {

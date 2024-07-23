@@ -5,11 +5,19 @@ import gift.domain.category.Category;
 import gift.domain.option.Option;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 @Entity
 public class Product extends BaseTimeEntity {
 
@@ -59,36 +67,36 @@ public class Product extends BaseTimeEntity {
         return name;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public List<Option> getOptions() {
-        return options;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public int getPrice() {
+        return price;
     }
 
     public void setPrice(int price) {
         this.price = price;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<Option> getOptions() {
+        return options;
     }
 
     public boolean hasOneOption() {
@@ -117,8 +125,12 @@ public class Product extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Product product = (Product) o;
         return id.equals(product.id) &&
                price == product.price &&

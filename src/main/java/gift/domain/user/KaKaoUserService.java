@@ -23,12 +23,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KaKaoUserService {
 
+    private final JpaUserRepository userRepository;
     @Value("${kakao.client.id}")
     private String clientId; // 카카오 개발자 콘솔에서 발급받은 클라이언트 ID
-
     @Value("${kakao.redirect.url}")
     private String redirectUri; // 카카오 로그인 후 리다이렉트될 URI
-    private final JpaUserRepository userRepository;
+
     public KaKaoUserService(JpaUserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -48,7 +48,8 @@ public class KaKaoUserService {
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request,
+            String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
@@ -62,7 +63,8 @@ public class KaKaoUserService {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "토큰을 처리하는 중 오류가 발생했습니다.");
+                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "토큰을 처리하는 중 오류가 발생했습니다.");
             }
         } else {
             System.out.println("응답 실패: " + response.getStatusCode());
@@ -85,8 +87,8 @@ public class KaKaoUserService {
 
         User findUser = null;
 
-        if(response.getStatusCode() == HttpStatus.OK){
-            try{
+        if (response.getStatusCode() == HttpStatus.OK) {
+            try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
 
@@ -102,12 +104,13 @@ public class KaKaoUserService {
                 findUser = userRepository.findByEmail(email);
 
                 // 유저 정보 없으면 자동 회원 가입
-                if(findUser == null){
+                if (findUser == null) {
                     findUser = createUser(email);
                 }
 
             } catch (JsonProcessingException e) {
-                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "json 데이터 형식이 올바르지 않습니다.");
+                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "json 데이터 형식이 올바르지 않습니다.");
             }
         }
         return findUser;

@@ -90,9 +90,9 @@
           <div class="form-group">
             <label for="productCategory">Category</label>
             <select class="form-control" id="productCategory" name="categoryId" required>
-              <option value="" disabled selected>Select Category</option>
+              <option disabled selected value="">Select Category</option>
               <tr th:each="category : ${categories}">
-                <option th:value="${category.id}" th:text="${category.name}"></option>
+                <option th:text="${category.name}" th:value="${category.id}"></option>
               </tr>
             </select>
           </div>
@@ -110,7 +110,8 @@
           </div>
           <div class="form-group">
             <label for="optionQuantity">Option Quantity</label>
-            <input class="form-control" id="optionQuantity" name="option.quantity" required type="number">
+            <input class="form-control" id="optionQuantity" name="option.quantity" required
+                   type="number">
           </div>
           <button class="btn btn-primary" onclick="submitProduct()" type="button">Submit</button>
         </form>
@@ -193,10 +194,11 @@
             </div>
             <div class="form-group">
               <label th:for="'editProductCategory_' + ${product.id}">Category</label>
-              <select class="form-control" th:id="'editProductCategory_' + ${product.id}" name="categoryId" required>
+              <select class="form-control" name="categoryId"
+                      required th:id="'editProductCategory_' + ${product.id}">
                 <tr th:each="category : ${categories}">
-                  <option th:value="${category.id}" th:text="${category.name}"
-                          th:selected="${category.id == product.category.id}"></option>
+                  <option th:selected="${category.id == product.category.id}" th:text="${category.name}"
+                          th:value="${category.id}"></option>
                 </tr>
               </select>
             </div>
@@ -262,7 +264,6 @@
       alert(error.response.data.message);
     });
   }
-
 
   function confirmDelete(productId, productName) {
     // 삭제 모달에 상품 이름 설정

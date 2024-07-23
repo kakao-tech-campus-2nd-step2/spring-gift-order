@@ -1,14 +1,12 @@
 package gift.domain.cartItem;
 
 import gift.domain.cartItem.dto.CartItemDTO;
-import gift.domain.product.Product;
 import gift.domain.user.dto.UserInfo;
 import gift.global.resolver.LoginInfo;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
 import java.util.List;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +84,7 @@ public class CartItemRestController {
     // 안그러면 productId 로 다시 상품 정보를 불러와야 함..페이징할때도 cartItem 에서 바로 할 수 있으니 나을 것 같다
     @PutMapping("/{cartItemId}")
     public ResponseEntity<SimpleResultResponseDto> updateCartItem(
-        @PathVariable("cartItemId") Long cartItemId, 
+        @PathVariable("cartItemId") Long cartItemId,
         @RequestParam("count") int count,
         @LoginInfo UserInfo userInfo
     ) {
