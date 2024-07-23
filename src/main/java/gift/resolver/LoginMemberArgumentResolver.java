@@ -12,6 +12,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -37,8 +38,16 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, org.springframework.web.bind.support.WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         String token = authorizationHeaderProcessor.extractToken(request);
-        String email = tokenService.extractEmail(token);
-        Optional<User> user = userRepository.findByEmail(email);
+        Map<String, String> userInfo = tokenService.extractUserInfo(token);
+        String userType = userInfo.get("userType");
+        String id = userInfo.get("id");
+
+        Optional<User> user;
+        if ("kakao".equals(userType)) {
+            user = userRepository.findByKakaoId(id);
+        } else {
+            user = userRepository.findByEmail(id);
+        }
 
         if (user.isEmpty()) {
             return null;

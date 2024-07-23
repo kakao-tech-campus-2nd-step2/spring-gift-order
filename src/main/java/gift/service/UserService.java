@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final KakaoAuthService kakaoAuthService;
 
-    public UserService(UserRepository userRepository, TokenService tokenService) {
+    public UserService(UserRepository userRepository, TokenService tokenService, KakaoAuthService kakaoAuthService) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.kakaoAuthService = kakaoAuthService;
     }
 
     public UserResponseDto registerUser(UserRegisterDto userRegisterDto) {
@@ -41,7 +43,7 @@ public class UserService {
             throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        return tokenService.generateToken(user.getEmail());
+        return tokenService.generateToken(user.getEmail(), "email");
     }
 
     public List<UserResponseDto> getAllUsers() {
