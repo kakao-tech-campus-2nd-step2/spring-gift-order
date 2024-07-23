@@ -23,7 +23,7 @@ public class KakaoService {
 
 
 
-    public String getAccessToken(@RequestParam String code){
+    public String getAccessToken(String code){
         var url = "https://kauth.kakao.com/oauth/token";
         var body = createBody(code);
         var response = client.post()
@@ -31,8 +31,8 @@ public class KakaoService {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)    //이 body는 request
             .retrieve()
-            .toEntity(Map.class);
-        return null;
+            .body(Map.class);
+        return response.get("access_token").toString();
     }
 
     private LinkedMultiValueMap<String, String> createBody(String code) {
