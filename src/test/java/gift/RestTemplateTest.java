@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,7 +17,11 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 public class RestTemplateTest {
     private final RestTemplate client = new RestTemplateBuilder().build();
+    @Value("${my.client_id}")
+    private String client_id;
 
+    @Value("${my.code}")
+    private String code;
     @Test
     void test1(){
         // 요청 URL
@@ -29,9 +34,10 @@ public class RestTemplateTest {
         // 요청 바디 설정
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "c19991678d82e3768f54412c03c96c96");
+        body.add("client_id", client_id);
         body.add("redirect_uri", "http://localhost:8080");
-        body.add("code", "7oS03_Nunlhcj08vwpVwvjRGf6LFJm8VwSZGdj_5RzXOKJZKaZS3RgAAAAQKPXObAAABkOCNQbrGDcCf5rkkeA"); // authorizationCode 값을 여기 넣으세요
+        body.add("code", code); // authorizationCode 값을 여기 넣으세요
+        System.out.println(client_id);
 
         // RequestEntity 객체 생성
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
