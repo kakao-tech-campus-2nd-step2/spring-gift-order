@@ -3,7 +3,6 @@ package gift.controller;
 import gift.DTO.Order.OrderRequest;
 import gift.DTO.Order.OrderResponse;
 import gift.DTO.User.UserResponse;
-import gift.domain.User;
 import gift.security.AuthenticateMember;
 import gift.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -21,11 +20,12 @@ public class OrderController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Void> order(
+    public ResponseEntity<OrderResponse> order(
             @RequestBody OrderRequest orderRequest,
             @AuthenticateMember UserResponse user
     ){
-        orderService.order(orderRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        OrderResponse order = orderService.order(orderRequest, user);
+
+        return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
 }
