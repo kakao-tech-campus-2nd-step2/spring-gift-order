@@ -23,6 +23,7 @@ public class MemberService {
     public void join(MemberRequest memberRequest) {
         if (!memberRepository.existsById(memberRequest.id())) {
             memberRepository.save(new Member(memberRequest.id(), memberRequest.password(), new LinkedList<WishList>()));
+            return;
         }
         throw new NoSuchElementException("이미 존재하는 회원입니다.");
     }
