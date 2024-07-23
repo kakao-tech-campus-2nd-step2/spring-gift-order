@@ -10,11 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class PageController {
-    @GetMapping("/")
-    public String main() {
+    @GetMapping("/home")
+    public String home(Model model){
+        if (model.containsAttribute("token")) {
+            String token = (String) model.getAttribute("token");
+            model.addAttribute("token", token);
+        }
         return "index.html";
     }
-
     @GetMapping("/login")
     public String login(){
         return "login.html";
