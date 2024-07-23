@@ -1,6 +1,7 @@
 package gift.service.OAuth;
 
 import gift.config.KakaoProperties;
+import gift.dto.OAuth.AuthTokenInfoResponse;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,6 +11,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Map;
 
 @Service
 public class KakaoAuthService {
@@ -52,6 +55,21 @@ public class KakaoAuthService {
                 entity,
                 AuthTokenResponse.class);
 
+        return response.getBody();
+    }
+    public AuthTokenInfoResponse getTokenInfo(String accessToken){
+        RestTemplate restTemplate = new RestTemplateBuilder().build();
+        String url = "https://kapi.kakao.com/v1/user/access_token_info";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization","Bearer "+accessToken);
+
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<AuthTokenInfoResponse> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                AuthTokenInfoResponse.class
+        );
         return response.getBody();
     }
 }
