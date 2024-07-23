@@ -44,8 +44,8 @@ public class Quantity {
         if (!(object instanceof Quantity))
             return false;
 
-        Quantity value = (Quantity) object;
-        return Objects.equals(this.value, value.getValue());
+        Quantity quantity = (Quantity) object;
+        return Objects.equals(this.value, quantity.getValue());
     }
 
     @Override

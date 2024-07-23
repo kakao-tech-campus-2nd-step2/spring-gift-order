@@ -35,8 +35,8 @@ public class Description {
         if (!(object instanceof Description))
             return false;
 
-        Description value = (Description) object;
-        return Objects.equals(this.value, value.getValue());
+        Description description = (Description) object;
+        return Objects.equals(this.value, description.getValue());
     }
 
     @Override

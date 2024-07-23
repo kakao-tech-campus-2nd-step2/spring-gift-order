@@ -36,8 +36,8 @@ public class Password {
         if (!(object instanceof Password))
             return false;
 
-        Password value = (Password) object;
-        return Objects.equals(this.value, value.getValue());
+        Password password = (Password) object;
+        return Objects.equals(this.value, password.getValue());
     }
 
     @Override

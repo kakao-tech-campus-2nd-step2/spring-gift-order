@@ -36,8 +36,8 @@ public class Price {
         if (!(object instanceof Price))
             return false;
 
-        Price value = (Price) object;
-        return Objects.equals(this.value, value.getValue());
+        Price price = (Price) object;
+        return Objects.equals(this.value, price.getValue());
     }
 
     @Override

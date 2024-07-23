@@ -56,8 +56,8 @@ public class Name {
         if (!(object instanceof Name))
             return false;
 
-        Name value = (Name) object;
-        return Objects.equals(this.value, value.getValue());
+        Name name = (Name) object;
+        return Objects.equals(this.value, name.getValue());
     }
 
     @Override

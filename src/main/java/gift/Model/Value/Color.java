@@ -37,8 +37,8 @@ public class Color {
         if(!(object instanceof Color))
             return false;
 
-        Color value = (Color) object;
-        return Objects.equals(this.value, value.getValue());
+        Color color = (Color) object;
+        return Objects.equals(this.value, color.getValue());
     }
 
     @Override

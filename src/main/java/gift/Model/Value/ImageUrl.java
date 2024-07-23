@@ -35,8 +35,8 @@ public class ImageUrl {
         if (!(object instanceof ImageUrl))
             return false;
 
-        ImageUrl value = (ImageUrl) object;
-        return Objects.equals(this.value, value.getValue());
+        ImageUrl imageUrl = (ImageUrl) object;
+        return Objects.equals(this.value, imageUrl.getValue());
     }
 
     @Override

@@ -39,8 +39,8 @@ public class Email {
         if (!(object instanceof Email))
             return false;
 
-        Email value = (Email) object;
-        return Objects.equals(this.value, value.getValue());
+        Email email = (Email) object;
+        return Objects.equals(this.value, email.getValue());
     }
 
     @Override

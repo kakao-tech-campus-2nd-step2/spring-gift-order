@@ -35,8 +35,8 @@ public class Count {
         if (!(object instanceof Count))
             return false;
 
-        Count value = (Count) object;
-        return Objects.equals(this.value, value.getValue());
+        Count count = (Count) object;
+        return Objects.equals(this.value, count.getValue());
     }
 
     @Override
