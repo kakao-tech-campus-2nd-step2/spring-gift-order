@@ -114,4 +114,13 @@ public class Product {
             .findFirst()
             .orElseThrow(() -> new NoSuchElementException("해당 이름의 옵션 없음: " + name));
     }
+
+    public void subtractOptionQuantity(String optionName, int amount) {
+        Option option = this.getOptions().stream()
+            .filter(opt -> opt.getName().equals(optionName))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("해당 이름의 옵션 없음: " + optionName));
+
+        option.subtract(amount);
+    }
 }
