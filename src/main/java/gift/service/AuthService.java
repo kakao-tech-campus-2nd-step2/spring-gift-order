@@ -23,8 +23,7 @@ public class AuthService {
         return new UserResponseDTO(token);
     }
 
-    public UserResponseDTO login(UserLoginRequestDTO userLoginRequestDTO) {
-        User user = userLoginRequestDTO.toEntity();
+    public UserResponseDTO login(User user, UserLoginRequestDTO userLoginRequestDTO) {
         if (!user.getPassword().equals(userLoginRequestDTO.password())) {
             throw new NoSuchElementException("회원의 정보가 일치하지 않습니다.");
         }
