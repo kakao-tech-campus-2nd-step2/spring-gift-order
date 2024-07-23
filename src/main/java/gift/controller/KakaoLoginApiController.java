@@ -1,9 +1,13 @@
 package gift.controller;
 
+import static gift.service.KakaoLoginService.TOKEN_REQUEST_URI;
+
+import gift.service.KakaoLoginService;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,13 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @ConfigurationProperties(prefix = "kakao")
 public class KakaoLoginApiController {
 
+    private final KakaoLoginService kakaoLoginService;
     private final RestClient client = RestClient.builder().build();
+
+    @Autowired
+    public KakaoLoginApiController(KakaoLoginService kakaoLoginService) {
+        this.kakaoLoginService = kakaoLoginService;
+    }
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -34,33 +43,17 @@ public class KakaoLoginApiController {
         return "kakaoLogin";
     }
 
-    @RequestMapping("/logined")
-    public String logined(@RequestParam("body") String body, Model model) {
-        model.addAttribute("body", body);
-        return "successKakaoLogin";
-    }
-
     @RequestMapping("/kakao/login/oauth2/code")
-    public String getToken(@RequestParam("code") String code, RedirectAttributes re) {
-
-        String url = "https://kauth.kakao.com/oauth/token";
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
-
-        ResponseEntity<String> response = client.post()
-            .uri(URI.create(url))
+    @ResponseBody
+    public ResponseEntity<String> getToken(@RequestParam("code") String code) {
+        ResponseEntity<String> tokenResponse = client.post()
+            .uri(URI.create(TOKEN_REQUEST_URI))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
+            .body(kakaoLoginService.createTokenRequest(clientId, redirectUri, code))
             .retrieve()
             .toEntity(String.class);
-        re.addAttribute("body", response.getBody());
-        return "redirect:/logined";
+        return new ResponseEntity<>(tokenResponse.getBody(), HttpStatus.OK);
     }
-
-
 
 
 }
