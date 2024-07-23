@@ -39,7 +39,10 @@ public class Product {
     }
 
     public void addOption(Option option) {
+        checkDuplicateOptionName(option.getName());
+
         options.add(option);
+        option.associateWithProduct(this);
     }
 
     public Long getId() {
