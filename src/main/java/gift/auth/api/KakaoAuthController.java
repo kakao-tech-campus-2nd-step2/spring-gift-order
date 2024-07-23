@@ -1,8 +1,8 @@
 package gift.auth.api;
 
-import gift.auth.application.KakaoAuthService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import gift.auth.dto.AuthResponse;
+import gift.auth.vo.KakaoProperties;
+import gift.member.application.MemberService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,26 +13,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/oauth/kakao")
 public class KakaoAuthController {
 
-    private final KakaoAuthService kakaoAuthService;
+    private final MemberService memberService;
+    private final KakaoProperties kakaoProperties;
 
-    public KakaoAuthController(KakaoAuthService kakaoAuthService) {
-        this.kakaoAuthService = kakaoAuthService;
+    public KakaoAuthController(MemberService memberService,
+                               KakaoProperties kakaoProperties) {
+        this.memberService = memberService;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping
     public String redirectKakaoLogin() {
-        return "redirect:" + kakaoAuthService.getKakaoAuthUrl();
+        return "redirect:" + kakaoProperties.getKakaoAuthUrl();
     }
 
     @GetMapping("/callback")
     @ResponseBody
-    public ResponseEntity<Object> handleKakaoCallback(@RequestParam("code") String code) throws Exception {
-        ResponseEntity<Object> response = kakaoAuthService.getResponseOfKakaoLogin(code);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseEntity.ok(response.getBody());
-        }
-        return ResponseEntity.internalServerError()
-                .body("로그인에 실패하였습니다.");
+    public AuthResponse handleKakaoCallback(@RequestParam("code") String code) {
+        return memberService.authenticate(code);
     }
 
 }

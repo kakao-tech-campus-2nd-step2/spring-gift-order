@@ -56,8 +56,7 @@ public class MemberController {
     @PostMapping("/login")
     @ResponseBody
     public AuthResponse login(@RequestBody @Valid MemberDto memberDto) {
-        String token = memberService.authenticate(memberDto);
-        return AuthResponse.of(token);
+        return memberService.authenticate(memberDto);
     }
 
     @GetMapping("/wishlist")

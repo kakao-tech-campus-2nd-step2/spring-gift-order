@@ -1,9 +1,8 @@
 package gift.application;
 
-import gift.auth.application.KakaoAuthService;
-import gift.auth.util.KakaoAuthUtil;
+import gift.auth.application.KakaoClient;
+import gift.auth.vo.KakaoProperties;
 import gift.global.config.RestTemplateConfig;
-import gift.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,30 +13,23 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @Import(RestTemplateConfig.class)
-@RestClientTest(value = KakaoAuthService.class)
-class KakaoAuthServiceTest {
+@RestClientTest(value = KakaoClient.class)
+class KakaoClientTest {
 
     @Autowired
-    private KakaoAuthService kakaoAuthService;
+    private KakaoClient kakaoClient;
 
     @MockBean
-    private KakaoAuthUtil kakaoAuthUtil;
-
-    @MockBean
-    private MemberService memberService;
+    private KakaoProperties kakaoProperties;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -50,23 +42,6 @@ class KakaoAuthServiceTest {
     }
 
     @Test
-    @DisplayName("카카오 인가 URL 확인 테스트")
-    void getKakaoAuthUrl() {
-        String redirectUri = "test_uri@email.com";
-        String clientId = "test_client";
-        String url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code" +
-                "&redirect_uri=" + redirectUri +
-                "&client_id="    + clientId;
-        given(kakaoAuthUtil.getKakaoAuthUrl())
-                .willReturn(url);
-
-        String kakaoAuthUrl = kakaoAuthService.getKakaoAuthUrl();
-
-        assertThat(kakaoAuthUrl).isEqualTo(url);
-        verify(kakaoAuthUtil).getKakaoAuthUrl();
-    }
-
-    @Test
     @DisplayName("액세스 토큰 발급 확인 테스트")
     void getAccessToken() {
         String code = "test-code";
@@ -74,49 +49,36 @@ class KakaoAuthServiceTest {
         String responseToken = "test-token";
         String url = "https://kauth.kakao.com/oauth/token";
 
-        RequestEntity<LinkedMultiValueMap<String, String>> requestBody = RequestEntity.post(url)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(new LinkedMultiValueMap<String, String>());
-        given(kakaoAuthUtil.getRequestWithPost(anyString(), anyString()))
-                .willReturn(requestBody);
-
         server.expect(requestTo(url))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED + ";charset=UTF-8"))
+                .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        String token = kakaoAuthService.getAccessToken(code);
+        String token = kakaoClient.getAccessToken(code);
 
         assertThat(token).isEqualTo(responseToken);
-        verify(kakaoAuthUtil).getRequestWithPost(url, code);
         server.verify();
     }
 
     @Test
     @DisplayName("카카오 사용자 ID 확인 테스트")
-    void getUserId() throws Exception {
+    void getUserId() {
         String token = "test-token";
         String responseBody = "{ \"id\": \"123\"}";
         String url = "https://kapi.kakao.com/v2/user/me";
-        String authHeader = JwtFilter.BEAR_PREFIX + token;
-        String userInfoId = "123";
-
-        RequestEntity<Void> requestBody = RequestEntity.get(url)
-                .header(HttpHeaders.AUTHORIZATION, authHeader)
-                .build();
-
-        given(kakaoAuthUtil.getRequestWithGet(anyString(), anyString()))
-                .willReturn(requestBody);
-
+        String authPrefix = "Bearer ";
+        String authHeader = authPrefix + token;
+        Long userInfoId = 123L;
+        given(kakaoProperties.authorizationPrefix())
+                .willReturn(authPrefix);
         server.expect(requestTo(url))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, authHeader))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        Long userInfoResponse = kakaoAuthService.getUserId(token);
+        Long userInfoResponse = kakaoClient.getUserId(token);
 
         assertThat(userInfoResponse).isEqualTo(userInfoId);
-        verify(kakaoAuthUtil).getRequestWithGet(url, token);
         server.verify();
     }
 
