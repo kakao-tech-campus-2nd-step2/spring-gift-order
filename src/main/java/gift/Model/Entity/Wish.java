@@ -29,6 +29,14 @@ public class Wish {
         this.count = count;
     }
 
+    public Wish(Member member, Product product, int count) {
+        Count countObj = new Count(count);
+
+        this.member = member;
+        this.product = product;
+        this.count = countObj;
+    }
+
     public Long getId() {
         return id;
     }
