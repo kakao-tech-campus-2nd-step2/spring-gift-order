@@ -1,6 +1,7 @@
 package gift.controller.oauth;
 
 import gift.config.KakaoProperties;
+import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.service.oauth.KakaoOAuthService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,9 +43,15 @@ public class KakaoOAuthController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/unlink")
-    public ResponseEntity<KakaoUnlinkResponse> unlink(@RequestParam("accessToken") String accessToken) {
+    @GetMapping("/unlink/{accessToken}")
+    public ResponseEntity<KakaoUnlinkResponse> unlink(@PathVariable String accessToken) {
         KakaoUnlinkResponse response = kakaoOAuthService.unlinkUser(accessToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/scopes/{accessToken}")
+    public ResponseEntity<KakaoScopeResponse> getUserScopes(@PathVariable String accessToken) {
+        KakaoScopeResponse response = kakaoOAuthService.getUserScopes(accessToken);
         return ResponseEntity.ok(response);
     }
 }

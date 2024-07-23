@@ -1,6 +1,7 @@
 package gift.service.oauth;
 
 import gift.config.KakaoProperties;
+import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import java.net.URI;
@@ -76,6 +77,22 @@ public class KakaoOAuthService {
             }
         } catch (RestClientResponseException e) {
             throw new RuntimeException("연결 끊기에 실패했습니다.", e);
+        }
+    }
+
+    public KakaoScopeResponse getUserScopes(String accessToken) {
+        String kakaoScopesUrl = "https://kapi.kakao.com/v2/user/scopes";
+
+        try {
+            ResponseEntity<KakaoScopeResponse> response = client.get()
+                .uri(URI.create(kakaoScopesUrl))
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .toEntity(KakaoScopeResponse.class);
+
+            return response.getBody();
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException("동의 내역 가져오기에 실패했습니다.", e);
         }
     }
 }
