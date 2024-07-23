@@ -35,7 +35,7 @@ public class AuthFilter implements Filter {
         String path = httpRequest.getRequestURI();
 
         // Filter 를 통과하지 않아도 되는 url
-        if (path.equals("/home") || path.startsWith("/members") || path.startsWith("/h2-console")) {
+        if (path.equals("/home") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
             filterChain.doFilter(request, response);
             return;
         }
