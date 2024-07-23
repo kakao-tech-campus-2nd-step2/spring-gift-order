@@ -15,6 +15,11 @@
 3. http://localhost:8080/?code={AUTHORIZATION_CODE}에서 인가 코드를 추출한다.
 
 ### 구현 기능 목록
-- [ ] kakao 간편 로그인 사용자 table 만들기
-- [ ] kakao oauth를 위한 controller 작성
-- [ ] kakao oauth 처리 service 작성
+kakao oauth
+- [X] kakao 간편 로그인 사용자 table 만들기
+- [X] kakao oauth를 위한 controller 작성
+- [X] kakao oauth 처리 service 작성
+
+웹페이지
+- [X] 메인 로그인 페이지
+- [X] kakao 간편 회원가입 페이지
