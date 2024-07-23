@@ -21,9 +21,7 @@ public class KakaoMemberService {
 
     @Value("${kakao.client-id}")
     private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
+    private String redirectUri = "http://localhost:8080";
 
     private final KakaoMemberRepository kakaoMemberRepository;
 
