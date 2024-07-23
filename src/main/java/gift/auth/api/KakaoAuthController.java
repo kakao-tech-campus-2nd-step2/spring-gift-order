@@ -26,10 +26,10 @@ public class KakaoAuthController {
 
     @GetMapping("/callback")
     @ResponseBody
-    public ResponseEntity<String> handleKakaoCallback(@RequestParam("code") String code) throws Exception {
+    public ResponseEntity<Object> handleKakaoCallback(@RequestParam("code") String code) throws Exception {
         ResponseEntity<Object> response = kakaoAuthService.getResponseOfKakaoLogin(code);
         if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseEntity.ok("로그인에 성공하였습니다.");
+            return ResponseEntity.ok(response.getBody());
         }
         return ResponseEntity.internalServerError()
                 .body("로그인에 실패하였습니다.");
