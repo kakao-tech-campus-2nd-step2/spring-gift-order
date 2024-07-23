@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-
+@Deprecated
 public class ProductDTO {
 
     private Long id;
@@ -48,12 +48,6 @@ public class ProductDTO {
         this.imageUrl = product.getImageUrl();
     }
 
-    //디버깅 필요 시 체크용 toString
-    @Override
-    public String toString() {
-        return "ProductDTO{" + "id=" + id + ", name='" + name + '\'' + ", price=" + price
-            + ", imageUrl='" + imageUrl + '\'' + '}';
-    }
 
     public Long getId() {
         return id;

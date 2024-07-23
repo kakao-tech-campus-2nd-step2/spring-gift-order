@@ -16,7 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 
 @DataJpaTest
-class WishListServiceImplTest {
+class WishListServiceTest {
     @Autowired
     private JpaWishRepository jpaWishRepository;
     @Autowired
