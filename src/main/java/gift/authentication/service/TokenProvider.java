@@ -1,4 +1,4 @@
-package gift.authentication;
+package gift.authentication.service;
 
 import gift.core.domain.authentication.Token;
 

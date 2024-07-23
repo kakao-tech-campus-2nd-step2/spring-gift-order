@@ -1,7 +1,7 @@
 package gift.authentication.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.authentication.TokenProvider;
+import gift.authentication.service.TokenProvider;
 import gift.core.exception.APIException;
 import gift.core.exception.ErrorCode;
 import jakarta.annotation.Nonnull;

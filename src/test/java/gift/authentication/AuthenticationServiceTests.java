@@ -1,6 +1,7 @@
 package gift.authentication;
 
 import gift.authentication.service.AuthenticationServiceImpl;
+import gift.authentication.service.TokenProvider;
 import gift.core.domain.authentication.AuthenticationService;
 import gift.core.domain.user.UserAccount;
 import gift.core.domain.user.UserAccountRepository;
