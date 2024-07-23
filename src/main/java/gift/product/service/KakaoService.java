@@ -1,7 +1,17 @@
 package gift.product.service;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import gift.product.model.Member;
+import gift.product.repository.MemberRepository;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.tomcat.util.json.JSONParser;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,9 +22,11 @@ public class KakaoService {
 
     private final RestClient client = RestClient.builder().build();
     private final KakaoProperties properties;
+    private final MemberRepository memberRepository;
 
-    public KakaoService(KakaoProperties properties) {
+    public KakaoService(KakaoProperties properties, MemberRepository memberRepository) {
         this.properties = properties;
+        this.memberRepository = memberRepository;
     }
 
     public String getAuthCode() {
@@ -23,7 +35,7 @@ public class KakaoService {
             + "&client_id=" + properties.clientId();
     }
 
-    public String getAccessToken(String code) {
+    public void getAccessToken(String code) {
         var url = "https://kauth.kakao.com/oauth/token";
         final var body = createBody(code);
         var response = client.post()
@@ -31,8 +43,25 @@ public class KakaoService {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
-            .toEntity(String.class);
-        return response.getBody();
+            .body(Map.class);
+        if (response == null)
+            throw new AssertionError();
+        String accessToken = response.get("access_token").toString();
+        signUpAndLogin(accessToken);
+    }
+
+    public void signUpAndLogin(String accessToken) {
+        var url = "https://kapi.kakao.com/v2/user/me";
+        var response = client.get()
+            .uri(URI.create(url))
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .body(Map.class);
+        if (response == null)
+            throw new AssertionError();
+        String memberId = response.get("id").toString();
+        if(!memberRepository.existsByEmail(memberId))
+            memberRepository.save(new Member(memberId, "kakao"));
     }
 
     private @NotNull LinkedMultiValueMap<String, String> createBody(String code) {

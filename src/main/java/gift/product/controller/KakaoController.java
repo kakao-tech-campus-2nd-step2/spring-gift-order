@@ -21,9 +21,8 @@ public class KakaoController {
     }
 
     @GetMapping(params = "code")
-    public ResponseEntity<String> login(@RequestParam("code") String code) {
-        String accessToken = kakaoService.getAccessToken(code);
-        return ResponseEntity.ok()
-            .body(accessToken);
+    public ResponseEntity<String> login(@RequestParam String code) {
+        kakaoService.getAccessToken(code);
+        return ResponseEntity.ok().body("SUCCESS LOGIN!");
     }
 }

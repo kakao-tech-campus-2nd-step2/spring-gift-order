@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
+import gift.product.controller.KakaoController;
+import gift.product.service.KakaoProperties;
 import java.net.URI;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,16 +19,20 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateTest {
     private final RestTemplate client = new RestTemplateBuilder().build();
 
+
+    private KakaoController kakaoController;
+    private KakaoProperties properties;
+
     @Test
     void test1() {
         var url = "https://kauth.kakao.com/oauth/token";
         var headers = new HttpHeaders();
         headers.add(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE);
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "d8e855663ae6bf0fba3c1493efa9086e");
-        body.add("redirect_url", "http://localhost:8080");
-        body.add("code", "v_UwXkjR5JJLTf8P82GBKlKr0dnHFT6st5jsEEIQlvEMq2Z0gKuCAwAAAAQKPCSbAAABkNjYA4FAPV-WDrAHcw");
+            body.add("grant_type", "authorization_code");
+        body.add("client_id", properties.clientId());
+        body.add("redirect_url", properties.redirectUrl());
+        body.add("code", "");
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         var response = client.exchange(request, String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
