@@ -15,4 +15,9 @@ public class UserViewController {
     public String login() {
         return "login";
     }
+
+    @GetMapping("/kakao")
+    public String kakao() {
+        return "kakao";
+    }
 }
