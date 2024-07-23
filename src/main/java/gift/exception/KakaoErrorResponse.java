@@ -6,6 +6,12 @@ public class KakaoErrorResponse {
     private String errorDescription;
     private String errorCode;
 
+    public KakaoErrorResponse(String error, String errorDescription, String errorCode) {
+        this.error = error;
+        this.errorDescription = errorDescription;
+        this.errorCode = errorCode;
+    }
+
     public String getError() {
         return error;
     }
