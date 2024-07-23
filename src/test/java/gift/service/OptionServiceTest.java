@@ -358,7 +358,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 100, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
         when(optionRepository.save(any(Option.class))).thenReturn(option);
 
         optionService.subtractOptionQuantity(1L, 1L, 10);
@@ -385,7 +388,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 5, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             optionService.subtractOptionQuantity(1L, 1L, 10);
@@ -401,7 +407,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 100, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
         when(optionRepository.save(any(Option.class))).thenReturn(option);
 
         int numberOfThreads = 10;
@@ -434,7 +443,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 50, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
         when(optionRepository.save(any(Option.class))).thenReturn(option);
 
         int numberOfThreads = 10;
@@ -466,7 +478,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 60, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
         when(optionRepository.save(any(Option.class))).thenReturn(option);
 
         int numberOfThreads = 10;
@@ -498,7 +513,10 @@ public class OptionServiceTest {
         Product product = new Product(1L, "Product", 100, "imageUrl", category);
         Option option = new Option(1L, "Option1", 100, product);
 
-        when(optionRepository.findByIdAndProduct_IdWithLock(1L, 1L)).thenReturn(Optional.of(option));
+        when(optionRepository.findByIdAndProduct_IdWithLock(
+            1L,
+            1L
+        )).thenReturn(Optional.of(option));
         when(optionRepository.save(any(Option.class))).thenReturn(option);
 
         int numberOfThreads = 10;
