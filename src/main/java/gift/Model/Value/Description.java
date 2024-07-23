@@ -8,7 +8,6 @@ import java.util.Objects;
 @Embeddable
 public class Description {
 
-    @Column(nullable = false)
     private String value;
 
     public Description(String value) {
