@@ -26,9 +26,6 @@ public class KakaoGateway implements OAuthGateway {
     @Value("${oauth2.client.kakao.token-uri}")
     private String tokenUri;
 
-    @Value("${oauth2.client.kakao.resource-uri}")
-    private String resourceUri;
-
     private final RestClient restClient;
 
     public KakaoGateway(RestClient restClient) {
@@ -38,8 +35,7 @@ public class KakaoGateway implements OAuthGateway {
     @Override
     public OAuthResult authenticate(String code) {
         KakaoTokenResponse tokenResponse = requestToken(code);
-        KakaoUserResourceResponse userResourceResponse = requestResource(tokenResponse.accessToken());
-        return new OAuthResult(userResourceResponse.socialId());
+        return new OAuthResult(tokenResponse.accessToken());
     }
 
     @Override
@@ -68,18 +64,4 @@ public class KakaoGateway implements OAuthGateway {
     }
 
     private record KakaoTokenResponse(@JsonProperty("access_token") String accessToken) {}
-
-    private KakaoUserResourceResponse requestResource(String accessToken) {
-        return restClient
-                .get()
-                .uri(resourceUri)
-                .headers(headers -> headers.setBearerAuth(accessToken))
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new AuthenticationFailedException();
-                })
-                .body(KakaoUserResourceResponse.class);
-    }
-
-    private record KakaoUserResourceResponse(@JsonProperty("id") String socialId) {}
 }
