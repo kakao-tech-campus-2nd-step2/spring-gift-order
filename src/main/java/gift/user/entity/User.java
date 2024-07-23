@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 )
 public class User {
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(\\S+)$");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,9 +72,7 @@ public class User {
     }
 
     private void validateEmail(String email) {
-        final String EMAIL_REGEX = "^(.+)@(\\S+)$";
-        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
-        if (!emailPattern.matcher(email).matches()) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new CustomException(ErrorCode.INVALID_EMAIL);
         }
     }
