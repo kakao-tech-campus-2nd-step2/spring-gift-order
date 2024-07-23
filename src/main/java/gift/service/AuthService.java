@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.common.exception.AuthenticationException;
 import gift.controller.dto.request.SignInRequest;
+import gift.controller.dto.response.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.security.TokenProvider;
@@ -19,9 +20,10 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public String signIn(SignInRequest request) {
+    public TokenResponse signIn(SignInRequest request) {
         Member member = findEmailAndPassword(request);
-        return tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        return TokenResponse.from(token);
     }
 
     private Member findEmailAndPassword(SignInRequest request) {

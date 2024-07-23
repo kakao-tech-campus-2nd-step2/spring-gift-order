@@ -3,6 +3,7 @@ package gift.repository;
 import gift.common.enums.Role;
 import gift.config.JpaConfig;
 import gift.model.Member;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -52,6 +53,23 @@ class MemberRepositoryTest {
 
         // then
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    @DisplayName("email이 없을 경우 저장 테스트[성공]")
+    void saveIfEntityNotExist() {
+        // given
+        String email = "test@gmail.com";
+
+        // when
+        Member member = memberRepository.findByEmail(email)
+                .orElse(memberRepository.save(new Member(email, "", Role.USER)));
+
+        // then
+        assertThat(member).isNotNull();
+        assertThat(member.getId()).isNotNull();
+        assertThat(member.getEmail()).isEqualTo(email);
+        assertThat(member.getRole()).isEqualTo(Role.USER);
     }
 
     void save(String email, String password, Role role) {

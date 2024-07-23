@@ -50,7 +50,7 @@ class AuthServiceTest {
                 .willReturn(token);
 
         // when
-        String actual = authService.signIn(request);
+        String actual = authService.signIn(request).accessToken();
 
         // then
         assertThat(actual).isEqualTo(token);

@@ -26,7 +26,7 @@ public class AdminLoginController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute SignInRequest request, HttpServletResponse response) {
-        TokenResponse tokenResponse  = TokenResponse.from(authService.signIn(request));
+        TokenResponse tokenResponse  = authService.signIn(request);
         String token = tokenResponse .accessToken();
         ResponseCookie cookie = ResponseCookie.from("Authorization", token)
                 .httpOnly(true)
