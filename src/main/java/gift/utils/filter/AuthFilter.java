@@ -1,5 +1,6 @@
 package gift.utils.filter;
 
+import gift.repository.TokenRepository;
 import gift.utils.JwtTokenProvider;
 import gift.utils.error.TokenAuthException;
 import jakarta.servlet.Filter;
@@ -15,10 +16,13 @@ import java.io.IOException;
 public class AuthFilter implements Filter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenRepository tokenRepository;
 
-    public AuthFilter(JwtTokenProvider jwtTokenProvider) {
+    public AuthFilter(JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenRepository = tokenRepository;
     }
+
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -34,11 +38,23 @@ public class AuthFilter implements Filter {
         String path = httpRequest.getRequestURI();
 
         // Filter 를 통과하지 않아도 되는 url
-        if (path.equals("/user/login") || path.equals("/user/register") || path.startsWith("/user")
-            || path.startsWith("/h2-console") || path.startsWith("/api/oauth")) {
+        if (path.equals("/api/user/login") || path.equals("/api/user/register") || path.startsWith("/user")
+            || path.startsWith("/h2-console") || path.equals("/api/oauth/authorize")
+            || path.equals("/api/oauth/token")) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        if (path.startsWith("/api/oauth")) {
+            // DB 검증 로직
+            if (!validateOAuthToken(httpRequest)) {
+                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Kakao OAuth token");
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         // Authorization header 존재하는지 확인
         String authHeader = httpRequest.getHeader("Authorization");
@@ -60,5 +76,25 @@ public class AuthFilter implements Filter {
     @Override
     public void destroy() {
         Filter.super.destroy();
+    }
+
+    private boolean validateOAuthToken(HttpServletRequest request) {
+
+        String oauthToken = extractOAuthToken(request);
+
+        if (oauthToken == null) {
+            return false;
+        }
+
+        return tokenRepository.existsByToken(oauthToken);
+    }
+
+    private String extractOAuthToken(HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 }

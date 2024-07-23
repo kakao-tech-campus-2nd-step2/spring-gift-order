@@ -1,5 +1,6 @@
 package gift.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,7 +8,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "option")
@@ -21,6 +25,8 @@ public class Option {
     private int quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
 
     public Option(String name, int quantity) {
         this.name = name;
@@ -64,5 +70,16 @@ public class Option {
         }
         this.quantity -= amount;
     }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setOption(null);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setOption(null);
+    }
+
 
 }
