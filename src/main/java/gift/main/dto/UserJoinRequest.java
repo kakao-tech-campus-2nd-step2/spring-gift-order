@@ -12,13 +12,4 @@ public record UserJoinRequest(
         String password,
         Role role) {
   
-    public UserJoinRequest(KakaoProfile kakaoProfile, String password) {
-        this(
-                kakaoProfile.nickname(),
-                kakaoProfile.id().toString() + kakaoProfile.nickname(),
-                password,
-                Role.USER
-        );
-    }
-
 }

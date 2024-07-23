@@ -1,5 +1,6 @@
 package gift.main.entity;
 
+import gift.main.dto.KakaoProfile;
 import gift.main.dto.UserJoinRequest;
 import jakarta.persistence.*;
 
@@ -58,6 +59,14 @@ public class User {
         this.email = userJoinRequest.email();
         this.password = userJoinRequest.password();
         this.role = userJoinRequest.role();
+    }
+
+
+    public User(KakaoProfile kakaoProfile) {
+        this.name =  kakaoProfile.name();
+        this.email =  kakaoProfile.email();
+        this.password =  kakaoProfile.password();
+        this.role =  kakaoProfile.role();
     }
 
     public User(String name, String email, String password, String role) {
