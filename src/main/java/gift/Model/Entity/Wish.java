@@ -56,4 +56,8 @@ public class Wish {
     public void update(Count count){
         this.count = count;
     }
+
+    public void update(int count){
+        this.count = new Count(count);
+    }
 }
