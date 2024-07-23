@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.enums.Role;
+import gift.common.enums.SocialLoginType;
 import gift.common.exception.AuthenticationException;
 import gift.common.properties.KakaoProperties;
 import gift.controller.dto.response.TokenResponse;
@@ -44,7 +45,8 @@ public class OAuthService {
         String accessToken = getKakaoAccessToken(code, redirectUrl);
         String email = getKakaoMemberInfo(accessToken);
         Member member = memberRepository.findByEmail(email)
-                .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER)));
+                .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER, SocialLoginType.KAKAO)));
+        member.checkLoginType(SocialLoginType.KAKAO);
         String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
         return TokenResponse.from(token);
     }

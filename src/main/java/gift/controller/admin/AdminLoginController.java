@@ -7,7 +7,6 @@ import gift.service.AuthService;
 import gift.service.OAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

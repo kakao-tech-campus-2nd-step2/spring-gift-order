@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.common.enums.SocialLoginType;
 import gift.common.exception.AuthenticationException;
 import gift.controller.dto.request.SignInRequest;
 import gift.controller.dto.response.TokenResponse;
@@ -22,6 +23,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public TokenResponse signIn(SignInRequest request) {
         Member member = findEmailAndPassword(request);
+        member.checkLoginType(SocialLoginType.DEFAULT);
         String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
         return TokenResponse.from(token);
     }

@@ -27,7 +27,7 @@ class MemberRepositoryTest {
         String email = "test@gmail.com";
         String password = "password";
         Role role = Role.USER;
-        save(email, password, role);
+        memberRepository.save(new Member(email, password, Role.USER));
 
         // when
         Member actual = memberRepository.findByEmailAndPassword(email, password).orElse(null);
@@ -46,7 +46,7 @@ class MemberRepositoryTest {
         String email = "test@gmail.com";
         String password = "password";
         Role role = Role.USER;
-        save(email, password, role);
+        memberRepository.save(new Member(email, password, Role.USER));
 
         // when
         boolean actual = memberRepository.existsByEmail(email);
@@ -91,18 +91,4 @@ class MemberRepositoryTest {
         assertThat(member.getPassword()).isEqualTo(password);
         assertThat(member.getRole()).isEqualTo(Role.USER);
     }
-
-    void save(String email, String password, Role role) {
-        // given
-        Member member = new Member(email, password, role);
-
-        // when
-        Member actual = memberRepository.save(member);
-
-        // then
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getEmail()).isEqualTo(email);
-        assertThat(actual.getRole()).isEqualTo(role);
-    }
-
 }
