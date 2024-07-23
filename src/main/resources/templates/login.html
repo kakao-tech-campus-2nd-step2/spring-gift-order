@@ -5,9 +5,8 @@
 </head>
 <body>
     <div>
-        <a href= "https://kauth.kakao.com/oauth/authorize"
-           th:href ="@{https://kauth.kakao.com/oauth/authorize(client_id=${KakaoApiKey}, redirect_uri=${redirectUri}, response_type='code'">
-          <p>kakao login</p>
+        <a th:href="@{https://kauth.kakao.com/oauth/authorize(client_id=${kakaoApiKey}, redirect_uri=${redirectUri}, response_type='code')}">
+            카카오 로그인
         </a>
     </div>
 </body>
