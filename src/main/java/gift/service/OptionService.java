@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static gift.constants.Messages.NOT_FOUND_OPTION;
+import static gift.constants.Messages.OPTION_NAME_ALREADY_EXISTS;
+
 @Service
 public class OptionService {
     public final OptionRepository optionRepository;
@@ -29,7 +32,7 @@ public class OptionService {
     @Transactional
     public void save(Long productId, OptionRequest optionRequest){
         if(optionRepository.existsByName(optionRequest.name())) {
-            throw new DuplicateOptionNameException(Messages.OPTION_NAME_ALREADY_EXISTS);
+            throw new DuplicateOptionNameException(OPTION_NAME_ALREADY_EXISTS);
         }
         ProductResponse foundProduct = productService.findById(productId);
         optionRepository.save(new Option(optionRequest.name(), optionRequest.quantity(), foundProduct.toEntity()));
@@ -39,7 +42,7 @@ public class OptionService {
     public OptionResponse findById(Long id){
         return optionRepository.findById(id)
                 .map(OptionResponse::from)
-                .orElseThrow(()-> new OptionNotFoundException(Messages.NOT_FOUND_OPTION));
+                .orElseThrow(()-> new OptionNotFoundException(NOT_FOUND_OPTION));
     }
 
     @Transactional(readOnly = true)
@@ -61,7 +64,7 @@ public class OptionService {
     @Transactional
     public void deleteById(Long id){
         Option foundOption = optionRepository.findById(id)
-                .orElseThrow(()->new OptionNotFoundException(Messages.NOT_FOUND_OPTION));
+                .orElseThrow(()->new OptionNotFoundException(NOT_FOUND_OPTION));
         foundOption.remove();
         optionRepository.deleteById(id);
     }
@@ -69,7 +72,7 @@ public class OptionService {
     @Transactional
     public void updateById(Long id, OptionRequest optionRequest){
         Option foundOption = optionRepository.findById(id)
-                .orElseThrow(()->new OptionNotFoundException(Messages.NOT_FOUND_OPTION));
+                .orElseThrow(()->new OptionNotFoundException(NOT_FOUND_OPTION));
 
         foundOption.updateOption(optionRequest.name(),optionRequest.quantity(),foundOption.getProduct());
     }
@@ -77,7 +80,7 @@ public class OptionService {
     @Transactional
     public void subtractQuantityById(Long id, int quantity){
         Option foundOption = optionRepository.findById(id)
-                .orElseThrow(()->new OptionNotFoundException(Messages.NOT_FOUND_OPTION));
+                .orElseThrow(()->new OptionNotFoundException(NOT_FOUND_OPTION));
         foundOption.subtract(quantity);
     }
 }
