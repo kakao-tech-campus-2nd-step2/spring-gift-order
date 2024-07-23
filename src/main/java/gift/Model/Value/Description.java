@@ -9,21 +9,21 @@ import java.util.Objects;
 public class Description {
 
     @Column(nullable = false)
-    private String description;
+    private String value;
 
-    public Description(String description) {
-        validateDescription(description);
+    public Description(String value) {
+        validateDescription(value);
 
-        this.description = description;
+        this.value = value;
     }
 
-    private void validateDescription(String description) {
-        if (description == null)
+    private void validateDescription(String value) {
+        if (value == null)
             throw new IllegalArgumentException("description의 값은 null이 올 수 없습니다");
     }
 
-    public String getDescription() {
-        return description;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class Description {
         if (!(object instanceof Description))
             return false;
 
-        Description description = (Description) object;
-        return Objects.equals(this.description, description.getDescription());
+        Description value = (Description) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description);
+        return Objects.hash(value);
     }
 }

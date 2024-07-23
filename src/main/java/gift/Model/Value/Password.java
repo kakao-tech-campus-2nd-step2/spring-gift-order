@@ -9,22 +9,22 @@ import java.util.Objects;
 public class Password {
 
     @Column(nullable = false)
-    private String password;
+    private String value;
 
-    public Password(String password) {
-        validatePassword(password);
+    public Password(String value) {
+        validatePassword(value);
 
-        this.password = password;
+        this.value = value;
     }
 
-    private void validatePassword(String password) {
-        if (password == null || password.isBlank())
+    private void validatePassword(String value) {
+        if (value == null || value.isBlank())
             throw new IllegalArgumentException("패스워드 값은 필수입니다");
 
     }
 
-    public String getPassword() {
-        return password;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -35,13 +35,13 @@ public class Password {
         if (!(object instanceof Password))
             return false;
 
-        Password password = (Password) object;
-        return Objects.equals(this.password, password.getPassword());
+        Password value = (Password) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(password);
+        return Objects.hash(value);
     }
 
 }

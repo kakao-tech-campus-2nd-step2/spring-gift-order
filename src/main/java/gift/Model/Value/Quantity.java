@@ -6,31 +6,31 @@ import java.util.Objects;
 
 @Embeddable
 public class Quantity {
-    private int quantity;
+    private int value;
 
-    public Quantity(int quantity) {
-        validateQuantity(quantity);
+    public Quantity(int value) {
+        validateQuantity(value);
 
-        this.quantity = quantity;
+        this.value = value;
     }
 
-    private void validateQuantity(int quantity) {
-        if (quantity <= 0)
+    private void validateQuantity(int value) {
+        if (value <= 0)
             throw new IllegalArgumentException("수량은 최소 1개 이상이여야 합니다");
-        if (quantity > 9999_9999)
+        if (value > 9999_9999)
             throw new IllegalArgumentException("수량은 최대 1억개 미만이여야 합니다");
 
     }
 
-    public void subtract(int quantity){
-        if (this.quantity - quantity < 1)
+    public void subtract(int value){
+        if (this.value - value < 1)
             throw new IllegalArgumentException("옵션 수량은 최소 1개이상이여야 합니다. 빼려는 수량을 조절해 주십시오.");
 
-        this.quantity -= quantity;
+        this.value -= value;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getValue() {
+        return value;
     }
 
     @Override
@@ -41,12 +41,12 @@ public class Quantity {
         if (!(object instanceof Quantity))
             return false;
 
-        Quantity quantity = (Quantity) object;
-        return Objects.equals(this.quantity,quantity.getQuantity());
+        Quantity value = (Quantity) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(quantity);
+        return Objects.hash(value);
     }
 }

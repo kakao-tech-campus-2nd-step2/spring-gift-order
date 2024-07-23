@@ -8,21 +8,21 @@ import java.util.Objects;
 @Embeddable
 public class Count {
 
-    private int count;
+    private int value;
 
-    public Count(int count) {
-        validateCount(count);
+    public Count(int value) {
+        validateCount(value);
 
-        this.count = count;
+        this.value = value;
     }
 
-    private void validateCount(int count){
-        if (count < 1)
+    private void validateCount(int value){
+        if (value < 1)
             throw new IllegalArgumentException("count값은 1이상이여야 합니다");
     }
 
-    public int getCount() {
-        return count;
+    public int getValue() {
+        return value;
     }
 
     @Override
@@ -33,12 +33,12 @@ public class Count {
         if (!(object instanceof Count))
             return false;
 
-        Count count = (Count) object;
-        return Objects.equals(this.count, count.getCount());
+        Count value = (Count) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(count);
+        return Objects.hash(value);
     }
 }

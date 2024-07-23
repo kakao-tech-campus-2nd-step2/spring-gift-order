@@ -10,16 +10,16 @@ import java.util.regex.Pattern;
 public class Name {
 
     @Column(nullable = false)
-    private String name;
+    private String value;
 
-    public Name(String name) {
-        validateName(name);
+    public Name(String value) {
+        validateName(value);
 
-        this.name = name;
+        this.value = value;
     }
 
-    private void validateName(String name) {
-        if (name == null || name.isBlank())
+    private void validateName(String value) {
+        if (value == null || value.isBlank())
             throw new IllegalArgumentException("이름 값은 필수입니다");
 
     }
@@ -28,7 +28,7 @@ public class Name {
         if (length <= 0 )
             throw new IllegalArgumentException("이름의 길이값이 0일수는 없습니다");
 
-        if (name.length() > length){
+        if (value.length() > length){
             throw new IllegalArgumentException("이름의 길이가 "+length+"를 초과합니다");
         }
     }
@@ -36,16 +36,16 @@ public class Name {
     public void checkNamePattern(Pattern pattern){
         if (pattern == null)
             throw new IllegalArgumentException("검사하려는 패턴이 null입니다");
-        if (!pattern.matcher(name).matches())
+        if (!pattern.matcher(value).matches())
             throw new IllegalArgumentException("이름에 허용되지 않은 패턴이 들어있습니다");
     }
 
-    public boolean isSame(String name){
-        return this.name.equals(name);
+    public boolean isSame(String value){
+        return this.value.equals(value);
     }
 
-    public String getName() {
-        return name;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -56,12 +56,12 @@ public class Name {
         if (!(object instanceof Name))
             return false;
 
-        Name name = (Name) object;
-        return Objects.equals(this.name, name.getName());
+        Name value = (Name) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(value);
     }
 }

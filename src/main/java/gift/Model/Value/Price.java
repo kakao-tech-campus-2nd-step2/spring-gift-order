@@ -9,22 +9,22 @@ import java.util.Objects;
 public class Price {
 
     @Column(nullable = false)
-    private int price;
+    private int value;
 
-    public Price(int price) {
-        validatePrice(price);
+    public Price(int value) {
+        validatePrice(value);
 
-        this.price = price;
+        this.value = value;
     }
 
-    private void validatePrice(int price) {
-        if (price < 0)
+    private void validatePrice(int value) {
+        if (value < 0)
             throw new IllegalArgumentException("가격은 0원 이상이여야 합니다");
 
     }
 
-    public int getPrice() {
-        return price;
+    public int getValue() {
+        return value;
     }
 
     @Override
@@ -35,13 +35,13 @@ public class Price {
         if (!(object instanceof Price))
             return false;
 
-        Price price = (Price) object;
-        return Objects.equals(this.price, price.getPrice());
+        Price value = (Price) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(price);
+        return Objects.hash(value);
     }
 
 }

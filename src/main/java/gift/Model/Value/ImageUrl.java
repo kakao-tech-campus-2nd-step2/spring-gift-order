@@ -3,29 +3,28 @@ package gift.Model.Value;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
-import java.awt.*;
 import java.util.Objects;
 
 @Embeddable
 public class ImageUrl {
 
     @Column(nullable = false)
-    private String imageUrl;
+    private String value;
 
-    public ImageUrl(String imageUrl) {
-        validateImageUrl(imageUrl);
+    public ImageUrl(String value) {
+        validateImageUrl(value);
 
-        this.imageUrl = imageUrl;
+        this.value = value;
     }
 
-    private void validateImageUrl(String imageUrl) {
-        if (imageUrl == null || imageUrl.isBlank())
-            throw new IllegalArgumentException("imageUrl를 입력해주세요");
+    private void validateImageUrl(String value) {
+        if (value == null || value.isBlank())
+            throw new IllegalArgumentException("value를 입력해주세요");
 
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getvalue() {
+        return value;
     }
 
     @Override
@@ -36,12 +35,12 @@ public class ImageUrl {
         if (!(object instanceof ImageUrl))
             return false;
 
-        ImageUrl imageUrl = (ImageUrl) object;
-        return Objects.equals(this.imageUrl, imageUrl.getImageUrl());
+        ImageUrl value = (ImageUrl) object;
+        return Objects.equals(this.value, value.getvalue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(imageUrl);
+        return Objects.hash(value);
     }
 }

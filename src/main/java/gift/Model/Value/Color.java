@@ -9,24 +9,24 @@ import java.util.Objects;
 public class Color {
 
     @Column(nullable = false)
-    private String color;
+    private String value;
 
-    public Color(String color){
-        validateColor(color);
+    public Color(String value){
+        validateColor(value);
 
-        this.color = color;
+        this.value = value;
     }
 
-    private void validateColor(String color){
-        if (color == null || color.isBlank())
+    private void validateColor(String value){
+        if (value == null || value.isBlank())
             throw new IllegalArgumentException("색상 값은 필수입니다");
 
-        if (color.length() != 7)
+        if (value.length() != 7)
             throw new IllegalArgumentException(" 색상 값의 길이는 7입니다");
     }
 
-    public String getColor() {
-        return color;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class Color {
         if(!(object instanceof Color))
             return false;
 
-        Color color = (Color) object;
-        return Objects.equals(this.color, color.getColor());
+        Color value = (Color) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode(){
-        return Objects.hash(color);
+        return Objects.hash(value);
     }
 }

@@ -13,22 +13,22 @@ public class Email {
     );
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String value;
 
-    public Email(String email) {
-        validateEmail(email);
-        this.email = email;
+    public Email(String value) {
+        validateEmail(value);
+        this.value = value;
     }
 
-    private void validateEmail(String email) {
-        if (email == null || email.isBlank())
+    private void validateEmail(String value) {
+        if (value == null || value.isBlank())
             throw new IllegalArgumentException("이메일 값은 필수입니다.");
-        if (!EMAIL_PATTERN.matcher(email).matches())
+        if (!EMAIL_PATTERN.matcher(value).matches())
             throw new IllegalArgumentException("이메일 양식을 다시 확인해주세요");
     }
 
-    public String getEmail() {
-        return email;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -39,12 +39,12 @@ public class Email {
         if (!(object instanceof Email))
             return false;
 
-        Email email = (Email) object;
-        return Objects.equals(this.email, email.getEmail());
+        Email value = (Email) object;
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email);
+        return Objects.hash(value);
     }
 }
