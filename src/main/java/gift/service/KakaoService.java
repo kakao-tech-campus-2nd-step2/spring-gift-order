@@ -12,7 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class KakaoService {
@@ -45,25 +47,48 @@ public class KakaoService {
 
     public String getAccessToken(String code) {
         String url = KAKAO_AUTH_URI + "/oauth/token";
+        HttpHeaders headers = createHeaders();
+        MultiValueMap<String, String> body = createBody(code);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(URI.create(url), HttpMethod.POST,
+                request, Map.class);
+            return extractAccessToken(response);
+        } catch (RestClientException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error while getting access token", e);
+        }
+
+    }
+
+    private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
+    }
 
+    private MultiValueMap<String, String> createBody(String code) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoClientId);
         body.add("redirect_uri", kakaoRedirectUrl);
         body.add("code", code);
+        return body;
+    }
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.exchange(URI.create(url), HttpMethod.POST,
-            request, Map.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody != null) {
-                return (String) responseBody.get("access_token");
-            }
+    private String extractAccessToken(ResponseEntity<Map> response) {
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "access token 발급 실패 : HTTP status " + response.getStatusCode());
         }
-        return null;
+
+        Map<String, Object> responseBody = response.getBody();
+        if (responseBody == null || responseBody.get("access_token") == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "응답에 access token이 발견 되지 않습니다.");
+        }
+
+        return (String) responseBody.get("access_token");
     }
 }
