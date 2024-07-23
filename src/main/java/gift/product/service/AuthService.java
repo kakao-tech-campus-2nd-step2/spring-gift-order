@@ -4,6 +4,7 @@ import gift.product.dto.JwtResponse;
 import gift.product.dto.MemberDto;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Member;
+import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -22,8 +23,13 @@ public class AuthService {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public AuthService(AuthRepository authRepository) {
+    private final KakaoProperties kakaoProperties;
+
+    private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code";
+
+    public AuthService(AuthRepository authRepository, KakaoProperties kakaoProperties) {
         this.authRepository = authRepository;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @Transactional
@@ -42,6 +48,10 @@ public class AuthService {
         String accessToken = getAccessToken(member);
 
         return new JwtResponse(accessToken);
+    }
+
+    public String getKakaoAuthCodeUrl() {
+        return KAKAO_AUTH_CODE_BASE_URL + "&redirect_uri=" + kakaoProperties.redirectUrl() + "&client_id=" + kakaoProperties.clientId();
     }
 
     private String getAccessToken(Member member) {
