@@ -5,12 +5,12 @@
   <script>
     function placeOrder(rowId) {
       const selectedOption = document.querySelector(`#optionSelect_${rowId}`).value;
-      const quantity = document.querySelector(`#quantity_${rowId}`).value;
+      const amount = document.querySelector(`#amount_${rowId}`).textContent; // amount 필드의 값을 가져옵니다.
       const message = document.querySelector(`#message_${rowId}`).value;
 
       const data = {
         optionName: selectedOption,
-        quantity: quantity,
+        quantity: amount, // amount 값을 수량으로 사용합니다.
         message: message
       };
 
@@ -54,7 +54,7 @@
     <td th:text="${wishlist.productDTO().name}"></td>
     <td th:text="${wishlist.productDTO().price}"></td>
     <td th:text="${wishlist.productDTO().categoryId}"></td>
-    <td th:text="${wishlist.amount}"></td>
+    <td th:id="'amount_' + ${iterStat.index}" th:text="${wishlist.amount}"></td> <!-- amount 필드를 추가합니다. -->
     <td>
       <select th:id="'optionSelect_' + ${iterStat.index}">
         <option th:each="option : ${wishlist.productDTO().optionDTOList}"
@@ -62,7 +62,6 @@
                 th:text="${option.name}">
         </option>
       </select>
-      <input type="number" th:id="'quantity_' + ${iterStat.index}" min="1" value="1"/>
     </td>
     <td>
       <textarea th:id="'message_' + ${iterStat.index}"></textarea>
