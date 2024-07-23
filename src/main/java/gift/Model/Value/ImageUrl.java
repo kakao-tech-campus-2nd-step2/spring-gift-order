@@ -23,7 +23,7 @@ public class ImageUrl {
 
     }
 
-    public String getvalue() {
+    public String getValue() {
         return value;
     }
 
@@ -36,7 +36,7 @@ public class ImageUrl {
             return false;
 
         ImageUrl value = (ImageUrl) object;
-        return Objects.equals(this.value, value.getvalue());
+        return Objects.equals(this.value, value.getValue());
     }
 
     @Override
