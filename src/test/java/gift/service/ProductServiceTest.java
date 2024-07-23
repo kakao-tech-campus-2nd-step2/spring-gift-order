@@ -80,7 +80,7 @@ class ProductServiceTest {
         Option option = Mockito.mock(Option.class);
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(optionService.saveOption(any(), any())).thenReturn(option);
+        when(optionService.saveOption(any())).thenReturn(option);
         when(option.getId()).thenReturn(1L);
 
         //When

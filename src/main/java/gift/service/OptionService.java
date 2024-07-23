@@ -2,7 +2,6 @@ package gift.service;
 
 import gift.dto.request.OptionRequest;
 import gift.entity.Option;
-import gift.entity.Product;
 import gift.exception.OptionNotFoundException;
 import gift.repository.OptionRepository;
 import org.springframework.stereotype.Service;
@@ -25,9 +24,8 @@ public class OptionService {
         targetOption.subtract(subtractQuantity);
     }
 
-    public Option saveOption(Product product, OptionRequest optionRequest) {
+    public Option saveOption(OptionRequest optionRequest) {
         Option option = new Option(optionRequest.name(), optionRequest.quantity());
-        option.associateWithProduct(product);
         return optionRepository.save(option);
     }
 }
