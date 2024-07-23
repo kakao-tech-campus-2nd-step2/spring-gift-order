@@ -54,6 +54,21 @@ public class Product {
         this.category = category;
     }
 
+    public Product(String name, int price, String imageUrl, Category category) {
+        Name nameObj = new Name(name);
+        nameObj.checkNameLength(NAME_MAX_LENGTH);
+        nameObj.checkNamePattern(NAME_PATTERN);
+        nameObj.checkNamePattern(NAME_EXCLUDE_PATTERN);
+
+        Price priceObj = new Price(price);
+        ImageUrl imageUrlObj = new ImageUrl(imageUrl);
+
+        this.name = nameObj;
+        this.price = priceObj;
+        this.imageUrl = imageUrlObj;
+        this.category = category;
+    }
+
     public Long getId() {
         return id;
     }
@@ -83,6 +98,10 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
+    }
+
+    public void update(String name, int price, String imageUrl, Category category) {
+        update (new Name(name), new Price(price), new ImageUrl(imageUrl), category);
     }
 
     public boolean isSameId(Long productId) {

@@ -42,6 +42,20 @@ public class Option {
         this.product = product;
     }
 
+    public Option(String name, int quantity, Product product) {
+        Name nameObj = new Name(name);
+        nameObj.checkNameLength(NAME_MAX_LENGTH);
+        nameObj.checkNamePattern(NAME_PATTERN);
+
+        Quantity quantityObj = new Quantity(quantity);
+
+        validateProduct(product);
+
+        this.name = nameObj;
+        this.quantity = quantityObj;
+        this.product = product;
+    }
+
     public void validateProduct(Product product) {
         if (product == null)
             throw new IllegalArgumentException("옵션에 product 지정은 필수입니다");
@@ -69,6 +83,10 @@ public class Option {
 
         this.name = name;
         this.quantity = quantity;
+    }
+
+    public void update(String name, int quantity) {
+        update(new Name(name), new Quantity(quantity));
     }
 
     public void subtract(int quantity){

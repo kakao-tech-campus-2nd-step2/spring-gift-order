@@ -26,6 +26,11 @@ public class Member {
         this.password = password;
     }
 
+    public Member(String email, String password) {
+        this.email = new Email(email);
+        this.password = new Password(password);
+    }
+
     public Long getId() {
         return id;
     }
@@ -41,5 +46,9 @@ public class Member {
     public void update(Email email, Password password){
         this.email = email;
         this.password = password;
+    }
+
+    public void update(String email, String password) {
+        update(new Email(email), new Password(password));
     }
 }
