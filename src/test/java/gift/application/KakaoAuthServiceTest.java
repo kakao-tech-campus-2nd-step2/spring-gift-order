@@ -93,8 +93,8 @@ class KakaoAuthServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 정보 확인 테스트")
-    void getUserInfo() throws Exception {
+    @DisplayName("카카오 사용자 ID 확인 테스트")
+    void getUserId() throws Exception {
         String token = "test-token";
         String responseBody = "{ \"id\": \"123\"}";
         String url = "https://kapi.kakao.com/v2/user/me";
@@ -115,7 +115,7 @@ class KakaoAuthServiceTest {
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        String userInfoResponse = kakaoAuthService.getUserInfo(token);
+        String userInfoResponse = kakaoAuthService.getUserId(token);
 
         assertThat(userInfoResponse).isEqualTo(userInfoId);
         verify(kakaoAuthUtil).getRequestWithGet(url, token);

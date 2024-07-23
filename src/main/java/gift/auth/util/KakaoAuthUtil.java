@@ -10,6 +10,9 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
 @Component
 public class KakaoAuthUtil {
 
@@ -23,6 +26,12 @@ public class KakaoAuthUtil {
         return "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code" +
                 "&redirect_uri=" + kakaoProperties.redirectUri() +
                 "&client_id="    + kakaoProperties.clientId();
+    }
+
+    public String generateKakaoEmail(String userInfo) {
+        return "kakao_user" +
+                userInfo +
+                "@kakao.com";
     }
 
     public RequestEntity<LinkedMultiValueMap<String, String>> getRequestWithPost(String url,
@@ -53,6 +62,15 @@ public class KakaoAuthUtil {
         return new ObjectMapper().readTree(json)
                 .get(key)
                 .asText();
+    }
+
+    public String generateTemporaryPassword() {
+        SecureRandom random = new SecureRandom();
+        byte[] bytes = new byte[32];
+        random.nextBytes(bytes);
+
+        return Base64.getEncoder()
+                .encodeToString(bytes);
     }
 
 }

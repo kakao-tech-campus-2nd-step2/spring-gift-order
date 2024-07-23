@@ -8,6 +8,9 @@ import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
 import gift.member.util.MemberMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class MemberService {
@@ -43,6 +46,12 @@ public class MemberService {
         }
         
         return jwtUtil.generateToken(member.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<MemberDto> getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .map(MemberMapper::toDto);
     }
 
 }

@@ -1,6 +1,8 @@
 package gift.auth.api;
 
 import gift.auth.application.KakaoAuthService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,15 +20,19 @@ public class KakaoAuthController {
     }
 
     @GetMapping
-    public String kakaoLogin() {
+    public String redirectKakaoLogin() {
         return "redirect:" + kakaoAuthService.getKakaoAuthUrl();
     }
 
     @GetMapping("/callback")
     @ResponseBody
-    public String kakaoCallback(@RequestParam("code") String code) throws Exception {
-        String token = kakaoAuthService.getAccessToken(code);
-        return kakaoAuthService.getUserInfo(token);
+    public ResponseEntity<String> handleKakaoCallback(@RequestParam("code") String code) throws Exception {
+        ResponseEntity<Object> response = kakaoAuthService.getResponseOfKakaoLogin(code);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok("로그인에 성공하였습니다.");
+        }
+        return ResponseEntity.internalServerError()
+                .body("로그인에 실패하였습니다.");
     }
 
 }

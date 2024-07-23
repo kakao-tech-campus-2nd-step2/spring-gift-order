@@ -12,4 +12,11 @@ public class MemberMapper {
         );
     }
 
+    public static MemberDto toDto(Member member) {
+        return new MemberDto(
+                member.getEmail(),
+                member.getPassword()
+        );
+    }
+
 }
