@@ -66,7 +66,7 @@ public class Category {
     }
 
     private void validateColor(String color) {
-        final String colorRegex = "^#+[0-9a-fA-F]{6}$";
+        String colorRegex = "^#+[0-9a-fA-F]{6}$";
         Pattern colorPattern = Pattern.compile(colorRegex);
         if (!colorPattern.matcher(color).matches()) {
             throw new CustomException(ErrorCode.INVALID_COLOR);
