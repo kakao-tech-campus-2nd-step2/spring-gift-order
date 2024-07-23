@@ -64,11 +64,7 @@ public class OptionService {
         Option option = optionRepository.findById(id)
             .orElseThrow(() -> new OptionNotFoundException("ID에 해당하는 옵션이 없습니다."));
 
-        if (product.optionAmount() <= 1) {
-            throw new MinimumOptionException("상품의 옵션이 1개 이하인 경우 옵션을 삭제할 수 없습니다.");
-        }
-
-        product.removeOption(option);
+        product.removeOption(option, product);
         productRepository.save(product);
         optionRepository.deleteById(id);
     }
