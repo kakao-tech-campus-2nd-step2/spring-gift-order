@@ -10,10 +10,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
+import static io.jsonwebtoken.lang.Strings.UTF_8;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+
 @Service
 public class KakaoService {
 
-    private static MediaType CONTENT_TYPE = MediaType.valueOf("application/x-www-form-urlencoded;charset=utf-8");
+    private static final MediaType CONTENT_TYPE = new  MediaType(APPLICATION_FORM_URLENCODED, UTF_8);
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
@@ -26,13 +29,13 @@ public class KakaoService {
     //카카오 인가코드를 이용한 엑세스 토큰 발급해오기
     public KakaoTokenResponse receiveKakaoToken(String code) {
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", kakaoProperties.getGrantType());
-        map.add("client_id", kakaoProperties.getClientId());
-        map.add("redirect_uri", kakaoProperties.getRedirectUri());
+        map.add("grant_type", kakaoProperties.grantType());
+        map.add("client_id", kakaoProperties.clientId());
+        map.add("redirect_uri", kakaoProperties.redirectUri());
         map.add("code", code);
 
         return restClient.post()
-                .uri(kakaoProperties.getTokenRequestUri())
+                .uri(kakaoProperties.tokenRequestUri())
                 .contentType(CONTENT_TYPE)
                 .body(map)
                 .retrieve()
@@ -43,14 +46,14 @@ public class KakaoService {
     //카카오 엑세스 토큰을 이용한 유저정보 가져오기
     public UserJoinRequest getKakaoProfile(KakaoTokenResponse tokenResponse) {
         KakaoProfile kakaoProfile = restClient.post()
-                .uri(kakaoProperties.getUserRequestUri() + "[\"kakao_account.profile\"]")
+                .uri(kakaoProperties.userRequestUri() + "[\"kakao_account.profile\"]")
                 .contentType(CONTENT_TYPE)
                 .header("Authorization", "Bearer " + tokenResponse.accessToken())
                 .retrieve()
                 .toEntity(KakaoProfile.class)
                 .getBody();
 
-        return new UserJoinRequest(kakaoProfile, kakaoProperties.getPassword());
+        return new UserJoinRequest(kakaoProfile, kakaoProperties.password());
     }
 
 }
