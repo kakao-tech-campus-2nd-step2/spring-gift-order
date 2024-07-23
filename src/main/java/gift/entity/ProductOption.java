@@ -5,13 +5,15 @@ import gift.exception.ErrorCode;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "product_option")
+@Table(name = "product_option", indexes = {
+        @Index(name = "idx_product_id", columnList = "product_id"),
+        @Index(name = "idx_option_id", columnList = "option_id")
+})
 public class ProductOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false, foreignKey = @ForeignKey(name = "fk_product_option_product"), columnDefinition = "BIGINT NOT NULL COMMENT 'Foreign Key to Product'")
     private Product product;
