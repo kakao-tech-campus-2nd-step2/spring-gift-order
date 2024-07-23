@@ -21,6 +21,7 @@ public class JwtProvider {
     public String create(Member member) {
         return Jwts.builder()
                 .subject(member.getId().toString())
+                .claim("kakaoId", member.getKakaoId() != null ? member.getKakaoId().toString() : null)
                 .claim("role", member.getRole())
                 .expiration(new Date(currentTimeMillis() + EXPIRE))
                 .signWith(SECRET_KEY)

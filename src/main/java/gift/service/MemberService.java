@@ -7,7 +7,9 @@ import gift.dto.MemberDto;
 import gift.exception.GiftException;
 import gift.repository.MemberRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MemberService {
 
@@ -34,8 +36,15 @@ public class MemberService {
         return jwtProvider.create(member);
     }
 
+    @Transactional(readOnly = true)
     public Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
+                .orElseThrow(() -> new GiftException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Member getKakaoMember(Long kakaoId) {
+        return memberRepository.findByKakaoId(kakaoId)
                 .orElseThrow(() -> new GiftException(ErrorCode.MEMBER_NOT_FOUND));
     }
 

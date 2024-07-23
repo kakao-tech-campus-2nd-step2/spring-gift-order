@@ -16,13 +16,15 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     private MemberRole role;
+
+    @Column(unique = true)
+    private Long kakaoId;
 
     @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
@@ -46,12 +48,17 @@ public class Member {
         return wishes;
     }
 
-    public Member(Long id, String name, String email, String password, MemberRole role) {
+    public Long getKakaoId() {
+        return kakaoId;
+    }
+
+    public Member(Long id, String name, String email, String password, MemberRole role, Long kakaoId) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.kakaoId = kakaoId;
     }
 
     public static class MemberBuilder {
@@ -60,6 +67,7 @@ public class Member {
         private String email;
         private String password;
         private MemberRole role;
+        private Long kakaoId;
 
         public MemberBuilder id(Long id) {
             this.id = id;
@@ -86,8 +94,13 @@ public class Member {
             return this;
         }
 
+        public MemberBuilder kakaoId(Long kakaoId) {
+            this.kakaoId = kakaoId;
+            return this;
+        }
+
         public Member build() {
-            return new Member(id, name, email, password, role);
+            return new Member(id, name, email, password, role, kakaoId);
         }
     }
 

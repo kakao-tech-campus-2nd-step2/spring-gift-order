@@ -36,7 +36,11 @@ public enum ErrorCode {
     /* ProductService */
     DUPLICATE_OPTION("중복된 옵션입니다.", HttpStatus.CONFLICT),
     OPTION_NOT_FOUND("존재하지 않는 옵션입니다.", HttpStatus.NOT_FOUND),
-    AT_LEAST_ONE_OPTION_REQUIRED("상품에는 반드시 하나 이상의 옵션이 있어야 합니다.", HttpStatus.BAD_REQUEST);
+    AT_LEAST_ONE_OPTION_REQUIRED("상품에는 반드시 하나 이상의 옵션이 있어야 합니다.", HttpStatus.BAD_REQUEST),
+
+    /* KakaoLoginService */
+    KAKAO_USER_RETRIEVAL_FAILED("카카오 유저 정보 조회에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    JSON_PARSING_FAILED("JSON 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String message;
     private final HttpStatus status;

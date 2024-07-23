@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.service.kakao.AccessTokenResponse;
+import gift.service.kakao.TokenResponse;
 import gift.service.kakao.KakaoLoginService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,12 +30,11 @@ public class KakaoController {
     }
 
     @GetMapping("/oauth")
-    public ResponseEntity<AccessTokenResponse> login(@RequestParam String code) {
-        String accessToken = loginService.getAccessToken(code);
-        AccessTokenResponse token = new AccessTokenResponse(accessToken);
+    public ResponseEntity<TokenResponse> login(@RequestParam String code) {
+        TokenResponse tokenResponse = loginService.getAccessToken(code);
 
         return ResponseEntity.ok()
-                .body(token);
+                .body(tokenResponse);
     }
 
 }

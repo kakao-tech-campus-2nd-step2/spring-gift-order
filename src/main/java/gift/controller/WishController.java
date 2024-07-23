@@ -6,6 +6,7 @@ import gift.dto.ProductDto;
 import gift.dto.request.WishCreateRequest;
 import gift.dto.response.ProductResponse;
 import gift.service.WishService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +45,7 @@ public class WishController {
 
     @PostMapping
     public ResponseEntity<Void> productAdd(@LoginMember Member member,
-                                           @RequestBody WishCreateRequest request) {
+                                           @RequestBody @Valid WishCreateRequest request) {
         wishService.addProduct(member, request.getProductId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -53,7 +54,7 @@ public class WishController {
 
     @DeleteMapping
     public ResponseEntity<Void> productRemove(@LoginMember Member member,
-                                              @RequestBody WishCreateRequest request) {
+                                              @RequestBody @Valid WishCreateRequest request) {
         wishService.removeProduct(member, request.getProductId());
 
         return ResponseEntity.ok()

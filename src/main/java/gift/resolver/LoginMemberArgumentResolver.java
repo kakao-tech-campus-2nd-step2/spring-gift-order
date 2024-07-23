@@ -5,6 +5,7 @@ import gift.config.LoginMember;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.service.MemberService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -39,9 +40,17 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
             throw new GiftException(ErrorCode.INVALID_TOKEN);
         }
 
-        Long memberId = Long.parseLong(jwtProvider.getClaims(token).getSubject());
+        Claims claims = jwtProvider.getClaims(token);
+        Long memberId = Long.parseLong(claims.getSubject());
 
-        return memberService.getMember(memberId);
+        Object optionalKakaoId = claims.get("kakaoId");
+        Long kakaoId = optionalKakaoId != null ? Long.parseLong(optionalKakaoId.toString()) : null;
+
+        if (kakaoId == null) {
+            return memberService.getMember(memberId);
+        } else {
+            return memberService.getKakaoMember(kakaoId);
+        }
     }
 
 }
