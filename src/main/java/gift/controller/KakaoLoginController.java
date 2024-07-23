@@ -3,10 +3,8 @@ package gift.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.DTO.KakaoProperties;
 import gift.DTO.Token;
-import gift.security.KakaoTokenProvider;
 import gift.service.KakaoUserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,7 +28,6 @@ public class KakaoLoginController {
         if(code != null){
             Token login = kakaoUserService.login(code);
             redirectAttributes.addFlashAttribute("token", login.getToken());
-            // 쿼리 파라미터 없이 리다이렉트
             return new RedirectView("/home");
         }
         return new RedirectView("/home");
