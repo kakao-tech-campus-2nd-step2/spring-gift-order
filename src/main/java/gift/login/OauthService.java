@@ -27,14 +27,15 @@ public class OauthService {
             .retrieve()
             .toEntity(String.class);
 
-        return URI.create(String.valueOf(response.getHeaders().getLocation()));
+        return response.getHeaders().getLocation();
     }
 
     private String generateKakaoLoginURL() {
         return UriComponentsBuilder.fromHttpUrl(kakaoOauthConfigure.getAuthorizeCodeURL())
             .queryParam("client_id", kakaoOauthConfigure.getClientId())
             .queryParam("redirect_uri", kakaoOauthConfigure.getRedirectURL())
-            .queryParam("response_type", "code").toUriString();
+            .queryParam("response_type", "code")
+            .toUriString();
     }
 
     public String getTokenFromKakao(String code) {
