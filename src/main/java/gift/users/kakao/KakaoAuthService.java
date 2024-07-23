@@ -18,12 +18,12 @@ public class KakaoAuthService {
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
-    public KakaoAuthService(KakaoProperties kakaoProperties, ObjectMapper objectMapper,
+    public KakaoAuthService(KakaoProperties kakaoProperties, RestClient restClient, ObjectMapper objectMapper,
         UserService userService) {
         this.kakaoProperties = kakaoProperties;
+        this.restClient = restClient;
         this.objectMapper = objectMapper;
         this.userService = userService;
-        this.restClient = RestClient.create();
     }
 
     public String getKakaoLoginUrl() {
@@ -40,7 +40,6 @@ public class KakaoAuthService {
     private Long getKakaoUser(String token) throws JsonProcessingException {
         String response = restClient.post()
             .uri(kakaoProperties.userUrl())
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .body(String.class);
@@ -57,7 +56,6 @@ public class KakaoAuthService {
 
         String response = restClient.post()
             .uri(kakaoProperties.tokenUrl())
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
             .body(String.class);
