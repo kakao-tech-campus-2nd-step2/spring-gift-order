@@ -1,5 +1,6 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
@@ -11,6 +12,7 @@ public class Email {
             "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
     );
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     public Email(String email) {

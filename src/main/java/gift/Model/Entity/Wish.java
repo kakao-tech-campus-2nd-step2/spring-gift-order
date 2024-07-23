@@ -18,7 +18,6 @@ public class Wish {
     private Product product;
 
     @Embedded
-    @Column(nullable = false)
     private Count count;
 
     protected Wish(){}

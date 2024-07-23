@@ -1,11 +1,13 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
 public class Count {
+
     private int count;
 
     public Count(int count) {

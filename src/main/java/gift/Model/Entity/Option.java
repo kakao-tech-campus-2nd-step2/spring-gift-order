@@ -20,7 +20,6 @@ public class Option {
     private Long id;
 
     @Embedded
-    @Column(nullable = false)
     private Name name;
 
     @Embedded

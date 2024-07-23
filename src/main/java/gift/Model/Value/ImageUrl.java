@@ -1,5 +1,6 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.awt.*;
@@ -7,6 +8,8 @@ import java.util.Objects;
 
 @Embeddable
 public class ImageUrl {
+
+    @Column(nullable = false)
     private String imageUrl;
 
     public ImageUrl(String imageUrl) {

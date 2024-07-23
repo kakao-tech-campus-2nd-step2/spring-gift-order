@@ -18,15 +18,12 @@ public class Category {
     private Name name;
 
     @Embedded
-    @Column(nullable = false)
     private Color color;
 
     @Embedded
-    @Column(nullable = false)
     private ImageUrl imageUrl;
 
     @Embedded
-    @Column(nullable = false)
     private Description description;
 
 

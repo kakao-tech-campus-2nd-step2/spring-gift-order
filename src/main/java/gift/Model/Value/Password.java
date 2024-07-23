@@ -1,11 +1,14 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
 public class Password {
+
+    @Column(nullable = false)
     private String password;
 
     public Password(String password) {

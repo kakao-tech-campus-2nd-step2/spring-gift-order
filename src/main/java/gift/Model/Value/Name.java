@@ -1,5 +1,6 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
@@ -8,6 +9,7 @@ import java.util.regex.Pattern;
 @Embeddable
 public class Name {
 
+    @Column(nullable = false)
     private String name;
 
     public Name(String name) {

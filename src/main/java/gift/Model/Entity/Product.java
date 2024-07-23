@@ -30,11 +30,9 @@ public class Product {
     private Name name;
 
     @Embedded
-    @Column(nullable = false)
     private Price price;
 
     @Embedded
-    @Column(nullable = false)
     private ImageUrl imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

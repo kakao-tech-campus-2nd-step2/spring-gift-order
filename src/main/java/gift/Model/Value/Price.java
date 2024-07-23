@@ -1,11 +1,14 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
 public class Price {
+
+    @Column(nullable = false)
     private int price;
 
     public Price(int price) {

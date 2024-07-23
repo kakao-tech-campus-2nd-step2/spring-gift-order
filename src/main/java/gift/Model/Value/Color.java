@@ -1,11 +1,14 @@
 package gift.Model.Value;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
 public class Color {
+
+    @Column(nullable = false)
     private String color;
 
     public Color(String color){

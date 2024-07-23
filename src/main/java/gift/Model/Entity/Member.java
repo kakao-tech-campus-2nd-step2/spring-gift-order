@@ -12,11 +12,9 @@ public class Member {
     private Long id;
 
     @Embedded
-    @Column(nullable = false, unique = true)
     private Email email;
 
     @Embedded
-    @Column(nullable = false)
     private Password password;
 
     protected Member() {}
