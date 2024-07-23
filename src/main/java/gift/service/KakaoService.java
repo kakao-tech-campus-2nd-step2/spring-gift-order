@@ -16,6 +16,7 @@ import java.net.URI;
 
 @Service
 public class KakaoService {
+    //https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id={REST_API_KEY}
     @Value("${kakao.client_id}")
     String client_id;
     @Value("${kakao.redirect_uri}")
@@ -37,13 +38,13 @@ public class KakaoService {
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         ResponseEntity<String> response;
         try {
-            response= restTemplate.postForEntity(url, request, String.class);
-        }catch(HttpClientErrorException e){
+            response = restTemplate.postForEntity(url, request, String.class);
+        } catch (HttpClientErrorException e) {
             throw new BadRequestException("잘못된 요청");
         }
-        if(response.getStatusCode()==HttpStatus.UNAUTHORIZED)
+        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED)
             throw new UnAuthException("인증되지 않은 요청");
-        if(response.getStatusCode()!=HttpStatus.OK)
+        if (response.getStatusCode() != HttpStatus.OK)
             throw new BadRequestException("잘못된 요청");
         KakaoToken kakaoToken = objectMapper.readValue(response.getBody(), KakaoToken.class);
         return kakaoToken.access_token();

@@ -1,6 +1,8 @@
 package gift.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.dto.option.OptionQuantityDTO;
+import gift.dto.option.OrderResponseDTO;
 import gift.dto.option.SaveOptionDTO;
 import gift.dto.option.UpdateOptionDTO;
 import gift.service.OptionService;
@@ -40,7 +42,8 @@ public class OptionController {
 
     @PostMapping("/api/option/order")
     @ResponseStatus(HttpStatus.OK)
-    public void order(@RequestBody OptionQuantityDTO optionQuantityDTO) {
-        optionService.order(optionQuantityDTO);
+    @ResponseBody
+    public OrderResponseDTO order(@RequestHeader("Authorization") String token, @RequestBody OptionQuantityDTO optionQuantityDTO) {
+        return optionService.order(optionQuantityDTO, token);
     }
 }
