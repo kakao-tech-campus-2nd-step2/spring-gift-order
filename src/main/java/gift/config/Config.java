@@ -27,13 +27,13 @@ public class Config implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/*")
-                .excludePathPatterns("/members/**", "/manager/products", "/manager/products/**", "/manager/products/**/**", "**.html");
+//        registry.addInterceptor(jwtInterceptor)
+//                .addPathPatterns("/*")
+//                .excludePathPatterns("/members/**", "/manager/products", "/manager/products/**", "/manager/products/**/**", "**.html", "/login");
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginUserArgumentResolver(userService, jwtService));
+        //resolvers.add(new LoginUserArgumentResolver(userService, jwtService));
     }
 }

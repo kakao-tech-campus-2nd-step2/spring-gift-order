@@ -70,7 +70,7 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public List<Product> findAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> findAllProducts() {
+        return productRepository.findAll().stream().map(ProductResponse::new).toList();
     }
 }

@@ -5,25 +5,25 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 
 public class ResponseDTO {
-    HttpStatus code;
+    HttpStatus HttpStatus;
     String message;
-    Object data;
+    Object details;
 
     public ResponseDTO() {
     }
 
-    public ResponseDTO(HttpStatus code, String message, Object data) {
-        this.code = code;
+    public ResponseDTO(HttpStatus HttpStatus, String message, Object details) {
+        this.HttpStatus = HttpStatus;
         this.message = message;
-        this.data = data;
+        this.details = details;
     }
 
-    public HttpStatus getCode() {
-        return code;
+    public HttpStatus getHttpStatus() {
+        return HttpStatus;
     }
 
-    public void setCode(HttpStatus code) {
-        this.code = code;
+    public void setHttpStatus(HttpStatus HttpStatus) {
+        this.HttpStatus = HttpStatus;
     }
 
     public String getMessage() {
@@ -34,11 +34,11 @@ public class ResponseDTO {
         this.message = message;
     }
 
-    public Object getData() {
-        return data;
+    public Object getDetails() {
+        return details;
     }
 
-    public void setData(HashMap<?, ?> data) {
-        this.data = data;
+    public void setDetails(HashMap<?, ?> details) {
+        this.details = details;
     }
 }

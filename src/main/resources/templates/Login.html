@@ -20,20 +20,20 @@
         <form action="MainView.html" th:action th:object="${loginDTO}" method="post">
             <div>
                 <label for="email">이메일 주소</label>
-                <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="이메일">
-                <div th:if="${#fields.hasErrors('email')}">
+                <input type="email" id="email" class="form-control" placeholder="이메일">
+                <!--<div th:if="${#fields.hasErrors('email')}">
                     <p class="field-error" th:each="err : ${#fields.errors('email')}"
                        th:text="${err}"></p>
-                </div>
+                </div>-->
 
             </div>
             <div>
                 <label for="password">비밀번호</label>
-                <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="비밀번호">
-                <div th:if="${#fields.hasErrors('password')}">
+                <input type="password" id="password" class="form-control" placeholder="비밀번호">
+                <!--<div th:if="${#fields.hasErrors('password')}">
                     <p class="field-error" th:each="err : ${#fields.errors('password')}"
                        th:text="${err}"></p>
-                </div>
+                </div>-->
             </div>
 
             <div class="row">
@@ -46,7 +46,14 @@
                             th:onclick="|location.href='@{/user/signup}'|"
                             type="button">회원가입</button>
                 </div>
+
+                <div class="col">
+                    <a th:href="@{https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri={redirect-url}&client_id={client-id}(redirect-url = ${redirect_url}, client-id = ${client_id})}">
+                        <img src="/kakao.png">
+                    </a>
+                </div>
             </div>
+
 
         </form>
     </div>
