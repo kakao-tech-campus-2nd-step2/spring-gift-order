@@ -1,4 +1,4 @@
-package gift.Menu;
+package gift.RepositoryTest;
 
 import gift.domain.Category;
 import gift.domain.Menu;
