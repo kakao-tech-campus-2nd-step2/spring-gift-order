@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class KakaoOauthConfigure {
 
-    @Value("${kakao.cliend-id}")
-    private String cliendId;
+    @Value("${kakao.client-id}")
+    private String clientId;
 
     @Value("${kakao.redirect-url}")
     private String redirectURL;
@@ -18,12 +18,12 @@ public class KakaoOauthConfigure {
     @Value("${kakao.token-url}")
     private String tokenURL;
 
-    public String getCliendId() {
-        return cliendId;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setCliendId(String cliendId) {
-        this.cliendId = cliendId;
+    public void setClientId(String cliendId) {
+        this.clientId = cliendId;
     }
 
     public String getRedirectURL() {
