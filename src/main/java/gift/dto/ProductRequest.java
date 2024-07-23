@@ -1,0 +1,54 @@
+package gift.dto;
+
+import gift.model.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+public class ProductRequest {
+
+    private Long id;
+
+    @Pattern(regexp = "^[ㄱ-ㅎ가-힣a-zA-Z0-9\\(\\)\\[\\]\\+\\-&/_]+$", message = "잘못된 이름입니다.")
+    @Size(min = 1, max = 15, message = "잘못된 이름입니다.")
+    private String name;
+
+    @NotNull(message = "가격을 입력해주세요")
+    private Integer price;
+
+    @NotBlank(message = "이미지 주소를 입력해주세요")
+    private String imageUrl;
+
+    @NotNull(message = "카테고리를 입력해주세요")
+    private Long categoryId;
+
+    public ProductRequest(Long id, String name, Integer price, String imageUrl, Long categoryId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.categoryId = categoryId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public Integer getPrice() {
+        return price;
+    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public Product toEntity(){
+        return new Product(id, name, price, imageUrl);
+    }
+}
