@@ -2,6 +2,8 @@ package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.Objects;
+
 @Embeddable
 public class Color {
     private String color;
@@ -22,5 +24,22 @@ public class Color {
 
     public String getColor() {
         return color;
+    }
+
+    @Override
+    public boolean equals(Object object){
+        if (this== object)
+            return true;
+
+        if(!(object instanceof Color))
+            return false;
+
+        Color color = (Color) object;
+        return Objects.equals(this.color, color.getColor());
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(color);
     }
 }

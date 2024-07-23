@@ -2,6 +2,8 @@ package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.Objects;
+
 @Embeddable
 public class Quantity {
     private int quantity;
@@ -29,5 +31,22 @@ public class Quantity {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (!(object instanceof Quantity))
+            return false;
+
+        Quantity quantity = (Quantity) object;
+        return Objects.equals(this.quantity,quantity.getQuantity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(quantity);
     }
 }

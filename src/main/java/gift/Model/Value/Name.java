@@ -2,6 +2,7 @@ package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Embeddable
@@ -43,5 +44,22 @@ public class Name {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (!(object instanceof Name))
+            return false;
+
+        Name name = (Name) object;
+        return Objects.equals(this.name, name.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

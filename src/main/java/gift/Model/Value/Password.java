@@ -2,6 +2,8 @@ package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.Objects;
+
 @Embeddable
 public class Password {
     private String password;
@@ -21,4 +23,22 @@ public class Password {
     public String getPassword() {
         return password;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (!(object instanceof Password))
+            return false;
+
+        Password password = (Password) object;
+        return Objects.equals(this.password, password.getPassword());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(password);
+    }
+
 }

@@ -2,6 +2,9 @@ package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
 
+import java.awt.*;
+import java.util.Objects;
+
 @Embeddable
 public class ImageUrl {
     private String imageUrl;
@@ -20,5 +23,22 @@ public class ImageUrl {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (!(object instanceof ImageUrl))
+            return false;
+
+        ImageUrl imageUrl = (ImageUrl) object;
+        return Objects.equals(this.imageUrl, imageUrl.getImageUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(imageUrl);
     }
 }

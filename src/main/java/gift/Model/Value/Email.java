@@ -1,6 +1,8 @@
 package gift.Model.Value;
 
 import jakarta.persistence.Embeddable;
+
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Embeddable
@@ -25,5 +27,22 @@ public class Email {
 
     public String getEmail() {
         return email;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (!(object instanceof Email))
+            return false;
+
+        Email email = (Email) object;
+        return Objects.equals(this.email, email.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }
