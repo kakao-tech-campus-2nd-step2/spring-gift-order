@@ -8,6 +8,7 @@ import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import java.net.URI;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,7 @@ public class KaKaoUserService {
     @Value("${kakao.redirect.url}")
     private String redirectUri; // 카카오 로그인 후 리다이렉트될 URI
 
+    @Autowired
     public KaKaoUserService(JpaUserRepository userRepository) {
         this.userRepository = userRepository;
     }
