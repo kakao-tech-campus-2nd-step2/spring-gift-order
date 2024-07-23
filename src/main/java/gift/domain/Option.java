@@ -25,6 +25,14 @@ public class Option {
 
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
     public void subtract(Long subtractNumber) throws IllegalAccessException {
         quantity -= subtractNumber;
         if(quantity <= 0 || quantity > 1000000000){
@@ -45,7 +53,4 @@ public class Option {
         return Objects.hash(name);
     }
 
-    public String getName() {
-        return this.name;
-    }
 }
