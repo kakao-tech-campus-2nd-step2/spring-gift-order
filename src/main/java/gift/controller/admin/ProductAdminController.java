@@ -29,8 +29,12 @@ public class ProductAdminController {
         this.categoryService = categoryService;
     }
 
+    @GetMapping("/login")
+    public String kakaoLogin() {
+        return "version-SSR/kakaoLogin";
+    }
 
-    @GetMapping("/")
+    @GetMapping("/product")
     public String getProducts(Model model, @PageableDefault(sort = "id") Pageable pageable) {
         model.addAttribute("products", productService.getProductResponses(pageable));
         return "version-SSR/index";
