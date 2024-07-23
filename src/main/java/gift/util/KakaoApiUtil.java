@@ -4,7 +4,9 @@ package gift.util;
 import com.google.gson.Gson;
 import gift.dto.OauthTokenDTO;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -15,18 +17,24 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
+@PropertySource("classpath:application-dev.properties")
 @Component
 public class KakaoApiUtil {
-
     private final RestClient restClient = RestClient.create();
+
+    @Value("${kakao.api.key}")
+    private String kakaoApiKey;
+
+    @Value("${client.id}")
+    private String clientId;
 
     private OauthTokenDTO getToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
 
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "5bc075cfab5ae4b53f2d3eb6e44ed01f");
-        body.add("redirect_url", "http://localhost:8080");
+        body.add("client_id", clientId);
+        body.add("redirect_url", "http://localhost:8080/login/token");
         body.add("code", code);
 
         var response = restClient.post()
