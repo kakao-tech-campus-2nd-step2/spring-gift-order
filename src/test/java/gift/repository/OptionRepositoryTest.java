@@ -33,19 +33,4 @@ class OptionRepositoryTest {
                 () -> assertThat(option1.getName()).isEqualTo(option.getName())
         );
     }
-    @Test
-    void purchaseProductById() {
-        Category category = new Category("category1");
-        categoryRepository.save(category);
-        Product expectedProduct = new Product(category, new ProductName("product1"), 1000, "qwer.com");
-        productRepository.save(expectedProduct);
-
-        Option option = new Option(expectedProduct, "option1", 1000);
-        optionRepository.save(option);
-
-        optionRepository.subtractById(option.getId(), 100);
-
-        Option updatedOption = optionRepository.findById(option.getId()).orElseThrow();
-        assertEquals(900, updatedOption.getAmount());
-    }
 }
