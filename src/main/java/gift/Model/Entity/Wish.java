@@ -18,6 +18,7 @@ public class Wish {
     private Product product;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "count"))
     private Count count;
 
     protected Wish(){}

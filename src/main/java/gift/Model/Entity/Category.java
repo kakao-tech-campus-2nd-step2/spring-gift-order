@@ -14,16 +14,19 @@ public class Category {
     private Long id;
 
     @Embedded
-    @AttributeOverride(name = "name", column = @Column(nullable = false, length = 15))
+    @AttributeOverride(name = "value", column = @Column(name = "name", nullable = false, unique = true, length = 15))
     private Name name;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "color", nullable = false))
     private Color color;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "image_url", nullable = false))
     private ImageUrl imageUrl;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "description", nullable = false))
     private Description description;
 
 

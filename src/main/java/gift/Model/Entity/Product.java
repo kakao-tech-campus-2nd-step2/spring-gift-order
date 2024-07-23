@@ -26,13 +26,15 @@ public class Product {
     private Long id;
 
     @Embedded
-    @AttributeOverride(name = "name", column = @Column(nullable = false, length = 50))
+    @AttributeOverride(name = "value", column = @Column(name = "name", nullable = false, length = 50))
     private Name name;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "price", nullable = false))
     private Price price;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "image_url", nullable = false))
     private ImageUrl imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
