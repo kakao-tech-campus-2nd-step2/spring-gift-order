@@ -1,5 +1,6 @@
 package gift.DTO;
 
+import gift.Model.Entity.Product;
 import jakarta.validation.constraints.*;
 
 public record RequestProductDTO(
@@ -18,5 +19,8 @@ public record RequestProductDTO(
         @Min(value = 1, message = "카테고리Id값은 최소 1이상입니다")
         Long categoryId
 ) {
+        public static RequestProductDTO of(Product product){
+                return new RequestProductDTO(product.getName().getName(), product.getPrice().getPrice(), product.getImageUrl().getImageUrl(), product.getId());
+        }
 }
 
