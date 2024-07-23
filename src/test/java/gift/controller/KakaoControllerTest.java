@@ -1,7 +1,7 @@
 package gift.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.service.kakao.KakaoLoginService;
+import gift.service.kakao.TokenResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,6 @@ class KakaoControllerTest {
 
     @Autowired
     private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private KakaoLoginService kakaoLoginService;
@@ -52,9 +49,9 @@ class KakaoControllerTest {
     void login() throws Exception {
         //given
         String code = "test_code";
-        String accessToken = "test_access_token";
+        TokenResponse tokenResponse = new TokenResponse("test_access_token", "test_jwt");
 
-        given(kakaoLoginService.processKakaoAuth(code)).willReturn(accessToken);
+        given(kakaoLoginService.processKakaoAuth(code)).willReturn(tokenResponse);
 
         //when
         ResultActions result = mvc.perform(get("/kakao/oauth")
@@ -63,7 +60,8 @@ class KakaoControllerTest {
         //then
         result
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("access_token").value(accessToken));
+                .andExpect(jsonPath("accessToken").value(tokenResponse.getAccessToken()))
+                .andExpect(jsonPath("jwt").value(tokenResponse.getJwt()));
 
         then(kakaoLoginService).should().processKakaoAuth(code);
     }

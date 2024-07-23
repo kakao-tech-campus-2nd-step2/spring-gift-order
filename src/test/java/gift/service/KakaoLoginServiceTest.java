@@ -37,7 +37,7 @@ class KakaoLoginServiceTest {
         HttpHeaders headers = kakaoLoginService.getRedirectHeaders();
 
         //then
-        String expectedUrl = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code"
+        String expectedUrl = "https://kauth.kakao.com/oauth/authorize?&response_type=code"
                 + "&redirect_uri=" + redirectUrl
                 + "&client_id=" + clientId;
 
