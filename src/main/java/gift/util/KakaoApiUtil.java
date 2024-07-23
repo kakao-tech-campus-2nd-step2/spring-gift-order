@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class KakaoApiUtil {
+
     private final RestClient restClient = RestClient.create();
 
     private OauthTokenDTO getToken(String code) {
@@ -39,20 +40,19 @@ public class KakaoApiUtil {
     }
 
     //유저의 정보를 받아오는 메서드
-//    private ResponseEntity<String> getUserInfo(String accessToken){
-//        String url = "https://kapi.kakao.com/v2/user/me";
-//
-//        var response = restClient.get()
-//            .uri(url)
-//            .header("Authorization","Bearer "+accessToken)
-//            .retrieve()
-//            .toEntity(String.class);
-//
-//        System.out.println(response);
-//
-//        return response;
-//
-//    }
+    private ResponseEntity<String> getUserInfo(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+
+        var response = restClient.get()
+            .uri(url)
+            .header("Authorization", "Bearer " + accessToken)
+            .retrieve()
+            .toEntity(String.class);
+
+
+        return response;
+
+    }
 
     private OauthTokenDTO Mapper(ResponseEntity<String> response) {
         Gson gson = new Gson();
