@@ -1,17 +1,10 @@
 package gift.product.service;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-
-import com.fasterxml.jackson.databind.JsonNode;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.boot.jackson.JsonObjectDeserializer;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
