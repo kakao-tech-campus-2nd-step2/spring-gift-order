@@ -1,26 +1,39 @@
 package gift.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.DTO.KakaoProperties;
+import gift.DTO.Token;
 import gift.security.KakaoTokenProvider;
-import org.springframework.http.ResponseEntity;
+import gift.service.KakaoUserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class KakaoLoginController {
-    private final KakaoTokenProvider kakaoTokenProvider;
+    private final KakaoUserService kakaoUserService;
+
     private final KakaoProperties kakaoProperties;
 
-    public KakaoLoginController(KakaoTokenProvider kakaoTokenProvider, KakaoProperties kakaoProperties) {
-        this.kakaoTokenProvider = kakaoTokenProvider;
+    public KakaoLoginController(KakaoUserService kakaoUserService, KakaoProperties kakaoProperties) {
+        this.kakaoUserService = kakaoUserService;
         this.kakaoProperties = kakaoProperties;
     }
 
-    @GetMapping("/code")
-    public String getCode(@RequestParam String code){
-        kakaoTokenProvider.getToken(code);
-        return "/";
+    @GetMapping("/")
+    public RedirectView kakaoLogin(
+            @RequestParam(required = false) String code, RedirectAttributes redirectAttributes
+    ) throws JsonProcessingException {
+        if(code != null){
+            Token login = kakaoUserService.login(code);
+            redirectAttributes.addFlashAttribute("token", login.getToken());
+            // 쿼리 파라미터 없이 리다이렉트
+            return new RedirectView("/home");
+        }
+        return new RedirectView("/home");
     }
 
     @GetMapping("/kakaoLogin")
