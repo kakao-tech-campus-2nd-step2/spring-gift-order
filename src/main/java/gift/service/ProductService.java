@@ -88,12 +88,11 @@ public class ProductService {
                 .toList();
     }
 
+    @Transactional
     public AddedOptionIdResponse addOptionToProduct(Long productId, OptionRequest optionRequest) {
         Product product = getProduct(productId);
 
-        product.checkDuplicateOptionName(optionRequest.name());
-        Option savedOption = optionService.saveOption(product, optionRequest);
-
+        Option savedOption = optionService.saveOption(optionRequest);
         product.addOption(savedOption);
 
         return new AddedOptionIdResponse(savedOption.getId());
