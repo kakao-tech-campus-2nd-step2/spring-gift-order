@@ -97,4 +97,8 @@ public class Product {
     public Integer optionAmount() {
         return this.options.size();
     }
+
+    public void addOption(Option option) {
+        this.options.add(option);
+    }
 }
