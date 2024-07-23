@@ -2,8 +2,8 @@ package gift.user;
 
 import gift.core.domain.user.User;
 import gift.core.domain.user.UserAccount;
-import gift.user.infrastructure.persistence.JpaUserRepository;
-import gift.user.infrastructure.persistence.UserEntity;
+import gift.user.infrastructure.persistence.repository.JpaUserRepository;
+import gift.user.infrastructure.persistence.entity.UserEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

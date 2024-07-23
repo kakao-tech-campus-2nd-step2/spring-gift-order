@@ -1,4 +1,4 @@
-package gift.user.infrastructure.persistence;
+package gift.user.infrastructure.persistence.entity;
 
 import gift.core.BaseEntity;
 import gift.core.domain.user.User;

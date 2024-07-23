@@ -1,4 +1,4 @@
-package gift.authentication.infrastructure;
+package gift.authentication.infrastructure.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.authentication.service.TokenProvider;
@@ -68,7 +68,7 @@ public class CustomJwtFilter extends OncePerRequestFilter {
 
     private boolean shouldSkipRequest(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/auth");
+        return path.startsWith("/api/auth") || path.startsWith("/api/oauth");
     }
 
     private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) {

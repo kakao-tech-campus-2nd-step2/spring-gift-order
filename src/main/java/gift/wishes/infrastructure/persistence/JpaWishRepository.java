@@ -1,6 +1,6 @@
 package gift.wishes.infrastructure.persistence;
 
-import gift.user.infrastructure.persistence.UserEntity;
+import gift.user.infrastructure.persistence.entity.UserEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
