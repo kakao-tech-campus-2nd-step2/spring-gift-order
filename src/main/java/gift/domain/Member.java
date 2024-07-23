@@ -18,6 +18,8 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    private String kakaoId;
+
     @OneToMany(mappedBy = "member")
     private List<Wish> wishList = new ArrayList<>();
 
@@ -27,11 +29,13 @@ public class Member {
     private Member(Builder builder) {
         this.email = builder.email;
         this.password = builder.password;
+        this.kakaoId = builder.kakaoId;
     }
 
     public static class Builder {
         private String email;
         private String password;
+        private String kakaoId;
 
         public Builder email(String email) {
             this.email = email;
@@ -40,6 +44,11 @@ public class Member {
 
         public Builder password(String password) {
             this.password = password;
+            return this;
+        }
+
+        public Builder kakaoId(String kakaoId) {
+            this.kakaoId = kakaoId;
             return this;
         }
 
@@ -60,6 +69,9 @@ public class Member {
         return password;
     }
 
+    public String getKakaoId() {
+        return kakaoId;
+    }
     public List<Wish> getWishList() {
         return wishList;
     }
