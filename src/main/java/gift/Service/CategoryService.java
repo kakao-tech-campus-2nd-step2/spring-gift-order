@@ -30,10 +30,10 @@ public class CategoryService {
                 .stream()
                 .map(it->new ResponseCategoryDTO(
                         it.getId(),
-                        it.getName(),
-                        it.getColor(),
-                        it.getImageUrl(),
-                        it.getDescription()))
+                        it.getName().getValue(),
+                        it.getColor().getValue(),
+                        it.getImageUrl().getValue(),
+                        it.getDescription().getValue()))
                 .toList();
     }
 

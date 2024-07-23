@@ -29,7 +29,7 @@ public class MemberService {
     @Transactional(readOnly = true)
     public String loginUser(RequestMemberDTO requestMemberDTO) throws ForbiddenException {
         Member member = memberRepository.findByEmail(requestMemberDTO.email()).orElseThrow(() -> new MemberNotFoundException("매칭되는 멤버가 없습니다."));
-        String temp = member.getPassword();
+        String temp = member.getPassword().getValue();
         if (!(temp.equals(requestMemberDTO.password())))
             throw new ForbiddenException("잘못된 로그인입니다");
 

@@ -55,7 +55,7 @@ public class WishPageController {
     public String showEditWishForm(@PathVariable("productId") Long productId, @ValidUser Member member, Model model) {
         Product product = productService.selectProduct(productId);
         Wish wish = wishService.findWishByMemberAndProduct(member, product);
-        RequestWishDTO requestWishDTO = new RequestWishDTO(wish.getProduct().getId(), wish.getCount());
+        RequestWishDTO requestWishDTO = new RequestWishDTO(wish.getProduct().getId(), wish.getCount().getValue());
         model.addAttribute("requestWishDTO", requestWishDTO);
         return "edit-wish";
     }

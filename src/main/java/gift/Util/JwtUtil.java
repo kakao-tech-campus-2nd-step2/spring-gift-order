@@ -33,7 +33,7 @@ public class JwtUtil {
 
     public String generateToken(Member user) {
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(user.getEmail().getValue())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 3600)) //1시간 동안 토큰 유효
                 .signWith(key, SignatureAlgorithm.HS256)
