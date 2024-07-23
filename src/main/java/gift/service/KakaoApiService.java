@@ -30,8 +30,6 @@ public class KakaoApiService {
     }
 
     public KakaoTokenResponse getToken(String code){
-
-        String accessToken = "";
         
         var url = "https://kauth.kakao.com/oauth/token";
         var body = createBody(code);
