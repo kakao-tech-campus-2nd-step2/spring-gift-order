@@ -26,6 +26,9 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private String kakaoAccessToken;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishList> wishLists = new ArrayList<>();
 
@@ -51,6 +54,14 @@ public class Member {
 
     public List<WishList> getWishLists() {
         return wishLists;
+    }
+
+    public void changeKakaoAccessToken(String kakaoAccessToken) {
+        this.kakaoAccessToken = kakaoAccessToken;
+    }
+
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
     }
 
     public void update(MemberReqDto memberReqDto) {
