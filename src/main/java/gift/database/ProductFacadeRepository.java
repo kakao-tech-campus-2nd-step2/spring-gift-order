@@ -8,7 +8,10 @@ import gift.exceptionAdvisor.exceptions.GiftNotFoundException;
 import gift.model.Category;
 import gift.model.GiftOption;
 import gift.model.Product;
+import java.util.Collection;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +33,28 @@ public class ProductFacadeRepository {
         this.jpaGiftOptionRepository = jpaGiftOptionRepository;
     }
 
+    public List<Product> findAll() {
+        return jpaProductRepository.findAll();
+    }
+
     public Product saveProduct(Product product) {
-        if (product.getGiftOptionList().isEmpty()) {
+
+        List<GiftOption> giftOptions = product.getGiftOptionList();
+        Category category = product.getCategory();
+
+        if (giftOptions.isEmpty()) {
             throw new GiftBadRequestException("상품 옵션이 필요합니다.");
         }
 
-        if (product.getCategory() == null) {
+        if (category == null) {
             throw new GiftBadRequestException("상품 카테고리가 필요합니다.");
         }
 
-        jpaCategoryRepository.save(product.getCategory());
+        category = jpaCategoryRepository.findById(category.getId())
+            .orElseThrow(() -> new GiftNotFoundException("카테고리가 존재하지 않습니다."));
+
+        category.addProduct(product);
+
         jpaGiftOptionRepository.saveAll(product.getGiftOptionList());
         return jpaProductRepository.save(product);
     }
@@ -52,7 +67,8 @@ public class ProductFacadeRepository {
     }
 
     public void deleteProduct(long id) {
-        Product product = jpaProductRepository.findById(id).orElseThrow(()-> new GiftNotFoundException("상품이 존재하지 않습니다."));
+        Product product = jpaProductRepository.findById(id)
+            .orElseThrow(() -> new GiftNotFoundException("상품이 존재하지 않습니다."));
 
         List<GiftOption> giftOptionList = product.getGiftOptionList();
         Category category = product.getCategory();
@@ -65,4 +81,7 @@ public class ProductFacadeRepository {
 
     }
 
+    public List<Page<Product>> findPageList(Pageable pageable) {
+        return null;//TODO
+    }
 }

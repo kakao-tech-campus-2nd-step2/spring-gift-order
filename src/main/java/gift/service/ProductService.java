@@ -1,11 +1,11 @@
 package gift.service;
 
-import gift.database.repository.JpaCategoryRepository;
-import gift.database.repository.JpaProductRepository;
-import gift.dto.ProductDTO;
+import gift.database.ProductFacadeRepository;
+import gift.dto.ProductRequest;
+import gift.dto.ProductResponse;
 import gift.exceptionAdvisor.exceptions.GiftBadRequestException;
-import gift.exceptionAdvisor.exceptions.GiftNotFoundException;
 import gift.model.Category;
+import gift.model.GiftOption;
 import gift.model.Product;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -17,44 +17,52 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class ProductService {
 
-    private final JpaProductRepository jpaProductRepository;
+    private final ProductFacadeRepository productFacadeRepository;
 
-    private final JpaCategoryRepository jpaCategoryRepository;
-
-    public ProductService(JpaProductRepository jpaProductRepository,
-        JpaCategoryRepository jpaCategoryRepository) {
-        this.jpaProductRepository = jpaProductRepository;
-        this.jpaCategoryRepository = jpaCategoryRepository;
+    public ProductService(ProductFacadeRepository productFacadeRepository) {
+        this.productFacadeRepository = productFacadeRepository;
     }
 
-    public List<ProductDTO> readAll() {
-        return jpaProductRepository.findAll().stream().map(
-            product -> new ProductDTO(product.getId(), product.getName(), product.getPrice(),
-                product.getImageUrl(), product.getCategory().getId())).toList();
+    public List<ProductResponse> readAll() {
+        List<Product> productList = productFacadeRepository.findAll();
+        return productList.stream().map(ProductResponse::new).toList();
     }
 
-    public void create(ProductDTO dto) {
-        checkKakao(dto.getName());
-        Product product = new Product(null, dto.getName(), dto.getPrice(), dto.getImageUrl());
-        jpaProductRepository.save(product);
+    public ProductResponse read(long id) {
+        Product product = productFacadeRepository.getProduct(id);
+        return new ProductResponse(product);
+    }
 
-        Category category = checkCategory(dto.getCategoryId());
+    public void create(ProductRequest productRequest) {
+
+        checkKakao(productRequest.getName());
+
+        Product product = new Product(null, productRequest.getName(), productRequest.getPrice(),
+            productRequest.getImageUrl());
+
+        GiftOption giftOption = new GiftOption(null, productRequest.getGiftOptionName(),
+            productRequest.getGiftOptionQuantity());
+        product.addGiftOption(giftOption);
+
+        Category category = new Category(productRequest.getCategoryId());
         product.updateCategory(category);
+
+        productFacadeRepository.saveProduct(product);
     }
 
 
-    public void update(long id, ProductDTO dto) {
-        jpaProductRepository.findById(id).orElseThrow(()->new GiftNotFoundException("상품이 존재하지 않습니다."));
+    public void update(long id, ProductRequest productRequest) {
 
-        Product product = new Product(id, dto.getName(), dto.getPrice(), dto.getImageUrl());
-        Category category = checkCategory(dto.getCategoryId());
+        Product product = productFacadeRepository.getProduct(id);
 
-        product.updateCategory(category);
-        jpaProductRepository.save(product);
+        product.update(productRequest.getName(), productRequest.getPrice(), productRequest.getImageUrl());
+
+        checkKakao(product.getName());
+        productFacadeRepository.saveProduct(product);
     }
 
     public void delete(long id) {
-        jpaProductRepository.deleteById(id);
+        productFacadeRepository.deleteProduct(id);
     }
 
     private void checkKakao(String productName) {
@@ -63,23 +71,11 @@ public class ProductService {
         }
     }
 
-    public List<ProductDTO> readProduct(int pageNumber, int pageSize) {
+    public List<ProductResponse> readProduct(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        return jpaProductRepository.findAll(pageable).stream().map(
-            product -> new ProductDTO(product.getId(), product.getName(), product.getPrice(),
-                product.getImageUrl())).toList();
-    }
-
-    // private //
-
-    private Product getProduct(long id) {
-        var prod = jpaProductRepository.findById(id).orElseThrow(()-> new GiftNotFoundException("상품이 존재하지않습니다."));
-        checkKakao(prod.getName());
-        return prod;
-    }
-
-    private Category checkCategory(long id) {
-        return jpaCategoryRepository.findById(id)
-            .orElseThrow(() -> new GiftNotFoundException("카테고리가 존재하지않습니다."));
+        return null;
+        //return productFacadeRepository.findPageList(pageable).stream()
+        //    .map(ProductResponse::new)
+        //    .toList();
     }
 }

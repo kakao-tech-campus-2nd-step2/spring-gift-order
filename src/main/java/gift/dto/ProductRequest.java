@@ -23,12 +23,21 @@ public class ProductRequest {
     @NotNull(message = "카테고리를 입력해주세요")
     private Long categoryId;
 
-    public ProductRequest(Long id, String name, Integer price, String imageUrl, Long categoryId) {
+    @NotNull(message = "선물 옵션을 입력해주세요")
+    private String giftOptionName;
+
+    @NotNull(message = "선물 옵션 수량을 입력해주세요")
+    private Integer giftOptionQuantity;
+
+    public ProductRequest(Long id, String name, Integer price, String imageUrl, Long categoryId,
+        String giftOptionName, Integer giftOptionQuantity) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
         this.categoryId = categoryId;
+        this.giftOptionName = giftOptionName;
+        this.giftOptionQuantity = giftOptionQuantity;
     }
 
     public Long getId() {
@@ -38,17 +47,24 @@ public class ProductRequest {
     public String getName() {
         return name;
     }
+
     public Integer getPrice() {
         return price;
     }
+
     public String getImageUrl() {
         return imageUrl;
     }
+
     public Long getCategoryId() {
         return categoryId;
     }
 
-    public Product toEntity(){
-        return new Product(id, name, price, imageUrl);
+    public String getGiftOptionName() {
+        return giftOptionName;
+    }
+
+    public Integer getGiftOptionQuantity() {
+        return giftOptionQuantity;
     }
 }

@@ -1,6 +1,7 @@
 package gift.dto;
 
 import gift.model.Product;
+import org.springframework.data.domain.Page;
 
 public class ProductResponse {
 
@@ -8,7 +9,7 @@ public class ProductResponse {
     private String name;
     private Integer price;
     private String imageUrl;
-    private Long categoryId;
+    private String categoryName;
 
     public ProductResponse() {
     }
@@ -18,6 +19,9 @@ public class ProductResponse {
         this.name = product.getName();
         this.price = product.getPrice();
         this.imageUrl = product.getImageUrl();
-        this.categoryId = product.getCategory().getId();
+        this.categoryName = product.getCategory().getName();
+    }
+
+    public ProductResponse(Page<Product> products) {
     }
 }
