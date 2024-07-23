@@ -4,6 +4,7 @@ import gift.config.KakaoProperties;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
+import gift.dto.oauth.KakaoUserResponse;
 import gift.service.oauth.KakaoOAuthService;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,7 @@ public class KakaoOAuthController {
     @GetMapping
     public ResponseEntity<Void> kakaoLogin() {
         String kakaoAuthUrl =
-            "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri="
+            "https://kauth.kakao.com/oauth/authorize?scope=talk_message,profile_nickname,account_email&response_type=code&redirect_uri="
                 + kakaoProperties.redirectUrl() + "&client_id=" + kakaoProperties.clientId();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(kakaoAuthUrl));
@@ -52,6 +53,12 @@ public class KakaoOAuthController {
     @GetMapping("/scopes/{accessToken}")
     public ResponseEntity<KakaoScopeResponse> getUserScopes(@PathVariable String accessToken) {
         KakaoScopeResponse response = kakaoOAuthService.getUserScopes(accessToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/userinfo/{accessToken}")
+    public ResponseEntity<KakaoUserResponse> getUserInfo(@PathVariable String accessToken) {
+        KakaoUserResponse response = kakaoOAuthService.getUserInfo(accessToken);
         return ResponseEntity.ok(response);
     }
 }

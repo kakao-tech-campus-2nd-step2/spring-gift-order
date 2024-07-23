@@ -4,6 +4,7 @@ import gift.config.KakaoProperties;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
+import gift.dto.oauth.KakaoUserResponse;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.http.HttpHeaders;
@@ -93,6 +94,32 @@ public class KakaoOAuthService {
             return response.getBody();
         } catch (RestClientResponseException e) {
             throw new RuntimeException("동의 내역 가져오기에 실패했습니다.", e);
+        }
+    }
+
+    public KakaoUserResponse getUserInfo(String accessToken) {
+        String kakaoUserInfoUrl = "https://kapi.kakao.com/v2/user/me";
+
+        try {
+            ResponseEntity<Map> response = client.get()
+                .uri(URI.create(kakaoUserInfoUrl))
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .toEntity(Map.class);
+            Map<String, Object> responseBody = response.getBody();
+
+            if (responseBody != null) {
+                Long id = ((Number) responseBody.get("id")).longValue();
+                Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
+                String nickname = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
+                String email = (String) kakaoAccount.get("email");
+
+                return new KakaoUserResponse(id, nickname, email);
+            } else {
+                throw new RuntimeException("사용자 정보 응답이 올바르지 않습니다.");
+            }
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException("사용자 정보 가져오기에 실패했습니다.", e);
         }
     }
 }
