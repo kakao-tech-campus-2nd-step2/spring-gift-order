@@ -40,16 +40,16 @@ class KakaoAuthUtilTest {
                 "&redirect_uri=" + redirectUri +
                 "&client_id="    + clientId;
 
-        given(kakaoProperties.getRedirectUri())
+        given(kakaoProperties.redirectUri())
                 .willReturn(redirectUri);
-        given(kakaoProperties.getClientId())
+        given(kakaoProperties.clientId())
                 .willReturn(clientId);
 
         String kakaoAuthUrl = kakaoAuthUtil.getKakaoAuthUrl();
 
         assertThat(kakaoAuthUrl).isEqualTo(url);
-        verify(kakaoProperties).getRedirectUri();
-        verify(kakaoProperties).getClientId();
+        verify(kakaoProperties).redirectUri();
+        verify(kakaoProperties).clientId();
     }
 
     @Test
@@ -61,11 +61,11 @@ class KakaoAuthUtilTest {
         String code = "test-auth";
         String url = "test@email.com";
 
-        given(kakaoProperties.getGrantType())
+        given(kakaoProperties.grantType())
                 .willReturn(grantType);
-        given(kakaoProperties.getRedirectUri())
+        given(kakaoProperties.redirectUri())
                 .willReturn(redirectUri);
-        given(kakaoProperties.getClientId())
+        given(kakaoProperties.clientId())
                 .willReturn(clientId);
 
         RequestEntity<LinkedMultiValueMap<String, String>> request = kakaoAuthUtil.getRequestWithPost(url, code);

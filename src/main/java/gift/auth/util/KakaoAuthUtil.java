@@ -21,8 +21,8 @@ public class KakaoAuthUtil {
 
     public String getKakaoAuthUrl() {
         return "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code" +
-                "&redirect_uri=" + kakaoProperties.getRedirectUri() +
-                "&client_id="    + kakaoProperties.getClientId();
+                "&redirect_uri=" + kakaoProperties.redirectUri() +
+                "&client_id="    + kakaoProperties.clientId();
     }
 
     public RequestEntity<LinkedMultiValueMap<String, String>> getRequestWithPost(String url,
@@ -38,12 +38,12 @@ public class KakaoAuthUtil {
                 .header(HttpHeaders.AUTHORIZATION, JwtFilter.BEAR_PREFIX + token)
                 .build();
     }
-    
+
     private LinkedMultiValueMap<String, String> getRequestBody(String authCode) {
         LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("grant_type", kakaoProperties.getGrantType());
-        requestBody.add("client_id", kakaoProperties.getClientId());
-        requestBody.add("redirect_uri", kakaoProperties.getRedirectUri());
+        requestBody.add("grant_type", kakaoProperties.grantType());
+        requestBody.add("client_id", kakaoProperties.clientId());
+        requestBody.add("redirect_uri", kakaoProperties.redirectUri());
         requestBody.add("code", authCode);
         return requestBody;
     }
