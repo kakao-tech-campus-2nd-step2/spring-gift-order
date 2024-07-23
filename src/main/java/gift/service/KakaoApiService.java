@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -19,7 +20,7 @@ import gift.exception.CustomException;
 @Service
 public class KakaoApiService {
 
-    private final RestClient client = RestClient.builder().build();
+    private final RestClient client;
     private final KakaoProperties kakaoProperties;
     private final ObjectMapper objectMapper;
 
@@ -27,6 +28,15 @@ public class KakaoApiService {
     public KakaoApiService(KakaoProperties kakaoProperties, ObjectMapper objectMapper){
         this.kakaoProperties = kakaoProperties;
         this.objectMapper = objectMapper;
+
+        // HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        // factory.setConnectTimeout(5000);
+
+        this.client = RestClient
+                .builder()
+                // .requestFactory(factory)
+                .build();
+       
     }
 
     public KakaoTokenResponse getToken(String code){
@@ -42,7 +52,7 @@ public class KakaoApiService {
                 .toEntity(String.class);
         
         if(response.getStatusCode() != HttpStatusCode.valueOf(200)){
-            throw new CustomException("Bad Request", HttpStatus.BAD_REQUEST);
+            throw new CustomException(response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
         }
 
         String jsonBody = response.getBody();
@@ -50,7 +60,7 @@ public class KakaoApiService {
         try {
             return objectMapper.readValue(jsonBody, KakaoTokenResponse.class);
         } catch (Exception e) {
-            throw new CustomException("Error parsing response", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Error parsing kakao token response", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
