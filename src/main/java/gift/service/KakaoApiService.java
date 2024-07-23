@@ -1,9 +1,9 @@
 package gift.service;
 
+import gift.controller.dto.KakaoTokenDto;
 import gift.utils.ExternalApiService;
 import gift.utils.config.KakaoProperties;
 import gift.utils.error.KakaoLoginException;
-import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,12 +22,11 @@ public class KakaoApiService {
     public String createKakaoCode(){
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize";
 
-        String url = UriComponentsBuilder.fromHttpUrl(kakaoAuthUrl)
+        return UriComponentsBuilder.fromHttpUrl(kakaoAuthUrl)
             .queryParam("client_id", kakaoProperties.getRestApiKey())
             .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
             .queryParam("response_type", "code")
             .toUriString();
-        return url;
     }
 
     public String createKakaoToken(String code,
@@ -35,12 +34,11 @@ public class KakaoApiService {
         String error_description,
         String state){
         if (code==null && error!=null){
-            throw new KakaoLoginException("Kakao Login Error");
+            throw new KakaoLoginException(error_description);
         }
-        ResponseEntity<Map<String, Object>> mapResponseEntity = externalApiService.postKakaoToken(
+        ResponseEntity<KakaoTokenDto> kakaoTokenDtoResponseEntity = externalApiService.postKakaoToken(
             code);
-        String accessToken = (String) mapResponseEntity.getBody().get("access_token");
-        return accessToken;
+        return kakaoTokenDtoResponseEntity.getBody().getAccessToken();
 
     }
 

@@ -1,10 +1,10 @@
 package gift.utils;
 
+import gift.controller.dto.KakaoTokenDto;
 import gift.utils.config.KakaoProperties;
-import java.util.HashMap;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,10 +14,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class ExternalApiService {
+    private static final Logger logger = LoggerFactory.getLogger(ExternalApiService.class);
+
     private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
     private final String baseUrl = "https://kauth.kakao.com/oauth";
@@ -28,11 +35,10 @@ public class ExternalApiService {
     }
 
 
-    public ResponseEntity<Map<String,Object>> postKakaoToken(String code) {
+    public ResponseEntity<KakaoTokenDto> postKakaoToken(String code) {
         String endpoint = "/token";
-        String fullUrl = baseUrl + endpoint;
+        UriComponentsBuilder fullUrl = UriComponentsBuilder.fromHttpUrl(baseUrl + endpoint);
 
-        try {
             MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
             requestBody.add("grant_type", "authorization_code");
             requestBody.add("client_id", kakaoProperties.getRestApiKey());
@@ -49,11 +55,12 @@ public class ExternalApiService {
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody,
                 headers);
 
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                fullUrl,
+        try {
+            ResponseEntity<KakaoTokenDto> response = restTemplate.exchange(
+                fullUrl.toUriString(),
                 HttpMethod.POST,
                 requestEntity,
-                new ParameterizedTypeReference<Map<String, Object>>() {}
+                KakaoTokenDto.class
             );
 
             if (response.getStatusCode() == HttpStatus.OK) {
@@ -61,12 +68,23 @@ public class ExternalApiService {
             } else {
                 return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
             }
-        } catch (Exception e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Error occurred while requesting Kakao token");
-            errorResponse.put("details", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+        } catch (HttpClientErrorException e) {
+        // 400번대 에러
+        logger.error("클라이언트 에러: {}", e.getMessage());
+        return ResponseEntity.status(e.getStatusCode()).body(null);
+    } catch (HttpServerErrorException e) {
+        // 500번대 에러
+        logger.error("카카오 API 서버 에러: {}", e.getMessage());
+        return ResponseEntity.status(e.getStatusCode()).body(null);
+    } catch (ResourceAccessException e) {
+        // 네트워크 에러
+        logger.error("카카오 API 네트워크 에러: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(null);
+    } catch (RestClientException e) {
+        // RestTemplate 에러
+        logger.error("RestTemlpate 에러: {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
     }
 
 
