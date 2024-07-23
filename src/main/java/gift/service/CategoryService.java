@@ -42,13 +42,13 @@ public class CategoryService {
     }
 
 
-    @Transactional
     public void removeCategory(Long categoryId){
-        Category category = findById(categoryId);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
         categoryRepository.deleteById(categoryId);
     }
 
-    @Transactional
+
     public void updateCategory(Long categoryId, CategoryRequestDTO categoryRequestDTO){
         Category category = findById(categoryId);
         category.updateCategory(categoryRequestDTO);
