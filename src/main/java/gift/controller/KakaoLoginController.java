@@ -1,26 +1,41 @@
 package gift.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import gift.dto.KakaoProperties;
+import gift.dto.response.KakaoTokenResponse;
+import gift.service.KakaoApiService;
 
 @Controller
 public class KakaoLoginController {
 
-    @Value("${kakao.api_key}")
-    private String kakaoApikey;
+    private KakaoProperties kakaoProperties;
+    private KakaoApiService kakaoApiService;
 
-    @Value("${kakao.redirect_uri}")
-    private String kakaoRedirectUri;
-
+    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoApiService kakaoApiService){
+        this.kakaoProperties = kakaoProperties;
+        this.kakaoApiService = kakaoApiService;
+    }
 
     @GetMapping("/login")
     public String login(Model model){
-        System.out.println(kakaoApikey + " " + kakaoRedirectUri);
-        model.addAttribute("kakaoApiKey", kakaoApikey);
-        model.addAttribute("redirectUri", kakaoRedirectUri);
+        model.addAttribute("kakaoApiKey", kakaoProperties.getApiKey());
+        model.addAttribute("redirectUri", kakaoProperties.getRedirectUri());
         return "login";
+    }
+
+    @RequestMapping("/login/code")
+    public ResponseEntity<String> kakaoLogin(@RequestParam String code) {
+
+        KakaoTokenResponse response = kakaoApiService.getToken(code);
+        
+        return new ResponseEntity<>(response.getAccessToken(), HttpStatus.OK);
     }
     
 }
