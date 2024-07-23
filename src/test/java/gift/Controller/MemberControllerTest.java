@@ -38,12 +38,6 @@ class MemberControllerTest {
 
   }
 
-//  @Test
-//  void memberLoginTest() {
-//    MemberDto memberDto = new MemberDto(1L,"a@naver.com","abcde");
-//    JwtToken jwtToken = memberController.memberLogin(memberDto).getBody();
-//  }
-
   @Test
   public void validateMemberDto() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -52,10 +46,6 @@ class MemberControllerTest {
     MemberDto memberDto1 = new MemberDto(1L, "a", "abcde");
     MemberDto memberDto2 = new MemberDto(1L, "", "abcde");
     MemberDto memberDto3 = new MemberDto(1L, "a@naver.com", "");
-
-    MemberDto signedUpMemberDto1 = memberController.SignUp(memberDto1).getBody();
-    MemberDto signedUpMemberDto2 = memberController.SignUp(memberDto2).getBody();
-    MemberDto signedUpMemberDto3 = memberController.SignUp(memberDto3).getBody();
 
     Set<ConstraintViolation<MemberDto>> violations1 = validator.validate(memberDto1);
     Set<ConstraintViolation<MemberDto>> violations2 = validator.validate(memberDto2);
