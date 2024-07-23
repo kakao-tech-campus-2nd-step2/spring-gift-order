@@ -55,5 +55,4 @@ public class MemberService {
         random.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
     }
-
 }
