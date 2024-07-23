@@ -44,7 +44,7 @@ public class ProductController {
 
     @GetMapping("/products/new")
     public String newProductForm(Model model) {
-        model.addAttribute("product", new RequestProductPostDTO("", 0, "", 0L, "",1));
+        model.addAttribute("product", new RequestProductPostDTO("이름을 입력해주세요", 1, "url을 입력해주세요", 1L, "옵션 이름을 입력해주세요",1));
         return "new-product";
     }
 
