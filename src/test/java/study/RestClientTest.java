@@ -49,7 +49,7 @@ public class RestClientTest {
     }
 
     @Test
-    void test1() {
+    void getKakaoAccessToken() {
         var url = properties.tokenUrl();
         var code = "78RmEworRfRtyhb6EanyFU_9RWox5DRxHVObH3128eHaCTIV-FEinAAAAAQKKiWQAAABkN8NH4oh5oEAb4_jFQ";
         final var body = createBody(code);
@@ -64,6 +64,19 @@ public class RestClientTest {
             }
             return "";
         });
+        System.out.println(response);
+    }
+
+    @Test
+    void getKakaoMemberInfo() {
+        var access_token = "EXzy9fHlc7wjc6GlfR1uRVo9yKYPTqJHAAAAAQorDR8AAAGQ3w6vZyn2EFsnJsRZ?";
+        var response = client.post()
+                .uri(URI.create(properties.memberInfoUrl()))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + access_token)
+                .retrieve()
+                .toEntity(String.class);
+
         System.out.println(response);
     }
 
