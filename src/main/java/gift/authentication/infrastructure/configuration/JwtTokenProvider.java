@@ -1,6 +1,6 @@
-package gift.authentication.infrastructure;
+package gift.authentication.infrastructure.configuration;
 
-import gift.authentication.TokenProvider;
+import gift.authentication.service.TokenProvider;
 import gift.core.domain.authentication.Token;
 import gift.core.domain.authentication.exception.AuthenticationExpiredException;
 import gift.core.domain.authentication.exception.AuthenticationFailedException;

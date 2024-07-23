@@ -3,8 +3,6 @@ package gift.wishes;
 import gift.core.domain.product.Product;
 import gift.core.domain.product.ProductCategory;
 import gift.core.domain.product.ProductRepository;
-import gift.core.domain.user.User;
-import gift.core.domain.user.UserAccount;
 import gift.core.domain.user.UserRepository;
 import gift.core.domain.wishes.WishesRepository;
 import gift.core.domain.wishes.WishesService;
@@ -17,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;

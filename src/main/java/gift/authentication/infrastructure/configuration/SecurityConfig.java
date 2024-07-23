@@ -1,4 +1,4 @@
-package gift.authentication.infrastructure;
+package gift.authentication.infrastructure.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

@@ -1,7 +1,8 @@
-package gift.user.infrastructure.persistence;
+package gift.user.infrastructure.persistence.repository;
 
 import gift.core.domain.user.UserAccount;
 import gift.core.domain.user.UserAccountRepository;
+import gift.user.infrastructure.persistence.entity.UserAccountEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -55,9 +56,5 @@ public class UserAccountRepositoryImpl implements UserAccountRepository {
 
     private UserAccount mapToUserAccount(UserAccountEntity entity) {
         return new UserAccount(entity.getEmail(), entity.getPassword());
-    }
-
-    private UserAccountEntity mapToUserAccountEntity(Long userId, UserAccount userAccount) {
-        return new UserAccountEntity(userId, userAccount.principal(), userAccount.credentials());
     }
 }

@@ -1,5 +1,7 @@
 package gift.user;
 
+import gift.core.domain.user.UserAccount;
+import gift.core.domain.user.UserAccountRepository;
 import gift.core.domain.user.*;
 import gift.core.domain.user.exception.UserAlreadyExistsException;
 import gift.core.domain.user.exception.UserNotFoundException;

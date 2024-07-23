@@ -8,8 +8,8 @@ import gift.product.infrastructure.persistence.repository.JpaProductCategoryRepo
 import gift.product.infrastructure.persistence.repository.JpaProductRepository;
 import gift.product.infrastructure.persistence.entity.ProductCategoryEntity;
 import gift.product.infrastructure.persistence.entity.ProductEntity;
-import gift.user.infrastructure.persistence.JpaUserRepository;
-import gift.user.infrastructure.persistence.UserEntity;
+import gift.user.infrastructure.persistence.repository.JpaUserRepository;
+import gift.user.infrastructure.persistence.entity.UserEntity;
 import gift.wishes.infrastructure.persistence.JpaWishRepository;
 import gift.wishes.infrastructure.persistence.WishEntity;
 import org.junit.jupiter.api.BeforeEach;

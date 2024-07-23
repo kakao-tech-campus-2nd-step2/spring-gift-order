@@ -1,6 +1,5 @@
 package gift.authentication.service;
 
-import gift.authentication.TokenProvider;
 import gift.core.domain.authentication.AuthenticationService;
 import gift.core.domain.authentication.Token;
 import gift.core.domain.authentication.exception.AuthenticationFailedException;

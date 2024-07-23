@@ -1,17 +1,14 @@
-package gift.user.infrastructure.persistence;
+package gift.user.infrastructure.persistence.repository;
 
 import gift.core.domain.user.User;
 import gift.core.domain.user.UserAccount;
 import gift.core.domain.user.UserAccountRepository;
 import gift.core.domain.user.UserRepository;
 import gift.core.domain.user.exception.UserAccountNotFoundException;
+import gift.user.infrastructure.persistence.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
 import java.util.Optional;
 
 @Repository
@@ -30,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void save(User user) {
-        UserEntity savedUser = jpaUserRepository.save(mapToUserEntity(user));
+        UserEntity savedUser = jpaUserRepository.save(UserEntity.fromDomain(user));
         userAccountRepository.save(savedUser.getId(), user.account());
     }
 
@@ -59,9 +56,5 @@ public class UserRepositoryImpl implements UserRepository {
                 entity.getName(),
                 userAccount
         );
-    }
-
-    private UserEntity mapToUserEntity(User user) {
-        return new UserEntity(user.id(), user.name());
     }
 }

@@ -2,7 +2,7 @@ package gift.wishes.infrastructure.persistence;
 
 import gift.core.BaseEntity;
 import gift.product.infrastructure.persistence.entity.ProductEntity;
-import gift.user.infrastructure.persistence.UserEntity;
+import gift.user.infrastructure.persistence.entity.UserEntity;
 import jakarta.persistence.*;
 
 @Entity
