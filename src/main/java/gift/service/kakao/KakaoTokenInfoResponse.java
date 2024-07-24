@@ -33,4 +33,8 @@ public class KakaoTokenInfoResponse {
         return accessToken;
     }
 
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
 }

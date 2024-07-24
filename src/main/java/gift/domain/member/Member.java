@@ -71,13 +71,15 @@ public class Member {
         return kakaoId;
     }
 
-    public Member(Long id, String name, String email, String password, MemberRole role, Long kakaoId) {
+    public Member(Long id, String name, String email, String password, MemberRole role, Long kakaoId, String accessToken, String refreshToken) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
         this.kakaoId = kakaoId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public static class MemberBuilder {
@@ -87,6 +89,8 @@ public class Member {
         private String password;
         private MemberRole role;
         private Long kakaoId;
+        private String accessToken;
+        private String refreshToken;
 
         public MemberBuilder id(Long id) {
             this.id = id;
@@ -118,8 +122,18 @@ public class Member {
             return this;
         }
 
+        public MemberBuilder accessToken(String accessToken) {
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        public MemberBuilder refreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+            return this;
+        }
+
         public Member build() {
-            return new Member(id, name, email, password, role, kakaoId);
+            return new Member(id, name, email, password, role, kakaoId, accessToken, refreshToken);
         }
     }
 

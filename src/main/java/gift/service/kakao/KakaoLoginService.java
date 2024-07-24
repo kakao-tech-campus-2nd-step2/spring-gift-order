@@ -45,20 +45,23 @@ public class KakaoLoginService {
         String url = "https://kauth.kakao.com/oauth/token";
         LinkedMultiValueMap<String, String> body = createFormBody(code);
 
-        String accessToken = getAccessTokenFromKakao(url, body);
-        Member kakaoMember = getKakaoMember(accessToken);
+        KakaoTokenInfoResponse tokenInfo = getTokenInfoFromKakao(url, body);
+
+        String accessToken = tokenInfo.getAccessToken();
+        String refreshToken = tokenInfo.getRefreshToken();
+
+        Member kakaoMember = getKakaoMember(accessToken, refreshToken);
         String jwt = jwtProvider.create(kakaoMember);
 
         return new TokenResponse(accessToken, jwt);
     }
 
-    private String getAccessTokenFromKakao(String url, LinkedMultiValueMap<String, String> body) {
+    private KakaoTokenInfoResponse getTokenInfoFromKakao(String url, LinkedMultiValueMap<String, String> body) {
         return Optional.ofNullable(restTemplate.postForObject(url, body, KakaoTokenInfoResponse.class))
-                .map(KakaoTokenInfoResponse::getAccessToken)
                 .orElseThrow(() -> new GiftException(ErrorCode.KAKAO_TOKEN_ISSUANCE_FAILED));
     }
 
-    private Member getKakaoMember(String accessToken) {
+    private Member getKakaoMember(String accessToken, String refreshToken) {
         ResponseEntity<String> response = getKakaoUserResponse(accessToken);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
@@ -70,7 +73,7 @@ public class KakaoLoginService {
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
         return memberRepository.findByKakaoId(kakaoId)
-                .orElseGet(() -> createAndSaveMember(kakaoId, nickname));
+                .orElseGet(() -> createAndSaveMember(kakaoId, nickname, accessToken, refreshToken));
     }
 
     private ResponseEntity<String> getKakaoUserResponse(String accessToken) {
@@ -81,10 +84,12 @@ public class KakaoLoginService {
         return restTemplate.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.GET, request, String.class);
     }
 
-    private Member createAndSaveMember(Long kakaoId, String nickname) {
+    private Member createAndSaveMember(Long kakaoId, String nickname, String accessToken, String refreshToken) {
         Member newMember = new Member.MemberBuilder()
                 .kakaoId(kakaoId)
                 .name(nickname)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
         return memberRepository.save(newMember);
     }
