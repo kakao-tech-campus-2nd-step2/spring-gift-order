@@ -26,6 +26,9 @@ public class Member {
     @Column(unique = true)
     private Long kakaoId;
 
+    private String accessToken;
+    private String refreshToken;
+
     @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
@@ -46,6 +49,22 @@ public class Member {
 
     public List<Wish> getWishes() {
         return wishes;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public Long getKakaoId() {
