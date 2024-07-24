@@ -1,25 +1,19 @@
-package gift.product.controller;
+package gift.product.controller.auth;
 
-import gift.product.dto.AccessAndRefreshToken;
-import gift.product.dto.JwtResponse;
-import gift.product.dto.MemberDto;
-import gift.product.dto.RegisterSuccessResponse;
-import gift.product.property.KakaoProperties;
+import gift.product.dto.auth.AccessAndRefreshToken;
+import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.MemberDto;
+import gift.product.dto.auth.RegisterSuccessResponse;
 import gift.product.service.AuthService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 public class AuthController {

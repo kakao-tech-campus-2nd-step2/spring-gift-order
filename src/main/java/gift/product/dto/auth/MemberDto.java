@@ -1,4 +1,4 @@
-package gift.product.dto;
+package gift.product.dto.auth;
 
 public record MemberDto(
     String email,

@@ -2,9 +2,9 @@ package gift.product.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.AccessAndRefreshToken;
-import gift.product.dto.JwtResponse;
-import gift.product.dto.MemberDto;
+import gift.product.dto.auth.AccessAndRefreshToken;
+import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.MemberDto;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;

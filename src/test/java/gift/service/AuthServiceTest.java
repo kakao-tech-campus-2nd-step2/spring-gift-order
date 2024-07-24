@@ -6,8 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.JwtResponse;
-import gift.product.dto.MemberDto;
+import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.MemberDto;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Member;
 import gift.product.repository.AuthRepository;

@@ -1,7 +1,7 @@
-package gift.product.controller;
+package gift.product.controller.wish;
 
-import gift.product.dto.LoginMember;
-import gift.product.dto.WishDto;
+import gift.product.dto.auth.LoginMember;
+import gift.product.dto.wish.WishDto;
 import gift.product.model.Wish;
 import gift.product.service.WishService;
 import jakarta.servlet.http.HttpServletRequest;

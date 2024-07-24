@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.ClientProductDto;
-import gift.product.dto.ProductDto;
+import gift.product.dto.product.ClientProductDto;
+import gift.product.dto.product.ProductDto;
 import gift.product.model.Category;
 import gift.product.model.Product;
 import gift.product.repository.CategoryRepository;

@@ -2,11 +2,11 @@ package gift.integrity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gift.product.dto.CategoryDto;
-import gift.product.dto.ClientProductDto;
-import gift.product.dto.MemberDto;
-import gift.product.dto.ProductDto;
-import gift.product.dto.WishDto;
+import gift.product.dto.category.CategoryDto;
+import gift.product.dto.product.ClientProductDto;
+import gift.product.dto.auth.MemberDto;
+import gift.product.dto.product.ProductDto;
+import gift.product.dto.wish.WishDto;
 import gift.product.service.AuthService;
 import gift.product.service.CategoryService;
 import gift.product.service.ProductService;

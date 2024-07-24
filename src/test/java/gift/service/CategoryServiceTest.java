@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.clearInvocations;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.CategoryDto;
+import gift.product.dto.category.CategoryDto;
 import gift.product.model.Category;
 import gift.product.repository.CategoryRepository;
 import gift.product.service.CategoryService;

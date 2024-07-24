@@ -5,7 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.OptionDto;
+import gift.product.dto.option.OptionDto;
 import gift.product.model.Category;
 import gift.product.model.Product;
 import gift.product.repository.CategoryRepository;

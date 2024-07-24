@@ -1,6 +1,6 @@
-package gift.product.controller;
+package gift.product.controller.category;
 
-import gift.product.dto.CategoryDto;
+import gift.product.dto.category.CategoryDto;
 import gift.product.model.Category;
 import gift.product.service.CategoryService;
 import jakarta.validation.Valid;

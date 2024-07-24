@@ -1,4 +1,4 @@
-package gift.product.dto;
+package gift.product.dto.product;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

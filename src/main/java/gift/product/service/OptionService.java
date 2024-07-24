@@ -1,8 +1,8 @@
 package gift.product.service;
 
-import gift.product.dto.OptionDto;
-import gift.product.dto.OptionResponse;
-import gift.product.dto.OptionSubtractAmount;
+import gift.product.dto.option.OptionDto;
+import gift.product.dto.option.OptionResponse;
+import gift.product.dto.option.OptionSubtractAmount;
 import gift.product.exception.CannotDeleteOnlyOneOptionException;
 import gift.product.model.Option;
 import gift.product.model.Product;
