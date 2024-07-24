@@ -54,4 +54,18 @@ public class KakaoApiClient {
                 .toEntity(KakaoUserInfo.class)
                 .getBody();
     }
+
+    public void messageToMe(String accessToken, String text, String path, String buttonTitle) {
+        String url = BASE_URL + path;
+        TemplateObject templateObject = new TemplateObject(OBJECT_TYPE, text, url, buttonTitle);
+
+        restClient.post()
+                .uri(KAKAO_MESSAGE_URL)
+                .header(HttpHeaders.AUTHORIZATION, BEARER_PREFIX + accessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .accept(MediaType.APPLICATION_JSON)
+                .body(templateObject.makeBody())
+                .retrieve()
+                .toEntity(DefaultTemplateResDto.class);
+    }
 }
