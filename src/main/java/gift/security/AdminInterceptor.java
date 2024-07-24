@@ -12,10 +12,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 public class AdminInterceptor implements HandlerInterceptor {
     private static final String AUTHORIZATION = "Authorization";
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
 
-    public AdminInterceptor(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public AdminInterceptor(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
     }
 
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
@@ -27,7 +27,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             throw new AuthenticationException("Invalid token");
         }
         try {
-            Claims claims = tokenProvider.parseToken(token);
+            Claims claims = jwtProvider.parseToken(token);
             request.setAttribute("SUB", Long.parseLong(claims.getSubject()));
             checkRole(request, claims.get("role").toString());
             return true;
