@@ -4,12 +4,15 @@ import static gift.exception.ErrorMessage.OPTION_ALREADY_EXISTS;
 import static gift.exception.ErrorMessage.OPTION_NOT_FOUND;
 import static gift.exception.ErrorMessage.PRODUCT_NOT_FOUND;
 
+import gift.option.entity.Option;
 import gift.product.Product;
 import gift.product.ProductRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class OptionService {
 
     private final OptionRepository optionRepository;
@@ -23,6 +26,7 @@ public class OptionService {
         this.productRepository = productRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<OptionDTO> getOptions(long productId) {
         validateProductExists(productId);
 

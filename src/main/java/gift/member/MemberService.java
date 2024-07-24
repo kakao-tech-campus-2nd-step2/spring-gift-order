@@ -6,9 +6,11 @@ import static gift.exception.ErrorMessage.WRONG_PASSWORD;
 
 import gift.exception.FailedLoginException;
 import gift.token.JwtProvider;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
+@Transactional
 public class MemberService {
 
     public final MemberRepository memberRepository;
@@ -34,6 +36,7 @@ public class MemberService {
         return jwtProvider.generateToken(memberDTO.toTokenDTO());
     }
 
+    @Transactional(readOnly = true)
     public String login(MemberDTO memberDTO) {
         Member findMember = memberRepository.findById(memberDTO.getEmail())
             .orElseThrow(() -> new FailedLoginException(MEMBER_NOT_FOUND));
