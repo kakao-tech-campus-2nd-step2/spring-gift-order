@@ -2,6 +2,7 @@ package gift.user.domain;
 
 import gift.wish.domain.WishlistItem;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,9 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@DiscriminatorColumn(name = "user_type")
 @Table(name="users")
 public class User {
     @Id
@@ -21,12 +24,17 @@ public class User {
     @Column(unique = true)
     private String email;
     @NotNull
-    private String password;
+    private String password="";
 
     @OneToMany(mappedBy = "user")
-    private List<WishlistItem> wishlistItemList;
+    private List<WishlistItem> wishlistItemList = new ArrayList<>();
 
     public User() {
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
     }
 
     public User(Long id, String email, String password) {
