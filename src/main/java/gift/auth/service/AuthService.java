@@ -30,4 +30,8 @@ public class AuthService {
         headers.put("Authorization", accessToken);
         return headers;
     }
+
+    public String getKakaoAuthUrl() {
+        return "http://localhost:8080";
+    }
 }
