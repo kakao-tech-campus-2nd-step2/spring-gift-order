@@ -1,6 +1,5 @@
 package gift.service.OAuth;
 
-import gift.config.KakaoProperties;
 import gift.model.user.User;
 import gift.repository.user.UserRepository;
 import gift.util.AuthUtil;
@@ -22,19 +21,20 @@ public class KakaoAuthService {
         this.userRepository = userRepository;
     }
 
-    public String createCodeUrl(){
+    public String createCodeUrl() {
         return authUtil.createGetCodeUrl();
     }
+
     public String getAccessToken(String authCode) {
         return authUtil.getAccessToken(authCode);
     }
 
 
-    public String register(String accessToken){
+    public String register(String accessToken) {
         String email = authUtil.extractUserEmail(accessToken);
 
         User user = userRepository.findByEmail(email).orElseGet(
-                ()->userRepository.save(new User(email,"1234"))
+                () -> userRepository.save(new User(email, "1234"))
         );
 
         return jwtUtil.generateJWT(user);

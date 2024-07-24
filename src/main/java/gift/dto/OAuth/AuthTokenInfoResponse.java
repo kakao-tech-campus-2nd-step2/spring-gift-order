@@ -8,4 +8,5 @@ public record AuthTokenInfoResponse(
         @JsonProperty("expires_in") int expiresIn,
         @JsonProperty("app_id") int appId,
         @JsonProperty("appId") int appIdDuplicate
-) {}
+) {
+}

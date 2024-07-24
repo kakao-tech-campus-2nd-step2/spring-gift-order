@@ -15,4 +15,5 @@ public record AuthTokenResponse(
         @JsonProperty("scope") String scope,
 
         @JsonProperty("refresh_token_expires_in") int refreshTokenExpiresIn
-) {}
+) {
+}

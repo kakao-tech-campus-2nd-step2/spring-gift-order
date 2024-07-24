@@ -6,7 +6,8 @@ import gift.model.wish.Wish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "gift")

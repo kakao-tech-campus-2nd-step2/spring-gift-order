@@ -4,7 +4,6 @@ import gift.config.KakaoProperties;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -24,19 +23,19 @@ public class AuthUtil {
         this.kakaoProperties = kakaoProperties;
     }
 
-    public String createGetCodeUrl(){
+    public String createGetCodeUrl() {
         String authUrl = kakaoProperties.getAuthUrl();
 
         String url = UriComponentsBuilder.fromHttpUrl(authUrl)
-                .queryParam("client_id",kakaoProperties.getRestAPiKey())
-                .queryParam("redirect_uri",kakaoProperties.getRedirectUri())
-                .queryParam("response_type","code")
+                .queryParam("client_id", kakaoProperties.getRestAPiKey())
+                .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
+                .queryParam("response_type", "code")
                 .toUriString();
         return url;
     }
 
 
-    public String getAccessToken(String authCode){
+    public String getAccessToken(String authCode) {
         RestClient restClient = RestClient.builder().build();
 
         String url = kakaoProperties.getTokenUrl();
@@ -51,7 +50,7 @@ public class AuthUtil {
         return resp.accessToken();
     }
 
-    public String extractUserEmail(String accessToken){
+    public String extractUserEmail(String accessToken) {
         String url = "https://kapi.kakao.com/v2/user/me";
         RestClient restClient = RestClient.builder().build();
         Map resp = restClient.get()
@@ -59,7 +58,7 @@ public class AuthUtil {
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .body(Map.class);
-        Map<String, Object> accountMap= (Map<String, Object>) resp.get("kakao_account");
+        Map<String, Object> accountMap = (Map<String, Object>) resp.get("kakao_account");
         return (String) accountMap.get("email");
     }
 
@@ -71,7 +70,6 @@ public class AuthUtil {
         params.add("code", authCode);
         return params;
     }
-
 
 
 }

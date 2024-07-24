@@ -1,7 +1,6 @@
 package gift.dto.gift;
 
 import gift.dto.option.OptionRequest;
-import gift.model.gift.Gift;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
@@ -22,9 +21,10 @@ public class GiftRequest {
             @NotEmpty(message = "옵션은 최소 하나 이상 포함되어야 합니다.")
             @Valid
             List<OptionRequest.Create> options
-    ){
+    ) {
 
     }
+
     public record Update(
             @Size(max = 15)
             @Pattern(regexp = "[\\s\\(\\)\\[\\]\\+\\-&/_a-zA-Z0-9\uAC00-\uD7AF]*", message = "특수문자 오류")
@@ -35,7 +35,7 @@ public class GiftRequest {
             String imageUrl,
 
             Long categoryId
-    ){
+    ) {
 
     }
 }
