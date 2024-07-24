@@ -54,6 +54,14 @@ public class MemberService {
         return new MemberResponse(member.getId(), member.getEmail(), token);
     }
 
+    public MemberResponse loginKakaoMember(String email) {
+        Member member = memberRepository.findByEmail(email)
+            .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
+
+        String token = jwtUtil.generateToken(member.getId(), member.getEmail());
+        return new MemberResponse(member.getId(), member.getEmail(), token);
+    }
+
     @Transactional(readOnly = true)
     public List<MemberResponse> getAllMembers() {
         return memberRepository.findAll().stream()

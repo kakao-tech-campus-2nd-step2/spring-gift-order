@@ -1,6 +1,6 @@
 package gift.util.constants;
 
-public class OAuthConstants {
+public class KakaoOAuthConstants {
 
     public static final String TOKEN_RESPONSE_ERROR = "토큰 응답이 올바르지 않습니다.";
     public static final String TOKEN_FAILURE_ERROR = "토큰 발급 요청이 실패했습니다: ";

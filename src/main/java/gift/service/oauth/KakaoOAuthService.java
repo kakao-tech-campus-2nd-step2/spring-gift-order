@@ -1,24 +1,30 @@
 package gift.service.oauth;
 
-import static gift.util.constants.OAuthConstants.SCOPES_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.TOKEN_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.TOKEN_RESPONSE_ERROR;
-import static gift.util.constants.OAuthConstants.UNLINK_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.UNLINK_RESPONSE_ERROR;
-import static gift.util.constants.OAuthConstants.USERINFO_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.USERINFO_RESPONSE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.TOKEN_RESPONSE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.UNLINK_RESPONSE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.USERINFO_RESPONSE_ERROR;
 
 import gift.config.KakaoProperties;
+import gift.dto.member.MemberLoginRequest;
+import gift.dto.member.MemberRegisterRequest;
+import gift.dto.member.MemberResponse;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
+import gift.exception.member.EmailAlreadyUsedException;
 import gift.exception.oauth.KakaoScopeException;
 import gift.exception.oauth.KakaoTokenException;
 import gift.exception.oauth.KakaoUnlinkException;
 import gift.exception.oauth.KakaoUserInfoException;
+import gift.service.MemberService;
 import java.net.URI;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +38,15 @@ public class KakaoOAuthService {
 
     private final KakaoProperties kakaoProperties;
     private final RestClient client;
+    private final MemberService memberService;
 
-    public KakaoOAuthService(KakaoProperties kakaoProperties, RestClient client) {
+    @Value("${kakao.password}")
+    private String kakaoPassword;
+
+    public KakaoOAuthService(KakaoProperties kakaoProperties, RestClient client, MemberService memberService) {
         this.kakaoProperties = kakaoProperties;
         this.client = client;
+        this.memberService = memberService;
     }
 
     public KakaoTokenResponse getAccessToken(String code) {
@@ -135,6 +146,15 @@ public class KakaoOAuthService {
             }
         } catch (RestClientResponseException e) {
             throw new KakaoUserInfoException(USERINFO_FAILURE_ERROR);
+        }
+    }
+
+    public MemberResponse registerOrLoginKakaoUser(KakaoUserResponse userResponse) {
+        try {
+            MemberRegisterRequest registerRequest = new MemberRegisterRequest(userResponse.email(), kakaoPassword);
+            return memberService.registerMember(registerRequest);
+        } catch (EmailAlreadyUsedException e) {
+            return memberService.loginKakaoMember(userResponse.email());
         }
     }
 }

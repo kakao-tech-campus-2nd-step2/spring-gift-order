@@ -1,9 +1,9 @@
 package gift.controller.oauth;
 
-import static gift.util.constants.OAuthConstants.SCOPES_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.TOKEN_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.UNLINK_FAILURE_ERROR;
-import static gift.util.constants.OAuthConstants.USERINFO_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
+import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

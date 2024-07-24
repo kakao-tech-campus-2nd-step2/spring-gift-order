@@ -1,6 +1,7 @@
 package gift.controller.oauth;
 
 import gift.config.KakaoProperties;
+import gift.dto.member.MemberResponse;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
@@ -39,9 +40,13 @@ public class KakaoOAuthController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<KakaoTokenResponse> kakaoCallback(@RequestParam("code") String code) {
-        KakaoTokenResponse response = kakaoOAuthService.getAccessToken(code);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<MemberResponse> kakaoCallback(@RequestParam("code") String code) {
+        KakaoTokenResponse tokenResponse = kakaoOAuthService.getAccessToken(code);
+        KakaoUserResponse userResponse = kakaoOAuthService.getUserInfo(tokenResponse.accessToken());
+
+        MemberResponse memberResponse = kakaoOAuthService.registerOrLoginKakaoUser(userResponse);
+
+        return ResponseEntity.ok(memberResponse);
     }
 
     @GetMapping("/unlink/{accessToken}")
