@@ -4,7 +4,7 @@ import gift.user.client.KakaoLoginClient;
 import gift.user.config.KakaoProperties;
 import gift.user.dto.request.UserLoginRequest;
 import gift.user.dto.request.UserRegisterRequest;
-import gift.user.dto.response.KakaoTokenResponse;
+import gift.user.dto.response.KakaoUserInfoResponse;
 import gift.user.dto.response.UserResponse;
 import gift.user.service.UserService;
 import jakarta.validation.Valid;
@@ -41,9 +41,10 @@ public class UserController {
     }
 
     @RequestMapping("auth/kakao/code")
-    public ResponseEntity<KakaoTokenResponse> getToken(@RequestParam("code") String code) {
+    public ResponseEntity<KakaoUserInfoResponse> getKakaoUserId(@RequestParam("code") String code) {
         var response = kakaoLoginClient.getKakaoTokenResponse(code);
-        return ResponseEntity.ok(response);
+        var response1 = kakaoLoginClient.getKakaoUserId(response.accessToken());
+        return ResponseEntity.ok(response1);
     }
 
 }

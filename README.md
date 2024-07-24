@@ -143,17 +143,16 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
   }
   ```
 
-- [ ] 발급된 토큰으로 사용자 정보 요청
+- [x] 발급된 토큰으로 사용자 정보 요청
 
   ```http
-  GET https://kapi.kakao.com/v2/user/me?property_keys=kakao_account.email HTTP/1.1
+  GET https://kapi.kakao.com/v2/user/me?property_keys=[""] HTTP/1.1
   Authorization: Bearer ${ACCESS_TOKEN}
-  Content-type: application/x-www-form-urlencoded;charset=utf-8
   ```
-
+  
 - [ ] Response 데이터 처리
 
-  - [ ] 최초 1회 회원가입 - User 테이블에 저장
+  - [ ] 최초 1회 회원가입 - 카카오 user id를 이용해 email로 만들어 User 테이블에 저장
   - [ ] 이후 로그인 - User 테이블에서 데이터 호출하여 대조
 
 - [ ] 유저 정보를 바탕으로 jwt token 발급하여 클라이언트에 반환
