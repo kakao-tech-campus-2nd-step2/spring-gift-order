@@ -79,9 +79,9 @@ public class KakaoUserService {
         ObjectMapper objectMapper = new ObjectMapper();
         Link link = new Link("localhost:8080");
         Content content = new Content(
-                productResponse.getName(),
+                productResponse.getName() + "\n" + optionName + "\n" + message,
                 productResponse.getImageUrl(),
-                optionName + "\n" + message,
+                "",
                 link
         );
         Commerce commerce = new Commerce(productResponse.getName(), productResponse.getPrice());
