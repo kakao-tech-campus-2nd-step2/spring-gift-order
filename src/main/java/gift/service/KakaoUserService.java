@@ -3,6 +3,7 @@ package gift.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.Kakao.*;
+import gift.DTO.Order.OrderRequest;
 import gift.DTO.Product.ProductResponse;
 import gift.DTO.Token;
 import gift.DTO.User.UserRequest;
@@ -13,14 +14,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 @Service
 public class KakaoUserService {
@@ -58,9 +56,9 @@ public class KakaoUserService {
      * 상품 구매에 따른 동작 중 "나에게 메세지 보내기" 로직
      */
     public void messageToMe(
-            String accessToken, ProductResponse productResponse, String optionName, String message
+            String accessToken, ProductResponse productResponse, String optionName, OrderRequest orderRequest
     ) throws JsonProcessingException {
-        LinkedMultiValueMap<Object, Object> body = makeBody(productResponse, optionName, message);
+        LinkedMultiValueMap<Object, Object> body = makeBody(productResponse, optionName, orderRequest);
         client.post()
                 .uri(URI.create(messageUrl))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -73,13 +71,16 @@ public class KakaoUserService {
      * meesage Api 호출을 위한 요청의 body를 만들어주는 로직
      */
     private static LinkedMultiValueMap<Object, Object> makeBody(
-            ProductResponse productResponse, String optionName, String message
+            ProductResponse productResponse, String optionName, OrderRequest orderRequest
     ) throws JsonProcessingException
     {
         ObjectMapper objectMapper = new ObjectMapper();
+
         Link link = new Link("localhost:8080");
+
+        String title = optionName + " x " + orderRequest.getQuantity() + "개\n" + orderRequest.getMessage();
         Content content = new Content(
-                productResponse.getName() + "\n" + optionName + "\n" + message,
+                title,
                 productResponse.getImageUrl(),
                 "",
                 link
