@@ -28,7 +28,7 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderDateTime;
 
-    protected Order() {
+    public Order() {
     }
 
     public Order(Option option, Long quantity, String message) {

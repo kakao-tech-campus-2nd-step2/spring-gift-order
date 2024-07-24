@@ -82,6 +82,10 @@ public class Member {
         this.refreshToken = refreshToken;
     }
 
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     public static class MemberBuilder {
         private Long id;
         private String name;

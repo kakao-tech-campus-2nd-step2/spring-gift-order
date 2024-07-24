@@ -31,6 +31,14 @@ public class OrderDto {
         this.message = message;
     }
 
+    public OrderDto(Long id, Long optionId, Long quantity, Member member, String message) {
+        this.id = id;
+        this.optionId = optionId;
+        this.quantity = quantity;
+        this.member = member;
+        this.message = message;
+    }
+
     public static OrderDto of(Member member, OrderCreateRequest request) {
         return new OrderDto(member, request.getOptionId(), request.getQuantity(), request.getMessage());
     }
