@@ -1,5 +1,8 @@
 package gift.controller;
 
+import gift.auth.dto.KakaoAccessToken;
+import gift.auth.dto.KakaoLoginAuthorizationCode;
+import gift.auth.dto.KakaoProperties;
 import gift.domain.User;
 import gift.dto.common.apiResponse.ApiResponseBody.SuccessBody;
 import gift.dto.common.apiResponse.ApiResponseGenerator;
@@ -11,13 +14,15 @@ import gift.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/auth")
+@Controller
+@RequestMapping("/api/oauth")
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
@@ -41,5 +46,19 @@ public class AuthController {
         User user = userService.findByEmail(userLoginRequestDTO);
         UserResponseDTO userResponseDTO = authService.login(user, userLoginRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "로그인에 성공했습니다.", userResponseDTO);
+    }
+
+    @GetMapping("/redirect")
+    public String redirect() {
+        KakaoProperties properties = authService.getProperties();
+        String clientId = properties.clientId();
+        return "redirect:https://kauth.kakao.com/oauth/authorize?client_id=" + clientId;
+    }
+
+    @PostMapping("/kakao/login")
+    public ResponseEntity<SuccessBody<String>> login(
+        @RequestHeader KakaoLoginAuthorizationCode kakaoLoginAuthorizationCode) {
+        String accessToken = authService.getAccessToken(kakaoLoginAuthorizationCode.code());
+        return ApiResponseGenerator.success(HttpStatus.OK, "액세스 토큰 발급 성공", accessToken);
     }
 }

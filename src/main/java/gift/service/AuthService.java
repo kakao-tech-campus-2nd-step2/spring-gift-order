@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.auth.JwtUtil;
+import gift.auth.KakaoClient;
+import gift.auth.dto.KakaoProperties;
 import gift.domain.Role;
 import gift.domain.User;
 import gift.dto.requestdto.UserLoginRequestDTO;
@@ -12,9 +14,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     private final JwtUtil jwtUtil;
+    private final KakaoClient kakaoClient;
 
-    public AuthService(JwtUtil jwtUtil) {
+    public AuthService(JwtUtil jwtUtil, KakaoClient kakaoClient) {
         this.jwtUtil = jwtUtil;
+        this.kakaoClient = kakaoClient;
     }
 
     public UserResponseDTO register(UserSignupRequestDTO userSignupRequestDTO) {
@@ -41,6 +45,15 @@ public class AuthService {
         if (!user.getRole().equals(Role.ADMIN.getRole())) {
             throw new IllegalStateException("권한이 없습니다.");
         }
+    }
+
+    public String getAccessToken(String code){
+        return kakaoClient.getAccessToken(code);
+    }
+
+    public KakaoProperties getProperties(){
+        System.out.println(kakaoClient.getProperties());
+        return kakaoClient.getProperties();
     }
 
     @Deprecated
