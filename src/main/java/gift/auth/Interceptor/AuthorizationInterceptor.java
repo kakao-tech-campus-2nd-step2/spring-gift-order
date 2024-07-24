@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.auth.Interceptor;
 
 import gift.member.service.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;

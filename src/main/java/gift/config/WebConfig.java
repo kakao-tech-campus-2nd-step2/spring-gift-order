@@ -1,8 +1,8 @@
 package gift.config;
 
-import gift.auth.AuthenticationInterceptor;
-import gift.auth.AuthorizationInterceptor;
-import gift.auth.LoginMemberArgumentResolver;
+import gift.auth.Interceptor.AuthenticationInterceptor;
+import gift.auth.Interceptor.AuthorizationInterceptor;
+import gift.auth.resolver.LoginMemberArgumentResolver;
 import gift.member.service.JwtProvider;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
