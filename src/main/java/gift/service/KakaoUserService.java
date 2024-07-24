@@ -42,7 +42,8 @@ public class KakaoUserService {
         RequestEntity<LinkedMultiValueMap<String, String>> request = new RequestEntity<>(body,
             headers, HttpMethod.POST, URI.create(url));
 
-        ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request, KakaoTokenResponse.class);
+        ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request,
+            KakaoTokenResponse.class);
 
         return response.getBody();
     }

@@ -10,8 +10,6 @@ import gift.exception.ProductNotFoundException;
 import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
