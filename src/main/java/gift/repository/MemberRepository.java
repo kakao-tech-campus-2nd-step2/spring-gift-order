@@ -10,5 +10,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Integer countByEmail(String email);
 
-    Integer countByEmailAndPassword(String email, String password);
+    Integer countByEmailAndPasswordAndAccountType(String email, String password, String accountType);
 }
