@@ -12,7 +12,7 @@ public class UserDto {
   @NotBlank(message = "이메일을 입력해야 합니다.")
   private String email;
 
-  @NotBlank(message = "비밀번호를 입력해야 합니다.")
+//  @NotBlank(message = "비밀번호를 입력해야 합니다.")
   private String password;
 
   private UserRole userRole = UserRole.ROLE_USER;

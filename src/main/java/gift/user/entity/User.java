@@ -20,8 +20,8 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
-  @NotBlank(message = "비밀번호를 입력해야 합니다.")
-  @Column(nullable = false)
+//  @NotBlank(message = "비밀번호를 입력해야 합니다.")
+  @Column(nullable = true)
   private String password;
 
   @Enumerated(EnumType.STRING)
