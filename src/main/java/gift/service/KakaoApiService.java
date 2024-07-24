@@ -7,10 +7,12 @@ import gift.domain.Option;
 import gift.domain.Order;
 import gift.domain.Token;
 import gift.domain.UserInfo;
+import gift.domain.Wish;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.TokenRepository;
 import gift.repository.UserInfoRepository;
+import gift.repository.WishRepository;
 import gift.utils.ExternalApiService;
 import gift.utils.config.KakaoProperties;
 import gift.utils.error.KakaoLoginException;
@@ -31,16 +33,19 @@ public class KakaoApiService {
     private final UserInfoRepository userInfoRepository;
     private final TokenRepository tokenRepository;
     private final OrderRepository orderRepository;
+    private final WishRepository wishRepository;
 
     public KakaoApiService(ExternalApiService externalApiService, KakaoProperties kakaoProperties,
         OptionRepository optionRepository, UserInfoRepository userInfoRepository,
-        TokenRepository tokenRepository, OrderRepository orderRepository) {
+        TokenRepository tokenRepository, OrderRepository orderRepository,
+        WishRepository wishRepository) {
         this.externalApiService = externalApiService;
         this.kakaoProperties = kakaoProperties;
         this.optionRepository = optionRepository;
         this.userInfoRepository = userInfoRepository;
         this.tokenRepository = tokenRepository;
         this.orderRepository = orderRepository;
+        this.wishRepository = wishRepository;
     }
 
 
@@ -99,6 +104,11 @@ public class KakaoApiService {
 
         userInfo.addOrder(order);
         option.addOrder(order);
+
+        Optional<Wish> byUserInfoIdAndProductId = wishRepository.findByUserInfoIdAndProductId(
+            userInfo.getId(), option.getProduct().getId());
+
+        byUserInfoIdAndProductId.ifPresent(wishRepository::delete);
 
         option.subtract(kakaoOrderRequest.quantity());
 
