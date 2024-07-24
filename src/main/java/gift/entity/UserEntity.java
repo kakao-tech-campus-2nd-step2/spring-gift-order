@@ -49,6 +49,11 @@ public class UserEntity {
         cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishEntity> wish;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SocialEntity> socials;
+
     public UserEntity() {
     }
 
