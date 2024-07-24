@@ -7,7 +7,6 @@ import gift.product.option.dto.request.CreateOptionRequest;
 import gift.product.option.dto.request.UpdateOptionRequest;
 import gift.product.option.dto.response.OptionResponse;
 import gift.product.option.entity.Option;
-import gift.product.option.entity.Options;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.repository.ProductJpaRepository;
 import java.util.List;
@@ -32,6 +31,7 @@ public class OptionService {
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
         return product.getOptions()
+            .getSet()
             .stream()
             .map(OptionResponse::from)
             .toList();
@@ -56,8 +56,7 @@ public class OptionService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        Options options = optionRepository.findAllByProduct(product);
-        options.validate(request);
+        product.getOptions().validateNameDuplicate(request);
 
         option.edit(request.name(), request.quantity());
     }

@@ -15,7 +15,7 @@ public class Options {
         this.options = new HashSet<>(options);
     }
 
-    public void validate(Option other) {
+    public void validateNameDuplicate(Option other) {
         if (options.stream()
             .map(Option::getName)
             .collect(Collectors.toSet())
@@ -24,7 +24,7 @@ public class Options {
         }
     }
 
-    public void validate(UpdateOptionRequest request) {
+    public void validateNameDuplicate(UpdateOptionRequest request) {
         if (options.stream()
             .map(Option::getName)
             .collect(Collectors.toSet())
@@ -34,7 +34,7 @@ public class Options {
     }
 
     public void addOption(Option option) {
-        validate(option);
+        validateNameDuplicate(option);
         options.add(option);
     }
 
@@ -48,6 +48,10 @@ public class Options {
         }
 
         options.remove(option);
+    }
+
+    public Set<Option> getSet() {
+        return options;
     }
 
 }

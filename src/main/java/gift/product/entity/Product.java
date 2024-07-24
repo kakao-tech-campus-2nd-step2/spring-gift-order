@@ -110,8 +110,8 @@ public class Product {
         return category.getName();
     }
 
-    public Set<Option> getOptions() {
-        return optionSet;
+    public Options getOptions() {
+        return options;
     }
 
     public void changeName(String name) {
