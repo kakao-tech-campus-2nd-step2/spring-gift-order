@@ -2,8 +2,6 @@ package gift.controller.kakao;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,16 +18,18 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/kakao")
-@EnableConfigurationProperties(KakaoProperties.class)
 public class KakaoController {
 
-    private final RestClient client = RestClient.builder().build();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RestClient client;
+    private final ObjectMapper objectMapper;
+    private final KakaoProperties kakaoProperties;
 
-    @Autowired
-    private KakaoProperties kakaoProperties;
+    public KakaoController(KakaoProperties kakaoProperties) {
+        this.client = RestClient.builder().build();
+        this.objectMapper = new ObjectMapper();
+        this.kakaoProperties = kakaoProperties;
+    }
 
-    //access token 과 유저정보 매핑해서 저장하는 로직 추후 추가
     @PostMapping("/login")
     public Map<String, Object> kakaoLogin(@RequestParam("code") String authorizationCode) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
@@ -79,7 +79,7 @@ public class KakaoController {
         }
     }
 
-    public Map<String, Object> getUserInfo(String accessToken) {
+    private Map<String, Object> getUserInfo(String accessToken) {
         Map<String, Object> userInfo = new HashMap<>();
         String reqURL = "https://kapi.kakao.com/v2/user/me";
         try {
@@ -91,18 +91,12 @@ public class KakaoController {
 
             JsonNode jsonNode = objectMapper.readTree(response);
 
-            // Extract user ID
             long id = jsonNode.path("id").asLong();
-
-            // Extract properties (nickname)
             JsonNode properties = jsonNode.path("properties");
             String nickname = properties.path("nickname").asText();
-
-            // Extract kakao_account (email)
             JsonNode kakaoAccount = jsonNode.path("kakao_account");
             String email = kakaoAccount.path("email").asText();
 
-            // Add extracted information to userInfo map
             userInfo.put("id", id);
             userInfo.put("nickname", nickname);
             userInfo.put("email", email);
