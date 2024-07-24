@@ -30,8 +30,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/wish/**", "/mywish" ,"/api/orders/**");
     }
 
-    @Bean(name = "customRestClient")
-    public RestClient restClientBuilder(){
-        return RestClient.builder().build();
-    }
+
 }
