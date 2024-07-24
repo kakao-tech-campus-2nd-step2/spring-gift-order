@@ -15,7 +15,6 @@ public class KakaoLoginService {
     private static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
     private static final String GRANT_TYPE = "authorization_code";
-    private final RestClient client = RestClient.create();
     MemberService memberService;
     @Value("${clientId}")
     private String CLIENT_ID;
@@ -32,7 +31,8 @@ public class KakaoLoginService {
         multiValueMap.add("client_id", CLIENT_ID);
         multiValueMap.add("code", code);
 
-        return client.post()
+        return RestClient.create()
+                .post()
                 .uri(TOKEN_REQUEST_URI)
                 .body(multiValueMap)
                 .retrieve()
@@ -40,7 +40,9 @@ public class KakaoLoginService {
     }
 
     public String getEmail(String token) {
-        KakaoUserInfoResponse body = client.get().uri(USER_INFO_REQUEST_URI)
+        KakaoUserInfoResponse body = RestClient.create()
+                .get()
+                .uri(USER_INFO_REQUEST_URI)
                 .header("Authorization", String.format("Bearer %s", token))
                 .retrieve()
                 .body(KakaoUserInfoResponse.class);
