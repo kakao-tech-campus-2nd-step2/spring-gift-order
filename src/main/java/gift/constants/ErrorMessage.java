@@ -41,4 +41,7 @@ public class ErrorMessage {
     public static final String OPTION_QUANTITY_INVALID_MSG = "옵션 수량은 최소 1개 최대 1억개 미만이어야 합니다.";
     public static final String OPTION_MUST_MORE_THAN_ZERO = "옵션은 반드시 1개 이상 있어야 합니다.";
     public static final String OPTION_QUANTITY_FEWER_MSG = "옵션의 수량이 부족합니다.";
+    public static final String KAKAO_BAD_REQUEST_MSG = "카카오 로그인 파라미터가 적절하지 않습니다.";
+    public static final String KAKAO_UNAUTHORIZED_MSG = "카카오 로그인 인증 정보가 유효하지 않습니다.";
+    public static final String KAKAO_FORBIDDEN_MSG = "허가되지 않은 접근입니다.";
 }
