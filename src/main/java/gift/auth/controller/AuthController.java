@@ -33,9 +33,9 @@ public class AuthController {
         return new RedirectView(authService.getKakaoAuthUrl());
     }
 
-    @PostMapping("/kakao/login")
-    public ResponseEntity<SimpleResultResponseDto> kakaoLogin(@RequestBody LoginRequestDto loginRequestDto) {
-        Map<String, String> headers = authService.login(loginRequestDto);
+    @GetMapping("/kakao/login")
+    public ResponseEntity<SimpleResultResponseDto> kakaoLogin(@RequestParam("code") String code) {
+        Map<String, String> headers = authService.kakaoLogin(code);
         return ResponseHelper.createSimpleResponse(ResultCode.LOGIN_SUCCESS, headers);
     }
 }
