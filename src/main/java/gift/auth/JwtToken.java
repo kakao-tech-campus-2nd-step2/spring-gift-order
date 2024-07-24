@@ -21,12 +21,9 @@ import org.springframework.stereotype.Component;
 public class JwtToken {
 
     private String secretKey;
-    private long tokenExpTime;
 
-    public JwtToken(@Value("${jwt.secretKey}") String secretKey,
-        @Value("${jwt.tokenExpTime}") long tokenExpTime) {
+    public JwtToken(@Value("${jwt.secretKey}") String secretKey) {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        this.tokenExpTime = tokenExpTime;
     }
 
     public Token createToken(JWT jwt) {
@@ -37,7 +34,7 @@ public class JwtToken {
         claims.put("socialType", jwt.getSocialType());
 
         ZonedDateTime now = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
-        ZonedDateTime expirationDateTime = now.plusSeconds(tokenExpTime);
+        ZonedDateTime expirationDateTime = now.plusSeconds(jwt.getExp());
 
         return new Token(Jwts.builder()
             .setClaims(claims)
