@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.model.KakaoTokenDTO;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,16 +38,16 @@ public class KakaoLoginService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(
+        ResponseEntity<KakaoTokenDTO> response = restTemplate.exchange(
             URI.create(url),
             HttpMethod.POST,
             request,
-            Map.class
+            KakaoTokenDTO.class
         );
 
-        Map<String, Object> responseBody = response.getBody();
+        KakaoTokenDTO responseBody = response.getBody();
         if (responseBody != null) {
-            return (String) responseBody.get("access_token");
+            return responseBody.access_token();
         }
 
         return null;
