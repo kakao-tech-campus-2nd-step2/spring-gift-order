@@ -36,6 +36,11 @@
                     style="display:none;">
                 로그아웃
             </button>
+            <button class="btn btn-warning"
+                    th:onclick="|location.href='@{/api/members/login/kakao}'|"
+                    type="button">
+                카카오 로그인
+            </button>
         </div>
     </div>
     <hr>
