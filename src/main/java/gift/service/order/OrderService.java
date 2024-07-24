@@ -62,8 +62,15 @@ public class OrderService {
 
         Order order = new Order(option.getId(), orderRequest.quantity(), orderRequest.message());
         orderRepository.save(order);
-        authUtil.sendMessage(accessToken, orderRequest.message());
+
+        sendMessage(orderRequest, accessToken, gift, option);
         return OrderResponse.fromEntity(order);
+    }
+
+    private void sendMessage(OrderRequest.Create orderRequest, String accessToken, Gift gift, Option option) {
+        String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
+                , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
+        authUtil.sendMessage(accessToken, message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {
