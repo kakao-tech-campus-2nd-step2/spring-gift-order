@@ -15,14 +15,12 @@ import java.util.Map;
 @RestController
 public class KakaoController {
 
-    private MemberService memberService;
-    private KakaoLoginService kakaoLoginService;
-    private KakaoProperties kakaoProperties;
+    private final MemberService memberService;
+    private final KakaoLoginService kakaoLoginService;
 
-    public KakaoController(MemberService memberService, KakaoLoginService kakaoLoginService, KakaoProperties kakaoProperties) {
+    public KakaoController(MemberService memberService, KakaoLoginService kakaoLoginService) {
         this.memberService = memberService;
         this.kakaoLoginService = kakaoLoginService;
-        this.kakaoProperties = kakaoProperties;
     }
 
     @PostMapping("/kakao/login")
