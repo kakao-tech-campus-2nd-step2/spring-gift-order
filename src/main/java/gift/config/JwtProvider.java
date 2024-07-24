@@ -1,6 +1,7 @@
 package gift.config;
 
 import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-
-import static java.lang.System.currentTimeMillis;
 
 @Component
 public class JwtProvider {
@@ -19,11 +18,13 @@ public class JwtProvider {
     public final String PREFIX = "Bearer ";
 
     public String create(Member member) {
+        SocialAccount socialAccount = member.getSocialAccount();
         return Jwts.builder()
                 .subject(member.getId().toString())
-                .claim("kakaoId", member.getKakaoId() != null ? member.getKakaoId().toString() : null)
+                .claim("socialType", socialAccount != null ? socialAccount.getSocialType().toString() : null)
+                .claim("socialId", socialAccount != null ? socialAccount.getSocialId() : null)
                 .claim("role", member.getRole())
-                .expiration(new Date(currentTimeMillis() + EXPIRE))
+                .expiration(new Date(System.currentTimeMillis() + EXPIRE))
                 .signWith(SECRET_KEY)
                 .compact();
     }

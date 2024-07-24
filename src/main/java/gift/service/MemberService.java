@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.config.JwtProvider;
+import gift.domain.member.SocialType;
 import gift.exception.ErrorCode;
 import gift.domain.member.Member;
 import gift.dto.MemberDto;
@@ -43,8 +44,8 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public Member getKakaoMember(Long kakaoId) {
-        return memberRepository.findByKakaoId(kakaoId)
+    public Member getMemberBySocialIdAndSocialType(Long socialId, SocialType socialType) {
+        return memberRepository.findBySocialAccount_SocialIdAndSocialAccount_SocialType(socialId, socialType)
                 .orElseThrow(() -> new GiftException(ErrorCode.MEMBER_NOT_FOUND));
     }
 

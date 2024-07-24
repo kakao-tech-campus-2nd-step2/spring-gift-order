@@ -3,6 +3,7 @@ package gift.resolver;
 import gift.config.JwtProvider;
 import gift.config.LoginMember;
 import gift.domain.member.Member;
+import gift.domain.member.SocialType;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.service.MemberService;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-
-import java.util.Optional;
 
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -43,9 +42,10 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         Claims claims = jwtProvider.getClaims(token);
 
         Long memberId = Long.parseLong(claims.getSubject());
-        Long kakaoId = getKakaoIdFromClaims(claims);
+        String socialType = claims.get("socialType", String.class);
+        Long socialId = claims.get("socialId", Long.class);
 
-        return resolveMember(memberId, kakaoId);
+        return resolveMember(memberId, socialType, socialId);
     }
 
     private String extractAndVerifyToken(HttpServletRequest request) {
@@ -56,15 +56,12 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         return token;
     }
 
-    private Long getKakaoIdFromClaims(Claims claims) {
-        return Optional.ofNullable(claims.get("kakaoId"))
-                .map(Object::toString)
-                .map(Long::parseLong)
-                .orElse(null);
-    }
-
-    private Member resolveMember(Long memberId, Long kakaoId) {
-        return kakaoId == null ? memberService.getMember(memberId) : memberService.getKakaoMember(kakaoId);
+    private Member resolveMember(Long memberId, String socialType, Long socialId) {
+        if (socialType == null || socialId == null) {
+            return memberService.getMember(memberId);
+        } else {
+            return memberService.getMemberBySocialIdAndSocialType(socialId, SocialType.valueOf(socialType));
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package gift.repository;
 
 import gift.domain.member.Member;
+import gift.domain.member.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -13,6 +14,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsByEmail(String email);
 
-    Optional<Member> findByKakaoId(Long kakaoId);
+    Optional<Member> findBySocialAccount_SocialIdAndSocialAccount_SocialType(Long socialId, SocialType socialType);
 
 }

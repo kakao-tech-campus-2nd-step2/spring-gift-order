@@ -3,6 +3,8 @@ package gift.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.config.JwtProvider;
 import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
+import gift.domain.member.SocialType;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.repository.MemberRepository;
@@ -56,23 +58,25 @@ public class KakaoLoginService {
         Long kakaoId = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
-        return memberRepository.findByKakaoId(kakaoId)
+        return memberRepository.findBySocialAccount_SocialIdAndSocialAccount_SocialType(kakaoId, SocialType.KAKAO)
                 .map(member -> {
-                    member.changeAccessToken(accessToken);
-                    member.changeRefreshToken(refreshToken);
+                    SocialAccount socialAccount = member.getSocialAccount();
+                    socialAccount.changeAccessToken(accessToken);
+                    socialAccount.changeRefreshToken(refreshToken);
                     return member;
                 })
                 .orElseGet(() -> createAndSaveMember(kakaoId, nickname, accessToken, refreshToken));
     }
 
     private Member createAndSaveMember(Long kakaoId, String nickname, String accessToken, String refreshToken) {
-        Member newMember = new Member.MemberBuilder()
-                .kakaoId(kakaoId)
+        Member member = new Member.MemberBuilder()
                 .name(nickname)
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
-        return memberRepository.save(newMember);
+
+        SocialAccount socialAccount = new SocialAccount(SocialType.KAKAO, kakaoId, accessToken, refreshToken);
+        member.setSocialAccount(socialAccount);
+
+        return memberRepository.save(member);
     }
 
     private HttpHeaders createRedirectHeaders(String url) {

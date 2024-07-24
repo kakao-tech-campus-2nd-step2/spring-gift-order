@@ -3,7 +3,7 @@ package gift.service.kakao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import org.springframework.http.*;
@@ -28,12 +28,12 @@ public class Oauth2TokenService {
     }
 
     @Transactional
-    public void refreshAccessToken(Member member) {
-        HttpEntity<LinkedMultiValueMap<String, String>> request = createTokenRequest(member.getRefreshToken());
+    public void refreshAccessToken(SocialAccount socialAccount) {
+        HttpEntity<LinkedMultiValueMap<String, String>> request = createTokenRequest(socialAccount.getRefreshToken());
         ResponseEntity<String> response = sendTokenRequest(request);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            handleTokenResponse(response.getBody(), member);
+            handleTokenResponse(response.getBody(), socialAccount);
         } else {
             throw new GiftException(ErrorCode.REFRESH_TOKEN_FAILED);
         }
@@ -66,15 +66,15 @@ public class Oauth2TokenService {
         return restTemplate.postForEntity(url, request, String.class);
     }
 
-    private void handleTokenResponse(String responseBody, Member member) {
+    private void handleTokenResponse(String responseBody, SocialAccount socialAccount) {
         try {
             JsonNode root = objectMapper.readTree(responseBody);
             String newAccessToken = root.path("access_token").asText();
             String newRefreshToken = root.path("refresh_token").asText();
 
-            member.changeAccessToken(newAccessToken);
+            socialAccount.changeAccessToken(newAccessToken);
             if (!newRefreshToken.isEmpty()) {
-                member.changeRefreshToken(newRefreshToken);
+                socialAccount.changeRefreshToken(newRefreshToken);
             }
         } catch (JsonProcessingException e) {
             throw new GiftException(ErrorCode.JSON_PROCESSING_FAILED);

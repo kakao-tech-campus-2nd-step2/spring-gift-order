@@ -4,6 +4,7 @@ import gift.domain.Option;
 import gift.domain.Order;
 import gift.domain.Product;
 import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
 import gift.dto.OrderDto;
 import gift.exception.GiftException;
 import gift.repository.OptionRepository;
@@ -38,11 +39,12 @@ public class OrderService {
         Long optionId = dto.getOptionId();
         Long quantity = dto.getQuantity();
         Member member = dto.getMember();
-        String accessToken = member.getAccessToken();
+        SocialAccount socialAccount = member.getSocialAccount();
+        String accessToken = socialAccount.getAccessToken();
         String message = dto.getMessage();
 
         if (oauth2TokenService.isAccessTokenExpired(accessToken)) {
-            oauth2TokenService.refreshAccessToken(member);
+            oauth2TokenService.refreshAccessToken(socialAccount);
         }
 
         Option option = getOptionById(optionId);

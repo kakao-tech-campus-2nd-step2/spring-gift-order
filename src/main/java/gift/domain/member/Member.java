@@ -23,11 +23,8 @@ public class Member {
 
     private MemberRole role;
 
-    @Column(unique = true)
-    private Long kakaoId;
-
-    private String accessToken;
-    private String refreshToken;
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SocialAccount socialAccount;
 
     @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
@@ -47,43 +44,21 @@ public class Member {
         return role;
     }
 
-    public List<Wish> getWishes() {
-        return wishes;
+    public SocialAccount getSocialAccount() {
+        return socialAccount;
     }
 
-    public void changeAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public void changeRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public Long getKakaoId() {
-        return kakaoId;
-    }
-
-    public Member(Long id, String name, String email, String password, MemberRole role, Long kakaoId, String accessToken, String refreshToken) {
+    public Member(Long id, String name, String email, String password, MemberRole role) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
-        this.kakaoId = kakaoId;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public void setSocialAccount(SocialAccount socialAccount) {
+        socialAccount.setMember(this);
+        this.socialAccount = socialAccount;
     }
 
     public static class MemberBuilder {
@@ -92,9 +67,6 @@ public class Member {
         private String email;
         private String password;
         private MemberRole role;
-        private Long kakaoId;
-        private String accessToken;
-        private String refreshToken;
 
         public MemberBuilder id(Long id) {
             this.id = id;
@@ -121,23 +93,8 @@ public class Member {
             return this;
         }
 
-        public MemberBuilder kakaoId(Long kakaoId) {
-            this.kakaoId = kakaoId;
-            return this;
-        }
-
-        public MemberBuilder accessToken(String accessToken) {
-            this.accessToken = accessToken;
-            return this;
-        }
-
-        public MemberBuilder refreshToken(String refreshToken) {
-            this.refreshToken = refreshToken;
-            return this;
-        }
-
         public Member build() {
-            return new Member(id, name, email, password, role, kakaoId, accessToken, refreshToken);
+            return new Member(id, name, email, password, role);
         }
     }
 
