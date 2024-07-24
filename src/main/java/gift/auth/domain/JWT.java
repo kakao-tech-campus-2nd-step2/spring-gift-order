@@ -1,7 +1,6 @@
 package gift.auth.domain;
 
 import gift.entity.enums.SocialType;
-import org.springframework.beans.factory.annotation.Value;
 
 public class JWT {
 
@@ -9,14 +8,14 @@ public class JWT {
     private String email;
     private String socialToken = "";
     private SocialType socialType = SocialType.OTHER;
-    private Integer exp;
+    private Integer exp = -1;
 
     public JWT(Long id, String email) {
         this.id = id;
         this.email = email;
     }
 
-    public JWT(Long id, String email, String socialToken, SocialType socialType, @Value("${jwt.tokenExpTime}") Integer exp) {
+    public JWT(Long id, String email, String socialToken, SocialType socialType, Integer exp) {
         this.id = id;
         this.email = email;
         this.socialToken = socialToken;

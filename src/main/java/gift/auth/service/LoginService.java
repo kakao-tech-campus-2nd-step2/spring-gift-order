@@ -61,6 +61,7 @@ public class LoginService {
             ).getUserEntity();
 
         return jwtToken.createToken(
-            new JWT(user.getId(), user.getEmail(), token.getAccess_token(), SocialType.KAKAO, token.getExpires_in()));
+            new JWT(user.getId(), user.getEmail(), token.getAccess_token(), SocialType.KAKAO,
+                token.getExpires_in()));
     }
 }

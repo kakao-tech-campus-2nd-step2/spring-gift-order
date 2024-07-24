@@ -2,7 +2,6 @@ package gift.auth;
 
 import gift.auth.domain.JWT;
 import gift.auth.domain.Token;
-import gift.entity.UserEntity;
 import gift.entity.enums.SocialType;
 import gift.util.errorException.BaseHandler;
 import io.jsonwebtoken.Claims;
@@ -21,9 +20,12 @@ import org.springframework.stereotype.Component;
 public class JwtToken {
 
     private String secretKey;
+    private long tokenExpTime;
 
-    public JwtToken(@Value("${jwt.secretKey}") String secretKey) {
+    public JwtToken(@Value("${jwt.secretKey}") String secretKey,
+        @Value("${jwt.tokenExpTime}") long tokenExpTime) {
         this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        this.tokenExpTime = tokenExpTime;
     }
 
     public Token createToken(JWT jwt) {
@@ -34,7 +36,10 @@ public class JwtToken {
         claims.put("socialType", jwt.getSocialType());
 
         ZonedDateTime now = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
-        ZonedDateTime expirationDateTime = now.plusSeconds(jwt.getExp());
+        ZonedDateTime expirationDateTime = now.plusSeconds(tokenExpTime);
+        if (tokenExpTime > jwt.getExp() && jwt.getExp() != -1) {
+            expirationDateTime = now.plusSeconds(jwt.getExp());
+        }
 
         return new Token(Jwts.builder()
             .setClaims(claims)
@@ -65,10 +70,12 @@ public class JwtToken {
         Claims claims = validateToken(token);
         return claims.get("email", String.class);
     }
+
     public String getSocialToken(String token) {
         Claims claims = validateToken(token);
         return claims.get("socialToken", String.class);
     }
+
     public SocialType getSocialType(String token) {
         Claims claims = validateToken(token);
         return SocialType.valueOf(claims.get("socialType", String.class));
