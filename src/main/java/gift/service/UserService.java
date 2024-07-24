@@ -4,6 +4,7 @@ import gift.DTO.User.UserRequest;
 import gift.DTO.User.UserResponse;
 import gift.domain.User;
 import gift.repository.UserRepository;
+import gift.security.KakaoTokenProvider;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,11 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
     public UserService(UserRepository userRepository){
         this.userRepository = userRepository;
     }
@@ -71,6 +72,20 @@ public class UserService {
         ));
 
         return new UserResponse(savedUser);
+    }
+    /*
+     * 카카오 로그인 유저 정보를 저장하는 로직
+     */
+    @Transactional
+    public UserResponse saveKakao(String kakaoId, String token){
+        User savedKakaoUser = userRepository.save(new User(
+                kakaoId,
+                kakaoId + "email.com",
+                UUID.randomUUID().toString()
+        ));
+        savedKakaoUser.insertToken(token);
+
+        return new UserResponse(savedKakaoUser);
     }
     /*
      * 유저 정보를 갱신하는 로직
