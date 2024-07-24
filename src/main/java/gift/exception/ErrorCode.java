@@ -41,7 +41,11 @@ public enum ErrorCode {
     /* KakaoLoginService */
     KAKAO_TOKEN_ISSUANCE_FAILED("카카오 토큰 발급에 실패했습니다.", HttpStatus.BAD_REQUEST),
     KAKAO_USER_RETRIEVAL_FAILED("카카오 유저 정보 조회에 실패했습니다.", HttpStatus.BAD_REQUEST),
-    JSON_PARSING_FAILED("JSON 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    JSON_PARSING_FAILED("JSON 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    /* OrderService */
+    SEND_KAKAO_MESSAGE_FAILED("카카오톡 메시지 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    JSON_PROCESSING_FAILED("JSON 처리에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String message;
     private final HttpStatus status;
