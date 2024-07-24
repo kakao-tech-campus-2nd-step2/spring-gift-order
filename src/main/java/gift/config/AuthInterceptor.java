@@ -4,8 +4,11 @@ import gift.auth.TokenService;
 import gift.exception.type.ForbiddenException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @Component
@@ -13,7 +16,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private final TokenService tokenService;
     private static final String AUTHENTICATION_TYPE = "Bearer ";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final int BEARER_PREFIX_LENGTH = 7;
 
     public AuthInterceptor(TokenService tokenService) {
@@ -22,7 +24,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String header = request.getHeader(AUTHORIZATION_HEADER);
+        String header = request.getHeader(AUTHORIZATION);
         if (header == null || !header.startsWith(AUTHENTICATION_TYPE)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
