@@ -42,7 +42,9 @@ public class KakaoUserService {
         this.jwtTokenProvider = jwtTokenProvider;
         this.kakaoProperties = kakaoProperties;
     }
-
+    /*
+     * Code를 이용하여 트큰을 발급하는 로직
+     */
     @Transactional
     public Token login(String code) throws JsonProcessingException {
         String token = kakaoTokenProvider.getToken(code);
@@ -52,7 +54,9 @@ public class KakaoUserService {
                 kakaoUser.getUserId(), kakaoUser.getEmail(), kakaoUser.getPassword()
         ));
     }
-
+    /*
+     * 상품 구매에 따른 동작 중 "나에게 메세지 보내기" 로직
+     */
     public void messageToMe(
             String accessToken, ProductResponse productResponse, String optionName, String message
     ) throws JsonProcessingException {
@@ -65,7 +69,9 @@ public class KakaoUserService {
                 .retrieve()
                 .toEntity(String.class);
     }
-
+    /*
+     * meesage Api 호출을 위한 요청의 body를 만들어주는 로직
+     */
     private static LinkedMultiValueMap<Object, Object> makeBody(
             ProductResponse productResponse, String optionName, String message
     ) throws JsonProcessingException
@@ -87,7 +93,9 @@ public class KakaoUserService {
         body.set("template_object", template_str);
         return body;
     }
-
+    /*
+     * login을 위해 code를 받기 위한 url을 만드는 로직
+     */
     public String makeLoginUrl(){
         loginUrl += "?scope=talk_message";
         loginUrl += "&response_type=code";

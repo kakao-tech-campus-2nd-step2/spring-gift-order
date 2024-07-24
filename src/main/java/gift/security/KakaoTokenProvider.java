@@ -31,7 +31,9 @@ public class KakaoTokenProvider {
         this.kakaoProperties = kakaoProperties;
         this.userRepository = userRepository;
     }
-
+    /*
+     * 토큰 발급
+     */
     public String getToken(String code) throws JsonProcessingException {
         LinkedMultiValueMap<Object, Object> body = makeBody(code);
 
@@ -48,7 +50,9 @@ public class KakaoTokenProvider {
 
         return jsonNode.get("access_token").asText();
     }
-
+    /*
+     * 토큰 요청을 위한 Body 만들기
+     */
     private LinkedMultiValueMap<Object, Object> makeBody(String code){
         var body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -58,7 +62,9 @@ public class KakaoTokenProvider {
 
         return body;
     }
-
+    /*
+     * 토큰을 이용하여 유저의 정보를 받아오기
+     */
     public User getKakaoUserInfo(String access_token) throws JsonProcessingException {
         ResponseEntity<String> entity = client.post()
                 .uri(URI.create(userInfoUrl))
