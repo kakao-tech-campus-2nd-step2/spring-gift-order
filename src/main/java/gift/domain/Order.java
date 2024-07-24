@@ -4,6 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Entity
 @Table(name="orders")
 public class Order extends BaseEntity{
@@ -19,11 +22,14 @@ public class Order extends BaseEntity{
     protected Order() {
     }
 
-    public Order(Long optionId, Long quantity, String message, String orderDateTime) {
+    public Order(Long optionId, Long quantity, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
         this.message = message;
-        this.orderDateTime = orderDateTime;
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        this.orderDateTime = now.format(formatter);
     }
 
     public Long getOptionId() {

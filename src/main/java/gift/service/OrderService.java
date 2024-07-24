@@ -16,20 +16,17 @@ import gift.repository.WishListRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
     private final WishListRepository wishListRepository;
     private final ProductRepository productRepository;
-    private final KakaoUserService kakaoUserService;
+    private final KakaoService kakaoUserService;
 
     public OrderService(
             OrderRepository orderRepository, OptionRepository optionRepository, WishListRepository wishListRepository,
-            KakaoUserService kakaoUserService, ProductRepository productRepository
+            KakaoService kakaoUserService, ProductRepository productRepository
     ) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
@@ -42,14 +39,10 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse save(OrderRequest orderRequest){
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        String orderDateTime = now.format(formatter);
         Order order = new Order(
                 orderRequest.getOptionId(),
                 orderRequest.getQuantity(),
-                orderRequest.getMessage(),
-                orderDateTime
+                orderRequest.getMessage()
         );
 
         Order savedOrder = orderRepository.save(order);
