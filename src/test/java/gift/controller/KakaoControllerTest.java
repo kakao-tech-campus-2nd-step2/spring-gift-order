@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.service.kakao.KakaoLoginService;
+import gift.service.KakaoLoginService;
 import gift.service.kakao.TokenResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.service.kakao.KakaoLoginService;
 import gift.service.kakao.KakaoProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

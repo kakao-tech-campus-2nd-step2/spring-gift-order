@@ -4,7 +4,7 @@ import gift.config.JwtProvider;
 import gift.config.RestTemplateConfig;
 import gift.domain.member.Member;
 import gift.repository.MemberRepository;
-import gift.service.kakao.KakaoLoginService;
+import gift.service.KakaoLoginService;
 import gift.service.kakao.KakaoProperties;
 import gift.service.kakao.TokenResponse;
 import org.junit.jupiter.api.BeforeEach;

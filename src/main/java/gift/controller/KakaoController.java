@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.service.kakao.TokenResponse;
-import gift.service.kakao.KakaoLoginService;
+import gift.service.KakaoLoginService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
