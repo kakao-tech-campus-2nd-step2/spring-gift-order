@@ -1,7 +1,9 @@
 package gift.vo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
@@ -19,14 +21,15 @@ public class Product {
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false, foreignKey = @ForeignKey(name = "fk_product_category_id_ref_category_id"))
     Category category;
 
-    @NotNull
+    @NotBlank
     @Size(max = 15)
     private String name;
 
     @NotNull
+    @PositiveOrZero
     private Integer price;
 
-    @NotNull
+    @NotBlank
     private String imageUrl;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)

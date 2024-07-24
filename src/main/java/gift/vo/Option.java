@@ -1,6 +1,7 @@
 package gift.vo;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -16,7 +17,7 @@ public class Option {
     @JoinColumn(name = "product_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "fk_option_product_id_ref_product_id"))
     private Product product;
 
-    @NotNull
+    @NotBlank
     private String name;
 
     @NotNull
