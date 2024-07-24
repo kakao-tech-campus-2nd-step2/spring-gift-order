@@ -35,6 +35,13 @@ public class KakaoController {
         // 사용자 정보 확인 및 처리
         // 예: 사용자가 기존 회원인지 확인하고, 신규 회원이면 가입 처리
         // 로그인 완료 후 홈 페이지로 리디렉션
-        return "redirect:/home";
+        return "redirect:/";
+    }
+
+    private String removeNewlines(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("[\\r\\n]", ""); // 개행 문자 제거
     }
 }

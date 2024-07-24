@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class KakaoProperties {
 
-    @Value("31564f3826ea40870a9d8e4de532d4e1\n")
+    @Value("${kakao.client-id}")
     private String clientId;
 
-    @Value("${http://localhost:8080/\n}")
+    @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
     public String getClientId() {
