@@ -19,7 +19,7 @@ public class KakaoOAuthService {
 
     private final RestTemplate restTemplate;
     private final Dotenv dotenv;
-    
+
     public KakaoOAuthService(RestTemplate restTemplate, Dotenv dotenv) {
         this.restTemplate = restTemplate;
         this.dotenv = dotenv;
