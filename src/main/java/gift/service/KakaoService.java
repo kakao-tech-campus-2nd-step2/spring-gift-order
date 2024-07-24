@@ -3,7 +3,6 @@ package gift.service;
 import gift.dto.KakaoProperties;
 import java.util.Map;
 import java.net.URI;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,6 +23,7 @@ public class KakaoService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
+    private final static String KAKAO_API_URI = "https://kapi.kakao.com";
 
     public KakaoService(KakaoProperties kakaoProperties) {
         this.kakaoProperties = kakaoProperties;
@@ -82,5 +82,21 @@ public class KakaoService {
         }
 
         return (String) responseBody.get("access_token");
+    }
+
+    public Map<String, Object> getUserInfo(String accessToken) {
+        String url = KAKAO_API_URI + "/v2/user/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(URI.create(url), HttpMethod.GET,
+                request, Map.class);
+            return response.getBody();
+        } catch (RestClientException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Error while fetching user info", e);
+        }
     }
 }

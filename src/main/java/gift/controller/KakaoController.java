@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.dto.KakaoProperties;
 import gift.service.KakaoService;
+import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class KakaoController {
     }
 
     @GetMapping("/login")
-    public String loginForm(Model model){
+    public String loginForm(Model model) {
         model.addAttribute("kakaoClientId", kakaoProperties.getClientId());
         model.addAttribute("kakaoRedirectUrl", kakaoProperties.getRedirectUrl());
         return "login";
@@ -41,7 +42,9 @@ public class KakaoController {
             return "redirect:/login?error";
         }
 
-        model.addAttribute("token", accessToken);
+        Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
+        model.addAttribute("userInfo", userInfo);
+
         return "user";
     }
 
