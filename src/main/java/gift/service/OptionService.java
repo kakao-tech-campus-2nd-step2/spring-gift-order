@@ -38,7 +38,7 @@ public class OptionService {
     public void addOption(List<OptionRequestDto> optionRequestDtos) {
         for (OptionRequestDto optionRequest : optionRequestDtos) {
             Product product = getProduct(optionRequest.productId());
-            validateOptionName(optionRequest, product);
+            validateOptionNameDuplicate(optionRequest, product);
             Option option = optionRequest.toOption(product);
             product.addOption(option);
             optionRepository.save(option);
@@ -48,13 +48,13 @@ public class OptionService {
 
     public void addOption(Product product, List<OptionRequestDto> optionRequestDtos) {
         for (OptionRequestDto optionRequest : optionRequestDtos) {
-            validateOptionName(optionRequest, product);
+            validateOptionNameDuplicate(optionRequest, product);
             Option option = optionRequest.toOption(product);
             product.addOption(option);
         }
     }
 
-    private void validateOptionName(OptionRequestDto optionRequestDto, Product product) {
+    private void validateOptionNameDuplicate(OptionRequestDto optionRequestDto, Product product) {
         Optional<Option> existingOption = optionRepository.findByNameAndProductId(optionRequestDto.name(), product.getId());
 
         if (existingOption.isPresent()) {

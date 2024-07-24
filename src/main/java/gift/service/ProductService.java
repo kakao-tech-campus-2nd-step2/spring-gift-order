@@ -46,7 +46,7 @@ public class ProductService {
     public void addProduct(@Valid ProductRequestDto productRequestDto) {
         Product product = productRequestDto.toProduct(getCategory(productRequestDto.categoryId()));
         optionService.addOption(product, productRequestDto.options());
-        Product.hasOptions(product.getOptions());
+        Product.validateOptionsExist(product.getOptions());
         productRepository.save(product);
     }
 
@@ -59,7 +59,7 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("삭제하려는 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("삭제하려는 상품을 찾을 수 없습니다."));
         productRepository.deleteById(id);
     }
 }

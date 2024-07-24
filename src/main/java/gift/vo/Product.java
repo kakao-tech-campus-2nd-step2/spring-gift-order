@@ -46,7 +46,7 @@ public class Product {
         this.imageUrl = imageUrl;
 
         validateName();
-        hasCategory();
+        validateCategoryExist();
     }
 
     private void validateName() {
@@ -63,13 +63,13 @@ public class Product {
         }
     }
 
-    private void hasCategory() {
+    private void validateCategoryExist() {
         if (category == null) {
             throw new IllegalArgumentException("상품에는 카테고리가 존재해야합니다.");
         }
     }
 
-    public static void hasOptions(List<Option> options) {
+    public static void validateOptionsExist(List<Option> options) {
         if (options.isEmpty()) {
             throw new IllegalArgumentException("상품에는 하나 이상의 옵션이 필요합니다.");
         }
