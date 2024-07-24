@@ -68,8 +68,9 @@ class AuthServiceTest {
         String grantType = properties.getProperty("kakao.grant-type");
         String clientId = properties.getProperty("kakao.client-id");
         String redirectUrl = properties.getProperty("kakao.redirect-url");
+        String clientSecret = properties.getProperty("kakao.client-secret");
 
-        ReflectionTestUtils.setField(authService, "kakaoProperties", new KakaoProperties(grantType, clientId, redirectUrl));
+        ReflectionTestUtils.setField(authService, "kakaoProperties", new KakaoProperties(grantType, clientId, redirectUrl, clientSecret));
     }
 
     @BeforeEach
