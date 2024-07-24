@@ -37,16 +37,18 @@ class WishRepositoryTest {
     @DisplayName("user id를 통해 wishes 찾기")
     void findByUserId() {
         // given
-        Product product1 = Product.builder()
-            .name("Product A")
-            .price(1000)
-            .imageUrl("http://example.com/images/product_a.jpg")
-            .build();
-        Product product3 = Product.builder()
-            .name("Product C")
-            .price(3000)
-            .imageUrl("http://example.com/images/product_c.jpg")
-            .build();
+        Product product1 = new Product(
+            "Product A",
+            1000,
+            "http://example.com/images/product_a.jpg",
+            null
+        );
+        Product product3 = new Product(
+            "Product C",
+            3000,
+            "http://example.com/images/product_c.jpg",
+            null
+        );
 
         // when
         final List<Wish> actual = wishRepository.findByUserId(1L);

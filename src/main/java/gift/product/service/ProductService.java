@@ -49,12 +49,12 @@ public class ProductService {
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        Product product = Product.builder()
-            .name(request.name())
-            .price(request.price())
-            .imageUrl(request.imageUrl())
-            .category(category)
-            .build();
+        Product product = new Product(
+            request.name(),
+            request.price(),
+            request.imageUrl(),
+            category
+        );
 
         Product saved = productRepository.save(product);
 

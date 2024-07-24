@@ -312,23 +312,22 @@ public class OptionServiceTest {
     }
 
     private Product createProduct(String name) {
-        return Product.builder()
-            .name(name)
-            .imageUrl("image")
-            .category(new Category("category"))
-            .price(1000)
-            .options()
-            .build();
+        return new Product(
+            name,
+            1000,
+            "image",
+            new Category("category")
+        );
     }
 
     private Product createProductWithOptions(Option... option) {
-        return Product.builder()
-            .name("Product 1")
-            .imageUrl("image")
-            .category(new Category("category"))
-            .price(1000)
-            .options(Set.of(option))
-            .build();
+        return new Product(
+            "Product 1",
+            1000,
+            "image",
+            new Category("category"),
+            Set.of(option)
+        );
     }
 
 }
