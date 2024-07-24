@@ -14,11 +14,9 @@ import org.springframework.web.servlet.view.RedirectView;
 public class KakaoLoginController {
     private final KakaoUserService kakaoUserService;
 
-    private final KakaoProperties kakaoProperties;
 
-    public KakaoLoginController(KakaoUserService kakaoUserService, KakaoProperties kakaoProperties) {
+    public KakaoLoginController(KakaoUserService kakaoUserService) {
         this.kakaoUserService = kakaoUserService;
-        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping("/")
@@ -35,11 +33,7 @@ public class KakaoLoginController {
 
     @GetMapping("/kakaoLogin")
     public String OauthLogin(){
-        String url = "https://kauth.kakao.com/oauth/authorize?";
-        url += "scope=talk_message&";
-        url += "response_type=code&";
-        url += "redirect_uri=" + kakaoProperties.getRedirectUrl() +"&";
-        url += "client_id=" + kakaoProperties.getClientId();
+        String url = kakaoUserService.makeLoginUrl();
         return "redirect:" + url;
     }
 }
