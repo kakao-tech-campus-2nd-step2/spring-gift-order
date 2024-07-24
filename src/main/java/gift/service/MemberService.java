@@ -24,9 +24,10 @@ public class MemberService {
 
     public void registerNewMember(MemberDto memberDto) {
         Member member = new Member(memberDto.email(),memberDto.password(), memberDto.role());
-        if(memberRepository.findByEmail(member.getEmail()).isPresent()){
+
+        memberRepository.findByEmail(member.getEmail()).ifPresent(existingMember -> {
             throw new ValueAlreadyExistsException("Email already exists in Database");
-        }
+        });
         memberRepository.save(member);
     }
 

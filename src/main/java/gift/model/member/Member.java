@@ -30,6 +30,9 @@ public class Member {
         this.role = role;
     }
 
+    public boolean isPasswordEqual(String inputPassword) {
+        return this.password.equals(inputPassword);
+    }
     public Long getId() {
         return id;
     }
@@ -44,9 +47,5 @@ public class Member {
 
     public String getRole() {
         return role;
-    }
-
-    public boolean isPasswordEqual(String inputPassword) {
-        return this.password.equals(inputPassword);
     }
 }

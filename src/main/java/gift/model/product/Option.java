@@ -39,6 +39,16 @@ public class Option {
         this.amount = amount;
     }
 
+    public boolean isProductEnough(int purchaseAmount){
+        if(amount >= purchaseAmount){
+            return true;
+        }
+        throw new RuntimeException("Not enough product available");
+    }
+
+    public void updateAmount(int purchaseAmount){
+        this.amount = amount - purchaseAmount;
+    }
     public Long getId() {
         return id;
     }
@@ -53,16 +63,5 @@ public class Option {
 
     public int getAmount() {
         return amount;
-    }
-
-    public boolean isProductEnough(int purchaseAmount){
-        if(amount >= purchaseAmount){
-            return true;
-        }
-        throw new RuntimeException("Not enough product available");
-    }
-
-    public void updateAmount(int purchaseAmount){
-        this.amount = amount - purchaseAmount;
     }
 }
