@@ -29,10 +29,9 @@ public class KakaoLoginController {
 
         String email = kakaoLoginService.getEmail(kakaoToken.access_token());
 
-        System.out.println(email);
         Long memberId = memberService.findMemberIdByEmail(email);
         TokenResponse tokenResponse = tokenService.generateToken(memberId);
-        System.out.println(tokenResponse);
+
         return ResponseEntity.ok().body(tokenResponse);
     }
 }

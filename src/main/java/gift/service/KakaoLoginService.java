@@ -12,8 +12,9 @@ import org.springframework.web.client.RestClient;
 public class KakaoLoginService {
 
     private static final String REDIRECT_URI = "http://localhost:8080";
-    private static final String GRANT_TYPE = "authorization_code";
     private static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
+    private static final String USER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
+    private static final String GRANT_TYPE = "authorization_code";
     private final RestClient client = RestClient.create();
     MemberService memberService;
     @Value("${clientId}")
@@ -24,7 +25,7 @@ public class KakaoLoginService {
     }
 
     public KakaoTokenResponse getToken(String code) {
-        MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
 
         multiValueMap.add("grant_type", GRANT_TYPE);
         multiValueMap.add("redirect_uri", REDIRECT_URI);
@@ -39,7 +40,7 @@ public class KakaoLoginService {
     }
 
     public String getEmail(String token) {
-        KakaoUserInfoResponse body = client.get().uri("https://kapi.kakao.com/v2/user/me")
+        KakaoUserInfoResponse body = client.get().uri(USER_INFO_REQUEST_URI)
                 .header("Authorization", String.format("Bearer %s", token))
                 .retrieve()
                 .body(KakaoUserInfoResponse.class);
