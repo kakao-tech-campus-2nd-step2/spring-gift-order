@@ -1,6 +1,6 @@
 package gift.repository;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import gift.user.entity.User;
 import gift.user.repository.UserRepository;
 import java.util.Optional;
