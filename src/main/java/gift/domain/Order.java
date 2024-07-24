@@ -30,6 +30,10 @@ public class Order {
     public Order() {
     }
 
+    public Order(Option option) {
+        this.option = option;
+    }
+
     public Order(Option option, Long quantity, String message) {
         this.option = option;
         this.quantity = quantity;

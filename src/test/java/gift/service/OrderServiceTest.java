@@ -47,7 +47,7 @@ public class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    @DisplayName("주문을 처리하고 카카오 메시지를 성공적으로 전송한다.")
+    @DisplayName("주문을 처리하고 나에게 카카오톡 메시지를 전송한다.")
     @Test
     void processOrder() throws Exception {
         //given
@@ -70,13 +70,13 @@ public class OrderServiceTest {
         given(wishRepository.findByMemberAndProduct(any(Member.class), any(Product.class))).willReturn(Optional.of(new Wish()));
         willDoNothing().given(wishRepository).delete(any(Wish.class));
         willDoNothing().given(kakaoApiService).sendKakaoMessage(anyString(), anyString());
-        given(orderRepository.save(any(Order.class))).willReturn(new Order());
+        given(orderRepository.save(any(Order.class))).willReturn(new Order(option, orderQuantity, message));
 
         //when
         OrderDto result = orderService.processOrder(orderDto);
 
         //then
-        assertThat(result.getQuantity()).isEqualTo(originalQuantity - orderQuantity);
+        assertThat(result.getQuantity()).isEqualTo(orderQuantity);
         assertThat(result.getMessage()).isEqualTo(message);
 
         then(oauth2TokenService).should().isAccessTokenExpired(anyString());
@@ -111,13 +111,13 @@ public class OrderServiceTest {
         given(wishRepository.findByMemberAndProduct(any(Member.class), any(Product.class))).willReturn(Optional.of(new Wish()));
         willDoNothing().given(wishRepository).delete(any(Wish.class));
         willDoNothing().given(kakaoApiService).sendKakaoMessage(anyString(), anyString());
-        given(orderRepository.save(any(Order.class))).willReturn(new Order());
+        given(orderRepository.save(any(Order.class))).willReturn(new Order(option, orderQuantity, message));
 
         //when
         OrderDto result = orderService.processOrder(orderDto);
 
         //then
-        assertThat(result.getQuantity()).isEqualTo(originalQuantity - orderQuantity);
+        assertThat(result.getQuantity()).isEqualTo(orderQuantity);
         assertThat(result.getMessage()).isEqualTo(message);
 
         then(oauth2TokenService).should().isAccessTokenExpired(anyString());
