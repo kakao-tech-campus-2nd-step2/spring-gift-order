@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @RequestMapping("auth/kakao/code")
-    public ResponseEntity<Void> getKakaoUserId(@RequestParam("code") String code,
+    public ResponseEntity<Void> kakaoLogin(@RequestParam("code") String code,
         HttpServletResponse response) throws IOException {
         var kakaoResponse = kakaoUserService.loginKakaoUser(code);
         String redirectUrl = "/users/kakaoLoginSuccess?token=" + kakaoResponse.token();
