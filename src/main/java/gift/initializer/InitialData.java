@@ -1,9 +1,11 @@
 package gift.initializer;
 
 import gift.entity.Category;
+import gift.entity.Member;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.repository.CategoryRepository;
+import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,16 +17,19 @@ public class InitialData implements CommandLineRunner {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final MemberRepository memberRepository;
 
-    public InitialData(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public InitialData(ProductRepository productRepository, CategoryRepository categoryRepository, MemberRepository memberRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.memberRepository = memberRepository;
     }
 
     @Override
     public void run(String... args) {
         initialCategory();
         initialProduct();
+        initialMember();
     }
 
     private void initialCategory() {
@@ -78,4 +83,10 @@ public class InitialData implements CommandLineRunner {
                         new Option("Plastic", 99939),
                         new Option("Steel", 434535))));
     }
+
+    private void initialMember() {
+        memberRepository.save(new Member("tjdgns5506@gmail.com", "1234"));
+    }
+
+
 }

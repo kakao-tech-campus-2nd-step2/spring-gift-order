@@ -9,7 +9,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
-public class TokenService {
+public class JwtTokenService {
 
     private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
     private static final int JWT_EXPIRATION_IN_MS = 1000 * 60 * 60 * 2;

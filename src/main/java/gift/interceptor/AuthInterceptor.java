@@ -1,6 +1,6 @@
 package gift.interceptor;
 
-import gift.service.TokenService;
+import gift.service.JwtTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -9,10 +9,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private final TokenService tokenService;
+    private final JwtTokenService jwtTokenService;
 
-    public AuthInterceptor(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public AuthInterceptor(JwtTokenService jwtTokenService) {
+        this.jwtTokenService = jwtTokenService;
     }
 
     @Override
@@ -24,12 +24,12 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
         String token = authHeader.substring("Bearer ".length()).trim();
-        if (!tokenService.isValidateToken(token)) {
+        if (!jwtTokenService.isValidateToken(token)) {
             response.setHeader("WWW-Authenticate", "Bearer");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
-        request.setAttribute("memberId", tokenService.getMemberId(token));
+        request.setAttribute("memberId", jwtTokenService.getMemberId(token));
         return true;
     }
 }

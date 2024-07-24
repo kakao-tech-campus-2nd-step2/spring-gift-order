@@ -37,4 +37,10 @@ public class MemberService {
         return memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
     }
+
+    public Long findMemberIdByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .map(Member::getId)
+                .orElseThrow(MemberNotFoundException::new);
+    }
 }
