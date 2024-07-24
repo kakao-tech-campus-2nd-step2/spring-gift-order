@@ -5,6 +5,7 @@ import gift.option.service.OptionService;
 import gift.order.domain.OrderRequest;
 import gift.order.domain.OrderResponse;
 import gift.order.service.OrderService;
+import gift.utility.JwtUtil;
 import gift.wish.repository.WishlistRepository;
 import gift.wish.service.WishlistService;
 import org.springframework.http.HttpHeaders;
@@ -36,8 +37,7 @@ public class OrderController {
         @RequestBody OrderRequest orderRequest,
         @RequestParam("userId") Long userId,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader){
-
-        String token = authorizationHeader.replace("Bearer ", "");
+        String jwtAccessToken = authorizationHeader.replace("Bearer ", "");
         // 1. 주문 저장
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
         // 2. 옵션 수량 차감, wishlist에서 제거
@@ -45,9 +45,8 @@ public class OrderController {
                                 orderResponse.quantity());
         wishlistService.deleteByUserIdProductId(userId, optionService.findById(orderResponse.optionid()).getId());
         // 3. 카카오톡 메시지 api 전송
-
+        orderService.sendMessage(jwtAccessToken, orderRequest.message());
         // 4. response 반환
-
         return ResponseEntity.ok(orderResponse);
     }
 }
