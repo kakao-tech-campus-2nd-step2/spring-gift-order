@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class OptionTest {
 
     @Test
-    void updateInfo() {
+    void updateInfo_중복이_없는_경우() {
         Product product = new Product("product", 1000, "product.jpg", null);
         Option option = new Option("test", 1, product);
         String name = "changed";
@@ -23,8 +23,17 @@ class OptionTest {
 
         assertThat(option.getName()).isEqualTo(name);
         assertThat(option.getQuantity()).isEqualTo(quantity);
-        assertThat(product.getOptions().get(0).getName()).isEqualTo(name);
-        assertThat(product.getOptions().get(0).getQuantity()).isEqualTo(quantity);
+    }
+
+    @Test
+    void updateInfo_중복이_있는_경우() {
+        Product product = new Product("product", 1000, "product.jpg", null);
+        Option option = new Option("changed", 3, product);
+        Option option1 = new Option("test", 1, product);
+        String name = "changed";
+        Integer quantity = 2;
+
+        assertThatExceptionOfType(OptionException.class).isThrownBy(()->option1.updateInfo(name, quantity));
     }
 
     @Test

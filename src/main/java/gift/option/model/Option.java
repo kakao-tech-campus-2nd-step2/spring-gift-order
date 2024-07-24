@@ -59,9 +59,10 @@ public class Option {
         return product;
     }
 
-    public void updateInfo(String name, Integer quantity) {
+    public void updateInfo(String name, Integer quantity) throws OptionException {
         this.name = name;
         this.quantity = quantity;
+        Option.Validator.validateDuplicated(product.getOptions());
     }
 
     public void subtract(Integer quantity) throws OptionException {
