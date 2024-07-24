@@ -82,7 +82,7 @@ public class KakaoService {
     /*
      * meesage Api 호출을 위한 요청의 body를 만들어주는 로직
      */
-    private static LinkedMultiValueMap<Object, Object> makeBody(
+    private LinkedMultiValueMap<Object, Object> makeBody(
             ProductResponse productResponse, String optionName, OrderRequest orderRequest
     ) throws JsonProcessingException
     {
