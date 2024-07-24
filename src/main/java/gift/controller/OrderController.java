@@ -4,6 +4,7 @@ import gift.config.LoginMember;
 import gift.domain.member.Member;
 import gift.dto.OrderDto;
 import gift.dto.request.OrderCreateRequest;
+import gift.dto.response.OrderResponse;
 import gift.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +26,14 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> order(@LoginMember Member member,
-                                      @RequestBody @Valid OrderCreateRequest request) {
+    public ResponseEntity<OrderResponse> order(@LoginMember Member member,
+                                               @RequestBody @Valid OrderCreateRequest request) {
         OrderDto dto = OrderDto.of(member, request);
-        orderService.processOrder(dto);
+        OrderDto orderDto = orderService.processOrder(dto);
+        OrderResponse response = orderDto.toResponseDto();
 
         return ResponseEntity.status(CREATED)
-                .build();
+                .body(response);
     }
 
 }

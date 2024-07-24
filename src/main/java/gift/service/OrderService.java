@@ -3,12 +3,14 @@ package gift.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.Option;
+import gift.domain.Order;
 import gift.domain.Product;
 import gift.domain.member.Member;
 import gift.dto.OrderDto;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.repository.OptionRepository;
+import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
 import gift.service.kakao.KakaoMessageRequest;
 import org.springframework.http.HttpEntity;
@@ -30,15 +32,17 @@ public class OrderService {
     private final WishRepository wishRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
+    private final OrderRepository orderRepository;
 
-    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, RestTemplate restTemplate, ObjectMapper objectMapper, OrderRepository orderRepository) {
         this.optionRepository = optionRepository;
         this.wishRepository = wishRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.orderRepository = orderRepository;
     }
 
-    public void processOrder(OrderDto dto) {
+    public OrderDto processOrder(OrderDto dto) {
         Long optionId = dto.getOptionId();
         Long quantity = dto.getQuantity();
         Member member = dto.getMember();
@@ -48,6 +52,11 @@ public class OrderService {
         subtractOptionQuantity(option, quantity);
         removeMemberWish(member, option.getProduct());
         sendKakaoMessage(member, message);
+
+        Order order = new Order(option, quantity, message);
+        orderRepository.save(order);
+
+        return OrderDto.from(order);
     }
 
     private Option getOptionById(Long optionId) {
