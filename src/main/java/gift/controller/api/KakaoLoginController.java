@@ -4,7 +4,7 @@ import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.TokenResponse;
 import gift.service.KakaoLoginService;
 import gift.service.MemberService;
-import gift.service.TokenService;
+import gift.service.JwtTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,12 +15,12 @@ public class KakaoLoginController {
 
     private final KakaoLoginService kakaoLoginService;
     private final MemberService memberService;
-    private final TokenService tokenService;
+    private final JwtTokenService jwtTokenService;
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService, MemberService memberService, TokenService tokenService) {
+    public KakaoLoginController(KakaoLoginService kakaoLoginService, MemberService memberService, JwtTokenService jwtTokenService) {
         this.kakaoLoginService = kakaoLoginService;
         this.memberService = memberService;
-        this.tokenService = tokenService;
+        this.jwtTokenService = jwtTokenService;
     }
 
     @GetMapping("/")
@@ -30,7 +30,7 @@ public class KakaoLoginController {
         String email = kakaoLoginService.getEmail(kakaoToken.access_token());
 
         Long memberId = memberService.findMemberIdByEmail(email);
-        TokenResponse tokenResponse = tokenService.generateToken(memberId);
+        TokenResponse tokenResponse = jwtTokenService.generateToken(memberId);
 
         return ResponseEntity.ok().body(tokenResponse);
     }

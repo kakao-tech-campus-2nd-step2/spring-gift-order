@@ -9,7 +9,7 @@ import gift.dto.response.AddedProductIdResponse;
 import gift.dto.response.OptionResponse;
 import gift.dto.response.ProductResponse;
 import gift.service.ProductService;
-import gift.service.TokenService;
+import gift.service.JwtTokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
     @MockBean
-    private TokenService tokenService;
+    private JwtTokenService jwtTokenService;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @Autowired
