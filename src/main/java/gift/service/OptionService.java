@@ -12,10 +12,7 @@ import gift.exception.exception.BadRequestException;
 import gift.exception.exception.NotFoundException;
 import gift.exception.exception.ServerInternalException;
 import gift.exception.exception.UnAuthException;
-import gift.repository.OptionRepository;
-import gift.repository.OrderRepository;
-import gift.repository.ProductRepository;
-import gift.repository.UserRepository;
+import gift.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -45,6 +42,8 @@ public class OptionService {
     ObjectMapper objectMapper = new ObjectMapper();
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    WishListRepository wishListRepository;
 
     @Transactional
     public void refill(OptionQuantityDTO optionQuantityDTO) {
@@ -66,7 +65,7 @@ public class OptionService {
 
         if(kakaoToken!=null)
             sendMessage(order, kakaoToken);
-
+        wishListRepository.findByUserAndProduct(user, option.getProduct()).ifPresent(wishList -> wishListRepository.deleteById(wishList.getId()));
         order = orderRepository.save(order);
         return order.toResponseDTO();
     }
