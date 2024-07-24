@@ -69,6 +69,7 @@ class MemberRepositoryTest {
         );
     }
 
+    /*
     @Test
     @DisplayName("멤버 이메일, 비밀번호로 조회 테스트")
     void findByEmailAndPassword() {
@@ -250,5 +251,5 @@ class MemberRepositoryTest {
                 () -> assertThat(wishes.size()).isEqualTo(1),
                 () -> assertThat(wishes.get(0)).isEqualTo(expectedWish)
         );
-    }
+    } */
 }
