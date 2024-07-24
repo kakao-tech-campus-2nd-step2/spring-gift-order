@@ -1,5 +1,7 @@
 package gift.order.service;
 
+import gift.kakao.login.dto.KakaoMessageSendResponse;
+import gift.kakao.login.service.KakaoLoginService;
 import gift.option.domain.Option;
 import gift.option.repository.OptionRepository;
 import gift.order.domain.Order;
@@ -15,9 +17,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository) {
+    private final KakaoLoginService kakaoLoginService;
+
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
+        KakaoLoginService kakaoLoginService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
+        this.kakaoLoginService = kakaoLoginService;
     }
 
     public OrderResponse createOrder(OrderRequest orderRequest){
@@ -26,6 +32,10 @@ public class OrderService {
     }
     public Order save(Order order){
         return orderRepository.save(order);
+    }
+
+    public KakaoMessageSendResponse sendMessage(String jwtAccessToken, String message){
+        return kakaoLoginService.sendMessage(jwtAccessToken, message);
     }
     private Order convertRequestToEntity(OrderRequest orderRequest){
         Option option = optionRepository.findById(orderRequest.optionId())
