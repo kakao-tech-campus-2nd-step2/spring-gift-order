@@ -52,9 +52,7 @@ public class ProductOptionService {
     @Transactional(readOnly = true)
     public List<ProductOptionResponseDto> getProductOptions(Long productId) {
         Product product = getProductById(productId);
-        List<ProductOption> productOptions = productOptionRepository.findAll().stream()
-                .filter(po -> po.getProduct().equals(product))
-                .collect(Collectors.toList());
+        List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         return productOptions.stream()
                 .map(ProductOptionMapper::toProductOptionResponseDto)
                 .collect(Collectors.toList());

@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 
+import java.util.List;
+
 public interface ProductOptionRepository extends JpaRepository<ProductOption, Long> {
 
     boolean existsByProductAndOptionName(Product product, OptionName optionName);
@@ -16,4 +18,6 @@ public interface ProductOptionRepository extends JpaRepository<ProductOption, Lo
     @Lock(LockModeType.OPTIMISTIC)
     @Query("select po from ProductOption po where po.id = :id")
     ProductOption findByIdWithLock(@Param("id") Long id);
+
+    List<ProductOption> findByProduct(Product product);
 }
