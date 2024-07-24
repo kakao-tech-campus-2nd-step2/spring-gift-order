@@ -1,75 +1,42 @@
 package gift.service.OAuth;
 
 import gift.config.KakaoProperties;
-import gift.dto.OAuth.AuthTokenInfoResponse;
-import gift.dto.OAuth.AuthTokenResponse;
+import gift.model.user.User;
+import gift.repository.user.UserRepository;
+import gift.util.AuthUtil;
+import gift.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Map;
 
 @Service
 public class KakaoAuthService {
 
-    private final KakaoProperties kakaoProperties;
+    private final AuthUtil authUtil;
+    private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Autowired
-    public KakaoAuthService(KakaoProperties kakaoProperties) {
-        this.kakaoProperties = kakaoProperties;
+    public KakaoAuthService(AuthUtil authUtil, JwtUtil jwtUtil, UserRepository userRepository) {
+        this.authUtil = authUtil;
+        this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     public String createCodeUrl(){
-        String authUrl = kakaoProperties.getAuthUrl();
-
-        String url = UriComponentsBuilder.fromHttpUrl(authUrl)
-                .queryParam("client_id",kakaoProperties.getRestAPiKey())
-                .queryParam("redirect_uri",kakaoProperties.getRedirectUri())
-                .queryParam("response_type","code")
-                .toUriString();
-        return url;
+        return authUtil.createGetCodeUrl();
+    }
+    public String getAccessToken(String authCode) {
+        return authUtil.getAccessToken(authCode);
     }
 
-    public AuthTokenResponse getAccessToken(String authCode) {
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
 
-        String url = kakaoProperties.getTokenUrl();
+    public String register(String accessToken){
+        String email = authUtil.extractUserEmail(accessToken);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", kakaoProperties.getRestAPiKey());
-        params.add("redirect_uri", kakaoProperties.getRedirectUri());
-        params.add("code", authCode);
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers);
-
-        ResponseEntity<AuthTokenResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.POST,
-                entity,
-                AuthTokenResponse.class);
-
-        return response.getBody();
-    }
-    public AuthTokenInfoResponse getTokenInfo(String accessToken){
-        RestTemplate restTemplate = new RestTemplateBuilder().build();
-        String url = "https://kapi.kakao.com/v1/user/access_token_info";
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization","Bearer "+accessToken);
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-        ResponseEntity<AuthTokenInfoResponse> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                AuthTokenInfoResponse.class
+        User user = userRepository.findByEmail(email).orElseGet(
+                ()->userRepository.save(new User(email,"1234"))
         );
-        return response.getBody();
+
+        return jwtUtil.generateJWT(user);
     }
 }
