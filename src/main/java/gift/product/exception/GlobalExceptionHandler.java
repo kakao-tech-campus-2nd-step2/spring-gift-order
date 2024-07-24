@@ -29,9 +29,12 @@ public class GlobalExceptionHandler {
     public static final String DUPLICATE_OPTION_NAME = "동일한 이름을 가진 옵션이 상품 내에 존재합니다.";
     public static final String LAST_OPTION = "해당 상품에 남아있는 옵션이 하나밖에 없어 옵션을 삭제할 수 없습니다.";
     public static final String LEAST_QUANTITY = "옵션의 수량은 0보다 작을 수 없습니다.";
+<<<<<<< HEAD
     // 수량과 관련된 에러 메세지
     public static final String CANNOT_SUBTRACT_ZERO_OR_NEGATIVE = "수량을 차감할 때는 1 이상의 양의 정수만 입력되어야 합니다.";
     public static final String SUBTRACT_EXCEED_QUANTITY = "차감하려는 수량이 상품 옵션의 잔여 수량을 초과하였습니다.";
+=======
+>>>>>>> e44b601 (feat: init code)
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

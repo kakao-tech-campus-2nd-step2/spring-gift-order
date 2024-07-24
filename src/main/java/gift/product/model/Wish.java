@@ -28,11 +28,17 @@ public class Wish {
     public Long getId() {
         return id;
     }
+<<<<<<< HEAD
 
     public Member getMember() {
         return member;
     }
 
+=======
+    public Member getMember() {
+        return member;
+    }
+>>>>>>> e44b601 (feat: init code)
     public Product getProduct() {
         return product;
     }

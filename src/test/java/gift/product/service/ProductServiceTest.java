@@ -1,6 +1,9 @@
 package gift.product.service;
 
+<<<<<<< HEAD
 import static org.junit.jupiter.api.Assertions.assertEquals;
+=======
+>>>>>>> e44b601 (feat: init code)
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
