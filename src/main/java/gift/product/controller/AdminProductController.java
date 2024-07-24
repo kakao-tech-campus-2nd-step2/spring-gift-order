@@ -40,7 +40,7 @@ public class AdminProductController {
     public String showProductList(Model model, Pageable pageable) {
         System.out.println("[ProductController] showProductList()");
         model.addAttribute("productList", productService.getAllProducts(pageable));
-        return "product";
+        return "product-management-list";
     }
 
     @GetMapping("/register")
