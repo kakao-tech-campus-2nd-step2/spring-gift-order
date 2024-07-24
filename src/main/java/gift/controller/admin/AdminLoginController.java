@@ -29,9 +29,13 @@ public class AdminLoginController {
     }
 
     @GetMapping("")
-    public String loginPage(Model model) {
-        model.addAttribute("kakaoUrl", properties.loginUrl() + properties.clientId());
+    public String loginPage() {
         return "login";
+    }
+
+    @GetMapping("kakao")
+    public String kakaoLoginPage() {
+        return "redirect:" + properties.loginUrl() + properties.clientId();
     }
 
     @PostMapping("/login")
