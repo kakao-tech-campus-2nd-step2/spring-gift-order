@@ -8,7 +8,7 @@ import static org.springframework.http.HttpStatus.ALREADY_REPORTED;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
-import gift.auth.Login;
+import gift.auth.domain.Login;
 import gift.domain.Wish.createWish;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
