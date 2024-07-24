@@ -1,5 +1,6 @@
 package gift.view.controller;
 
+import gift.user.config.KakaoProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/users")
 public class UserViewController {
+
+    private final KakaoProperties kakaoProperties;
+
+    public UserViewController(KakaoProperties kakaoProperties) {
+        this.kakaoProperties = kakaoProperties;
+    }
 
     @GetMapping("/register")
     public String register() {
@@ -18,4 +25,14 @@ public class UserViewController {
         return "login_form";
     }
 
+    @GetMapping("/kakao/login")
+    public String loginKakao() {
+        String authorizationUrl = "https://kauth.kakao.com/oauth/authorize"
+            + "?scope=talk_message"
+            + "&response_type=code"
+            + "&redirect_uri=" + kakaoProperties.redirectUri()
+            + "&client_id=" + kakaoProperties.clientId();
+
+        return "redirect:" + authorizationUrl;
+    }
 }
