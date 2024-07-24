@@ -11,6 +11,8 @@ public interface ProductOptionRepository {
 
     Optional<ProductOption> findById(Long optionId);
 
+    Long getProductIdByOptionId(Long optionId);
+
     Long countByProductId(Long productId);
 
     boolean hasOption(Long productId, String optionName);

@@ -2,6 +2,7 @@ package gift.product.infrastructure.persistence.repository;
 
 import gift.core.domain.product.ProductOption;
 import gift.core.domain.product.ProductOptionRepository;
+import gift.core.domain.product.exception.OptionNotFoundException;
 import gift.product.infrastructure.persistence.entity.ProductOptionEntity;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +36,14 @@ public class ProductOptionRepositoryImpl implements ProductOptionRepository {
         return jpaProductOptionRepository
                 .findById(optionId)
                 .map(ProductOptionEntity::toDomain);
+    }
+
+    @Override
+    public Long getProductIdByOptionId(Long optionId) {
+        return jpaProductOptionRepository
+                .findById(optionId)
+                .map(ProductOptionEntity::getProductId)
+                .orElseThrow(OptionNotFoundException::new);
     }
 
     @Override
