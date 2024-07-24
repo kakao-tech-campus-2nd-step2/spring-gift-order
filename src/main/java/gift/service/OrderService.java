@@ -80,7 +80,7 @@ public class OrderService {
         }
 
         kakaoUserService.messageToMe(
-                userResponse.getToken(), productResponse, option.getName(), orderRequest.getMessage()
+                userResponse.getToken(), productResponse, option.getName(), orderRequest
         );
 
         return save(orderRequest);
