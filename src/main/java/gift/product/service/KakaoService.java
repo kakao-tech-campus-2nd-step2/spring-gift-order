@@ -1,5 +1,8 @@
 package gift.product.service;
 
+import static gift.product.exception.GlobalExceptionHandler.DID_NOT_GET_RESPONSE;
+
+import gift.product.exception.ResponseException;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
 import jakarta.validation.constraints.NotNull;
@@ -38,7 +41,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new AssertionError();
+            throw new ResponseException(DID_NOT_GET_RESPONSE);
         String accessToken = response.get("access_token").toString();
         signUpAndLogin(accessToken);
     }
@@ -51,7 +54,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new AssertionError();
+            throw new ResponseException(DID_NOT_GET_RESPONSE);
         String memberId = response.get("id").toString();
         if(!memberRepository.existsByEmail(memberId))
             memberRepository.save(new Member(memberId, "kakao"));

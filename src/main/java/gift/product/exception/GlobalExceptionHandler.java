@@ -32,6 +32,8 @@ public class GlobalExceptionHandler {
     // 수량과 관련된 에러 메세지
     public static final String CANNOT_SUBTRACT_ZERO_OR_NEGATIVE = "수량을 차감할 때는 1 이상의 양의 정수만 입력되어야 합니다.";
     public static final String SUBTRACT_EXCEED_QUANTITY = "차감하려는 수량이 상품 옵션의 잔여 수량을 초과하였습니다.";
+    // 서버 응답과 관련된 에러 메세지
+    public static final String DID_NOT_GET_RESPONSE = "서버로부터 받은 응답이 존재하지 않습니다.";
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -69,4 +71,9 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", "Login error: " + ex.getMessage());
     }
 
+    @ExceptionHandler(ResponseException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleDidNotGetResponseException(ResponseException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
 }
