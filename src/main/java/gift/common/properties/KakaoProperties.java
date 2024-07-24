@@ -9,5 +9,7 @@ public record KakaoProperties(
         String adminRedirectUrl,
         String tokenUrl,
         String memberInfoUrl,
-        String loginUrl
+        String loginUrl,
+        String logoutUrl,
+        String refreshUrl
 ) {}
