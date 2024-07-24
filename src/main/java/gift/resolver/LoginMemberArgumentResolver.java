@@ -1,9 +1,9 @@
 package gift.resolver;
 
-import gift.entity.User;
 import gift.entity.KakaoUser;
-import gift.repository.UserRepository;
+import gift.entity.User;
 import gift.repository.KakaoUserRepository;
+import gift.repository.UserRepository;
 import gift.service.TokenService;
 import gift.util.AuthorizationHeaderProcessor;
 import jakarta.servlet.http.HttpServletRequest;

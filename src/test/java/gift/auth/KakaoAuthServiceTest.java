@@ -19,7 +19,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
 public class KakaoAuthServiceTest {
@@ -50,7 +51,7 @@ public class KakaoAuthServiceTest {
     public void setup() {
         kakaoUserResponse = new KakaoUserResponse(12345L, new KakaoUserResponse.Properties("testNickname"));
 
-        user = new User(1L,"test@example.com", "password");
+        user = new User(1L, "test@example.com", "password");
 
         kakaoUser = new KakaoUser(kakaoUserResponse.getId(), kakaoUserResponse.getProperties().getNickname(), user);
         user.setKakaoUser(kakaoUser);

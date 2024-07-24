@@ -11,7 +11,6 @@ import gift.mapper.ProductOptionMapper;
 import gift.repository.OptionRepository;
 import gift.repository.ProductOptionRepository;
 import gift.repository.ProductRepository;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.logging.Logger;
 
 @Service
 public class ProductOptionService {
