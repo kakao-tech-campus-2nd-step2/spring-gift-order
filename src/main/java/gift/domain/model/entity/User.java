@@ -2,6 +2,8 @@ package gift.domain.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,15 +22,29 @@ public class User {
     private String email;
 
     @JsonIgnore
-    @Column(nullable = false, length = 72)
+    @Column(length = 72)
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
+
+    @Column
+    private String providerId;
+
     protected User() {
+    }
+
+    public User(String email, AuthProvider authProvider, String providerId) {
+        this.email = email;
+        this.authProvider = authProvider;
+        this.providerId = providerId;
     }
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.authProvider = AuthProvider.LOCAL;
     }
 
     public Long getId() {
@@ -43,11 +59,15 @@ public class User {
         return password;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public AuthProvider getAuthProvider() {
+        return authProvider;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public enum AuthProvider {
+        LOCAL, KAKAO
     }
 }
