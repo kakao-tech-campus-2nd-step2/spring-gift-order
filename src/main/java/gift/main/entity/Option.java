@@ -99,4 +99,11 @@ public class Option {
         }
         this.quantity -= quantityRequest.quantity();
     }
+
+    public void sellOption(int quantity) {
+        if (this.quantity - quantity < 0) {
+            throw new CustomException(ErrorCode.INVALID_OPTION_QUANTITY);
+        }
+        this.quantity -= quantity;
+    }
 }
