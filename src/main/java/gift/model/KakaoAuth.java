@@ -10,27 +10,23 @@ public class KakaoAuth {
     private String accessToken;
 
     @JsonProperty("expires_in")
-    private String expiresIn;
+    private Integer expiresIn;
 
     @JsonProperty("refresh_token")
     private String refreshToken;
 
     @JsonProperty("refresh_token_expires_in")
-    private String refreshTokenExpiresIn;
-
-    @JsonProperty("scope")
-    private String scope;
+    private Integer refreshTokenExpiresIn;
 
     public KakaoAuth() {
     }
 
-    public KakaoAuth(String tokenType, String accessToken, String expiresIn, String refreshToken, String refreshTokenExpiresIn, String scope) {
+    public KakaoAuth(String tokenType, String accessToken, Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn) {
         this.tokenType = tokenType;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
         this.refreshToken = refreshToken;
         this.refreshTokenExpiresIn = refreshTokenExpiresIn;
-        this.scope = scope;
     }
 
     public String getTokenType() {
@@ -41,7 +37,7 @@ public class KakaoAuth {
         return accessToken;
     }
 
-    public String getExpiresIn() {
+    public Integer getExpiresIn() {
         return expiresIn;
     }
 
@@ -49,12 +45,8 @@ public class KakaoAuth {
         return refreshToken;
     }
 
-    public String getRefreshTokenExpiresIn() {
+    public Integer getRefreshTokenExpiresIn() {
         return refreshTokenExpiresIn;
-    }
-
-    public String getScope() {
-        return scope;
     }
 
     @Override
@@ -62,10 +54,9 @@ public class KakaoAuth {
         return "KakaoAuth{" +
                 "tokenType='" + tokenType + '\'' +
                 ", accessToken='" + accessToken + '\'' +
-                ", expiresIn='" + expiresIn + '\'' +
+                ", expiresIn=" + expiresIn +
                 ", refreshToken='" + refreshToken + '\'' +
-                ", refreshTokenExpiresIn='" + refreshTokenExpiresIn + '\'' +
-                ", scope='" + scope + '\'' +
+                ", refreshTokenExpiresIn=" + refreshTokenExpiresIn +
                 '}';
     }
 }
