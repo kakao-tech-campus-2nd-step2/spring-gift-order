@@ -1,6 +1,7 @@
 package gift.wish.service;
 
 import gift.product.service.ProductService;
+import gift.wish.domain.WishlistDTO;
 import gift.wish.domain.WishlistItem;
 import gift.wish.domain.WishlistResponse;
 import gift.wish.repository.WishlistRepository;
@@ -53,7 +54,9 @@ public class WishlistService {
         }
         return wishlistRepository.saveAll(userWishlistItems);
     }
-
+    public void deleteByUserIdProductId(Long userId, Long productId){
+        wishlistRepository.deleteByUserIdProductId(userId, productId);
+    }
     private static Map<Long, WishlistItem> convertListToMap(List<WishlistItem> wishlistItems) {
         Map<Long, WishlistItem> userWishlistMap = new HashMap<>();
         for(WishlistItem wishlistItem : wishlistItems){
