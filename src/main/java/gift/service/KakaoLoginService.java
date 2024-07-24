@@ -1,49 +1,62 @@
 package gift.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.exception.kakao.KakaoAuthException;
-import gift.response.KakaoTokenResponse;
+import gift.exception.oauth2.oAuth2Exception;
+import gift.exception.oauth2.oAuth2TokenException;
+import gift.response.oAuth2TokenResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 @Service
-public class KakaoLoginService {
+public class KakaoLoginService implements OAuth2LoginService {
 
     public static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
     public static final String AUTH_ERROR = "error";
     public static final String AUTH_ERROR_DESCRIPTION = "error_description";
-    private final RestClient client = RestClient.builder().build();
     private final ObjectMapper mapper;
+    private final WebClient client;
 
-    public KakaoLoginService(ObjectMapper mapper) {
+    @Value("${kakao.client-id}")
+    private String clientId;
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
+
+    public KakaoLoginService(ObjectMapper mapper, WebClient client) {
         this.mapper = mapper;
+        this.client = client;
     }
 
-    public void checkRedirectUriParams(MultiValueMap<String, Object> params) {
-        if (params.containsKey(AUTH_ERROR) || params.containsKey(AUTH_ERROR_DESCRIPTION)) {
-            String error = (String) params.getFirst(AUTH_ERROR);
-            String errorDescription = (String) params.getFirst(AUTH_ERROR_DESCRIPTION);
-            throw new KakaoAuthException(error, errorDescription);
+    public void checkRedirectUriParams(HttpServletRequest request) {
+        if (request.getParameterMap().containsKey(AUTH_ERROR) || request.getParameterMap()
+            .containsKey(AUTH_ERROR_DESCRIPTION)) {
+            String error = request.getParameter(AUTH_ERROR);
+            String errorDescription = request.getParameter(AUTH_ERROR_DESCRIPTION);
+            throw new oAuth2Exception(error, errorDescription);
         }
     }
 
-    public KakaoTokenResponse getToken(String clientId, String redirectUri, String code)
-        throws JsonProcessingException {
-        ResponseEntity<String> tokenResponse = client.post()
-            .uri(URI.create(TOKEN_REQUEST_URI))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(createTokenRequest(clientId, redirectUri, code))
-            .retrieve()
-            .toEntity(String.class);
-
-        return mapper.readValue(tokenResponse.getBody(),
-            KakaoTokenResponse.class);
+    public oAuth2TokenResponse getToken(String code) {
+        try {
+            return client.post()
+                .uri(URI.create(TOKEN_REQUEST_URI))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(Mono.just(createTokenRequest(clientId, redirectUri, code)),
+                    LinkedMultiValueMap.class)
+                .retrieve()
+                .bodyToMono(oAuth2TokenResponse.class)
+                .retry(3)
+                .block();
+        } catch (WebClientResponseException e) {
+            throw new oAuth2TokenException(e);
+        }
     }
 
     public LinkedMultiValueMap<String, String> createTokenRequest(String clientId,
@@ -53,7 +66,6 @@ public class KakaoLoginService {
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
-
         return body;
     }
 
