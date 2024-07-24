@@ -24,11 +24,14 @@ public class User {
     protected User() {
     }
 
-    public User(String email, String password) {
+    public User(Long id, String email, String password) {
+        this.id = id;
         this.email = email;
         this.password = password;
-        validateEmail(email);
-        validatePassword(password);
+    }
+
+    public User(String email, String password) {
+        this(null, email, password);
     }
 
     public User(KakaoUser kakaoUser) {

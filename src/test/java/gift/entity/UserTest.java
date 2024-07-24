@@ -28,33 +28,6 @@ class UserTest {
     }
 
     @Test
-    void 유저_이메일_실패_빈값() {
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            new User("", "password123");
-        });
-
-        assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
-    void 유저_이메일_실패_유효하지않은형식() {
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            new User("invalidemail", "password123");
-        });
-
-        assertEquals(ErrorCode.INVALID_EMAIL, exception.getErrorCode());
-    }
-
-    @Test
-    void 유저_비밀번호_실패_빈값() {
-        BusinessException exception = assertThrows(BusinessException.class, () -> {
-            new User("test@example.com", "");
-        });
-
-        assertEquals(ErrorCode.INVALID_PASSWORD, exception.getErrorCode());
-    }
-
-    @Test
     void 비밀번호_검증_성공() {
         User user = new User("test@example.com", "password123");
 
