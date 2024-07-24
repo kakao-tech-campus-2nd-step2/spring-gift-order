@@ -51,7 +51,7 @@ public class AuthUtil {
     }
 
     public String extractUserEmail(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
+        String url = kakaoProperties.getUserInfoUrl();
         RestClient restClient = RestClient.builder().build();
         Map resp = restClient.get()
                 .uri(URI.create(url))

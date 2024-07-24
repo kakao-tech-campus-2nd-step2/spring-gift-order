@@ -11,6 +11,7 @@ public class KakaoProperties {
     private String restAPiKey;
     private String tokenUrl;
     private String authUrl;
+    private String userInfoUrl;
 
     public String getRedirectUri() {
         return redirectUri;
@@ -42,5 +43,13 @@ public class KakaoProperties {
 
     public void setAuthUrl(String authUrl) {
         this.authUrl = authUrl;
+    }
+
+    public String getUserInfoUrl() {
+        return userInfoUrl;
+    }
+
+    public void setUserInfoUrl(String userInfoUrl) {
+        this.userInfoUrl = userInfoUrl;
     }
 }
