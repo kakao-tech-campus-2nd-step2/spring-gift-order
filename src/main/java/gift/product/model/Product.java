@@ -47,7 +47,6 @@ public class Product {
     public Long getId() {
         return id;
     }
-<<<<<<< HEAD
 
     public String getName() {
         return name;
@@ -61,17 +60,6 @@ public class Product {
         return imageUrl;
     }
 
-=======
-    public String getName() {
-        return name;
-    }
-    public int getPrice() {
-        return price;
-    }
-    public String getImageUrl() {
-        return imageUrl;
-    }
->>>>>>> e44b601 (feat: init code)
     public Category getCategory() {
         return category;
     }

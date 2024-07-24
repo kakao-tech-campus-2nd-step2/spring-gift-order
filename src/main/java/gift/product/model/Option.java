@@ -1,11 +1,8 @@
 package gift.product.model;
 
-<<<<<<< HEAD
 import static gift.product.exception.GlobalExceptionHandler.CANNOT_SUBTRACT_ZERO_OR_NEGATIVE;
 import static gift.product.exception.GlobalExceptionHandler.SUBTRACT_EXCEED_QUANTITY;
 
-=======
->>>>>>> e44b601 (feat: init code)
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -49,7 +46,6 @@ public class Option {
     public Long getId() {
         return id;
     }
-<<<<<<< HEAD
 
     public String getName() {
         return name;
@@ -59,14 +55,6 @@ public class Option {
         return quantity;
     }
 
-=======
-    public String getName() {
-        return name;
-    }
-    public int getQuantity() {
-        return quantity;
-    }
->>>>>>> e44b601 (feat: init code)
     public Product getProduct() {
         return product;
     }
@@ -74,16 +62,12 @@ public class Option {
     public boolean isSameName(String name) {
         return this.name.equals(name);
     }
-<<<<<<< HEAD
 
     public void subtractQuantity(int amountToSubtract) {
         if(amountToSubtract < 1)
             throw new IllegalArgumentException(CANNOT_SUBTRACT_ZERO_OR_NEGATIVE);
         if(this.quantity < amountToSubtract)
             throw new IllegalArgumentException(SUBTRACT_EXCEED_QUANTITY);
-=======
-    public void subtractQuantity(int quantity) {
->>>>>>> e44b601 (feat: init code)
         this.quantity -= quantity;
     }
 }

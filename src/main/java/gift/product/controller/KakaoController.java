@@ -1,14 +1,11 @@
 package gift.product.controller;
 
 import gift.product.service.KakaoService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/kakao")
 public class KakaoController {
 
     private final KakaoService kakaoService;
@@ -17,7 +14,7 @@ public class KakaoController {
         this.kakaoService = kakaoService;
     }
 
-    @GetMapping("/login")
+    @GetMapping("/kakao/login")
     public String getAuthCode() {
         return "redirect:" + kakaoService.getAuthCode();
     }
