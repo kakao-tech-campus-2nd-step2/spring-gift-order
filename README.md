@@ -35,15 +35,15 @@ kakao oauth
 
 ### 구현 기능 목록
 Order
-- [ ] Order Entity
-- [ ] Order Repository
-- [ ] Order Service
-  - [ ] Option 수량 확인하고 Order Request 수량 만큼 감소하기 (OptionService 이용)
-  - [ ] Order 저장하기
-  - [ ] Order에 해당하는 Wish 삭제하기 (WishService 이용)
-- [ ] Order Controller
-  - [ ] Order 전달하기
+- [X] Order Entity
+- [X] Order Repository
+- [X] Order Service
+  - [X] Option 수량 확인하고 Order Request 수량 만큼 감소하기 (OptionService 이용)
+  - [X] Order 저장하기
+  - [X] Order에 해당하는 Wish 삭제하기 (WishService 이용)
+- [X] Order Controller
+  - [X] Order 전달하기
 
 메시지 전송
-- [ ] KakaoMemberService
-  - [ ] 토큰 주인에게 구매 확인 메시지 전송하기
+- [X] KakaoMemberService
+  - [X] 토큰 주인에게 구매 확인 메시지 전송하기
