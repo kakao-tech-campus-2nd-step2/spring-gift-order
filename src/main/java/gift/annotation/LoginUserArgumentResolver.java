@@ -1,6 +1,7 @@
 package gift.annotation;
 
 import gift.jwt.JWTService;
+import gift.user.KakaoUser;
 import gift.user.User;
 import gift.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean hasLoginUserAnnotation = parameter.hasParameterAnnotation(LoginUser.class);
-        boolean assignableFrom = User.class.isAssignableFrom(parameter.getParameterType());
+        boolean assignableFrom = KakaoUser.class.isAssignableFrom(parameter.getParameterType());
         return hasLoginUserAnnotation && assignableFrom;
     }
 
@@ -33,6 +34,6 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         String accessToken = request.getHeader("Authorization");
 
         if(accessToken == null) return null;
-        return userService.getUserById(Long.parseLong(jwtService.getClaims(accessToken)));
+        return new KakaoUser(jwtService.getAccessToken(accessToken), userService.getUserById(Long.parseLong(jwtService.getClaims(accessToken))));
     }
 }

@@ -28,7 +28,21 @@ public class JWTService {
                 .issuedAt(now).expiration(createExpiredDate(now))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
-        }
+    }
+
+    public String generateAccessToken(User user, String accessToken){
+        Date now = new Date();
+        String encodeString = user.getEmail() + ":" + user.getPassword();
+        secretKey = Base64.getEncoder().encodeToString(encodeString.getBytes(StandardCharsets.UTF_8));
+        return Jwts.builder()
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("nickName", user.getNickname())
+                .claim("accessToken", accessToken)
+                .issuedAt(now).expiration(createExpiredDate(now))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+    }
 
 
     private Date createExpiredDate(Date now) {
@@ -39,6 +53,15 @@ public class JWTService {
         String tokenFromHeader = getTokenFromHeader(jwt);
         try{
             return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(tokenFromHeader).getPayload().getSubject();
+        }
+        catch (SignatureException e){
+            return null;
+        }
+    }
+    public String getAccessToken(String jwt){
+        String tokenFromHeader = getTokenFromHeader(jwt);
+        try{
+            return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(tokenFromHeader).getPayload().get("accessToken").toString();
         }
         catch (SignatureException e){
             return null;
