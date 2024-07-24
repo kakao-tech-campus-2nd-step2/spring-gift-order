@@ -1,7 +1,6 @@
 package gift.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gift.DTO.KakaoProperties;
 import gift.DTO.Token;
 import gift.service.KakaoUserService;
 import org.springframework.stereotype.Controller;
