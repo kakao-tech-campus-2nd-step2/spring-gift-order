@@ -1,13 +1,17 @@
 package gift.kakaoLogin;
 
+import gift.jwt.JWTService;
 import gift.product.ProductService;
-import gift.user.LoginDTO;
+import gift.user.*;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -21,6 +25,8 @@ public class KakaoLoginController {
 
     private final KakaoLoginService kakaoLoginService;
     private final ProductService productService;
+
+
     private static final Logger log = LoggerFactory.getLogger(KakaoLoginController.class);
 
     public KakaoLoginController(KakaoLoginService kakaoLoginService, ProductService productService) {
@@ -40,6 +46,7 @@ public class KakaoLoginController {
     public String getCode(@RequestParam String code, Model model){
         log.info("[code] : " + code);
         String accessToken = kakaoLoginService.login(code);
+        log.info("[access toke] : " + accessToken);
         model.addAttribute("products", productService.findAllProducts());
         return "MainView";
     }

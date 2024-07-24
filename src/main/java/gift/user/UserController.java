@@ -20,7 +20,6 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    //로그인 API
     @PostMapping("/login")
     public Token loginUser(@RequestBody @Valid LoginDTO loginDTO) throws Exception {
         if (!userService.validateUser(loginDTO)) {
@@ -32,11 +31,18 @@ public class UserController {
         return new Token(accessToken);
     }
 
-    //회원 가입 API
     @PostMapping("/signup")
     public Token signupUser(@RequestBody @Valid UserDTO userDTO) {
         User user = userService.registerUser(userDTO);
         String accessToken = jwtService.generateAccessToken(user);
+        return new Token(accessToken);
+    }
+
+
+    @PostMapping("/signup")
+    public Token signupUser(@RequestBody @Valid KakaoUserDTO kakaoUserDTO) {
+        User user = userService.registerUser(kakaoUserDTO.getUserDTO());
+        String accessToken = jwtService.generateAccessToken(user, kakaoUserDTO.getAccessToken());
         return new Token(accessToken);
     }
 
