@@ -30,9 +30,8 @@ public class OptionService {
     }
 
     @Transactional
-    public void saveOption(Long productId, OptionRequestDto request) {
-        Product product = getProduct(productId);
-        Option option = new Option(request.getName(), request.getQuantity(), product);
+    public void saveOption(OptionRequestDto request) {
+        Option option = new Option(request.name(), request.quantity());
         optionRepository.save(option);
     }
 

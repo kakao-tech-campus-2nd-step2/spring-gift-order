@@ -63,13 +63,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PostMapping("/{productId}/options")
-    public ResponseEntity<ApiResponse> saveOption(@PathVariable("productId") Long productId,
-                                                  @RequestBody OptionRequestDto request) {
-        optionService.saveOption(productId, request);
-        return ResponseEntity.ok().body(new ApiResponse(HttpStatus.OK, "옵션이 성공적으로 등록되었습니다."));
-    }
-
     @GetMapping("/{productId}/options")
     public ResponseEntity<List<OptionResponseDto>> getOptions(@PathVariable("productId") Long productId) {
         var result = optionService.getOptions(productId);

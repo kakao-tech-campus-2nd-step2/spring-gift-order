@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.domain.category.Category;
 import gift.domain.category.CategoryRepository;
+import gift.domain.option.Option;
 import gift.domain.product.Product;
 import gift.domain.product.ProductRepository;
 import gift.dto.ProductChangeRequestDto;
@@ -33,7 +34,11 @@ public class ProductService {
         Long categoryId = requestDto.category();
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CATEGORY, categoryId));
-        Product product = new Product(requestDto.name(), requestDto.price(), requestDto.imgUrl(), category);
+        List<Option> options = requestDto.options().stream().map(req -> new Option(req.name(),req.quantity())).toList();
+        if (isOptionDuplicate(options)) {
+            throw new CustomException(ErrorCode.DUPLICATE_OPTION);
+        }
+        Product product = new Product(requestDto.name(), requestDto.price(), requestDto.imgUrl(), category,options);
         productRepository.save(product);
     }
 
@@ -72,5 +77,9 @@ public class ProductService {
         if (!productRepository.existsById(id)) {
             throw new CustomException(INVALID_PRODUCT, id);
         }
+    }
+
+    private boolean isOptionDuplicate(List<Option> options) {
+        return options.size() != options.stream().distinct().count();
     }
 }
