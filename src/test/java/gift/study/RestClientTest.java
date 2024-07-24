@@ -1,9 +1,15 @@
 package gift.study;
 
-import org.assertj.core.api.Assertions;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.DTO.Kakao.Commerce;
+import gift.DTO.Kakao.Content;
+import gift.DTO.Kakao.Link;
+import gift.DTO.Kakao.Template;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
@@ -13,22 +19,32 @@ public class RestClientTest {
     private final RestClient client = RestClient.builder().build();
 
     @Test
-    void test1(){
-        var url = "https://kauth.kakao.com/oauth/token";
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "104672445eed390cc023c9380c48d746");
-        body.add("redirect_url", "http://localhost:8080");
-        body.add("code", "w-ICT4eCX517Hk1NgUFh2WCOv2gVqRvJMi5t_CaNpSM_HXrPBQ70oAAAAAQKKiWQAAABkNg8pdoBl6J2VXah6g");
+    void test1() throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Link link = new Link("localhost:8080");
+        Content content = new Content(
+                "title",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-fHdqE2SSTrLLFfvUQCvfiHVeq0fJpEmtYg&s",
+                "description",
+                link
+        );
+        Commerce commerce = new Commerce("product_name", 4500);
+        Template template = new Template("commerce", content, commerce);
 
-        var response = client.post()
-                .uri(URI.create(url))
+        String template_str = objectMapper.writeValueAsString(template);
+
+        LinkedMultiValueMap<Object, Object> body = new LinkedMultiValueMap<>();
+        body.set("template_object", template_str);
+
+        System.out.println("body = " + body);
+
+        ResponseEntity<String> entity = client.post()
+                .uri(URI.create("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + "8z42d3eQ04So-_AfZ_SZ5PkNvD5ulLkPAAAAAQo8IlIAAAGQ401T8H6MVWkGe_Nf")
                 .retrieve()
                 .toEntity(String.class);
-        
-        System.out.println(response);
-        Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        System.out.println("entity = " + entity);
     }
 }
