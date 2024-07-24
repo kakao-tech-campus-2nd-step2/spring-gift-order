@@ -67,6 +67,11 @@ public class User {
         return providerId;
     }
 
+    public void update(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
     public enum AuthProvider {
         LOCAL, KAKAO
     }
