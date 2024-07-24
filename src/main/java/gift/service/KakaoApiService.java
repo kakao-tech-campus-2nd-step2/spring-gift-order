@@ -67,15 +67,16 @@ public class KakaoApiService {
 
         var url = "https://kapi.kakao.com/v2/user/me";
 
-        // var body = new LinkedMultiValueMap<String, String>();
-        // body.add("property_keys", "[\"kakao_account.email\"]");
-
         ResponseEntity<String> response = client.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .toEntity(String.class);
+
+        if(response.getStatusCode() != HttpStatusCode.valueOf(200)){
+            throw new CustomException(response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
+        }
 
         String jsonBody = response.getBody();
 
