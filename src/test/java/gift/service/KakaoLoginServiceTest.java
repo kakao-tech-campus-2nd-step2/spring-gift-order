@@ -21,13 +21,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 class KakaoLoginServiceTest {
 
     @Autowired
-    KakaoLoginService kakaoLoginService;
+    private KakaoLoginService kakaoLoginService;
     @Autowired
-    ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     @Autowired
-    MockRestServiceServer server;
+    private MockRestServiceServer server;
     @MockBean
-    JpaMetamodelMappingContext jpaMetamodelMappingContext;
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Test
     @DisplayName("파싱이 제대로 되는지 테스트")
