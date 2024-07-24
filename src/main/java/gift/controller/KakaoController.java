@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.KakaoProperties;
 import gift.service.KakaoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,15 +11,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class KakaoController {
 
     private final KakaoService kakaoService;
+    private final KakaoProperties kakaoProperties;
 
-    public KakaoController(KakaoService kakaoService) {
+    public KakaoController(KakaoService kakaoService, KakaoProperties kakaoProperties) {
         this.kakaoService = kakaoService;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping("/login")
     public String loginForm(Model model){
-        model.addAttribute("kakaoClientId", kakaoService.getKakaoClientId());
-        model.addAttribute("kakaoRedirectUrl", kakaoService.getKakaoRedirectUrl());
+        model.addAttribute("kakaoClientId", kakaoProperties.getClientId());
+        model.addAttribute("kakaoRedirectUrl", kakaoProperties.getRedirectUrl());
         return "login";
     }
 

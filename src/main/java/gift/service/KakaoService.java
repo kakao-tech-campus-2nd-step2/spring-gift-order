@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.KakaoProperties;
 import java.util.Map;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,28 +20,19 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class KakaoService {
 
-    @Value("${kakao.client-id}")
-    private String kakaoClientId;
-
-    @Value("${kakao.redirect-url}")
-    private String kakaoRedirectUrl;
-
+    private final KakaoProperties kakaoProperties;
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
 
-    public String getKakaoClientId() {
-        return kakaoClientId;
-    }
-
-    public String getKakaoRedirectUrl() {
-        return kakaoRedirectUrl;
+    public KakaoService(KakaoProperties kakaoProperties) {
+        this.kakaoProperties = kakaoProperties;
     }
 
     public String getKakaoLogin() {
         return KAKAO_AUTH_URI + "/oauth/authorize" + "?scope=talk_message" + "&response_type=code"
-            + "&redirect_uri=" + kakaoRedirectUrl
-            + "&client_id=" + kakaoClientId;
+            + "&redirect_uri=" + kakaoProperties.getRedirectUrl()
+            + "&client_id=" + kakaoProperties.getClientId();
     }
     // https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code
     // &redirect_uri={kakaoRedirectUrl}&client_id={kakaoClientId}
@@ -71,8 +63,8 @@ public class KakaoService {
     private MultiValueMap<String, String> createBody(String code) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoClientId);
-        body.add("redirect_uri", kakaoRedirectUrl);
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUrl());
         body.add("code", code);
         return body;
     }
