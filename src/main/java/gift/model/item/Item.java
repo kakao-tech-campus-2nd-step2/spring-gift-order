@@ -40,10 +40,10 @@ public class Item {
     private Category category;
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-    private List<WishItem> wishes = new ArrayList<>();
+    private final List<WishItem> wishes = new ArrayList<>();
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Option> options = new ArrayList<>();
+    private final List<Option> options = new ArrayList<>();
 
     protected Item() {
     }
@@ -113,9 +113,5 @@ public class Item {
 
     public boolean checkDuplicateOptionName(String name) {
         return options.stream().map(Option::getName).toList().contains(name);
-    }
-
-    public ItemDTO toDTO() {
-        return new ItemDTO(id, name, price, imgUrl, category.getId());
     }
 }

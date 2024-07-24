@@ -16,6 +16,14 @@ public class ItemDTO {
         this.categoryId = categoryId;
     }
 
+    public ItemDTO(Item item) {
+        this.id = item.getId();
+        this.name = item.getName();
+        this.price = item.getPrice();
+        this.imgUrl = item.getImgUrl();
+        this.categoryId = item.getCategory().getId();
+    }
+
     public ItemDTO(String name, Long price, String imgUrl, Long categoryId) {
         this(null, name, price, imgUrl, categoryId);
     }
