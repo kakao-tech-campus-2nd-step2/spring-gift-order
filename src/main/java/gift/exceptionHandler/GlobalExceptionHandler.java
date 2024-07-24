@@ -1,11 +1,15 @@
 package gift.exceptionHandler;
 
 import gift.constants.ErrorMessage;
+import gift.exception.KakaoLoginBadRequestException;
+import gift.exception.KakaoLoginForbiddenException;
+import gift.exception.KakaoLoginUnauthorizedException;
 import gift.exception.ProductOptionRequiredException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -57,5 +61,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> productOptionRequiredException(ProductOptionRequiredException e) {
         logger.error(String.valueOf(e.getStackTrace()[0]));
         return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(KakaoLoginBadRequestException.class)
+    public ResponseEntity<String> kakaoLoginBadRequestExceptionHandler(
+        KakaoLoginBadRequestException e) {
+        logger.error(String.valueOf(e.getStackTrace()[0]));
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(KakaoLoginUnauthorizedException.class)
+    public ResponseEntity<String> kakaoUnauthorizedExceptionHandler(
+        KakaoLoginUnauthorizedException e) {
+        logger.error(String.valueOf(e.getStackTrace()[0]));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    }
+
+    @ExceptionHandler(KakaoLoginForbiddenException.class)
+    public ResponseEntity<String> kakaoLoginForbiddenExceptionHandler(
+        KakaoLoginForbiddenException e) {
+        logger.error(String.valueOf(e.getStackTrace()[0]));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 }

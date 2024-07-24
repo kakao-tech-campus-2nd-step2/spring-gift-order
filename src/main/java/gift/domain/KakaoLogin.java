@@ -4,6 +4,9 @@ import gift.constants.ErrorMessage;
 import gift.dto.KakaoTokenResponse;
 import gift.dto.KakaoUserInfo;
 import gift.entity.Member;
+import gift.exception.KakaoLoginBadRequestException;
+import gift.exception.KakaoLoginForbiddenException;
+import gift.exception.KakaoLoginUnauthorizedException;
 import gift.properties.KakaoProperties;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -30,15 +33,15 @@ public class KakaoLogin {
             .retrieve()
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(400),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
+                    throw new KakaoLoginBadRequestException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
                 })
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(401),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
+                    throw new KakaoLoginUnauthorizedException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
                 })
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(403),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
+                    throw new KakaoLoginForbiddenException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
                 })
             .body(KakaoUserInfo.class);
 
@@ -60,15 +63,15 @@ public class KakaoLogin {
             .retrieve()
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(400),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
+                    throw new KakaoLoginBadRequestException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
                 })
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(401),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
+                    throw new KakaoLoginUnauthorizedException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
                 })
             .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(403),
                 (req, res) -> {
-                    throw new IllegalArgumentException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
+                    throw new KakaoLoginForbiddenException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
                 })
             .body(KakaoTokenResponse.class);
 
