@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
@@ -27,9 +28,6 @@ public class KakaoLoginService {
     private static final RestClient restClient = RestClient.create();
 
     private static final String GRANT_TYPE = "authorization_code";
-    private static final String TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String TOKEN_INFO_REQUEST_URL = "https://kapi.kakao.com/v1/user/access_token_info";
-    private static final String USER_INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
 
     public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService, ObjectMapper objectMapper) {
         this.kakaoProperties = kakaoProperties;
@@ -58,14 +56,14 @@ public class KakaoLoginService {
     }
 
     private String getAccessToken(String code) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
 
         JsonNode jsonResponse = restClient.post()
-            .uri(URI.create(TOKEN_REQUEST_URL))
+            .uri(URI.create(kakaoProperties.tokenRequestUrl()))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .accept(MediaType.APPLICATION_JSON)
@@ -84,7 +82,7 @@ public class KakaoLoginService {
         headers.setBearerAuth(accessToken);
 
         restClient.get()
-            .uri(URI.create(TOKEN_INFO_REQUEST_URL))
+            .uri(URI.create(kakaoProperties.tokenInfoRequestUrl()))
             .headers(httpHeaders -> {
                 httpHeaders.addAll(headers);
             })
@@ -103,7 +101,7 @@ public class KakaoLoginService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         JsonNode jsonResponse = restClient.get()
-            .uri(URI.create(USER_INFO_REQUEST_URL))
+            .uri(URI.create(kakaoProperties.userInfoRequestUrl()))
             .headers(httpHeaders -> {
                 httpHeaders.addAll(headers);
             })
