@@ -31,7 +31,7 @@ class KakaoLoginControllerTest {
     }
 
     @Test
-    void testCallback() {
+    void callbackTest() {
         // Given
         String code = "test_code";
         String accessToken = "test_access_token";
