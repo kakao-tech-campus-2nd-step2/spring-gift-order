@@ -75,11 +75,12 @@ public class KakaoLoginService {
     }
 
     public KakaoMessageSendResponse sendMessage(String jwtAccessToken, String message){
+        String accessToken = JwtUtil.extractEmail(jwtAccessToken);
         var uri = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         var body = createSendMsgBody(message);
         var response = client.post()
             .uri(uri)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtAccessToken)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
