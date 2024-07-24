@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import gift.dto.KakaoProperties;
 import gift.dto.response.KakaoTokenResponse;
+import gift.dto.response.KakaoUserInfoResponse;
 import gift.service.KakaoApiService;
 
 @Controller
@@ -34,6 +35,8 @@ public class KakaoLoginController {
     public ResponseEntity<String> kakaoLogin(@RequestParam String code) {
 
         KakaoTokenResponse response = kakaoApiService.getToken(code);
+
+        KakaoUserInfoResponse kakaoUserInfoResponse = kakaoApiService.getUserInfo(response.getAccessToken());
         
         return new ResponseEntity<>(response.getAccessToken(), HttpStatus.OK);
     }

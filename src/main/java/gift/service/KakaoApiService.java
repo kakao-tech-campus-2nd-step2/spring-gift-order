@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gift.dto.KakaoProperties;
 import gift.dto.response.KakaoTokenResponse;
+import gift.dto.response.KakaoUserInfoResponse;
 import gift.exception.CustomException;
 
 @Service
@@ -33,7 +34,6 @@ public class KakaoApiService {
 
         this.client = RestClient
                 .builder()
-                // .requestFactory(factory)
                 .build();
        
     }
@@ -63,6 +63,31 @@ public class KakaoApiService {
         }
     }
 
+    public KakaoUserInfoResponse getUserInfo(String accessToken){
+
+        var url = "https://kapi.kakao.com/v2/user/me";
+
+        // var body = new LinkedMultiValueMap<String, String>();
+        // body.add("property_keys", "[\"kakao_account.email\"]");
+
+        ResponseEntity<String> response = client.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .toEntity(String.class);
+
+        String jsonBody = response.getBody();
+
+        try {
+            KakaoUserInfoResponse kakaoUserInfoResponse = objectMapper.readValue(jsonBody, KakaoUserInfoResponse.class);
+            return kakaoUserInfoResponse;
+        }catch (Exception e) {
+            throw new CustomException("Error parsing kakao user info response", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
     private LinkedMultiValueMap<String, String> createBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
@@ -72,4 +97,11 @@ public class KakaoApiService {
         return body;
 
     }
+
+    // private ClientHttpRequestFactory getClientHttpRequestFactory() {
+    //     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+    //     clientHttpRequestFactory.setConnectTimeout(100);
+    //     clientHttpRequestFactory.setConnectionRequestTimeout(70);
+    //     return clientHttpRequestFactory;
+    // }
 }
