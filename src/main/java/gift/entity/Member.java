@@ -30,6 +30,9 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String accountType;
+
     @Size(max = 255)
     @Column(nullable = false)
     private String name;
@@ -41,11 +44,14 @@ public class Member {
     protected Member() {
     }
 
-    public Member(String email, String password, String name, String role) {
+    public Member(String email, String password, String accountType, String name, String role) {
         validateEmail(email);
         validatePassword(password);
+        validateAccountType(accountType);
+
         this.email = email;
         this.password = password;
+        this.accountType = accountType;
         this.name = name;
         this.role = role;
     }
@@ -56,6 +62,7 @@ public class Member {
     public String getPassword() {
         return password;
     }
+    public String getAccountType() { return accountType; }
     public String getName() {
         return name;
     }
@@ -76,13 +83,14 @@ public class Member {
         }
         Member member = (Member) o;
         return Objects.equals(id, member.id) && Objects.equals(email, member.email)
-                && Objects.equals(password, member.password) && Objects.equals(name,
-                member.name) && Objects.equals(role, member.role);
+                && Objects.equals(password, member.password) && Objects.equals(
+                accountType, member.accountType) && Objects.equals(name, member.name)
+                && Objects.equals(role, member.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, name, role);
+        return Objects.hash(id, email, password, accountType, name, role);
     }
 
     private void validateEmail(String email) {
@@ -97,4 +105,8 @@ public class Member {
         }
     }
 
+    private void validateAccountType(String accountType) {
+        if(!Objects.equals(accountType, "basic") && !Objects.equals(accountType, "social"))
+            throw new BadRequestException("계정 타입은 'basic' 또는 'social'이어야 합니다.");
+    }
 }

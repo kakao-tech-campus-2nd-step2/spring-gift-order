@@ -38,7 +38,7 @@ class ProductControllerTest {
 
     @BeforeEach
     void setUp() {
-        token = "Bearer " + jwtUtil.generateToken(new MemberDTO("1234@1234.com", "1234"));
+        token = "Bearer " + jwtUtil.generateToken(new MemberDTO("1234@1234.com", "1234", "basic"));
     }
 
 
