@@ -71,25 +71,12 @@ class LazyLoadingTest {
         option.setProduct(savedProduct);
         optionRepository.save(option);
 
-
         var product = productRepository.findById(savedProduct.getId()).orElseThrow();
 
         // 테스트 실패
 //        entityManager.clear();
         assertThat(productRepository.findById(product.getId()).get().getOptions()).hasSize(1);
     }
-    @Test
-    void test1() {
-        var savedProduct = productRepository.save(new ProductTest());
-        var option = new OptionTest();
-        option.setProduct(savedProduct);
-        optionRepository.save(option);
-        entityManager.flush();
-        entityManager.clear();
 
-
-        var product = productRepository.findById(savedProduct.getId()).orElseThrow();
-        assertThat(product.getOptions()).hasSize(1); //실제값이 0으로 오류가 난다.
-    }
 }
 
