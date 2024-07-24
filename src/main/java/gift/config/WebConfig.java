@@ -1,7 +1,9 @@
 package gift.config;
 
 import gift.member.application.MemberService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,14 +24,12 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/api/wishlist/**")
-                .addPathPatterns("/api/products/**")
-                .addPathPatterns("/api/member/**")
-                .addPathPatterns("/api/categories/**")
-                .addPathPatterns("/api/options/**")
+                .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/member/join")
-                .excludePathPatterns("/api/member/login");
-
+                .excludePathPatterns("/api/member/login")
+                .excludePathPatterns("/api/member/login/kakao/callback")
+                .excludePathPatterns("/api/member/login/kakao")
+                .excludePathPatterns("api/member/login/kakao/refresh-token");
     }
 
     @Override
