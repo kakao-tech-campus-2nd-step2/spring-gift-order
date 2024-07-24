@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.model.dto.KakaoUserInfo;
 import gift.domain.model.dto.TokenResponseDto;
 import gift.domain.model.entity.User;
 import gift.domain.model.dto.UserRequestDto;
@@ -16,12 +17,14 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final JwtUtil jwtUtil;
+    private final KakaoLoginService kakaoLoginService;
 
-    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil,
+        KakaoLoginService kakaoLoginService) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.kakaoLoginService = kakaoLoginService;
     }
 
     public UserResponseDto joinUser(UserRequestDto userRequestDto) {
@@ -53,5 +56,21 @@ public class UserService {
     public User getUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new NoSuchEmailException("사용자를 찾을 수 없습니다."));
+    }
+
+    public TokenResponseDto loginOrRegisterKakaoUser(String accessToken) {
+        KakaoUserInfo kakaoUserInfo = kakaoLoginService.getUserInfo(accessToken);
+        String email = kakaoUserInfo.getEmail();
+
+        User user = userRepository.findByEmail(email)
+            .orElseGet(() -> registerNewKakaoUser(kakaoUserInfo));
+
+        String jwtToken = jwtUtil.generateToken(email);
+        return new TokenResponseDto(jwtToken);
+    }
+
+    private User registerNewKakaoUser(KakaoUserInfo kakaoUserInfo) {
+        User newUser = new User(kakaoUserInfo.getEmail(), "KAKAO_" + kakaoUserInfo.getId());
+        return userRepository.save(newUser);
     }
 }
