@@ -2,8 +2,8 @@ package gift.controller.api;
 
 import gift.dto.request.MemberRequest;
 import gift.dto.response.TokenResponse;
-import gift.service.MemberService;
 import gift.service.JwtTokenService;
+import gift.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

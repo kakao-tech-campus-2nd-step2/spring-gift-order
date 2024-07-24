@@ -2,9 +2,9 @@ package gift.controller.api;
 
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.TokenResponse;
+import gift.service.JwtTokenService;
 import gift.service.KakaoLoginService;
 import gift.service.MemberService;
-import gift.service.JwtTokenService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
