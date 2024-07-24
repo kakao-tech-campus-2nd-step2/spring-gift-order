@@ -51,9 +51,8 @@ public class ProductService {
             productCreate.imageUrl(), category);
         List<Option> options = productCreate.optionCreateRequests()
             .stream()
-            .map(it -> new Option(it.name(), it.quantity(), product))
+            .map(optionCreateRequest -> new Option(optionCreateRequest.name(), optionCreateRequest.quantity(), product))
             .toList();
-        Option.Validator.validateDuplicated(options);
         productRepository.save(product);
         options.forEach(optionRepository::save);
         return product.getId();

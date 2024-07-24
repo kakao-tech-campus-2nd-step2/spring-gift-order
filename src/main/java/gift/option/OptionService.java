@@ -38,7 +38,6 @@ public class OptionService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductException(ProductErrorCode.NOT_FOUND));
         Option option = new Option(optionCreate.name(), optionCreate.quantity(), product);
-        Option.Validator.validateName(product.getOptions(), option);
         optionRepository.save(option);
         return option.getId();
     }
@@ -48,8 +47,6 @@ public class OptionService {
         throws OptionException {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new OptionException(OptionErrorCode.NOT_FOUND));
-        Option.Validator.validateName(
-            optionRepository.findAllByProductId(option.getProduct().getId()), option);
         option.updateInfo(optionUpdate.name(), optionUpdate.quantity());
     }
 

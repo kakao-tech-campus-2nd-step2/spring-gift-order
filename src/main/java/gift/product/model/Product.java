@@ -1,6 +1,7 @@
 package gift.product.model;
 
 import gift.category.model.Category;
+import gift.common.exception.OptionException;
 import gift.common.exception.ProductException;
 import gift.common.model.BaseEntity;
 import gift.option.model.Option;
@@ -79,5 +80,10 @@ public class Product extends BaseEntity {
         if (name.contains("카카오")) {
             throw new ProductException(ProductErrorCode.HAS_KAKAO_WORD);
         }
+    }
+
+    public void addOption(Option option) throws OptionException {
+        this.options.add(option);
+        Option.Validator.validateDuplicated(options);
     }
 }

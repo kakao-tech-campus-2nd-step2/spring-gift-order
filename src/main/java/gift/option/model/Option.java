@@ -40,6 +40,7 @@ public class Option {
         this.name = name;
         this.quantity = quantity;
         this.product = product;
+        product.addOption(this);
     }
 
     public Long getId() {
@@ -85,8 +86,8 @@ public class Option {
 
         public static void validateDuplicated(List<Option> optionList) throws OptionException {
             List<String> optionNameList = getOptionNames(optionList);
-            Set<String> optionSet = new HashSet<>(optionNameList);
-            if(optionList.size() != optionSet.size()) {
+            Set<String> optionNameSet = new HashSet<>(optionNameList);
+            if(optionNameList.size() != optionNameSet.size()) {
                 throw new OptionException(OptionErrorCode.NAME_DUPLICATED);
             }
         }
