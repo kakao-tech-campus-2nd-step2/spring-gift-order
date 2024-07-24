@@ -10,7 +10,6 @@ public class KakaoProperties {
     private String redirectUri;
     private String clientSecret;
 
-    // Getters and Setters
     public String getClientId() {
         return clientId;
     }
