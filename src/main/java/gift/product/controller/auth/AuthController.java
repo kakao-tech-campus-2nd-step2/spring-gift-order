@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final String KAKAO_AUTH_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private final String KAKAO_UNLINK_USER_URL = "https://kapi.kakao.com/v1/user/unlink";
+    private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
     public AuthController(AuthService authService) {
         this.authService = authService;
@@ -49,12 +52,13 @@ public class AuthController {
 
     @GetMapping
     public ResponseEntity<AccessAndRefreshToken> getKakaoJwt(@RequestParam(name = "code") String code) {
-        AccessAndRefreshToken accessAndRefreshToken = authService.getAccessAndRefreshToken(code);
+        AccessAndRefreshToken accessAndRefreshToken = authService.getAccessAndRefreshToken(code, KAKAO_AUTH_TOKEN_URL);
+        authService.registerKakaoMember(accessAndRefreshToken.accessToken(), KAKAO_USER_INFO_URL);
         return ResponseEntity.ok(accessAndRefreshToken);
     }
 
     @PostMapping("/members/login/kakao/unlink")
     public ResponseEntity<Long> unlinkKakaoAccount(@RequestParam(name = "accessToken") String accessToken) {
-        return ResponseEntity.ok(authService.unlinkKakaoAccount(accessToken));
+        return ResponseEntity.ok(authService.unlinkKakaoAccount(accessToken, KAKAO_UNLINK_USER_URL));
     }
 }
