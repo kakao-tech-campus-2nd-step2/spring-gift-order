@@ -1,5 +1,13 @@
 package gift.service.oauth;
 
+import static gift.util.constants.OAuthConstants.SCOPES_FAILURE_ERROR;
+import static gift.util.constants.OAuthConstants.TOKEN_FAILURE_ERROR;
+import static gift.util.constants.OAuthConstants.TOKEN_RESPONSE_ERROR;
+import static gift.util.constants.OAuthConstants.UNLINK_FAILURE_ERROR;
+import static gift.util.constants.OAuthConstants.UNLINK_RESPONSE_ERROR;
+import static gift.util.constants.OAuthConstants.USERINFO_FAILURE_ERROR;
+import static gift.util.constants.OAuthConstants.USERINFO_RESPONSE_ERROR;
+
 import gift.config.KakaoProperties;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
@@ -7,7 +15,6 @@ import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
 import java.net.URI;
 import java.util.Map;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -52,10 +59,10 @@ public class KakaoOAuthService {
 
                 return new KakaoTokenResponse(accessToken, expiresIn, refreshToken, refreshTokenExpiresIn);
             } else {
-                throw new RuntimeException("토큰 응답이 올바르지 않습니다.");
+                throw new RuntimeException(TOKEN_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("토큰 발급에 실패했습니다.", e);
+            throw new RuntimeException(TOKEN_FAILURE_ERROR, e);
         }
     }
 
@@ -74,10 +81,10 @@ public class KakaoOAuthService {
                 Long id = ((Number) responseBody.get("id")).longValue();
                 return new KakaoUnlinkResponse(id);
             } else {
-                throw new RuntimeException("연결 끊기 응답이 올바르지 않습니다.");
+                throw new RuntimeException(UNLINK_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("연결 끊기에 실패했습니다.", e);
+            throw new RuntimeException(UNLINK_FAILURE_ERROR, e);
         }
     }
 
@@ -93,7 +100,7 @@ public class KakaoOAuthService {
 
             return response.getBody();
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("동의 내역 가져오기에 실패했습니다.", e);
+            throw new RuntimeException(SCOPES_FAILURE_ERROR, e);
         }
     }
 
@@ -116,10 +123,10 @@ public class KakaoOAuthService {
 
                 return new KakaoUserResponse(id, nickname, email);
             } else {
-                throw new RuntimeException("사용자 정보 응답이 올바르지 않습니다.");
+                throw new RuntimeException(USERINFO_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("사용자 정보 가져오기에 실패했습니다.", e);
+            throw new RuntimeException(USERINFO_FAILURE_ERROR, e);
         }
     }
 }

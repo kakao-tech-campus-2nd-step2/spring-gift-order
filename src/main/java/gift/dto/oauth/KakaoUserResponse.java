@@ -5,4 +5,5 @@ public record KakaoUserResponse(
     String nickname,
     String email
 ) {
+
 }
