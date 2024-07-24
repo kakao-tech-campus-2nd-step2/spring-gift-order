@@ -1,9 +1,7 @@
 package gift.auth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @ConfigurationProperties(prefix = "jwt")
 public class TokenProperty {
     private String secretKey;
