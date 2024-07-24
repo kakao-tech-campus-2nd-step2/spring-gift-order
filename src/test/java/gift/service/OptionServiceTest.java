@@ -3,6 +3,7 @@ package gift.service;
 import gift.dto.OptionRequestDto;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
+import gift.vo.Category;
 import gift.vo.Option;
 import gift.vo.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ class OptionServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private Category category;
+
     @InjectMocks
     private OptionService optionService;
 
@@ -38,7 +42,7 @@ class OptionServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product(1L, null, "테스트용 상품", 10000, "http://image.png");
+        product = new Product(1L, category, "테스트용 상품", 10_000, "http://image.png");
     }
 
     @Test
