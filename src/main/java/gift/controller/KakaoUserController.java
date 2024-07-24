@@ -13,7 +13,7 @@ public class KakaoUserController {
 
     private final KakaoUserService kakaoUserService;
 
-    public KakaoUserController(KakaoUserService kakaoUserService){
+    public KakaoUserController(KakaoUserService kakaoUserService) {
         this.kakaoUserService = kakaoUserService;
     }
 

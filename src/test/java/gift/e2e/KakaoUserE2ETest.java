@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -35,20 +34,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ConfigurationPropertiesScan
 class KakaoUserE2ETest {
 
+    private final String testCode = "testCode";
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private KakaoProperties kakaoProperties;
-
     @Autowired
     private KakaoUserService kakaoUserService;
-
     private MockWebServer mockServer;
-    private final String testCode = "testCode";
     private RestTemplate restTemplate;
 
     @BeforeEach

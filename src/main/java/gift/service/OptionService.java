@@ -4,7 +4,6 @@ import gift.dto.OptionQuantityRequest;
 import gift.dto.OptionRequest;
 import gift.entity.Option;
 import gift.entity.Product;
-import gift.exception.MinimumOptionException;
 import gift.exception.OptionNotFoundException;
 import gift.exception.ProductNotFoundException;
 import gift.repository.OptionRepository;
