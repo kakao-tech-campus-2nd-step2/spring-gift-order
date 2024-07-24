@@ -1,9 +1,6 @@
 package gift.repository;
 
-import gift.domain.Category;
-import gift.domain.Member;
-import gift.domain.Product;
-import gift.domain.Wish;
+import gift.domain.*;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -139,9 +136,10 @@ class ProductRepositoryTest {
                 .build();
         categories.save(category);
 
-        products.save(new Product("상품1", 1000, "http://product1", category));
-        products.save(new Product("상품2", 2000, "http://product2", category));
-        products.save(new Product("상품3", 3000, "http://product3", category));
+        Option option = new Option("옵션1", 10);
+        products.save(new Product("상품1", 1000, "http://product1", category, option));
+        products.save(new Product("상품2", 2000, "http://product2", category, option));
+        products.save(new Product("상품3", 3000, "http://product3", category, option));
 
         // when
         List<Product> findProducts = products.findAll();
@@ -406,9 +404,10 @@ class ProductRepositoryTest {
                 .build();
 
         categories.save(category);
-        products.save(new Product("상품1", 1000, "http://product1", category));
-        products.save(new Product("상품2", 2000, "http://product2", category));
-        products.save(new Product("상품3", 3000, "http://product3", category));
+        Option option = new Option("옵션1", 10);
+        products.save(new Product("상품1", 1000, "http://product1", category, option));
+        products.save(new Product("상품2", 2000, "http://product2", category, option));
+        products.save(new Product("상품3", 3000, "http://product3", category, option));
 
         // when
         Pageable pageable = PageRequest.of(0,2, Sort.by("id").descending());

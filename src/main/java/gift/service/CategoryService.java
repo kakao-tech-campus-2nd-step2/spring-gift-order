@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static gift.constants.Messages.CATEGORY_NAME_ALREADY_EXISTS;
+import static gift.constants.Messages.NOT_FOUND_CATEGORY;
+
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
@@ -23,7 +26,7 @@ public class CategoryService {
     @Transactional
     public void save(CategoryRequest categoryDto){
         if(categoryRepository.existsByName(categoryDto.name())){
-            throw new DuplicateCategoryNameException(Messages.CATEGORY_NAME_ALREADY_EXISTS);
+            throw new DuplicateCategoryNameException(CATEGORY_NAME_ALREADY_EXISTS);
         }
         categoryRepository.save(categoryDto.toEntity());
     }
@@ -32,7 +35,7 @@ public class CategoryService {
     public CategoryResponse findById(Long id){
         return categoryRepository.findById(id)
                 .map(CategoryResponse::from)
-                .orElseThrow(()->new CategoryNotFoundException(Messages.NOT_FOUND_CATEGORY));
+                .orElseThrow(()->new CategoryNotFoundException(NOT_FOUND_CATEGORY));
     }
 
     @Transactional(readOnly = true)
@@ -46,14 +49,14 @@ public class CategoryService {
     @Transactional
     public void deleteById(Long id){
         categoryRepository.findById(id)
-                        .orElseThrow(() -> new CategoryNotFoundException(Messages.NOT_FOUND_CATEGORY));
+                        .orElseThrow(() -> new CategoryNotFoundException(NOT_FOUND_CATEGORY));
         categoryRepository.deleteById(id);
     }
 
     @Transactional
     public void updateById(Long id, CategoryRequest request){
         Category foundCategory = categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException(Messages.NOT_FOUND_CATEGORY));
+                .orElseThrow(() -> new CategoryNotFoundException(NOT_FOUND_CATEGORY));
 
         foundCategory.updateCategory(request.name(), request.color(), request.imageUrl(), request.description());
     }

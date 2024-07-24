@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS OPTIONS;
 DROP TABLE IF EXISTS PRODUCTS;
 DROP TABLE IF EXISTS CATEGORIES;
 DROP TABLE IF EXISTS MEMBERS;
+DROP TABLE IF EXISTS KAKAO_MEMBERS;
 
 -- Create table for categories
 CREATE TABLE CATEGORIES (
@@ -42,7 +43,7 @@ CREATE TABLE OPTIONS (
 CREATE TABLE MEMBERS (
                          ID BIGINT AUTO_INCREMENT PRIMARY KEY,
                          EMAIL VARCHAR(255) NOT NULL UNIQUE,
-                         PASSWORD VARCHAR(255) NOT NULL
+                         PASSWORD VARCHAR(255)
 );
 
 -- Create table for wishes
@@ -59,4 +60,10 @@ CREATE TABLE WISHES (
                             FOREIGN KEY (PRODUCT_ID)
                                 REFERENCES PRODUCTS (ID)
                                 ON DELETE CASCADE
+);
+
+CREATE TABLE KAKAO_MEMBERS (
+                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                              email VARCHAR(255) NOT NULL,
+                              access_token VARCHAR(255) NOT NULL
 );

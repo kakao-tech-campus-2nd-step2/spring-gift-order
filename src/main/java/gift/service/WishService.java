@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static gift.constants.Messages.NOT_FOUND_WISH;
+
 @Service
 public class WishService {
     private final WishRepository wishRepository;
@@ -61,7 +63,7 @@ public class WishService {
     @Transactional
     public void deleteWishByMemberIdAndId(Long memberId, Long id){
         Wish foundWish = wishRepository.findByIdAndMemberId(id, memberId)
-                .orElseThrow(()-> new WishNotFoundException(Messages.NOT_FOUND_WISH));
+                .orElseThrow(()-> new WishNotFoundException(NOT_FOUND_WISH));
 
         foundWish.remove();
         wishRepository.deleteById(id);
@@ -70,7 +72,7 @@ public class WishService {
     @Transactional
     public void updateQuantityByMemberIdAndId(Long memberId, Long id, WishRequest request){
         Wish existingWish = wishRepository.findByIdAndMemberId(id, memberId)
-                .orElseThrow(()-> new WishNotFoundException(Messages.NOT_FOUND_WISH));
+                .orElseThrow(()-> new WishNotFoundException(NOT_FOUND_WISH));
 
         existingWish.updateQuantity(request.quantity());
     }

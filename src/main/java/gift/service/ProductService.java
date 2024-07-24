@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static gift.constants.Messages.*;
+
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
@@ -30,7 +32,7 @@ public class ProductService {
     @Transactional
     public void save(ProductRequest productRequest, OptionRequest optionRequest){
         if (optionRequest == null) {
-            throw new ProductOptionRequiredException(Messages.PRODUCT_OPTION_REQUIRED);
+            throw new ProductOptionRequiredException(PRODUCT_OPTION_REQUIRED);
         }
         Category category = categoryService.findById(productRequest.categoryId()).toEntity();
         Option option = new Option(optionRequest.name(), optionRequest.quantity());
@@ -52,7 +54,7 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductResponse findByName(String name){
         Product product =  productRepository.findByName(name)
-                .orElseThrow(()->  new ProductNotFoundException(Messages.NOT_FOUND_PRODUCT_BY_NAME));
+                .orElseThrow(()->  new ProductNotFoundException(NOT_FOUND_PRODUCT_BY_NAME));
         return ProductResponse.from(product);
     }
 
@@ -81,6 +83,6 @@ public class ProductService {
 
     private Product findProductByIdOrThrow(Long id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException(Messages.NOT_FOUND_PRODUCT_BY_ID));
+                .orElseThrow(() -> new ProductNotFoundException(NOT_FOUND_PRODUCT_BY_ID));
     }
 }
