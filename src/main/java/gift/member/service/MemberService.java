@@ -95,6 +95,7 @@ public class MemberService {
         }
     }
 
+    @Transactional
     public MemberResDto loginOrRegisterByEmail(String email, String accessToken) {
         Member member = memberRepository.findByEmail(email)
                         .orElseGet(() -> memberRepository.save(new Member(email, "1234")));
