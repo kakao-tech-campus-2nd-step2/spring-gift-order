@@ -2,10 +2,12 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.Util.JWTUtil;
 import gift.dto.option.*;
 import gift.entity.Option;
 import gift.entity.Order;
 import gift.entity.Product;
+import gift.entity.User;
 import gift.exception.exception.BadRequestException;
 import gift.exception.exception.NotFoundException;
 import gift.exception.exception.ServerInternalException;
@@ -13,6 +15,7 @@ import gift.exception.exception.UnAuthException;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
+import gift.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -36,8 +39,12 @@ public class OptionService {
     OptionRepository optionRepository;
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    JWTUtil jwtUtil;
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    UserRepository userRepository;
 
     @Transactional
     public void refill(OptionQuantityDTO optionQuantityDTO) {
@@ -52,17 +59,19 @@ public class OptionService {
         if (option.getQuantity() < optionQuantityDTO.quantity())
             throw new BadRequestException("재고보다 많은 물건 주문 불가능");
         option.subQuantity(optionQuantityDTO.quantity());
-        Order order = new Order(optionQuantityDTO, option);
-        try {
-            sendMessage(order, token);
-        } catch (JsonProcessingException e) {
-            throw new ServerInternalException("문자 보내기 에러");
-        }
+        User user = userRepository.findById(jwtUtil.getUserIdFromToken(token)).orElseThrow(()->new NotFoundException("유저 없음"));
+        String kakaoToken = jwtUtil.getKakaoTokenFromToken(token);
+        Order order = new Order(optionQuantityDTO, option, user);
+        user.addOrder(order);
+
+        if(kakaoToken!=null)
+            sendMessage(order, kakaoToken);
+
         order = orderRepository.save(order);
         return order.toResponseDTO();
     }
 
-    private void sendMessage(Order order, String token) throws JsonProcessingException {
+    private void sendMessage(Order order, String token)  {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);

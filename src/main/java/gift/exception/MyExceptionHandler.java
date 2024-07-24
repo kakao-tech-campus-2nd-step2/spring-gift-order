@@ -32,7 +32,7 @@ public class MyExceptionHandler {
     @ResponseBody
     @ExceptionHandler(ServerInternalException.class)
     public String exception(ServerInternalException e) {
-        return "서버 오류";
+        return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

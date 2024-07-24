@@ -23,6 +23,9 @@ public class Order {
     @CreatedDate
     LocalDateTime orderDateTime;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    User user;
+
     public Order() {
 
     }
@@ -47,10 +50,11 @@ public class Order {
         return orderDateTime;
     }
 
-    public Order(OptionQuantityDTO optionQuantityDTO, Option option) {
+    public Order(OptionQuantityDTO optionQuantityDTO, Option option, User user) {
         this.option = option;
         this.quantity = optionQuantityDTO.quantity();
         this.message = optionQuantityDTO.message();
+        this.user = user;
     }
 
     public OrderResponseDTO toResponseDTO() {

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Component
@@ -23,11 +25,12 @@ public class JWTUtil {
         this.expirationMs = jwtExpirationMs;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(User user,String kakaoToken) {
         Date date = new Date();
         Date expire = new Date(date.getTime() + expirationMs);
         return Jwts.builder()
                 .subject(Integer.toString(user.getId()))
+                .claim("kakaoToken",kakaoToken)
                 .issuedAt(date)
                 .expiration(expire)
                 .signWith(key)
@@ -44,11 +47,22 @@ public class JWTUtil {
     }
 
     public Integer getUserIdFromToken(String token) {
+
         return Integer.parseInt(Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject());
+    }
+
+    public String getKakaoTokenFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return (String) claims.get("kakaoToken");
     }
 }
