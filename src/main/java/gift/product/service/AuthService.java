@@ -175,6 +175,7 @@ public class AuthService {
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_url", kakaoProperties.redirectUrl());
         body.add("code", code);
+        body.add("client_secret", kakaoProperties.clientSecret());
         return body;
     }
 }

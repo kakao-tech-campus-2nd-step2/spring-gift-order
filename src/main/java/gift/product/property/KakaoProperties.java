@@ -6,7 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record KakaoProperties(
     String grantType,
     String clientId,
-    String redirectUrl
+    String redirectUrl,
+    String clientSecret
 ) {
 
 }
