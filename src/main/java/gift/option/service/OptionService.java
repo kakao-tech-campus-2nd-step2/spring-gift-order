@@ -6,6 +6,7 @@ import gift.option.repository.OptionRepository;
 import gift.product.domain.Product;
 import gift.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,10 @@ public class OptionService {
         return optionRepository.findAll()
             .stream().map(this::convertToDTO)
             .toList();
+    }
+    public Option findById(Long id){
+        return optionRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("optionService: optionid가 없다."));
     }
 
     public List<OptionDTO> findAllByProductId(Long productId){
@@ -60,8 +65,11 @@ public class OptionService {
     public Option subtract(OptionDTO optionDTO, Long orderedQuantity) {
         Option option = optionRepository.findByProductIdAndName(optionDTO.getProductId(), optionDTO.getName())
             .orElseThrow(() -> new IllegalArgumentException("option이 존재하지 않습니다."));
-
-        option.subtract(orderedQuantity);
+        try{
+            option.subtract(orderedQuantity);
+        }catch(ConstraintViolationException e){
+            option.setQuantity(0L);
+        }
         return optionRepository.save(option);
     }
 
