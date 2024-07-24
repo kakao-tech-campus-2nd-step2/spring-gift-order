@@ -44,15 +44,13 @@ public class MemberService {
     @Transactional(readOnly = true)
     public void login(MemberDTO memberDTO) throws RuntimeException {
         try {
-            if (memberRepository.countByEmailAndPassword(memberDTO.getEmail(),
-                    memberDTO.getPassword()) < 1) {
-                throw new UserNotFoundException("아이디 또는 비밀번호가 올바르지 않습니다.");
-            }
+            if (memberRepository.countByEmailAndPasswordAndAccountType(
+                    memberDTO.getEmail(), memberDTO.getPassword(), memberDTO.getAccountType()) < 1
+            ) { throw new UserNotFoundException("아이디 또는 비밀번호가 올바르지 않습니다."); }
 
-            if (memberRepository.countByEmailAndPassword(memberDTO.getEmail(),
-                    memberDTO.getPassword()) > 1) {
-                throw new DuplicatedUserException(memberDTO.getEmail() + "is Duplicated in DB");
-            }
+            if (memberRepository.countByEmailAndPasswordAndAccountType(
+                    memberDTO.getEmail(), memberDTO.getPassword(), memberDTO.getAccountType()) > 1
+            ) { throw new DuplicatedUserException(memberDTO.getEmail() + "is Duplicated in DB"); }
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
@@ -70,7 +68,6 @@ public class MemberService {
             if (memberRepository.countByEmail(email) > 1) {
                 throw new DuplicatedUserException(email + "is Duplicated in DB");
             }
-
             throw new UserNotFoundException(email + "을(를) 가지는 유저를 찾을 수 없습니다.");
         } catch (BadRequestException e) {
             throw e;
