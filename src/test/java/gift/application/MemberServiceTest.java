@@ -1,5 +1,6 @@
 package gift.application;
 
+import gift.auth.dto.AuthResponse;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
 import gift.global.security.JwtUtil;
@@ -77,9 +78,9 @@ class MemberServiceTest {
         given(memberRepository.findByEmail(any()))
                 .willReturn(Optional.of(member));
 
-        String authToken = memberService.authenticate(memberDto);
+        AuthResponse authToken = memberService.authenticate(memberDto);
 
-        assertThat(authToken).isEqualTo(token);
+        assertThat(authToken.token()).isEqualTo(token);
     }
 
     @Test

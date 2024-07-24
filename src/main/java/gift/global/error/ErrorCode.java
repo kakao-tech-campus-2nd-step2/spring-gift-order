@@ -26,7 +26,10 @@ public enum ErrorCode {
 
     // Wish Error
     WISH_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상품을 위시리스트에서 찾을 수 없습니다."),
-    WISH_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 해당 상품이 위시리스트에 존재합니다.")
+    WISH_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 해당 상품이 위시리스트에 존재합니다."),
+
+    // External API Error
+    EXTERNAL_API_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "해당 서비스는 현재 이용할 수 없습니다.")
     ;
 
     private final HttpStatus status;
