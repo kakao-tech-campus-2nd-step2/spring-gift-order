@@ -85,4 +85,46 @@ public class OrderServiceTest {
         then(orderRepository).should().save(any(Order.class));
     }
 
+    @DisplayName("주문을 처리하고 카카오 메시지를 전송하는데, 만료된 accessToken 이면 refreshToken 을 통해 재발급 받고 진행한다.")
+    @Test
+    void processOrderWithExpiredAccessToken() throws Exception {
+        //given
+        Member member = new Member();
+        member.setAccessToken("test-access-token");
+
+        Long originalQuantity = 10L;
+        Long orderQuantity = 5L;
+        String message = "Test Message";
+
+        OrderDto orderDto = new OrderDto(1L, 2L, orderQuantity, member, message);
+
+        Option option = new Option();
+        option.setProduct(new Product());
+        option.setId(1L);
+        option.setQuantity(originalQuantity);
+
+        given(oauth2TokenService.isAccessTokenExpired(anyString())).willReturn(true);
+        willDoNothing().given(oauth2TokenService).refreshAccessToken(any(Member.class));
+        given(optionRepository.findById(anyLong())).willReturn(Optional.of(option));
+        given(wishRepository.findByMemberAndProduct(any(Member.class), any(Product.class))).willReturn(Optional.of(new Wish()));
+        willDoNothing().given(wishRepository).delete(any(Wish.class));
+        willDoNothing().given(kakaoApiService).sendKakaoMessage(anyString(), anyString());
+        given(orderRepository.save(any(Order.class))).willReturn(new Order());
+
+        //when
+        OrderDto result = orderService.processOrder(orderDto);
+
+        //then
+        assertThat(result.getQuantity()).isEqualTo(originalQuantity - orderQuantity);
+        assertThat(result.getMessage()).isEqualTo(message);
+
+        then(oauth2TokenService).should().isAccessTokenExpired(anyString());
+        then(oauth2TokenService).should().refreshAccessToken(any(Member.class));
+        then(optionRepository).should().findById(anyLong());
+        then(wishRepository).should().findByMemberAndProduct(any(Member.class), any(Product.class));
+        then(wishRepository).should().delete(any(Wish.class));
+        then(kakaoApiService).should().sendKakaoMessage(anyString(), anyString());
+        then(orderRepository).should().save(any(Order.class));
+    }
+
 }

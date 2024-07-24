@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.member.Member;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
-import gift.repository.MemberRepository;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +17,11 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 @Service
 public class Oauth2TokenService {
 
-    private final MemberRepository memberRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
 
-    public Oauth2TokenService(MemberRepository memberRepository, RestTemplate restTemplate, ObjectMapper objectMapper, KakaoProperties kakaoProperties) {
-        this.memberRepository = memberRepository;
+    public Oauth2TokenService(RestTemplate restTemplate, ObjectMapper objectMapper, KakaoProperties kakaoProperties) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.kakaoProperties = kakaoProperties;
