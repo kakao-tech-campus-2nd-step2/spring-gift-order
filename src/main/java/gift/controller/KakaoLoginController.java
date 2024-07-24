@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/oauth")
+@RequestMapping("/api/kakao")
 public class KakaoLoginController {
     private KakaoLoginService kakaoLoginService;
     public KakaoLoginController(KakaoLoginService kakaoLoginService) {
         this.kakaoLoginService = kakaoLoginService;
     }
 
-    @GetMapping("/login")
-    public ResponseEntity<?> kakaoLogin(@RequestParam("code") String code) {
+    @GetMapping("/callback")
+    public ResponseEntity<?> callback(@RequestParam("code") String code) {
         String accessToken = kakaoLoginService.getAccessToken(code);
         return ResponseEntity.ok(accessToken);
     }
