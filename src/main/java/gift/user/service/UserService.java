@@ -10,7 +10,6 @@ import gift.user.entity.User;
 import gift.user.repository.RoleJpaRepository;
 import gift.user.repository.UserJpaRepository;
 import gift.util.auth.JwtUtil;
-import gift.util.mapper.UserMapper;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +46,7 @@ public class UserService {
         );
         List<String> roles = new ArrayList<>();
 
-        return UserMapper.toResponse(jwtUtil.generateToken(registeredUser.getId(),
+        return UserResponse.from(jwtUtil.generateToken(registeredUser.getId(),
             registeredUser.getEmail(), roles));
     }
 
@@ -69,7 +68,7 @@ public class UserService {
 
         String token = jwtUtil.generateToken(user.getId(), user.getEmail(), roles);
 
-        return UserMapper.toResponse(token);
+        return UserResponse.from(token);
     }
 
     @Transactional(readOnly = true)

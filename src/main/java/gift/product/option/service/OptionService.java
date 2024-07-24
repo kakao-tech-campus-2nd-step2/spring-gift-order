@@ -10,7 +10,6 @@ import gift.product.option.entity.Option;
 import gift.product.option.entity.Options;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.repository.ProductJpaRepository;
-import gift.util.mapper.OptionMapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ public class OptionService {
 
         return product.getOptions()
             .stream()
-            .map(OptionMapper::toResponse)
+            .map(OptionResponse::from)
             .toList();
     }
 
@@ -47,7 +46,7 @@ public class OptionService {
         product.addOption(option);
         Option saved = optionRepository.save(option);
 
-        return OptionMapper.toResponse(saved);
+        return OptionResponse.from(saved);
     }
 
     @Transactional

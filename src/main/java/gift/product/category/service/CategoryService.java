@@ -8,7 +8,6 @@ import gift.product.category.dto.response.CategoryResponse;
 import gift.product.category.entity.Categories;
 import gift.product.category.entity.Category;
 import gift.product.category.repository.CategoryJpaRepository;
-import gift.util.mapper.CategoryMapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +25,7 @@ public class CategoryService {
     public List<CategoryResponse> getAllCategories() {
         List<Category> categoryList = categoryRepository.findAll();
         return categoryList.stream()
-            .map(CategoryMapper::toResponse)
+            .map(CategoryResponse::from)
             .toList();
     }
 
@@ -34,7 +33,7 @@ public class CategoryService {
     public CategoryResponse getCategory(Long id) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-        return CategoryMapper.toResponse(category);
+        return CategoryResponse.from(category);
     }
 
     @Transactional
@@ -47,7 +46,7 @@ public class CategoryService {
 
         Category category = categoryRepository.save(newCategory);
 
-        return CategoryMapper.toResponse(category);
+        return CategoryResponse.from(category);
     }
 
     @Transactional
