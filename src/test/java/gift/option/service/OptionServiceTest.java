@@ -3,6 +3,7 @@ package gift.option.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -130,7 +131,7 @@ class OptionServiceTest {
         when(optionRepository.findById(anyLong())).thenReturn(Optional.of(option));
 
         //when
-        optionService.subtractStock(anyLong(), 5);
+        optionService.subtractQuantity(any(), 5);
 
         //then
         assertThat(option.getQuantity()).isEqualTo(5);
@@ -146,7 +147,7 @@ class OptionServiceTest {
         when(optionRepository.findById(anyLong())).thenReturn(Optional.of(option));
 
         //then
-        assertThatThrownBy(() -> optionService.subtractStock(anyLong(), 15))
+        assertThatThrownBy(() -> optionService.subtractQuantity(any(), 15))
             .isInstanceOf(OptionNotEnoughStockException.class)
             .hasMessage(OptionErrorCode.NOT_ENOUGH_STOCK.getMessage());
     }

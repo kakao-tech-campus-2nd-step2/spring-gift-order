@@ -56,6 +56,11 @@ VALUES (7, 4, 1),
        (8, 4, 2),
        (9, 4, 3);
 
+-- 키보드 상품(PK 1)에 대한 옵션 데이터 입력
+INSERT INTO option (name, quantity, product_id)
+VALUES ('청축', 10, 1),
+       ('적축', 10, 1),
+       ('흑축', 10, 1);
 
 
 

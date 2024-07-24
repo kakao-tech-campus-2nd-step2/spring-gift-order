@@ -1,9 +1,9 @@
 package gift.option.service;
 
 import gift.option.dto.OptionReqDto;
+import gift.option.entity.Option;
 import gift.option.exception.OptionDuplicatedNameException;
 import gift.option.exception.OptionNotEnoughStockException;
-import gift.option.repository.OptionRepository;
 import gift.product.entity.Product;
 import java.util.List;
 import java.util.Set;
@@ -13,12 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OptionService {
-
-    private final OptionRepository optionRepository;
-
-    public OptionService(OptionRepository optionRepository) {
-        this.optionRepository = optionRepository;
-    }
 
     @Transactional
     public void addOptions(Product product, List<OptionReqDto> optionReqDtos) {
@@ -37,14 +31,16 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractStock(Long optionId, Integer quantity) {
-        optionRepository.findById(optionId)
-            .ifPresent(option -> {
-                if (option.getQuantity() < quantity) {
-                    throw OptionNotEnoughStockException.EXCEPTION;
-                }
-                option.subtractQuantity(quantity);
-            });
+    public void addQuantity(Option option, Integer quantity) {
+        option.addQuantity(quantity);
+    }
+
+    @Transactional
+    public void subtractQuantity(Option option, Integer quantity) {
+        if (option.getQuantity() < quantity) {
+            throw OptionNotEnoughStockException.EXCEPTION;
+        }
+        option.subtractQuantity(quantity);
     }
 
     private void addOptionsToProduct(Product product, List<OptionReqDto> optionReqDtos) {
