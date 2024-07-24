@@ -40,4 +40,3 @@ out/
 .DS_Store
 
 **/application-local.properties
-**/application-test.properties
