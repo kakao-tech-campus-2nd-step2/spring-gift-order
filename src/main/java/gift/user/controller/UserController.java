@@ -1,11 +1,9 @@
 package gift.user.controller;
 
-import gift.user.client.KakaoLoginClient;
-import gift.user.config.KakaoProperties;
 import gift.user.dto.request.UserLoginRequest;
 import gift.user.dto.request.UserRegisterRequest;
-import gift.user.dto.response.KakaoUserInfoResponse;
 import gift.user.dto.response.UserResponse;
+import gift.user.service.KakaoUserService;
 import gift.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final KakaoLoginClient kakaoLoginClient;
-    private final KakaoProperties kakaoProperties;
+    private final KakaoUserService kakaoUserService;
 
-    public UserController(UserService userService, KakaoLoginClient kakaoLoginClient,
-        KakaoProperties kakaoProperties) {
+    public UserController(UserService userService, KakaoUserService kakaoUserService) {
         this.userService = userService;
-        this.kakaoLoginClient = kakaoLoginClient;
-        this.kakaoProperties = kakaoProperties;
+        this.kakaoUserService = kakaoUserService;
     }
 
     @PostMapping("register")
@@ -41,10 +36,9 @@ public class UserController {
     }
 
     @RequestMapping("auth/kakao/code")
-    public ResponseEntity<KakaoUserInfoResponse> getKakaoUserId(@RequestParam("code") String code) {
-        var response = kakaoLoginClient.getKakaoTokenResponse(code);
-        var response1 = kakaoLoginClient.getKakaoUserId(response.accessToken());
-        return ResponseEntity.ok(response1);
+    public ResponseEntity<UserResponse> getKakaoUserId(@RequestParam("code") String code) {
+        var response = kakaoUserService.loginKakaoUser(code);
+        return ResponseEntity.ok(response);
     }
 
 }
