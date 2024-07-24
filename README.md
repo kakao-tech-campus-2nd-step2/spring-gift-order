@@ -150,12 +150,12 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
   Authorization: Bearer ${ACCESS_TOKEN}
   ```
   
-- [ ] Response 데이터 처리
+- [x] Response 데이터 처리
 
-  - [ ] 최초 1회 회원가입 - 카카오 user id를 이용해 email로 만들어 User 테이블에 저장
-  - [ ] 이후 로그인 - User 테이블에서 데이터 호출하여 대조
+  - [x] 최초 1회 회원가입 - 카카오 user id를 이용해 email로 만들어 User 테이블에 저장
+  - [x] 이후 로그인 - User 테이블에서 데이터 호출하여 대조
 
-- [ ] 유저 정보를 바탕으로 jwt token 발급하여 클라이언트에 반환
+- [x] 유저 정보를 바탕으로 jwt token 발급하여 클라이언트에 반환
 
 
 
@@ -163,7 +163,7 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
 
 현재 코드 구현이 Controller - Client 연결로 되어있음
 
-- [ ] Controller - Service - Client 구조로 리팩토링 필요
+- [x] Controller - Service - Client 구조로 리팩토링 필요
 
 
 
