@@ -7,10 +7,12 @@
         ├── java
         │   └── gift
         │       ├── config
-        │       │   └── SecurityConfig.java
+        │       │   ├── SecurityConfig.java
+        │       │   └── WebConfig.java
         │       ├── controller
         │       │   ├── AdminController.java
         │       │   ├── CategoryController.java
+        │       │   ├── HomeController.java
         │       │   ├── HomeController.java
         │       │   ├── MemberController.java
         │       │   ├── ProductConroller.java
@@ -31,6 +33,9 @@
         │       │   ├── GlobalExceptionHandler.java
         │       │   ├── InvalidProductNameException.java
         │       │   └── ProductNotFoundException.java
+        │       ├── interceptor
+        │       │   ├── JwtInterceptor.java
+        │       │   └── TokenInterceptor.java
         │       ├── repository
         │       │   ├── CategoryRepository.java
         │       │   ├── MemberRepository.java
@@ -41,7 +46,12 @@
         │       │   ├── CategoryService.java
         │       │   ├── MemberService.java
         │       │   ├── ProductService.java
-        │       │   └── WishService.java      
+        │       │   └── WishService.java   
+        │       ├── util
+        │       │   └── TokenUtil.java   
+        │       ├── value
+        │       │   ├── OptionName.java
+        │       │   └── OptionQuantity.java   
         │       └── Application.java
         └── resources
             ├── data.sql
