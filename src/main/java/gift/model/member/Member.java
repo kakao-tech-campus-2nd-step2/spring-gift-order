@@ -1,9 +1,6 @@
 package gift.model.member;
 
-import gift.model.wish.Wish;
 import jakarta.persistence.*;
-
-import java.util.List;
 
 @Entity
 @Table(name = "members")
@@ -31,8 +28,16 @@ public class Member {
     }
 
     public boolean isPasswordEqual(String inputPassword) {
-        return this.password.equals(inputPassword);
+        return password.equals(inputPassword);
     }
+
+    public boolean isPasswordNotEqual(String inputPassword){
+        if(password.equals(inputPassword)){
+            return false;
+        }
+        return true;
+    }
+
     public Long getId() {
         return id;
     }
