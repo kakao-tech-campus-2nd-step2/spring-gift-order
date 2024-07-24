@@ -7,6 +7,7 @@ public class UserResponse {
     String userId;
     String email;
     String password;
+    String token;
 
     public UserResponse(){
 
@@ -17,6 +18,7 @@ public class UserResponse {
         this.userId = user.getUserId();
         this.email = user.getEmail();
         this.password = user.getPassword();
+        this.token = user.getToken();
     }
 
     public Long getId() {
@@ -33,5 +35,8 @@ public class UserResponse {
 
     public String getPassword() {
         return password;
+    }
+    public String getToken(){
+        return token;
     }
 }
