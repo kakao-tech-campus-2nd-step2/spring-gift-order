@@ -1,31 +1,16 @@
 package gift.domain.option;
 
-import gift.domain.category.Category;
-import gift.domain.product.Product;
 import gift.exception.CustomException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class OptionTest {
     @Test
-    void 옵션_양방향_생성_성공() {
-        //given
-        Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        //when
-        Option option = new Option("테스트", 100, product);
-        //then
-        assertThat(product.getOptions()).isNotNull();
-    }
-
-    @Test
     void 옵션_차감_성공() {
         //given
-        Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        Option option = new Option("테스트", 100, product);
+        Option option = new Option("테스트", 100);
         //when
         option.subtract(70);
         //then
@@ -35,9 +20,7 @@ class OptionTest {
     @Test
     void 옵션_차감_실패() {
         //given
-        Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        Option option = new Option("테스트", 100, product);
+        Option option = new Option("테스트", 100);
         //when
         //then
         assertThatExceptionOfType(CustomException.class)

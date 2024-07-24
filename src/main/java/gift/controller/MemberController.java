@@ -1,15 +1,9 @@
 package gift.controller;
 
-import gift.dto.MemberRegisterRequestDto;
-import gift.dto.MemberRegisterResponseDto;
-import gift.dto.MemberRequestDto;
-import gift.dto.TokenResponseDto;
+import gift.dto.*;
 import gift.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")

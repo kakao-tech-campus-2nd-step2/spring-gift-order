@@ -2,6 +2,7 @@ package gift.domain.wish;
 
 import gift.domain.category.Category;
 import gift.domain.member.Member;
+import gift.domain.option.Option;
 import gift.domain.product.Product;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,7 +71,8 @@ class WishRepositoryTest {
     }
 
     private Product createProduct() {
-        Product product = new Product("커피", 10000, "image", createCategory());
+        Product product = new Product("커피", 10000, "image", createCategory(),
+                List.of(new Option("옵션1", 100)));
         entityManager.persist(product);
         entityManager.flush();
         return product;

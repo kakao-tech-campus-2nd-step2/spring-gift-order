@@ -36,9 +36,8 @@ class OptionServiceTest {
     void 옵션_조회_성공() {
         //given
         Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        Option expected1 = new Option("옵션1",1000,product);
-        Option expected2 = new Option("옵션2",100,product);
+                new Category("테스트", "##", "설명", "test"),
+                List.of(new Option("옵션1", 100), new Option("옵션2", 100)));
 
         given(productRepository.findById(any()))
                 .willReturn(Optional.of(product));
@@ -56,41 +55,21 @@ class OptionServiceTest {
     @Test
     void 옵션_생성_성공() {
         //given
-        given(productRepository.findById(any()))
-                .willReturn(Optional.of(new Product("더미", 10000, "test.jpg",
-                        new Category("테스트", "##", "설명", "test"))));
-
         //when
-        optionService.saveOption(1L,new OptionRequestDto("새 옵션",10,1L));
+        optionService.saveOption(new OptionRequestDto("새 옵션", 10));
 
         //then
         verify(optionRepository).save(any());
     }
 
     @Test
-    void 옵션_생성_실패_중복된_이름() {
-        //given
-        given(productRepository.findById(any()))
-                .willReturn(Optional.of(new Product("더미", 10000, "test.jpg",
-                        new Category("테스트", "##", "설명", "test"))));
-        //when
-        optionService.saveOption(1L,new OptionRequestDto("중복이름",10,1L));
-        var request = new OptionRequestDto("중복이름",10,1L);
-        //then
-        assertThatExceptionOfType(CustomException.class)
-                .isThrownBy(() -> optionService.saveOption(1L, request));
-    }
-
-    @Test
     void 옵션_차감_성공() {
         //given
-        Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        Option option = new Option("옵션",100,product);
+        Option option = new Option("옵션", 100);
         given(optionRepository.findById(any()))
                 .willReturn(Optional.of(option));
         //when
-        optionService.subtractOption(1L,70);
+        optionService.subtractOption(1L, 70);
         //then
         assertThat(option.getQuantity()).isEqualTo(30);
     }
@@ -98,9 +77,7 @@ class OptionServiceTest {
     @Test
     void 옵션_차감_실패_재고보다_많은_요청() {
         //given
-        Product product = new Product("더미", 10000, "test.jpg",
-                new Category("테스트", "##", "설명", "test"));
-        Option option = new Option("옵션",100,product);
+        Option option = new Option("옵션", 100);
         given(optionRepository.findById(any()))
                 .willReturn(Optional.of(option));
         //when
