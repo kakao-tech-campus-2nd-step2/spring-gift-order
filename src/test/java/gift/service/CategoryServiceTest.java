@@ -9,14 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class CategoryServiceTest {
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void test() {
 
