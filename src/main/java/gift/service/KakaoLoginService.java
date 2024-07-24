@@ -41,8 +41,6 @@ public class KakaoLoginService {
         try {
             ResponseEntity<Map> response = restTemplate.exchange(request, Map.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                System.out.println("Response Body: " + response.getBody());
-                System.out.println((String) response.getBody().get("access_token"));
                 return (String) response.getBody().get("access_token");
             } else {
                 throw new Exception("Failed to get access token from Kakao");
