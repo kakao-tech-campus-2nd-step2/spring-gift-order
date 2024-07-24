@@ -17,7 +17,7 @@ public class Category {
     private String name;
     @Column(name="color", nullable = false)
     private String color;
-    @Column(name="imageUrl", nullable = false)
+    @Column(name="image_url", nullable = false)
     private String imageUrl;
     @Column(name="description", nullable = false)
     private String description;
