@@ -1,9 +1,10 @@
 package gift.controller.auth;
 
+import gift.domain.AuthToken;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
 import gift.service.AuthService;
-import gift.service.KakaoOauthService;
+import gift.service.KakaoService;
 import gift.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -21,13 +22,12 @@ public class AuthApiController {
 
     private final AuthService authService;
     private final TokenService tokenService;
+    private final KakaoService kakaoService;
 
-    private final KakaoOauthService kakaoOauthService;
-
-    public AuthApiController(AuthService authService, TokenService tokenService, KakaoOauthService kakaoOauthService) {
+    public AuthApiController(AuthService authService, TokenService tokenService, KakaoService kakaoService) {
         this.authService = authService;
         this.tokenService = tokenService;
-        this.kakaoOauthService = kakaoOauthService;
+        this.kakaoService = kakaoService;
     }
 
     @PostMapping("/members/register")
@@ -49,23 +49,36 @@ public class AuthApiController {
     }
 
     @GetMapping("/members/login/oauth/kakao")
-    public ResponseEntity<Map<String, String>> memberKakaoLogin(HttpServletRequest servletRequest){
+    public ResponseEntity<Map<String, String>> renewOAuthToken(HttpServletRequest servletRequest){
         String code = servletRequest.getParameter("code");
 
-        String kakaoAccessToken = kakaoOauthService.getKakaoAccessToken(code);
+        Map<String, String> kakaoTokenInfo = kakaoService.getKakaoOauthToken(code);
 
-        String kakaoUserInformation = kakaoOauthService.getKakaoUserInformation(kakaoAccessToken);
+        String kakaoUserInformation = kakaoService.getKakaoUserInformation(kakaoTokenInfo.get("access_token"));
 
-        MemberResponseDto memberResponseDto = authService.kakaoMemberLogin(kakaoUserInformation);
-
-        tokenService.tokenSave(kakaoAccessToken, memberResponseDto.email());
+        String token = authService.kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo);
 
         Map<String, String> response = new HashMap<>();
-        response.put("token", kakaoAccessToken);
+        response.put("token", token);
 
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
+    @GetMapping("/oauth/renew/kakao")
+    public ResponseEntity<Map<String, String>> memberKakaoLogin(HttpServletRequest servletRequest){
+        String tokenId = servletRequest.getParameter("token");
+
+        AuthToken findToken = tokenService.findTokenById(Long.valueOf(tokenId));
+
+        Map<String, String> renewTokenInfo = kakaoService.renewToken(findToken);
+
+        AuthToken updateToken = tokenService.updateToken(renewTokenInfo);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("token", updateToken.getToken());
+
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
+    }
 
     public Map<String, String> getToken(String memberRequestDto) {
         UUID uuid = UUID.randomUUID();
