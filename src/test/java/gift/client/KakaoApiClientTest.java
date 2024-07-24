@@ -3,6 +3,12 @@ package gift.client;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoUserResponse;
+import gift.entity.Order;
+import gift.entity.Product;
+import gift.entity.ProductName;
+import gift.entity.ProductOption;
+import gift.entity.Option;
+import gift.entity.OptionName;
 import gift.exception.BusinessException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -14,6 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,7 +47,8 @@ public class KakaoApiClientTest {
                 "http://localhost:8080/oauth/kakao/callback",
                 "https://kauth.kakao.com/oauth/authorize",
                 mockWebServer.url("/oauth/token").toString(),
-                mockWebServer.url("/v2/user/me").toString()
+                mockWebServer.url("/v2/user/me").toString(),
+                mockWebServer.url("/v2/api/talk/memo/default/send").toString()
         );
         kakaoApiClient = new KakaoApiClient(kakaoProperties, webClientBuilder);
     }
@@ -100,5 +109,42 @@ public class KakaoApiClientTest {
                 .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
 
         assertThrows(BusinessException.class, () -> kakaoApiClient.getUserInfo(accessToken));
+    }
+
+    @Test
+    public void 메시지_보내기_성공() throws Exception {
+        String accessToken = "accessToken";
+        ProductName productName = new ProductName("Test Product");
+        Product product = new Product(productName, 1000, "http://example.com/image.jpg", null);
+        OptionName optionName = new OptionName("Test Option");
+        Option option = new Option(optionName);
+
+        ProductOption productOption = new ProductOption(product, option, 10);
+        Order order = new Order(productOption, null, 1, LocalDateTime.now(), "Test Message");
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+
+        kakaoApiClient.sendMessageToMe(accessToken, order);
+    }
+
+    @Test
+    public void 메시지_보내기_실패() {
+        String accessToken = "accessToken";
+        ProductName productName = new ProductName("Test Product");
+        Product product = new Product(productName, 1000, "http://example.com/image.jpg", null);
+        OptionName optionName = new OptionName("Test Option");
+        Option option = new Option(optionName);
+
+        ProductOption productOption = new ProductOption(product, option, 10);
+        Order order = new Order(productOption, null, 1, LocalDateTime.now(), "Test Message");
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(400)
+                .setBody("{\"msg\":\"failed to parse parameter\",\"code\":-2}")
+                .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+
+        assertThrows(BusinessException.class, () -> kakaoApiClient.sendMessageToMe(accessToken, order));
     }
 }
