@@ -1,15 +1,16 @@
 package gift.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.error.KakaoAuthenticationException;
 import gift.users.kakao.KakaoAuthService;
 import gift.users.kakao.KakaoProperties;
 import gift.users.user.UserService;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -29,14 +31,12 @@ public class KakaoAuthServiceTest {
     private MockRestServiceServer server;
     private KakaoAuthService kakaoAuthService;
     private UserService userService = mock(UserService.class);
-    private ObjectMapper objectMapper;
     private RestClient.Builder restClientBuilder;
     @Autowired
     private KakaoProperties kakaoProperties;
 
     @BeforeEach
     void beforeEach() {
-        objectMapper = new ObjectMapper();
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);
         factory.setReadTimeout(10000);
@@ -46,13 +46,13 @@ public class KakaoAuthServiceTest {
                 headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             });
         server = MockRestServiceServer.bindTo(restClientBuilder).build();
-        kakaoAuthService = new KakaoAuthService(kakaoProperties, restClientBuilder, objectMapper,
+        kakaoAuthService = new KakaoAuthService(kakaoProperties, restClientBuilder,
             userService);
     }
 
     @Test
-    @DisplayName("카카오 로그인")
-    void kakaoCallBack() throws JsonProcessingException {
+    @DisplayName("카카오 로그인 성공")
+    void kakaoCallBackSuccess() {
         //given
         String code = "test_code";
         String tokenResponse = "{\"access_token\":\"test_access_token\"}";
@@ -74,5 +74,41 @@ public class KakaoAuthServiceTest {
 
         //then
         assertThat(result).isEqualTo("user_token");
+    }
+
+    @Test
+    @DisplayName("카카오 로그인 실패 BAD_REQUEST")
+    void kakaoCallBackFailedWhenBadRequest() {
+        //given
+        String code = "test_code";
+
+        server.expect(requestTo(kakaoProperties.tokenUrl()))
+            .andExpect(method(POST))
+            .andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        //when
+
+        //then
+        assertThatThrownBy(() -> kakaoAuthService.kakaoCallBack(code))
+            .isInstanceOf(KakaoAuthenticationException.class)
+            .hasMessageContaining("카카오 토큰 값을 서버에서 가져오는 데에 실패했습니다.");
+    }
+
+    @Test
+    @DisplayName("카카오 로그인 실패 DTO에 null 값을 전달 받음")
+    void kakaoCallBackFailedWhenBodyIsNull() {
+        //given
+        String code = "test_code";
+
+        server.expect(requestTo(kakaoProperties.tokenUrl()))
+            .andExpect(method(POST))
+            .andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+
+        //when
+
+        //then
+        assertThatThrownBy(() -> kakaoAuthService.kakaoCallBack(code))
+            .isInstanceOf(KakaoAuthenticationException.class)
+            .hasMessageContaining("카카오 토큰 값이 비어있습니다.");
     }
 }

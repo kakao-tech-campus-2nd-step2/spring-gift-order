@@ -2,7 +2,6 @@ package gift.administrator.category;
 
 import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,23 +29,21 @@ public class CategoryApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("id") Long id)
-        throws NotFoundException {
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable("id") Long id) {
         CategoryDTO categoryDTO = categoryService.getCategoryById(id);
         return ResponseEntity.ok(categoryDTO);
     }
 
     @PostMapping
-    public ResponseEntity<?> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> addCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         categoryService.existsByNameThrowException(categoryDTO.getName());
         CategoryDTO result = categoryService.addCategory(categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable("id") Long id,
-        @Valid @RequestBody CategoryDTO categoryDTO)
-        throws NotFoundException {
+    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable("id") Long id,
+        @Valid @RequestBody CategoryDTO categoryDTO) {
         categoryDTO.setId(id);
         categoryService.existsByNameAndId(categoryDTO.getName(), categoryDTO.getId());
         CategoryDTO result = categoryService.updateCategory(categoryDTO);
@@ -54,8 +51,7 @@ public class CategoryApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<CategoryDTO> deleteCategory(@PathVariable("id") Long id)
-        throws NotFoundException {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok().build();
     }

@@ -1,8 +1,8 @@
 package gift.administrator.option;
 
 import gift.administrator.product.Product;
+import gift.error.NotFoundIdException;
 import java.util.List;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,24 +37,28 @@ public class OptionService {
         }
     }
 
-    public int countAllOptionsByProductIdFromOptionId(long optionId) throws NotFoundException {
+    public int countAllOptionsByProductIdFromOptionId(long optionId) {
         long productId = findOptionById(optionId).getProductId();
         return optionRepository.countAllByProductId(productId);
     }
 
-    public OptionDTO updateOption(long optionId, OptionDTO optionDTO) throws NotFoundException {
-        Option option = optionRepository.findById(optionId).orElseThrow(NotFoundException::new);
+    public OptionDTO updateOption(long optionId, OptionDTO optionDTO) {
+        Option option = findByOptionId(optionId);
         option.update(optionDTO.getName(), optionDTO.getQuantity());
         return OptionDTO.fromOption(optionRepository.save(option));
     }
 
-    public OptionDTO findOptionById(long optionId) throws NotFoundException {
-        return OptionDTO.fromOption(
-            optionRepository.findById(optionId).orElseThrow(NotFoundException::new));
+    public OptionDTO findOptionById(long optionId) {
+        return OptionDTO.fromOption(findByOptionId(optionId));
     }
 
-    public Option subtractOptionQuantity(long optionId, int quantity) throws NotFoundException {
-        Option option = optionRepository.findById(optionId).orElseThrow(NotFoundException::new);
+    private Option findByOptionId(long optionId) {
+        return optionRepository.findById(optionId)
+            .orElseThrow(() -> new NotFoundIdException("아이디를 찾을 수 없습니다."));
+    }
+
+    public Option subtractOptionQuantity(long optionId, int quantity) {
+        Option option = findByOptionId(optionId);
         if (option.getQuantity() < quantity) {
             throw new IllegalArgumentException("옵션의 수량이 부족합니다.");
         }
@@ -67,11 +71,11 @@ public class OptionService {
         optionRepository.deleteAll(options);
     }
 
-    public void deleteOptionByOptionId(long optionId) throws NotFoundException {
+    public void deleteOptionByOptionId(long optionId) {
         if (!optionRepository.existsById(optionId)) {
             throw new IllegalArgumentException("없는 아이디입니다.");
         }
-        Option option = optionRepository.findById(optionId).orElseThrow(NotFoundException::new);
+        Option option = findByOptionId(optionId);
         option.getProduct().removeOption(option);
         optionRepository.deleteById(option.getId());
     }

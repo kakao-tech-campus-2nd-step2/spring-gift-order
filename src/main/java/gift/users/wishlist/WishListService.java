@@ -12,7 +12,6 @@ import gift.users.user.UserService;
 import gift.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +31,9 @@ public class WishListService {
     private final UserService userService;
     private final OptionService optionService;
     private final JwtUtil jwtUtil;
+
+    private static final String HEADER_NAME = "Authorization";
+    private static final String HEADER_VALUE = "Bearer ";
 
     public WishListService(WishListRepository wishListRepository, ProductService productService,
         UserService userService, OptionService optionService,
@@ -55,8 +57,8 @@ public class WishListService {
     }
 
     public void extractUserIdFromTokenAndValidate(HttpServletRequest request, Long userId) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String authHeader = request.getHeader(HEADER_NAME);
+        if (authHeader == null || !authHeader.startsWith(HEADER_VALUE)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
         String token = authHeader.substring(7);
@@ -66,7 +68,7 @@ public class WishListService {
         }
     }
 
-    public WishListDTO addWishList(WishListDTO wishListDTO, Long userId) throws NotFoundException {
+    public WishListDTO addWishList(WishListDTO wishListDTO, Long userId) {
         UserDTO userDTO = userService.findById(userId);
         User user = userDTO.toUser();
         validateIfProductExists(userId, wishListDTO.getProductId(), user.getEmail());
@@ -92,8 +94,7 @@ public class WishListService {
         }
     }
 
-    public WishListDTO updateWishList(long userId, long productId, WishListDTO wishListDTO)
-        throws NotFoundException {
+    public WishListDTO updateWishList(long userId, long productId, WishListDTO wishListDTO) {
         validateIfProductNotExists(userId, productId);
 
         WishList wishList = wishListRepository.findByUserIdAndProductId(userId, productId);
@@ -111,7 +112,7 @@ public class WishListService {
         return WishListDTO.fromWishList(wishList);
     }
 
-    private Product toProductByProductIdAndSetOption(long productId) throws NotFoundException {
+    private Product toProductByProductIdAndSetOption(long productId) {
         ProductDTO productDTO = productService.getProductById(productId);
         Product product = productDTO.toProduct(productDTO,
             productService.getCategoryById(productDTO.getCategoryId()));
@@ -121,7 +122,7 @@ public class WishListService {
         return product;
     }
 
-    private void validateIfProductNotExists(long userId, long productId) throws NotFoundException {
+    private void validateIfProductNotExists(long userId, long productId) {
         if (!wishListRepository.existsByUserIdAndProductId(userId, productId)) {
             throw new IllegalArgumentException(
                 userService.findById(userId).email() + "의 위시리스트에는 " + productService.getProductById(
@@ -138,7 +139,7 @@ public class WishListService {
     }
 
     @Transactional
-    public void deleteWishList(long userId, long productId) throws NotFoundException {
+    public void deleteWishList(long userId, long productId) {
         if (!wishListRepository.existsByUserIdAndProductId(userId, productId)) {
             throw new IllegalArgumentException(
                 userService.findById(userId).email() + "의 위시리스트에는 " + productService.getProductById(

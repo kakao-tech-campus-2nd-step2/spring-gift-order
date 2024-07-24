@@ -1,6 +1,6 @@
 package gift.users.kakao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import gift.error.KakaoAuthenticationException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,17 @@ public class KakaoAuthApiController {
     }
 
     @GetMapping("/authorize")
-    public void kakaoLogin(HttpServletResponse response) throws IOException {
+    public void kakaoLogin(HttpServletResponse response) {
         String kakaoLoginUrl = kakaoAuthService.getKakaoLoginUrl();
-        response.sendRedirect(kakaoLoginUrl);
+        try {
+            response.sendRedirect(kakaoLoginUrl);
+        } catch (IOException e){
+            throw new KakaoAuthenticationException("카카오 로그인에 실패했습니다.");
+        }
     }
 
     @GetMapping("/token")
-    public ResponseEntity<String> kakaoCallBack(@RequestParam("code") String code)
-        throws JsonProcessingException {
+    public ResponseEntity<String> kakaoCallBack(@RequestParam("code") String code) {
         String accessToken = kakaoAuthService.kakaoCallBack(code);
         return ResponseEntity.ok(accessToken);
     }

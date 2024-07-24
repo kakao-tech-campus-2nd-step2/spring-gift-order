@@ -1,16 +1,20 @@
 package gift.controller;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.error.KakaoAuthenticationException;
 import gift.users.kakao.KakaoAuthApiController;
 import gift.users.kakao.KakaoAuthService;
 import gift.users.kakao.KakaoProperties;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +31,6 @@ public class KakaoAuthApiControllerTest {
     private final KakaoAuthService kakaoAuthService = mock(KakaoAuthService.class);
     private MockMvc mvc;
     private KakaoAuthApiController kakaoAuthApiController;
-    private ObjectMapper objectMapper;
     @Autowired
     private KakaoProperties kakaoProperties;
 
@@ -37,7 +40,6 @@ public class KakaoAuthApiControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(kakaoAuthApiController)
             .defaultResponseCharacterEncoding(UTF_8)
             .build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -74,5 +76,22 @@ public class KakaoAuthApiControllerTest {
         //then
         resultActions.andExpect(status().isOk())
             .andExpect(content().string(accessToken));
+    }
+
+    @Test
+    @DisplayName("로그인 화면 리다이렉트 IOException")
+    void kakaoLoginBadRedirection() throws Exception {
+        //given
+        String expectedUrl = kakaoProperties.authUrl() + "?response_type=code&client_id="
+            + kakaoProperties.clientId() + "&redirect_uri=" + kakaoProperties.redirectUri();
+        given(kakaoAuthService.getKakaoLoginUrl()).willReturn(expectedUrl);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        doThrow(new IOException()).when(response).sendRedirect(expectedUrl);
+
+        //when
+
+        //then
+        assertThatThrownBy(() -> kakaoAuthApiController.kakaoLogin(response)).isInstanceOf(
+            KakaoAuthenticationException.class).hasMessageContaining("카카오 로그인에 실패했습니다.");
     }
 }

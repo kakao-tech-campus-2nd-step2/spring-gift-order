@@ -1,11 +1,9 @@
 package gift.administrator.category;
 
+import gift.error.NotFoundIdException;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 @Service
 public class CategoryService {
@@ -22,8 +20,8 @@ public class CategoryService {
             .toList();
     }
 
-    public CategoryDTO getCategoryById(long id) throws NotFoundException {
-        Category category = categoryRepository.findById(id).orElseThrow(NotFoundException::new);
+    public CategoryDTO getCategoryById(long id) {
+        Category category = findByCategoryId(id);
         return CategoryDTO.fromCategory(category);
     }
 
@@ -34,9 +32,13 @@ public class CategoryService {
         return CategoryDTO.fromCategory(categoryRepository.save(categoryDTO.toCategory()));
     }
 
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) throws NotFoundException {
-        Category category = categoryRepository.findById(categoryDTO.getId())
-            .orElseThrow(NotFoundException::new);
+    private Category findByCategoryId(long categoryId){
+        return categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new NotFoundIdException("카테고리 아이디를 찾을 수 없습니다."));
+    }
+
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+        Category category = findByCategoryId(categoryDTO.getId());
         if (categoryRepository.existsByNameAndIdNot(categoryDTO.getName(), categoryDTO.getId())) {
             throw new IllegalArgumentException("존재하는 이름입니다.");
         }
@@ -45,8 +47,10 @@ public class CategoryService {
         return CategoryDTO.fromCategory(categoryRepository.save(category));
     }
 
-    public void deleteCategory(long id) throws NotFoundException {
-        categoryRepository.findById(id).orElseThrow(NotFoundException::new);
+    public void deleteCategory(long id) {
+        if(!categoryRepository.existsById(id)){
+            throw new NotFoundIdException("삭제하려는 카테고리가 존재하지 않습니다.");
+        }
         categoryRepository.deleteById(id);
     }
 
@@ -59,8 +63,9 @@ public class CategoryService {
             throw new IllegalArgumentException("존재하는 이름입니다.");
         }
     }
+
     public void existsByNameAndId(String name, long id)
-        throws NotFoundException {
+        throws NotFoundIdException {
         if (existsByName(name) && !Objects.equals(getCategoryById(id).getName(), name)) {
             throw new IllegalArgumentException("존재하는 이름입니다.");
         }

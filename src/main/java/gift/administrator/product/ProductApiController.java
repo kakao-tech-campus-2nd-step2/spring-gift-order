@@ -3,7 +3,6 @@ package gift.administrator.product;
 import gift.util.PageUtil;
 import jakarta.validation.Valid;
 import java.util.Arrays;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
@@ -43,22 +42,21 @@ public class ProductApiController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable("id") Long id)
-        throws NotFoundException {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable("id") Long id) {
         ProductDTO productDTO = productService.getProductById(id);
         return ResponseEntity.status(HttpStatus.OK).body(productDTO);
     }
 
     @PostMapping
-    public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
+    public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO) {
         productService.existsByNameAddingProducts(productDTO);
         ProductDTO result = productService.addProduct(productDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable("id") Long id,
-        @Valid @RequestBody ProductDTO productDTO) throws NotFoundException {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id,
+        @Valid @RequestBody ProductDTO productDTO) {
         productDTO.setId(id);
         productService.existsByNameAndId(productDTO.getName(), productDTO.getId());
 
@@ -67,8 +65,7 @@ public class ProductApiController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("id") Long id)
-        throws NotFoundException {
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         productService.getProductById(id);
         productService.deleteProduct(id);
         return ResponseEntity.ok().build();

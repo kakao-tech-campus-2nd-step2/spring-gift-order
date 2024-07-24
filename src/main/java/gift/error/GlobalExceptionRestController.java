@@ -15,4 +15,14 @@ public class GlobalExceptionRestController{
         BindingResult bindingResult = ex.getBindingResult();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorResponse.of(bindingResult));
     }
+
+    @ExceptionHandler(KakaoAuthenticationException.class)
+    public ResponseEntity<String> handleKakaoAuthenticationException(Exception ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundIdException.class)
+    public ResponseEntity<String> handleNotFoundIdException(Exception ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }

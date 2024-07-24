@@ -18,11 +18,11 @@ import gift.administrator.category.CategoryApiController;
 import gift.administrator.category.CategoryDTO;
 import gift.administrator.category.CategoryService;
 import gift.error.GlobalExceptionRestController;
+import gift.error.NotFoundIdException;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -159,14 +159,14 @@ public class CategoryApiControllerTest {
 
     @Test
     @DisplayName("카테고리 삭제 존재하지 않는 아이디라 실패해서 NotFoundException 던짐")
-    void deleteCategoryFailed() throws Exception {
+    void deleteCategoryFailed() {
         //given
-        doThrow(new NotFoundException()).when(categoryService).deleteCategory(1L);
+        doThrow(new NotFoundIdException("삭제하려는 카테고리가 존재하지 않습니다.")).when(categoryService).deleteCategory(1L);
 
         //when
 
         //then
         assertThatThrownBy(() -> categoryApiController.deleteCategory(1L)).isInstanceOf(
-            NotFoundException.class);
+            NotFoundIdException.class).hasMessageContaining("삭제하려는 카테고리가 존재하지 않습니다.");
     }
 }

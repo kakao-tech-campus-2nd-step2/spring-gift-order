@@ -105,7 +105,7 @@ public class OptionApiControllerTest {
 
     @Test
     @DisplayName("옵션 아이디로 옵션 삭제하기")
-    void deleteOptionByOptionIdOptionNotExistsError() throws Exception {
+    void deleteOptionByOptionIdOptionNotExistsError() {
         //given
         doThrow(new IllegalArgumentException("없는 아이디입니다.")).when(optionService).deleteOptionByOptionId(1L);
 
