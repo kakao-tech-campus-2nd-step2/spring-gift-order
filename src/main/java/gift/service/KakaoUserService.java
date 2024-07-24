@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
+import gift.dto.KakaoUserResponse;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,6 +44,23 @@ public class KakaoUserService {
 
         ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request,
             KakaoTokenResponse.class);
+
+        return response.getBody();
+    }
+
+    public KakaoUserResponse getUserInfo(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(accessToken);
+
+        String propertyKeys = "[\"kakao_account.email\"]";
+
+        RequestEntity<String> request = new RequestEntity<>("property_keys=" + propertyKeys,
+            headers, HttpMethod.GET, URI.create(url));
+
+        ResponseEntity<KakaoUserResponse> response = restTemplate.exchange(request,
+            KakaoUserResponse.class);
 
         return response.getBody();
     }

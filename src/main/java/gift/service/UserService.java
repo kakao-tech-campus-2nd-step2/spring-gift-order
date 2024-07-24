@@ -44,4 +44,11 @@ public class UserService {
         }
         return tokenService.generateToken(user.getEmail());
     }
+
+    public void kakaoUserRegister(String email, String password) {
+        if (userRepository.findByEmail(email).isEmpty()) {
+            User newUser = new User(email, password);
+            userRepository.save(newUser);
+        }
+    }
 }

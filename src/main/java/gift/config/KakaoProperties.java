@@ -9,6 +9,7 @@ public class KakaoProperties {
 
     private String clientId;
     private String redirectUri;
+    private String defaultPassword;
 
     public String getClientId() {
         return clientId;
@@ -24,5 +25,13 @@ public class KakaoProperties {
 
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
+    }
+
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public void setDefaultPassword(String defaultPassword) {
+        this.defaultPassword = defaultPassword;
     }
 }
