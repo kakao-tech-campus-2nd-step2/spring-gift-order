@@ -1,5 +1,7 @@
 package gift.product.entity;
 
+import gift.exception.CustomException;
+import gift.exception.ErrorCode;
 import gift.product.category.entity.Category;
 import gift.product.dto.request.UpdateProductRequest;
 import gift.product.option.entity.Option;
@@ -83,6 +85,17 @@ public class Product {
         option.initProduct(this);
         this.options.addOption(option);
         this.optionSet.add(option);
+    }
+
+    public void editOption(Long optionId, String name, Integer quantity) {
+        Option option = this.optionSet.stream()
+            .filter(option1 -> option1.getId().equals(optionId))
+            .findFirst()
+            .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
+
+        Option temp = new Option(name, quantity, this);
+        this.options.validateNameDuplicate(temp);
+        option.edit(name, quantity);
     }
 
     public void removeOption(Option option) {
