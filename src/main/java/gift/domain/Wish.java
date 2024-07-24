@@ -15,8 +15,8 @@ public class Wish {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "option_id")
+    private Option option;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
@@ -27,26 +27,26 @@ public class Wish {
     private Wish(Builder builder) {
         this.id = builder.id;
         this.member = builder.member;
-        this.product = builder.product;
+        this.option = builder.option;
         this.quantity = builder.quantity;
     }
 
-    public Wish(Long id, Member member, Product product, int quantity) {
+    public Wish(Long id, Member member, Option option, int quantity) {
         this.id = id;
         this.member = member;
-        this.product = product;
+        this.option = option;
         this.quantity = quantity;
     }
 
-    public Wish(Member member, Product product, int quantity) {
+    public Wish(Member member, Option option, int quantity) {
         this.member = member;
-        this.product = product;
+        this.option = option;
         this.quantity = quantity;
         if(this.member != null){
             this.member.addWish(this);
         }
-        if(this.product != null){
-            this.product.addWish(this);
+        if(this.option != null){
+            this.option.addWish(this);
         }
     }
 
@@ -54,8 +54,8 @@ public class Wish {
         if(this.member != null){
             this.member.removeWish(this);
         }
-        if(this.product != null){
-            this.product.removeWish(this);
+        if(this.option != null){
+            this.option.removeWish(this);
         }
     }
 
@@ -71,10 +71,6 @@ public class Wish {
         return member;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public int getQuantity() {
         return quantity;
     }
@@ -83,14 +79,18 @@ public class Wish {
         this.member = member;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public Option getOption() {
+        return option;
+    }
+
+    public void setOption(Option option) {
+        this.option = option;
     }
 
     public static class Builder{
         private Long id;
         private Member member;
-        private Product product;
+        private Option option;
         private int quantity;
 
         public Builder id(Long id){
@@ -103,8 +103,8 @@ public class Wish {
             return this;
         }
 
-        public Builder product(Product product){
-            this.product = product;
+        public Builder option(Option option){
+            this.option = option;
             return this;
         }
 
@@ -118,8 +118,8 @@ public class Wish {
             if(wish.member != null && wish.id == null){
                 wish.member.addWish(wish);
             }
-            if(wish.product != null && wish.id == null){
-                wish.product.addWish(wish);
+            if(wish.option != null && wish.id == null){
+                wish.option.addWish(wish);
             }
             return wish;
         }
