@@ -3,6 +3,7 @@ package gift.util;
 import gift.config.KakaoProperties;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,10 +18,12 @@ import java.util.Map;
 public class AuthUtil {
 
     private final KakaoProperties kakaoProperties;
+    private final RestClient restClient;
 
     @Autowired
-    public AuthUtil(KakaoProperties kakaoProperties) {
+    public AuthUtil(KakaoProperties kakaoProperties,@Qualifier("customRestClient") RestClient restClient) {
         this.kakaoProperties = kakaoProperties;
+        this.restClient = restClient;
     }
 
     public String createGetCodeUrl() {
@@ -36,8 +39,6 @@ public class AuthUtil {
 
 
     public String getAccessToken(String authCode) {
-        RestClient restClient = RestClient.builder().build();
-
         String url = kakaoProperties.getTokenUrl();
         MultiValueMap<String, String> params = createParams(authCode);
         AuthTokenResponse resp = restClient.post()
@@ -52,7 +53,6 @@ public class AuthUtil {
 
     public String extractUserEmail(String accessToken) {
         String url = kakaoProperties.getUserInfoUrl();
-        RestClient restClient = RestClient.builder().build();
         Map resp = restClient.get()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer " + accessToken)
@@ -64,7 +64,6 @@ public class AuthUtil {
 
     public String sendMessage(String accessToken, String text){
         String url = kakaoProperties.getSendMessageUrl();
-        RestClient restClient = RestClient.builder().build();
 
         String templateObject = String.format(
                 "{\"object_type\": \"text\", \"text\": \"%s\", \"link\": {\"web_url\": \"https://www.test.com\", \"mobile_web_url\": \"https://www.test.com\"}, \"button_title\": \"선물 확인\"}",
