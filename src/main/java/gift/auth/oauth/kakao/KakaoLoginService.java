@@ -1,38 +1,36 @@
 package gift.auth.oauth.kakao;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.auth.dto.Token;
+import gift.client.KakaoApiClient;
+import gift.client.KakaoAuthClient;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;
 import gift.domain.user.service.UserService;
-import gift.exception.OauthLoginException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoLoginService {
 
     private final KakaoProperties kakaoProperties;
+    private final KakaoAuthClient kakaoAuthClient;
+    private final KakaoApiClient kakaoApiClient;
     private final UserService userService;
-    private final ObjectMapper objectMapper;
-
-    private static final RestClient restClient = RestClient.create();
 
     private static final String GRANT_TYPE = "authorization_code";
 
-    public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService, ObjectMapper objectMapper) {
+    public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService,
+        KakaoAuthClient kakaoAuthClient, KakaoApiClient kakaoApiClient) {
         this.kakaoProperties = kakaoProperties;
         this.userService = userService;
-        this.objectMapper = objectMapper;
+        this.kakaoAuthClient = kakaoAuthClient;
+        this.kakaoApiClient = kakaoApiClient;
     }
 
     public Token login(String code) {
@@ -62,60 +60,27 @@ public class KakaoLoginService {
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
 
-        JsonNode jsonResponse = restClient.post()
-            .uri(URI.create(kakaoProperties.tokenRequestUrl()))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange((request, response) -> {
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new OauthLoginException(response.toString());
-                }
-                return objectMapper.readTree(response.getBody());
-            });
+        JsonNode response = kakaoAuthClient.getAccessToken(body);
 
-        return jsonResponse.get("access_token").asText();
+        return response.get("access_token").asText();
     }
 
     private void validateAccessToken(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        restClient.get()
-            .uri(URI.create(kakaoProperties.tokenInfoRequestUrl()))
-            .headers(httpHeaders -> {
-                httpHeaders.addAll(headers);
-            })
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange((request, response) -> {
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new OauthLoginException(response.toString());
-                }
-                return response.getBody().toString();
-            });
+        kakaoApiClient.getAccessTokenInfo(headers);
     }
 
     private Map<String, String> getUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        JsonNode jsonResponse = restClient.get()
-            .uri(URI.create(kakaoProperties.userInfoRequestUrl()))
-            .headers(httpHeaders -> {
-                httpHeaders.addAll(headers);
-            })
-            .accept(MediaType.APPLICATION_JSON)
-            .exchange((request, response) -> {
-                if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new OauthLoginException(response.toString());
-                }
-                return objectMapper.readTree(response.getBody());
-            });
+        JsonNode response = kakaoApiClient.getUserInfo(headers);
 
         Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("name", jsonResponse.get("kakao_account").get("profile").get("nickname").asText());
-        userInfo.put("email", jsonResponse.get("kakao_account").get("email").asText());
+        userInfo.put("name", response.get("kakao_account").get("profile").get("nickname").asText());
+        userInfo.put("email", response.get("kakao_account").get("email").asText());
 
         return userInfo;
     }
