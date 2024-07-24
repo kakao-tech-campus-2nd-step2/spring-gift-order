@@ -3,12 +3,11 @@
 <head>
   <title>Wishlist List</title>
   <script>
-    function placeOrder(rowId) {
+    function placeOrder(rowId, token) {
       const userId = document.querySelector(`#userId_${rowId}`).textContent;
       const selectedOption = document.querySelector(`#optionSelect_${rowId}`).value;
       const amount = parseInt(document.querySelector(`#amount_${rowId}`).textContent, 10);
       const message = document.querySelector(`#message_${rowId}`).value;
-      const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');  // CSRF 토큰이 필요한 경우
 
       const data = {
         optionId: selectedOption,
@@ -19,15 +18,13 @@
       fetch(`/api/orders?userId=${userId}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`  // Authorization 헤더 추가
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       }).then(response => {
         if (response.ok) {
           alert('Order placed successfully');
-          // 화면 이동
-          window.location.href = '/wishlist/';
         } else {
           alert('Failed to place order');
         }
@@ -75,7 +72,8 @@
       <textarea th:id="'message_' + ${iterStat.index}"></textarea>
     </td>
     <td>
-      <button type="button" th:onclick="'placeOrder(' + ${iterStat.index} + ')'">Order</button>
+      <button type="button" th:data-row-id="${iterStat.index}" th:data-token="${token}"
+              onclick="placeOrder(this.getAttribute('data-row-id'), this.getAttribute('data-token'))">Order</button>
     </td>
   </tr>
   </tbody>
