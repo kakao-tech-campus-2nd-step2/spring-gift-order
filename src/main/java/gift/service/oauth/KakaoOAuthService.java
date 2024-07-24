@@ -13,6 +13,10 @@ import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
+import gift.exception.oauth.KakaoScopeException;
+import gift.exception.oauth.KakaoTokenException;
+import gift.exception.oauth.KakaoUnlinkException;
+import gift.exception.oauth.KakaoUserInfoException;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.http.MediaType;
@@ -59,10 +63,10 @@ public class KakaoOAuthService {
 
                 return new KakaoTokenResponse(accessToken, expiresIn, refreshToken, refreshTokenExpiresIn);
             } else {
-                throw new RuntimeException(TOKEN_RESPONSE_ERROR);
+                throw new KakaoTokenException(TOKEN_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException(TOKEN_FAILURE_ERROR, e);
+            throw new KakaoTokenException(TOKEN_FAILURE_ERROR);
         }
     }
 
@@ -81,10 +85,10 @@ public class KakaoOAuthService {
                 Long id = ((Number) responseBody.get("id")).longValue();
                 return new KakaoUnlinkResponse(id);
             } else {
-                throw new RuntimeException(UNLINK_RESPONSE_ERROR);
+                throw new KakaoUnlinkException(UNLINK_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException(UNLINK_FAILURE_ERROR, e);
+            throw new KakaoUnlinkException(UNLINK_FAILURE_ERROR);
         }
     }
 
@@ -100,7 +104,7 @@ public class KakaoOAuthService {
 
             return response.getBody();
         } catch (RestClientResponseException e) {
-            throw new RuntimeException(SCOPES_FAILURE_ERROR, e);
+            throw new KakaoScopeException(SCOPES_FAILURE_ERROR);
         }
     }
 
@@ -123,10 +127,10 @@ public class KakaoOAuthService {
 
                 return new KakaoUserResponse(id, nickname, email);
             } else {
-                throw new RuntimeException(USERINFO_RESPONSE_ERROR);
+                throw new KakaoUserInfoException(USERINFO_RESPONSE_ERROR);
             }
         } catch (RestClientResponseException e) {
-            throw new RuntimeException(USERINFO_FAILURE_ERROR, e);
+            throw new KakaoUserInfoException(USERINFO_FAILURE_ERROR);
         }
     }
 }
