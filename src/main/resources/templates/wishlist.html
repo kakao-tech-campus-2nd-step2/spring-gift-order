@@ -4,17 +4,18 @@
   <title>Wishlist List</title>
   <script>
     function placeOrder(rowId) {
+      const userId = document.querySelector(`#userId_${rowId}`).textContent;
       const selectedOption = document.querySelector(`#optionSelect_${rowId}`).value;
       const amount = parseInt(document.querySelector(`#amount_${rowId}`).textContent, 10);
       const message = document.querySelector(`#message_${rowId}`).value;
 
       const data = {
-        optionName: selectedOption,
-        quantity: amount, // amount 값을 수량으로 사용합니다.
+        optionId: selectedOption,
+        quantity: amount,
         message: message
       };
 
-      fetch('/api/orders', {
+      fetch(`/api/orders?userId=${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -49,7 +50,7 @@
   </thead>
   <tbody>
   <tr th:each="wishlist, iterStat : ${wishlists.content}">
-    <td th:text="${wishlist.userId}"></td>
+    <td th:id="'userId_' + ${iterStat.index}" th:text="${wishlist.userId}"></td>
     <td th:text="${wishlist.productDTO().id}"></td>
     <td th:text="${wishlist.productDTO().name}"></td>
     <td th:text="${wishlist.productDTO().price}"></td>
@@ -58,8 +59,8 @@
     <td>
       <select th:id="'optionSelect_' + ${iterStat.index}">
         <option th:each="option : ${wishlist.productDTO().optionDTOList}"
-                th:value="${option.name}"
-                th:text="${option.name}">
+                th:value="${option.id}" <!-- 변경된 부분 -->
+        th:text="${option.name}">
         </option>
       </select>
     </td>
