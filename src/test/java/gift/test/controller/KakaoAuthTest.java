@@ -2,7 +2,7 @@ package gift.test.controller;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,10 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gift.controller.KakaoAuthController;
 import gift.service.KakaoAuthService;
@@ -36,12 +33,9 @@ public class KakaoAuthTest {
 	@MockBean
     private KakaoAuthService kakaoAuthService;
 	
-	private ObjectMapper objectMapper;
-	
 	@BeforeEach
 	public void setUp() {
 		MockitoAnnotations.openMocks(this);
-		objectMapper = new ObjectMapper();
 	}
 	
 	@Test
@@ -50,14 +44,10 @@ public class KakaoAuthTest {
         Map<String, String> accessTokenResponse = new HashMap<>();
         accessTokenResponse.put("access_token", "dummy_access_token");
         
-        Map<String, String> request = new HashMap<>();
-        request.put("code", authorizationCode);
-        
         when(kakaoAuthService.getAccessToken(anyString())).thenReturn(accessTokenResponse);
 
-        mockMvc.perform(post("/kakao/redirect")
-        		.contentType(MediaType.APPLICATION_JSON)
-        		.content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(get("/kakao/redirect")
+        		.param("code", authorizationCode))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value("dummy_access_token"));
     }
