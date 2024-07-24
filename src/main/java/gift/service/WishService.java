@@ -1,13 +1,13 @@
 package gift.service;
 
-import gift.constants.Messages;
 import gift.domain.Member;
-import gift.domain.Product;
+import gift.domain.Option;
 import gift.domain.Wish;
 import gift.dto.request.MemberRequest;
-import gift.dto.response.ProductResponse;
+import gift.dto.response.OptionResponse;
 import gift.dto.request.WishRequest;
 import gift.dto.response.WishResponse;
+import gift.exception.OptionAlreadyInWishlistException;
 import gift.exception.WishNotFoundException;
 import gift.repository.WishRepository;
 import org.springframework.data.domain.Page;
@@ -18,29 +18,30 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static gift.constants.Messages.NOT_FOUND_WISH;
+import static gift.constants.Messages.OPTION_ALREADY_IN_WISHLIST;
 
 @Service
 public class WishService {
     private final WishRepository wishRepository;
-    private final ProductService productService;
+    private final OptionService optionService;
 
-    public WishService(WishRepository wishRepository, ProductService productService) {
+    public WishService(WishRepository wishRepository, OptionService optionService) {
         this.wishRepository = wishRepository;
-        this.productService = productService;
+        this.optionService = optionService;
     }
 
     @Transactional
     public void save(MemberRequest memberRequest, WishRequest wishRequest){
-        ProductResponse productResponseDto = productService.findByName(wishRequest.productName());
+        if(wishRepository.existsByOptionId(wishRequest.optionId())){
+            throw new OptionAlreadyInWishlistException(OPTION_ALREADY_IN_WISHLIST);
+        }
 
-        Product product = productResponseDto.toEntity();
+        OptionResponse optionResponse = optionService.findById(wishRequest.optionId());
+
+        Option option = optionResponse.toEntity();
         Member member = memberRequest.toEntity();
 
-        Wish newWish = new Wish.Builder()
-                .member(member)
-                .product(product)
-                .qunatity(wishRequest.quantity())
-                .build();
+        Wish newWish = new Wish(member,option,wishRequest.quantity());
 
         wishRepository.save(newWish);
     }
@@ -75,5 +76,15 @@ public class WishService {
                 .orElseThrow(()-> new WishNotFoundException(NOT_FOUND_WISH));
 
         existingWish.updateQuantity(request.quantity());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByOptionId(Long optionId){
+        return wishRepository.existsByOptionId(optionId);
+    }
+
+    @Transactional
+    public void deleteByOptionId(Long optionId){
+        wishRepository.deleteByOptionId(optionId);
     }
 }
