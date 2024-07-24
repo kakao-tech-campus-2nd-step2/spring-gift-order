@@ -43,8 +43,11 @@ public class KakaoProperties {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+<<<<<<< HEAD
 
     public boolean checkKakaoLogin() {
         return !this.accessToken.equals("demoToken");
     }
+=======
+>>>>>>> aab52be (feat: 카카오 메세지 전송 기능 구현)
 }
