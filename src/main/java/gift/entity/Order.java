@@ -67,4 +67,12 @@ public class Order {
     public String getMessage() {
         return message;
     }
+
+    public String getProductName() {
+        return this.option.getProduct().getName();
+    }
+
+    public Integer getTotalPrice() {
+        return this.option.getProduct().getPrice() * quantity;
+    }
 }

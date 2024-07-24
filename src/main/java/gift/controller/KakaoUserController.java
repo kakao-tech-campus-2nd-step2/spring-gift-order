@@ -34,9 +34,14 @@ public class KakaoUserController {
     @GetMapping("/kakao/login")
     public ResponseEntity<KakaoTokenResponse> kakaoCallback(@RequestParam String code) {
         KakaoTokenResponse response = kakaoUserService.getAccessToken(code);
-        KakaoUserResponse userResponse = kakaoUserService.getUserInfo(response.accessToken());
+
+        kakaoProperties.setAccessToken(response.accessToken());
+
+        KakaoUserResponse userResponse = kakaoUserService.getUserInfo(
+            kakaoProperties.getAccessToken());
         userService.kakaoUserRegister(userResponse.kakaoAccount().email(),
             kakaoProperties.getDefaultPassword());
+
         return ResponseEntity.ok().body(response);
     }
 

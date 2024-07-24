@@ -78,4 +78,7 @@ public class Option {
         }
     }
 
+    public Product getProduct() {
+        return this.product;
+    }
 }

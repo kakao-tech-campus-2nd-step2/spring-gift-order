@@ -25,12 +25,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
     private final UserRepository userRepository;
+    private final KakaoMessageService kakaoMessageService;
 
     public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
-        UserRepository userRepository) {
+        UserRepository userRepository, KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.userRepository = userRepository;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @Transactional
@@ -48,6 +50,8 @@ public class OrderService {
 
         option.subtractQuantity(request.getQuantity());
         user.subtractWishNumber(request.getQuantity(), product);
+
+        kakaoMessageService.sendOrderMessage(order);
 
         return new OrderResponse(order.getId(), option.getId(), request.getQuantity(),
             LocalDateTime.now(),
