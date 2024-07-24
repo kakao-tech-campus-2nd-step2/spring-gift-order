@@ -1,6 +1,6 @@
 package gift.auth.service;
 
-import gift.auth.controller.KakaoApiClient;
+import gift.auth.client.KakaoApiClient;
 import gift.auth.dto.KakaoUserInfo;
 import gift.auth.dto.LoginReqDto;
 import gift.auth.exception.LoginFailedException;
