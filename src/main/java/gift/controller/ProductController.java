@@ -11,11 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -34,21 +29,11 @@ public class ProductController {
      * @return 페이징된 상품 목록, 관련 메타데이터 포함한 응답 객체 반환
      */
     @GetMapping()
-    public ResponseEntity<Map<String, Object>> getAllProducts(
+    public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize) {
         Page<Product> allProductsPaged = service.getAllProducts(pageNumber-1, pageSize);
-
-        List<ProductResponseDto> productResponseDtos = allProductsPaged.getContent().stream()
-                .map(ProductResponseDto::toProductResponseDto)
-                .collect(Collectors.toList());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("content", productResponseDtos);
-        response.put("totalPages", allProductsPaged.getTotalPages());
-        response.put("currentPageNumber", allProductsPaged.getNumber());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(allProductsPaged.map(ProductResponseDto::toProductResponseDto), HttpStatus.OK);
     }
 
     /**

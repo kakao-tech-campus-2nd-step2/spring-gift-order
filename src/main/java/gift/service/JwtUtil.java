@@ -36,8 +36,13 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Long getMemberIdFromToken(String token) {
-        return getClaims(token).get("userId", Long.class);
+    /**
+     *
+     * @param authorizationHeader Authorization 헤더
+     * @return Bearer 토큰 추출
+     */
+    private static String getBearerTokenFromAuthorizationHeader(String authorizationHeader) {
+        return authorizationHeader.replace("Bearer ", "");
     }
 
     /**
@@ -45,7 +50,7 @@ public class JwtUtil {
      * @param token JWT 토큰
      * @return Claims
      */
-    public Claims getClaims(String token) {
+    private static Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(KEY)
                 .build()
@@ -53,13 +58,12 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    /**
-     *
-     * @param authorizationHeader Authorization 헤더
-     * @return Bearer 토큰 추출
-     */
-    public static String getBearerToken(String authorizationHeader) {
-        return authorizationHeader.replace("Bearer ", "");
+    private static Long getMemberIdFromToken(String token) {
+        return getClaims(token).get("userId", Long.class);
+    }
+
+    public static Long getBearTokenAndMemberId(String token) {
+        return getMemberIdFromToken(getBearerTokenFromAuthorizationHeader(token));
     }
 
 }
