@@ -28,18 +28,19 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();
 
     protected Product() {
     }
 
-    public Product(String name, int price, String imgUrl, Category category) {
+    public Product(String name, int price, String imgUrl, Category category, List<Option> options) {
         checkName(name);
         this.name = name;
         this.price = price;
         this.imgUrl = imgUrl;
         this.category = category;
+        addOptions(options);
     }
 
     public void update(String name, int price, String imgUrl, Category category) {
@@ -80,11 +81,19 @@ public class Product {
         }
     }
 
-    public void addOption(Option option) {
+    private void addOptions(List<Option> options) {
+        if (options.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_OPTIONS);
+        }
+        options.forEach(this::addSingleOption);
+    }
+
+    private void addSingleOption(Option option) {
         if (isAlreadyExistOption(option)) {
             throw new CustomException(ErrorCode.ALREADY_EXIST_OPTION, option.getName());
         }
         this.options.add(option);
+        option.addProduct(this);
     }
 
     private boolean isAlreadyExistOption(Option option) {

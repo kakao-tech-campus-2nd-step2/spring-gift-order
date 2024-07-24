@@ -24,11 +24,9 @@ public class Option {
     protected Option() {
     }
 
-    public Option(String name, int quantity, Product product) {
+    public Option(String name,int quantity) {
         this.name = name;
         this.quantity = quantity;
-        this.product = product;
-        product.addOption(this);
     }
 
     public Long getId() {
@@ -41,6 +39,10 @@ public class Option {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public void addProduct(Product product) {
+        this.product = product;
     }
 
     public boolean hasSameName(Option target) {
