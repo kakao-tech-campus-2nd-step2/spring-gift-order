@@ -5,7 +5,7 @@ import gift.exception.ErrorCode;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "`user`", uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "kakaoId"})})
+@Table(name = "`user`")
 public class User {
 
     @Id
@@ -18,11 +18,8 @@ public class User {
     @Column(columnDefinition = "VARCHAR(255) COMMENT 'User Password'")
     private String password;
 
-    @Column(unique = true, columnDefinition = "VARCHAR(255) COMMENT 'Kakao ID'")
-    private String kakaoId;
-
-    @Column(columnDefinition = "VARCHAR(255) COMMENT 'User Nickname'")
-    private String nickname;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private KakaoUser kakaoUser;
 
     protected User() {
     }
@@ -32,15 +29,11 @@ public class User {
         this.password = password;
         validateEmail(email);
         validatePassword(password);
-        this.nickname = null;
-        this.kakaoId = null;
     }
 
-    public User(Long kakaoId, String nickname) {
-        this.kakaoId = kakaoId.toString();
-        this.nickname = nickname;
-        this.email = null;
-        this.password = null;
+    public User(KakaoUser kakaoUser) {
+        this.kakaoUser = kakaoUser;
+        this.kakaoUser.setUser(this);
     }
 
     public void update(String email, String password) {
@@ -78,11 +71,11 @@ public class User {
         return password;
     }
 
-    public String getKakaoId() {
-        return kakaoId;
+    public KakaoUser getKakaoUser() {
+        return kakaoUser;
     }
 
-    public String getNickname() {
-        return nickname;
+    public void setKakaoUser(KakaoUser kakaoUser) {
+        this.kakaoUser = kakaoUser;
     }
 }

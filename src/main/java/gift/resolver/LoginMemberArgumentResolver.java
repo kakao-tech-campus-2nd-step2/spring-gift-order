@@ -1,7 +1,9 @@
 package gift.resolver;
 
 import gift.entity.User;
+import gift.entity.KakaoUser;
 import gift.repository.UserRepository;
+import gift.repository.KakaoUserRepository;
 import gift.service.TokenService;
 import gift.util.AuthorizationHeaderProcessor;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,12 +21,14 @@ import java.util.Optional;
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final UserRepository userRepository;
+    private final KakaoUserRepository kakaoUserRepository;
     private final TokenService tokenService;
     private final AuthorizationHeaderProcessor authorizationHeaderProcessor;
 
     @Autowired
-    public LoginMemberArgumentResolver(UserRepository userRepository, TokenService tokenService, AuthorizationHeaderProcessor authorizationHeaderProcessor) {
+    public LoginMemberArgumentResolver(UserRepository userRepository, KakaoUserRepository kakaoUserRepository, TokenService tokenService, AuthorizationHeaderProcessor authorizationHeaderProcessor) {
         this.userRepository = userRepository;
+        this.kakaoUserRepository = kakaoUserRepository;
         this.tokenService = tokenService;
         this.authorizationHeaderProcessor = authorizationHeaderProcessor;
     }
@@ -44,7 +48,8 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
 
         Optional<User> user;
         if ("kakao".equals(userType)) {
-            user = userRepository.findByKakaoId(id);
+            Optional<KakaoUser> kakaoUser = kakaoUserRepository.findByKakaoId(Long.parseLong(id));
+            user = kakaoUser.map(KakaoUser::getUser);
         } else {
             user = userRepository.findByEmail(id);
         }
