@@ -8,6 +8,7 @@
 </head>
 <body>
 <h1 th:text="'Product no.' + ${product_id} + ' Buying Page'"></h1>
+<data id="product_id" th:value="${product_id}"></data>
 <div class="form-inline">
     <label for="optionId">OptionId:</label>
     <input type="text" id="optionId" name="id" required>
@@ -130,7 +131,7 @@
 
         $.ajax({
             type : "POST",
-            url : "api/orders",
+            url : "api/orders" + "?" + "productId=" + $("#product_id").val(),
             contentType: "application/json",
             datatype : "json",
             data : JSON.stringify(order),
@@ -138,6 +139,7 @@
                 Authorization: 'Bearer ' + localStorage.getItem("token"),
             },
             success : function(res){
+                alert("구매에 성공했습니다!")
                 getOptions(currentPage);
             },
             error : function(err){
