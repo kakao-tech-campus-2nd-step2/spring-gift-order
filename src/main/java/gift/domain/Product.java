@@ -116,11 +116,7 @@ public class Product {
     }
 
     public void subtractOptionQuantity(String optionName, int amount) {
-        Option option = this.getOptions().stream()
-            .filter(opt -> opt.getName().equals(optionName))
-            .findFirst()
-            .orElseThrow(() -> new NoSuchElementException("해당 이름의 옵션 없음: " + optionName));
-
+        Option option = getOptionByName(optionName);
         option.subtract(amount);
     }
 }
