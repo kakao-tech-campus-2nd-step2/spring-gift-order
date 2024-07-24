@@ -1,5 +1,9 @@
-package gift.auth;
+package gift.auth.controller;
 
+import gift.auth.domain.KakaoToken.kakaoToken;
+import gift.auth.domain.Login;
+import gift.auth.domain.Token;
+import gift.auth.service.LoginService;
 import gift.util.page.SingleResult;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +27,10 @@ public class LoginController {
     @PostMapping
     public SingleResult<Token> Login(@Valid @RequestBody Login login) {
         return new SingleResult<>(loginService.Login(login));
+    }
+
+    @PostMapping("/kakao")
+    public SingleResult<Token> KakaoLogin(@Valid @RequestBody kakaoToken token) {
+        return new SingleResult<>(loginService.kakaoLogin(token));
     }
 }
