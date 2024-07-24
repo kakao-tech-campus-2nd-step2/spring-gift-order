@@ -10,7 +10,17 @@ Content-Type: application/json
   "name" : "coffeee",
   "imgUrl" : "test.jpg",
   "price" : 10000,
-  "category": 1
+  "category": 1,
+  "options" : [
+    {
+      "name" : "파란색",
+      "quantity" : "10"
+    },
+    {
+      "name" : "파란색",
+      "quantity" : "10"
+    }
+  ]
 }
 
 ### 3.상품 수정
