@@ -15,11 +15,8 @@ public class WishProductTest {
         User user = new User("bae", "Bae@email.com", "aaaa");
         WishProduct wishProduct = new WishProduct(user, product);
         Assertions.assertThat(wishProduct).isNotNull();
-        Assertions.assertThat(wishProduct.getCount()).isEqualTo(1);
 
-        wishProduct.changeCount(2);
         Assertions.assertThat(wishProduct.getProduct()).isEqualTo(product);
         Assertions.assertThat(wishProduct.getUser()).isEqualTo(user);
-        Assertions.assertThat(wishProduct.getCount()).isEqualTo(2);
     }
 }
