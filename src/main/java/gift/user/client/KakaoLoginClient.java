@@ -2,6 +2,7 @@ package gift.user.client;
 
 import gift.user.config.KakaoProperties;
 import gift.user.dto.response.KakaoTokenResponse;
+import gift.user.dto.response.KakaoUserInfoResponse;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -32,6 +33,16 @@ public class KakaoLoginClient {
             .body(body)
             .retrieve()
             .body(KakaoTokenResponse.class);
+    }
+
+    public KakaoUserInfoResponse getKakaoUserId(String token) {
+        var url = "https://kapi.kakao.com/v2/user/me?property_keys=[\"\"]";
+        var response = restClient.get()
+            .uri(url)
+            .header("Authorization", "Bearer " + token)
+            .retrieve()
+            .body(KakaoUserInfoResponse.class);
+        return response;
     }
 
 }
