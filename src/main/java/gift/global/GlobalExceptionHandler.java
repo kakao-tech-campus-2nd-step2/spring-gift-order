@@ -3,6 +3,7 @@ package gift.global;
 import gift.domain.member.exception.MemberAuthorizationException;
 import gift.domain.option.exception.OptionValidException;
 import gift.global.exception.NotFoundException;
+import gift.oauth.exception.KakaoOAuthException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -40,5 +41,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleOptionValidException(OptionValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(e.getMessage());
+    }
+
+    @ExceptionHandler(KakaoOAuthException.class)
+    public ResponseEntity<String> handleKakaoOAuthException(KakaoOAuthException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body("[" + e.getErrorCode() + "] " + e.getMessage());
     }
 }
