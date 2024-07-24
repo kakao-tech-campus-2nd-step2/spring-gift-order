@@ -1,10 +1,12 @@
 package gift.auth.oauth.kakao;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.auth.dto.Token;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;
 import gift.domain.user.service.UserService;
+import gift.exception.OauthLoginException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +22,7 @@ public class KakaoLoginService {
 
     private final KakaoProperties kakaoProperties;
     private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     private static final RestClient restClient = RestClient.create();
 
@@ -28,9 +31,10 @@ public class KakaoLoginService {
     private static final String TOKEN_INFO_REQUEST_URL = "https://kapi.kakao.com/v1/user/access_token_info";
     private static final String USER_INFO_REQUEST_URL = "https://kapi.kakao.com/v2/user/me";
 
-    public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService) {
+    public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService, ObjectMapper objectMapper) {
         this.kakaoProperties = kakaoProperties;
         this.userService = userService;
+        this.objectMapper = objectMapper;
     }
 
     public Token login(String code) {
@@ -64,8 +68,13 @@ public class KakaoLoginService {
             .uri(URI.create(TOKEN_REQUEST_URL))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
-            .retrieve()
-            .body(JsonNode.class);
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange((request, response) -> {
+                if (!response.getStatusCode().is2xxSuccessful()) {
+                    throw new OauthLoginException(response.toString());
+                }
+                return objectMapper.readTree(response.getBody());
+            });
 
         return jsonResponse.get("access_token").asText();
     }
@@ -74,14 +83,18 @@ public class KakaoLoginService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        String body = restClient.get()
+        restClient.get()
             .uri(URI.create(TOKEN_INFO_REQUEST_URL))
             .headers(httpHeaders -> {
                 httpHeaders.addAll(headers);
             })
-            .retrieve()
-            .body(String.class);
-        System.out.println(body);
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange((request, response) -> {
+                if (!response.getStatusCode().is2xxSuccessful()) {
+                    throw new OauthLoginException(response.toString());
+                }
+                return response.getBody().toString();
+            });
     }
 
     private Map<String, String> getUserInfo(String accessToken) {
@@ -94,8 +107,13 @@ public class KakaoLoginService {
             .headers(httpHeaders -> {
                 httpHeaders.addAll(headers);
             })
-            .retrieve()
-            .body(JsonNode.class);
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange((request, response) -> {
+                if (!response.getStatusCode().is2xxSuccessful()) {
+                    throw new OauthLoginException(response.toString());
+                }
+                return objectMapper.readTree(response.getBody());
+            });
 
         Map<String, String> userInfo = new HashMap<>();
         userInfo.put("name", jsonResponse.get("kakao_account").get("profile").get("nickname").asText());
