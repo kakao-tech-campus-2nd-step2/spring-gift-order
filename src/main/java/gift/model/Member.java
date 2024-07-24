@@ -11,6 +11,7 @@ public class Member {
     private String email;
     @Column(nullable = false)
     private String password;
+    private String accessToken;
 
     public Member() {
     }
@@ -18,6 +19,12 @@ public class Member {
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(String email, String password, String accessToken) {
+        this.email = email;
+        this.password = password;
+        this.accessToken = accessToken;
     }
 
     public Member(Long id, String email, String password) {
@@ -38,7 +45,15 @@ public class Member {
         return password;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     public boolean matchPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
