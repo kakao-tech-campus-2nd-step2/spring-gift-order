@@ -1,7 +1,11 @@
 package gift.controller.api;
 
 import gift.dto.response.KakaoTokenResponse;
+import gift.dto.response.TokenResponse;
 import gift.service.KakaoLoginService;
+import gift.service.MemberService;
+import gift.service.TokenService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,27 +13,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class KakaoLoginController {
 
-    KakaoLoginService kakaoLoginService;
+    private final KakaoLoginService kakaoLoginService;
+    private final MemberService memberService;
+    private final TokenService tokenService;
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService) {
+    public KakaoLoginController(KakaoLoginService kakaoLoginService, MemberService memberService, TokenService tokenService) {
         this.kakaoLoginService = kakaoLoginService;
+        this.memberService = memberService;
+        this.tokenService = tokenService;
     }
 
-    //카카오 로그인 성공후에 내서버에서 인가 코드 요청하는것임
     @GetMapping("/kakaologin")
-    public void kakaoLogin() {
+    public void requestAuthorizationCode() {
         kakaoLoginService.requestAuthorizationCode();
     }
 
     @GetMapping("/")
-    public String getToken(@RequestParam("code") String code) {
-        //토큰 얻기
-        KakaoTokenResponse token = kakaoLoginService.getToken(code);
+    public ResponseEntity<TokenResponse> getJwtToken(@RequestParam("code") String code) {
 
-        //사용자 로그인 처리  토큰에 카카오의 회원번오있음. 이거 우리 멤버 디이에 있는지 확인
-        //kakaoLoginService.verifyMember(token);
+        KakaoTokenResponse kakaoToken = kakaoLoginService.getToken(code);
 
-        System.out.println(token);
-        return "성공함";
+        String email = kakaoLoginService.getEmail(kakaoToken.access_token());
+
+        System.out.println(email);
+        Long memberId = memberService.findMemberIdByEmail(email);
+        TokenResponse tokenResponse = tokenService.generateToken(memberId);
+        System.out.println(tokenResponse);
+        return ResponseEntity.ok().body(tokenResponse);
     }
 }
