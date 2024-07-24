@@ -3,6 +3,7 @@ package gift.main.service;
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
 import gift.main.dto.KakaoProfile;
+import gift.main.dto.KakaoUser;
 import gift.main.dto.UserJoinRequest;
 import gift.main.dto.UserLoginRequest;
 import gift.main.entity.User;
@@ -41,9 +42,9 @@ public class UserService {
     }
 
     @Transactional
-    public String loginKakaoUser(KakaoProfile kakaoProfile) {
-        User user = userRepository.findByEmail(kakaoProfile.email())
-                .orElseGet(() -> userRepository.save(new User(kakaoProfile)));
+    public String loginKakaoUser(KakaoUser kakaoUser) {
+        User user = userRepository.findByEmail(kakaoUser.email())
+                .orElseGet(() -> userRepository.save(new User(kakaoUser)));
         return jwtUtil.createToken(user);
     }
 }
