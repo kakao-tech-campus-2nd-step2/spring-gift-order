@@ -30,9 +30,4 @@ public class AuthService {
         headers.put("Authorization", accessToken);
         return headers;
     }
-
-    public Member getMemberById(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(MemberNotFoundException::new);
-    }
 }
