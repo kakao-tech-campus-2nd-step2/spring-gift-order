@@ -17,7 +17,7 @@ class ProductTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private List<OptionTest> options = new ArrayList<>();
 
     public Long getId() {
@@ -42,7 +42,6 @@ class OptionTest {
     private ProductTest product;
 
     public void setProduct(ProductTest product) {
-        product.addOption(this); //편의메서드 추가
         this.product = product;
     }
 }
@@ -71,16 +70,26 @@ class LazyLoadingTest {
         var option = new OptionTest();
         option.setProduct(savedProduct);
         optionRepository.save(option);
-        entityManager.flush();
-        entityManager.clear();
+
 
         var product = productRepository.findById(savedProduct.getId()).orElseThrow();
-        entityManager.flush();
-        assertThat(entityManager.contains(product)).isTrue();
 
         // 테스트 실패
 //        entityManager.clear();
-//        assertThat(entityManager.contains(product)).isFalse();
-        assertThat(product.getOptions()).hasSize(1);
+        assertThat(productRepository.findById(product.getId()).get().getOptions()).hasSize(1);
+    }
+    @Test
+    void test1() {
+        var savedProduct = productRepository.save(new ProductTest());
+        var option = new OptionTest();
+        option.setProduct(savedProduct);
+        optionRepository.save(option);
+        entityManager.flush();
+        entityManager.clear();
+
+
+        var product = productRepository.findById(savedProduct.getId()).orElseThrow();
+        assertThat(product.getOptions()).hasSize(1); //실제값이 0으로 오류가 난다.
     }
 }
+
