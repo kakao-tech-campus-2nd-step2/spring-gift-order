@@ -22,7 +22,6 @@ public class Order {
     @Column(nullable = false)
     private Long quantity;
 
-    @Column(nullable = false)
     private String message;
 
     @CreatedDate

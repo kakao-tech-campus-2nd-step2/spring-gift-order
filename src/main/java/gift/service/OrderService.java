@@ -15,6 +15,8 @@ import gift.service.kakao.Oauth2TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static gift.exception.ErrorCode.OPTION_NOT_FOUND;
 
 @Service
@@ -36,26 +38,47 @@ public class OrderService {
 
     @Transactional
     public OrderDto processOrder(OrderDto dto) {
-        Long optionId = dto.getOptionId();
-        Long quantity = dto.getQuantity();
         Member member = dto.getMember();
-        SocialAccount socialAccount = member.getSocialAccount();
-        String accessToken = socialAccount.getAccessToken();
-        String message = dto.getMessage();
 
+        Optional<SocialAccount> optionalSocialAccount = Optional.ofNullable(member.getSocialAccount());
+
+        Order order = optionalSocialAccount
+                .map(socialAccount -> processWithSocialAccount(socialAccount, dto))
+                .orElseGet(() -> processWithoutSocialAccount(dto));
+
+        return OrderDto.from(order);
+    }
+
+    private Order processWithSocialAccount(SocialAccount socialAccount, OrderDto dto) {
+        String accessToken = socialAccount.getAccessToken();
         if (oauth2TokenService.isAccessTokenExpired(accessToken)) {
             oauth2TokenService.refreshAccessToken(socialAccount);
         }
+        return processOrderCommon(dto, accessToken);
+    }
+
+    private Order processWithoutSocialAccount(OrderDto dto) {
+        return processOrderCommon(dto, null);
+    }
+
+    private Order processOrderCommon(OrderDto dto, String accessToken) {
+        Long optionId = dto.getOptionId();
+        Long quantity = dto.getQuantity();
+        Member member = dto.getMember();
+        String message = dto.getMessage();
 
         Option option = getOptionById(optionId);
         subtractOptionQuantity(option, quantity);
         removeMemberWish(member, option.getProduct());
-        kakaoApiService.sendKakaoMessage(accessToken, message);
+
+        if (accessToken != null) {
+            kakaoApiService.sendKakaoMessage(accessToken, message);
+        } else {
+            message = null;
+        }
 
         Order order = new Order(option, quantity, message);
-        orderRepository.save(order);
-
-        return OrderDto.from(order);
+        return orderRepository.save(order);
     }
 
     private Option getOptionById(Long optionId) {

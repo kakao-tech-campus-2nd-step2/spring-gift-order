@@ -46,6 +46,7 @@ public enum ErrorCode {
     /* OrderService */
     SEND_KAKAO_MESSAGE_FAILED("카카오톡 메시지 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     JSON_PROCESSING_FAILED("JSON 처리에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    KAKAO_USER_ONLY("카카오 사용자만 주문할 수 있습니다.", HttpStatus.FORBIDDEN),
 
     /* Outh2TokenService */
     REFRESH_TOKEN_FAILED("토큰 갱신에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
