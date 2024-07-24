@@ -64,6 +64,4 @@ public class OAuthService {
         }
         throw new AuthenticationException("Login has expired");
     }
-
-
 }

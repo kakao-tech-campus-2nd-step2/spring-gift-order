@@ -11,5 +11,6 @@ public record KakaoProperties(
         String memberInfoUrl,
         String loginUrl,
         String logoutUrl,
-        String refreshUrl
+        String refreshUrl,
+        String selfMessageUrl
 ) {}

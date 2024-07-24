@@ -72,12 +72,9 @@ public class KakaoApiUtil {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError,
-                        (request, response) -> {
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
                             throw new AuthenticationException("Logout failed");
-                        }
-                );
-
+                        });
     }
 
     private @NotNull LinkedMultiValueMap<String, String> createBodyForAccessToken(String code, String redirectUrl) {
