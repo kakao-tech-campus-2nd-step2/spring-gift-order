@@ -50,7 +50,7 @@ public class OptionService {
         List<Option> options = optionDTOList.stream()
             .map(optionDTO -> {
                 Option option = convertToEntity(optionDTO);
-                option.setProduct(product); // Set the product for each option
+                option.setProduct(product);
                 return option;
             })
             .toList();
@@ -75,6 +75,7 @@ public class OptionService {
 
     public OptionDTO convertToDTO(Option option){
         return new OptionDTO(
+            option.getId(),
             option.getName(),
             option.getQuantity(),
             option.getProduct().getId()
