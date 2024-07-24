@@ -4,6 +4,7 @@ import gift.domain.ProductOption.optionDetail;
 import gift.domain.ProductOrder.decreaseProductOption;
 import gift.service.ProductOrderService;
 import gift.util.page.SingleResult;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +25,11 @@ public class ProductOrderController {
     }
 
     @PostMapping("/{optionId}")
-    public SingleResult<optionDetail> decreaseProductOption(@PathVariable Long productId,
+    public SingleResult<optionDetail> decreaseProductOption(
+        HttpServletRequest req,
+        @PathVariable Long productId,
         @PathVariable Long optionId, @Valid @RequestBody decreaseProductOption decrease) {
         return new SingleResult<>(
-            productOrderService.decreaseProductOption(productId, optionId, decrease));
+            productOrderService.decreaseProductOption(req, productId, optionId, decrease));
     }
 }

@@ -2,9 +2,12 @@ package gift.util;
 
 import static gift.util.url.KakaoUrl.redirectUrl;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 import gift.auth.domain.KakaoToken.kakaoInfo;
 import gift.auth.domain.KakaoToken.kakaoToken;
+import gift.domain.SendKakao.Link;
+import gift.domain.SendKakao.Message;
 import gift.util.url.KakaoUrl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -13,6 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @Component
 public class ApiCall {
@@ -62,5 +67,22 @@ public class ApiCall {
         ResponseEntity<kakaoInfo> responseEntity = restCall.apiCall(url, GET, requestEntity,
             kakaoInfo.class);
         return responseEntity.getBody();
+    }
+
+    public void sendMessageForMe(String token, String text, String webUrl, String mobileUrl) {
+        Message message = new Message(text, new Link(webUrl, mobileUrl));
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("template_object", message.toString());
+
+        headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(token);
+
+        var requestEntity = new HttpEntity(body, headers);
+
+        String url = KakaoUrl.sendMessage;
+
+        restCall.apiCall(url, POST, requestEntity, String.class);
     }
 }
