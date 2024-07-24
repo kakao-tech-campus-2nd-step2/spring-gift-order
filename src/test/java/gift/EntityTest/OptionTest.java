@@ -25,8 +25,8 @@ public class OptionTest {
         Option option = new Option("옵션1", 1, product1);
 
         assertAll(
-                ()->assertThat(option.getName()).isEqualTo("옵션1"),
-                ()->assertThat(option.getQuantity()).isEqualTo(1),
+                ()->assertThat(option.getName().getValue()).isEqualTo("옵션1"),
+                ()->assertThat(option.getQuantity().getValue()).isEqualTo(1),
                 ()->assertThat(option.getProduct()).isEqualTo(product1)
         );
     }
@@ -37,8 +37,8 @@ public class OptionTest {
         option.update("옵션2", 2);
 
         assertAll(
-                () -> assertThat(option.getName()).isEqualTo("옵션2"),
-                () -> assertThat(option.getQuantity()).isEqualTo(2)
+                () -> assertThat(option.getName().getValue()).isEqualTo("옵션2"),
+                () -> assertThat(option.getQuantity().getValue()).isEqualTo(2)
         );
     }
 
@@ -47,6 +47,6 @@ public class OptionTest {
         Option option = new Option("옵션1", 5, product1);
         option.subtract(3);
 
-        assertThat(option.getQuantity()).isEqualTo(2);
+        assertThat(option.getQuantity().getValue()).isEqualTo(2);
     }
 }

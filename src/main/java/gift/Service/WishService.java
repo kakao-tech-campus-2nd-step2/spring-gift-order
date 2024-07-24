@@ -48,7 +48,7 @@ public class WishService {
         List<Wish> wishList = wishRepository.findWishListByMember(member);
         List<ResponseWishDTO> responseWishDTOList = new ArrayList<>();
         for(Wish wish : wishList){
-            responseWishDTOList.add(new ResponseWishDTO(wish.getProduct().getName(), wish.getCount()));
+            responseWishDTOList.add(new ResponseWishDTO(wish.getProduct().getName().getValue(), wish.getCount().getValue()));
         }
 
         return responseWishDTOList;
@@ -66,7 +66,7 @@ public class WishService {
                 .orElseThrow(() -> new ProductNotFoundException("매칭되는 물건이 없습니다."));
         Wish wish = wishRepository.findByMemberAndProduct(member, product)
                 .orElseThrow(() -> new WishNotFoundException("매칭되는 wish가 없습니다"));
-        wish.setCount(requestWishDTO.getCount());
+        wish.update(requestWishDTO.getCount());
         return getWish(member);
     }
 

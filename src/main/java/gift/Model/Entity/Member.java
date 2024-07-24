@@ -1,68 +1,54 @@
 package gift.Model.Entity;
 
+import gift.Model.Value.Email;
+import gift.Model.Value.Password;
 import jakarta.persistence.*;
-
-import java.util.regex.Pattern;
 
 @Entity
 public class Member {
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-    );
-
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column(nullable = false)
-    private String password;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "email", nullable = false, unique = true))
+    private Email email;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "password", nullable = false))
+    private Password password;
 
     protected Member() {}
 
-    public Member(String email, String password) {
-        validateEmail(email);
-        validatePassword(password);
-
+    public Member(Email email, Password password) {
         this.email = email;
         this.password = password;
     }
 
-    public void validateEmail(String email){
-        if (email == null|| email.isBlank())
-            throw new IllegalArgumentException("이메일 값은 필수입니다.");
-        if (!EMAIL_PATTERN.matcher(email).matches())
-            throw new IllegalArgumentException("이메일 양식을 다시 확인해주세요");
+    public Member(String email, String password) {
+        this.email = new Email(email);
+        this.password = new Password(password);
     }
-
-    public void validatePassword(String password) {
-        if (password == null || password.isBlank())
-            throw new IllegalArgumentException("패스워드 값은 필수입니다");
-    }
-
 
     public Long getId() {
         return id;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
+    public void update(Email email, Password password){
         this.email = email;
+        this.password = password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void update(String email, String password) {
+        update(new Email(email), new Password(password));
     }
 }

@@ -53,12 +53,9 @@ public class ProductService {
     @Transactional
     public void editProduct(long id, RequestProductDTO requestProductDTO) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("매칭되는 product가 없습니다"));
-        product.setName(requestProductDTO.name());
-        product.setPrice(requestProductDTO.price());
-        product.setImageUrl(requestProductDTO.imageUrl());
         Category category = categoryRepository.findById(requestProductDTO.categoryId())
-                        .orElseThrow(()->new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
-        product.setCategory(category);
+                .orElseThrow(() -> new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
+        product.update(requestProductDTO.name(), requestProductDTO.price(), requestProductDTO.imageUrl(), category);
     }
 
     @Transactional

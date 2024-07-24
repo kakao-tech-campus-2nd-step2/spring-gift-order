@@ -4,6 +4,7 @@ import gift.Exception.CategoryNotFoundException;
 import gift.Model.Entity.Category;
 import gift.DTO.RequestCategoryDTO;
 import gift.DTO.ResponseCategoryDTO;
+import gift.Model.Value.Name;
 import gift.Repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +31,16 @@ public class CategoryService {
                 .stream()
                 .map(it->new ResponseCategoryDTO(
                         it.getId(),
-                        it.getName(),
-                        it.getColor(),
-                        it.getImageUrl(),
-                        it.getDescription()))
+                        it.getName().getValue(),
+                        it.getColor().getValue(),
+                        it.getImageUrl().getValue(),
+                        it.getDescription().getValue()))
                 .toList();
     }
 
     @Transactional
     public void editCategory(RequestCategoryDTO requestCategoryDTO) {
-        Category category = categoryRepository.findByName(requestCategoryDTO.name())
+        Category category = categoryRepository.findByName(new Name(requestCategoryDTO.name()))
                 .orElseThrow(()-> new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
         category.update(requestCategoryDTO.name(), requestCategoryDTO.color(), requestCategoryDTO.imageUrl(), requestCategoryDTO.description());;
     }

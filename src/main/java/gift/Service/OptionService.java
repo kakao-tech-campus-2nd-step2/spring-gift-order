@@ -40,8 +40,8 @@ public class OptionService {
                 .stream()
                 .map(it-> new ResponseOptionDTO(
                         it.getId(),
-                        it.getName(),
-                        it.getQuantity()))
+                        it.getName().getValue(),
+                        it.getQuantity().getValue()))
                 .toList();
     }
 

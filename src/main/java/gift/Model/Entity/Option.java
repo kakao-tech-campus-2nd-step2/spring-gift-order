@@ -1,5 +1,7 @@
 package gift.Model.Entity;
 
+import gift.Model.Value.Name;
+import gift.Model.Value.Quantity;
 import jakarta.persistence.*;
 
 import java.util.regex.Pattern;
@@ -11,14 +13,19 @@ public class Option {
             "^[a-zA-Z0-9ㄱ-ㅎㅏ-ㅣ가-힣 ()\\[\\]+\\-\\&/_]*$"
     );
 
+    private static final int NAME_MAX_LENGTH = 50;
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "name, nullable = false"))
+    private Name name;
 
-    private int quantity;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "quantity"))
+    private Quantity quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
@@ -26,9 +33,9 @@ public class Option {
 
     private Option() {}
 
-    public Option(String name, int quantity, Product product) {
-        validateName(name);
-        validateQuantity(quantity);
+    public Option(Name name, Quantity quantity, Product product) {
+        name.checkNameLength(NAME_MAX_LENGTH);
+        name.checkNamePattern(NAME_PATTERN);
         validateProduct(product);
 
         this.name = name;
@@ -36,26 +43,21 @@ public class Option {
         this.product = product;
     }
 
-    public void validateName(String name) {
-        if (name.length() > 50)
-            throw new IllegalArgumentException("옵션 이름의 길이는 공백포함 최대 50자 입니다");
+    public Option(String name, int quantity, Product product) {
+        Name nameObj = new Name(name);
+        nameObj.checkNameLength(NAME_MAX_LENGTH);
+        nameObj.checkNamePattern(NAME_PATTERN);
 
-        if (name == null || name.isBlank())
-            throw new IllegalArgumentException("옵션 이름은 필수입니다");
+        Quantity quantityObj = new Quantity(quantity);
 
-        if (!NAME_PATTERN.matcher(name).matches())
-            throw new IllegalArgumentException("옵션 이름에는 허용된 특수 문자만 포함될 수 있습니다: (), [], +, -, &, /, _");
+        validateProduct(product);
 
+        this.name = nameObj;
+        this.quantity = quantityObj;
+        this.product = product;
     }
 
-    public void validateQuantity(int quantity) {
-        if (quantity <= 0)
-            throw new IllegalArgumentException("옵션 수량은 최소 1개 이상이여야 합니다");
-        if (quantity > 9999_9999)
-            throw new IllegalArgumentException("옵션 수량은 최대 1억개 미만이여야 합니다");
-    }
-
-        public void validateProduct(Product product) {
+    public void validateProduct(Product product) {
         if (product == null)
             throw new IllegalArgumentException("옵션에 product 지정은 필수입니다");
     }
@@ -64,11 +66,11 @@ public class Option {
         return id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public int getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 
@@ -76,22 +78,27 @@ public class Option {
         return product;
     }
 
-    public void update(String name, int quantity){
+    public void update(Name name, Quantity quantity){
+        name.checkNameLength(NAME_MAX_LENGTH);
+        name.checkNamePattern(NAME_PATTERN);
+
         this.name = name;
         this.quantity = quantity;
     }
 
+    public void update(String name, int quantity) {
+        update(new Name(name), new Quantity(quantity));
+    }
+
     public void subtract(int quantity){
-        if (this.quantity - quantity < 1)
-            throw new IllegalArgumentException("옵션 수량은 최소 1개이상이여야 합니다. 빼려는 수량을 조절해 주십시오.");
-        this.quantity -= quantity;
+        this.quantity.subtract(quantity);
     }
 
     public boolean hasSameName(String name){
-        return this.name.equals(name);
+        return this.name.isSame(name);
     }
 
     public boolean isBelongToProduct(Long productId){
-        return this.product.getId().equals(productId);
+        return this.product.isSameId(productId);
     }
 }
