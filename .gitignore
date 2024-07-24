@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 src/main/resources/secret.properties
-src/test/java/study
+src/test/java/gift/study
 
 ### STS ###
 .apt_generated
