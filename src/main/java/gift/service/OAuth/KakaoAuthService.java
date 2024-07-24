@@ -29,6 +29,10 @@ public class KakaoAuthService {
         return authUtil.getAccessToken(authCode);
     }
 
+    public String sendMemo(String accessToken, String text){
+        return authUtil.sendMessage(accessToken, text);
+    }
+
 
     public String register(String accessToken) {
         String email = authUtil.extractUserEmail(accessToken);

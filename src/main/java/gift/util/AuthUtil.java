@@ -62,6 +62,28 @@ public class AuthUtil {
         return (String) accountMap.get("email");
     }
 
+    public String sendMessage(String accessToken, String text){
+        String url = kakaoProperties.getSendMessageUrl();
+        RestClient restClient = RestClient.builder().build();
+
+        String templateObject = String.format(
+                "{\"object_type\": \"text\", \"text\": \"%s\", \"link\": {\"web_url\": \"https://www.test.com\", \"mobile_web_url\": \"https://www.test.com\"}, \"button_title\": \"선물 확인\"}",
+                text
+        );
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("template_object", templateObject);
+
+        String resp = restClient.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(formData)
+                .retrieve()
+                .body(String.class);
+
+        return resp;
+    }
+
     private MultiValueMap<String, String> createParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");

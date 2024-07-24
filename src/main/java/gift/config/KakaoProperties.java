@@ -12,6 +12,7 @@ public class KakaoProperties {
     private String tokenUrl;
     private String authUrl;
     private String userInfoUrl;
+    private String sendMessageUrl;
 
     public String getRedirectUri() {
         return redirectUri;
@@ -51,5 +52,13 @@ public class KakaoProperties {
 
     public void setUserInfoUrl(String userInfoUrl) {
         this.userInfoUrl = userInfoUrl;
+    }
+
+    public String getSendMessageUrl() {
+        return sendMessageUrl;
+    }
+
+    public void setSendMessageUrl(String sendMessageUrl) {
+        this.sendMessageUrl = sendMessageUrl;
     }
 }

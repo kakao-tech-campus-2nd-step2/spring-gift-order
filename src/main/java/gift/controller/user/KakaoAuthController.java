@@ -37,4 +37,11 @@ public class KakaoAuthController {
         String token = kakaoAuthService.register(accessToken);
         return ResponseEntity.ok(Map.of("access_token", token));
     }
+
+    @PostMapping("/send")
+    public ResponseEntity<String> sendMemo(@RequestParam String accessToken,@RequestParam
+                                            String text){
+        String resp = kakaoAuthService.sendMemo(accessToken,text);
+        return ResponseEntity.ok(resp);
+    }
 }
