@@ -57,9 +57,10 @@ public class Option {
     }
 
     public void subtractQuantity(Integer quantity) {
-        if (this.quantity - quantity <= 1) {
-            throw new MinimumOptionException("옵션의 수량을 1개 이하로 남길 수 없습니다.");
+        if (this.quantity - quantity < 0) {
+            throw new MinimumOptionException("옵션에 해당하는 수량이 0개 미만이 될 수 없습니다.");
         }
+
         this.quantity -= quantity;
     }
 

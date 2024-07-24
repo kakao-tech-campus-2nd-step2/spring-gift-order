@@ -1,5 +1,6 @@
 package gift.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,7 @@ public class User {
     private String email;
     @NotNull
     private String password;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
     protected User() {
@@ -48,5 +49,17 @@ public class User {
 
     public boolean samePassword(String password) {
         return this.password.equals(password);
+    }
+
+    public void subtractWishNumber(Integer number, Product product) {
+        wishes.stream()
+            .filter(wish -> wish.sameProduct(product))
+            .forEach(wish -> wish.subtractNumber(number));
+
+        deleteEmptyWish();
+    }
+
+    public void deleteEmptyWish() {
+        wishes.removeIf(Wish::checkLeftWishNumber);
     }
 }

@@ -25,7 +25,7 @@ public class Wish {
     @JoinColumn(name = "product_id")
     private Product product;
     @NotNull
-    private int number;
+    private Integer number;
 
     protected Wish() {
     }
@@ -54,5 +54,17 @@ public class Wish {
 
     public int getNumber() {
         return number;
+    }
+
+    public void subtractNumber(Integer number) {
+        this.number -= number;
+    }
+
+    public boolean sameProduct(Product product) {
+        return this.product == product;
+    }
+
+    public boolean checkLeftWishNumber() {
+        return this.number <= 0;
     }
 }
