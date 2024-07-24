@@ -13,7 +13,6 @@ import org.springframework.web.servlet.view.RedirectView;
 public class KakaoLoginController {
     private final KakaoUserService kakaoUserService;
 
-
     public KakaoLoginController(KakaoUserService kakaoUserService) {
         this.kakaoUserService = kakaoUserService;
     }
