@@ -1,7 +1,9 @@
 package gift.wish.controller;
 
+import gift.kakao.login.dto.KakaoUser;
 import gift.product.domain.Product;
 import gift.product.domain.ProductDTO;
+import gift.user.repository.UserRepository;
 import gift.wish.domain.WishlistDTO;
 import gift.wish.domain.WishlistItem;
 import gift.product.service.ProductService;
@@ -28,12 +30,14 @@ public class WishlistViewController {
     private UserService userService;
     private ProductService productService;
     private WishlistService wishlistService;
+    private UserRepository userRepository;
 
     public WishlistViewController(UserService userService, ProductService productService,
-        WishlistService wishlistService) {
+        WishlistService wishlistService, UserRepository userRepository) {
         this.userService = userService;
         this.productService = productService;
         this.wishlistService = wishlistService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("{id}")
@@ -44,11 +48,7 @@ public class WishlistViewController {
         Page<WishlistResponse> wishlists = wishlistService.getWishlistResponseByUserId(userId, pageable);
         model.addAttribute("wishlists", wishlists);
         model.addAttribute("id", userId);
-        //wishlistResponse
-            //wishlist_id
-            //user_id
-            //productDTO
-            //amount
+        model.addAttribute("token", ((KakaoUser) userRepository.findById(userId).get()).getToken());
         return "wishlist";
     }
 
