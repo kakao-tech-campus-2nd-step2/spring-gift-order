@@ -8,6 +8,7 @@ import gift.model.Product;
 import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -83,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public boolean patchProduct(Long id, Map<String, Object> updates) {
         return productRepository.findById(id)
             .map(existingProduct -> {
@@ -94,6 +96,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public List<Product> patchProducts(List<Map<String, Object>> updatesList) {
         List<Product> updatedProducts = new ArrayList<>();
         for (Map<String, Object> updates : updatesList) {
