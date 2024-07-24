@@ -23,11 +23,6 @@ public class KakaoLoginController {
         this.tokenService = tokenService;
     }
 
-    @GetMapping("/kakaologin")
-    public void requestAuthorizationCode() {
-        kakaoLoginService.requestAuthorizationCode();
-    }
-
     @GetMapping("/")
     public ResponseEntity<TokenResponse> getJwtToken(@RequestParam("code") String code) {
 
