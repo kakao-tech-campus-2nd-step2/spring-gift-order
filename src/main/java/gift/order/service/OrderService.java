@@ -86,13 +86,10 @@ public class OrderService {
 
     @Transactional
     public void cancelOrder(MemberResDto memberDto, Long orderId) {
-        Member member = memberRepository.findById(memberDto.id())
-                .orElseThrow(() -> MemberNotFoundByIdException.EXCEPTION);
-
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> OrderNotFoundException.EXCEPTION);
 
-        if (!order.getMember().getId().equals(member.getId())) {
+        if (!order.getMember().getId().equals(memberDto.id())) {
             throw OrderNotFoundException.EXCEPTION;
         }
 
