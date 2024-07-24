@@ -8,6 +8,7 @@
     <script src="/js/index_ajax.js"></script>
 </head>
 <body>
+<data id="token" th:value="${token != null ? token : 'null'}"></data>
 <div class="header" id="header">
     <!-- 조건에 따라 데이터를 로드 -->
 </div>
@@ -94,6 +95,8 @@
     }
 
     $(document).ready(function() {
+        if($('#token').val() !== 'null')
+            localStorage.setItem('token', $('#token').val());
         getProducts(currentPage);
 
         $('#prevPage').click(function() {
@@ -139,7 +142,7 @@
 
     function logoutFunction(){
         localStorage.removeItem('token');
-        backToHome();
+        location.href = "/";
     }
 </script>
 </html>
