@@ -24,17 +24,27 @@ public class KakaoLoginService {
     }
 
     public KakaoTokenResponse getToken(String code) {
-        MultiValueMap multiValueMap = new LinkedMultiValueMap();
+        MultiValueMap<String,String> multiValueMap = new LinkedMultiValueMap<>();
+
         multiValueMap.add("grant_type", GRANT_TYPE);
         multiValueMap.add("redirect_uri", REDIRECT_URI);
         multiValueMap.add("client_id", CLIENT_ID);
         multiValueMap.add("code", code);
 
-        return client.post().uri(TOKEN_REQUEST_URI).body(multiValueMap).retrieve().body(KakaoTokenResponse.class);
+        return client.post()
+                .uri(TOKEN_REQUEST_URI)
+                .body(multiValueMap)
+                .retrieve()
+                .body(KakaoTokenResponse.class);
     }
 
     public String getEmail(String token) {
-        KakaoUserInfoResponse body = client.get().uri("https://kapi.kakao.com/v2/user/me").header("Authorization", String.format("Bearer %s", token)).retrieve().body(KakaoUserInfoResponse.class);
-        return body.kakao_account().email();
+        KakaoUserInfoResponse body = client.get().uri("https://kapi.kakao.com/v2/user/me")
+                .header("Authorization", String.format("Bearer %s", token))
+                .retrieve()
+                .body(KakaoUserInfoResponse.class);
+
+        return body.kakao_account()
+                .email();
     }
 }
