@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.config.KakaoProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,11 @@ public class KakaoService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    public KakaoService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public String getAccessToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";

@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.config.KakaoProperties;
+import gift.service.KakaoProperties;
 import gift.service.KakaoService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.GetMapping;
