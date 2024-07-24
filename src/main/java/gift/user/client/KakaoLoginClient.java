@@ -3,7 +3,11 @@ package gift.user.client;
 import gift.user.config.KakaoProperties;
 import gift.user.dto.response.KakaoTokenResponse;
 import gift.user.dto.response.KakaoUserInfoResponse;
+import java.time.Duration;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -11,11 +15,17 @@ import org.springframework.web.client.RestClient;
 @Component
 public class KakaoLoginClient {
 
-    private final RestClient restClient = RestClient.builder().build();
+    private final RestClient restClient;
 
     private final KakaoProperties properties;
 
     public KakaoLoginClient(KakaoProperties properties) {
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+            .withConnectTimeout(Duration.ofMinutes(1));
+        ClientHttpRequestFactory factory = ClientHttpRequestFactories.get(settings);
+        this.restClient = RestClient.builder()
+            .requestFactory(factory)
+            .build();
         this.properties = properties;
     }
 
