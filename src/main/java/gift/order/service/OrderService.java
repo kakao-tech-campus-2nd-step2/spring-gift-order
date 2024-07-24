@@ -6,8 +6,6 @@ import gift.member.entity.Member;
 import gift.member.exception.MemberNotFoundByIdException;
 import gift.member.repository.MemberRepository;
 import gift.option.entity.Option;
-import gift.option.exception.OptionNotFoundException;
-import gift.option.repository.OptionRepository;
 import gift.option.service.OptionService;
 import gift.order.dto.OrderReqDto;
 import gift.order.dto.OrderResDto;
@@ -26,14 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final MemberRepository memberRepository;
-    private final OptionRepository optionRepository;
     private final OptionService optionService;
     private final OrderRepository orderRepository;
     private final KakaoApiClient kakaoApiClient;
 
-    public OrderService(MemberRepository memberRepository, OptionRepository optionRepository, OptionService optionService, OrderRepository orderRepository, KakaoApiClient kakaoApiClient) {
+    public OrderService(MemberRepository memberRepository, OptionService optionService, OrderRepository orderRepository, KakaoApiClient kakaoApiClient) {
         this.memberRepository = memberRepository;
-        this.optionRepository = optionRepository;
         this.optionService = optionService;
         this.orderRepository = orderRepository;
         this.kakaoApiClient = kakaoApiClient;
@@ -42,8 +38,7 @@ public class OrderService {
     @Transactional
     public OrderResDto createOrder(MemberResDto memberDto, OrderReqDto orderReqDto) {
 
-        Option option = optionRepository.findById(orderReqDto.optionId())
-                .orElseThrow(() -> OptionNotFoundException.EXCEPTION);
+        Option option = optionService.findByIdOrThrow(orderReqDto.optionId());
 
         Member member = memberRepository.findById(memberDto.id())
                 .orElseThrow(() -> MemberNotFoundByIdException.EXCEPTION);
