@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoUserResponse;
+import gift.entity.Order;
 import gift.exception.BusinessException;
 import gift.exception.ErrorCode;
 import io.netty.channel.ChannelOption;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -91,6 +93,27 @@ public class KakaoApiClient {
                     throw new BusinessException(ErrorCode.KAKAO_AUTH_FAILED, "네트워크 오류: " + throwable.getMessage());
                 })
                 .block();
+    }
+
+    public void sendMessageToMe(String kakaoAccessToken, Order order) {
+        String templateObject = buildTemplateObject(order);
+
+        webClient.post()
+                .uri(kakaoProperties.getMessageUrl())
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoAccessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData("template_object", templateObject))
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                        clientResponse -> clientResponse.bodyToMono(String.class).flatMap(bodyContent ->
+                                Mono.error(new BusinessException(ErrorCode.KAKAO_MESSAGE_SEND_FAILED, "HTTP 오류: " + clientResponse.statusCode() + " - " + bodyContent))))
+                .bodyToMono(String.class)
+                .block();
+    }
+
+    private String buildTemplateObject(Order order) {
+        return String.format("{\"object_type\":\"text\",\"text\":\"상품 : %s\\n수량 : %d\\n%s\",\"link\":{\"web_url\":\"http://localhost:8080\",\"mobile_web_url\":\"http://localhost:8080\"}}",
+                order.getProductOption().getProduct().getName().getValue(), order.getQuantity(), order.getMessage());
     }
 
     private String extractAccessToken(String responseBody) {

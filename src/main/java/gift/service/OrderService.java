@@ -12,8 +12,6 @@ import gift.repository.OrderRepository;
 import gift.repository.ProductOptionRepository;
 import gift.repository.UserRepository;
 import gift.repository.WishRepository;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,48 +20,57 @@ import java.util.Map;
 
 @Service
 public class OrderService {
-    private final ProductOptionRepository productOptionRepository;
-    private final OrderRepository orderRepository;
-    private final WishRepository wishRepository;
-    private final UserRepository userRepository;
-    private final TokenService tokenService;
-    private final KakaoApiClient kakaoApiClient;
 
-    public OrderService(ProductOptionRepository productOptionRepository, OrderRepository orderRepository, WishRepository wishRepository, UserRepository userRepository, TokenService tokenService, KakaoApiClient kakaoApiClient) {
-        this.productOptionRepository = productOptionRepository;
+    private final OrderRepository orderRepository;
+    private final ProductOptionRepository productOptionRepository;
+    private final UserRepository userRepository;
+    private final WishRepository wishRepository;
+    private final KakaoApiClient kakaoApiClient;
+    private final TokenService tokenService;
+
+    public OrderService(OrderRepository orderRepository, ProductOptionRepository productOptionRepository,
+                        UserRepository userRepository, WishRepository wishRepository,
+                        KakaoApiClient kakaoApiClient, TokenService tokenService) {
         this.orderRepository = orderRepository;
-        this.wishRepository = wishRepository;
+        this.productOptionRepository = productOptionRepository;
         this.userRepository = userRepository;
-        this.tokenService = tokenService;
+        this.wishRepository = wishRepository;
         this.kakaoApiClient = kakaoApiClient;
+        this.tokenService = tokenService;
     }
 
     @Transactional
     public OrderResponseDto createOrder(String jwtToken, String kakaoAccessToken, OrderRequestDto requestDto) {
-        Map<String, String> userInfo = tokenService.extractUserInfo(jwtToken);
-        Long userId = Long.parseLong(userInfo.get("id"));
-        User user = userRepository.findById(userId)
+        String jwt = jwtToken.replace("Bearer ", "");
+        String kakaoToken = kakaoAccessToken.replace("Bearer ", "");
+
+        Map<String, String> userInfo = tokenService.extractUserInfo(jwt);
+        String userId = userInfo.get("id");
+
+        User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         ProductOption productOption = productOptionRepository.findById(requestDto.getProductOptionId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_OPTION_NOT_FOUND));
 
+        if (productOption.getQuantity() < requestDto.getQuantity()) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_QUANTITY);
+        }
+
         productOption.decreaseQuantity(requestDto.getQuantity());
         productOptionRepository.save(productOption);
 
         Order order = new Order(productOption, user, requestDto.getQuantity(), LocalDateTime.now(), requestDto.getMessage());
-        Order savedOrder = orderRepository.save(order);
+        orderRepository.save(order);
 
-        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE); // 모든 위시 항목을 가져오기 위해 설정
-        wishRepository.findByUser(user, pageable).stream()
-                .filter(wish -> wish.getProduct().equals(productOption.getProduct()))
-                .forEach(wishRepository::delete);
+        wishRepository.deleteByUserAndProduct(user, productOption.getProduct());
 
-        String message = String.format("%s 님이 %s를 %d만큼 주문했습니다.\n%s",
-                user.getKakaoUser().getNickname(), productOption.getProduct().getName().getValue(), requestDto.getQuantity(), requestDto.getMessage());
+        sendOrderConfirmationMessage(kakaoToken, order);
 
-        kakaoApiClient.sendKakaoMessage(kakaoAccessToken, message);
+        return new OrderResponseDto(order.getId(), productOption.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
+    }
 
-        return new OrderResponseDto(savedOrder.getId(), productOption.getId(), requestDto.getQuantity(), savedOrder.getOrderDateTime(), requestDto.getMessage());
+    private void sendOrderConfirmationMessage(String kakaoAccessToken, Order order) {
+        kakaoApiClient.sendMessageToMe(kakaoAccessToken, order);
     }
 }
