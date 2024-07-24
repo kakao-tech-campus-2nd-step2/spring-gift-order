@@ -5,7 +5,9 @@ import gift.user.dto.request.UserRegisterRequest;
 import gift.user.dto.response.UserResponse;
 import gift.user.service.KakaoUserService;
 import gift.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +38,12 @@ public class UserController {
     }
 
     @RequestMapping("auth/kakao/code")
-    public ResponseEntity<UserResponse> getKakaoUserId(@RequestParam("code") String code) {
-        var response = kakaoUserService.loginKakaoUser(code);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> getKakaoUserId(@RequestParam("code") String code,
+        HttpServletResponse response) throws IOException {
+        var kakaoResponse = kakaoUserService.loginKakaoUser(code);
+        String redirectUrl = "/users/kakaoLoginSuccess?token=" + kakaoResponse.token();
+        response.sendRedirect(redirectUrl);
+        return ResponseEntity.ok().build();
     }
 
 }
