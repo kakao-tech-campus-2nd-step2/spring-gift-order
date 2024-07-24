@@ -27,6 +27,8 @@ public class KakaoService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
+
     public String getKakaoClientId() {
         return kakaoClientId;
     }
@@ -34,8 +36,6 @@ public class KakaoService {
     public String getKakaoRedirectUrl() {
         return kakaoRedirectUrl;
     }
-
-    private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
 
     public String getKakaoLogin() {
         return KAKAO_AUTH_URI + "/oauth/authorize" + "?scope=talk_message" + "&response_type=code"
