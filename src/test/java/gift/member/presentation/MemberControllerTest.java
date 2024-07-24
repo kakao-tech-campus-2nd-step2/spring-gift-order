@@ -1,8 +1,10 @@
 package gift.member.presentation;
 
+import gift.auth.KakaoService;
+import gift.auth.KakaoToken;
 import gift.auth.TokenService;
-import gift.member.application.MemberServiceResponse;
 import gift.member.application.MemberService;
+import gift.member.application.MemberServiceResponse;
 import gift.member.application.command.MemberEmailUpdateCommand;
 import gift.member.application.command.MemberPasswordUpdateCommand;
 import gift.member.presentation.request.MemberJoinRequest;
@@ -10,6 +12,8 @@ import gift.member.presentation.request.MemberLoginRequest;
 import gift.member.presentation.request.ResolvedMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,8 +25,7 @@ import java.util.Arrays;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -38,6 +41,9 @@ public class MemberControllerTest {
     @MockBean
     private TokenService tokenService;
 
+    @MockBean
+    private KakaoService kakaoService;
+
     private Long memberId;
     private String email;
     private String password;
@@ -49,6 +55,7 @@ public class MemberControllerTest {
         email = "test@example.com";
         password = "password";
         token = "testToken";
+        MockitoAnnotations.openMocks(this);
 
         when(tokenService.extractMemberId(eq(token))).thenReturn(memberId);
     }
@@ -116,7 +123,6 @@ public class MemberControllerTest {
     void 이메일_업데이트_테스트() throws Exception {
         // Given
         String newEmail = "test2@example.com";
-//        Member member = new Member(memberId, email, password);
         ResolvedMember resolvedMember = new ResolvedMember(memberId);
         MemberEmailUpdateCommand expectedCommand = new MemberEmailUpdateCommand(newEmail);
 
@@ -131,14 +137,12 @@ public class MemberControllerTest {
                 .andExpect(status().isOk());
 
         verify(memberService).updateEmail(eq(expectedCommand), eq(resolvedMember));
-
     }
 
     @Test
     void 비밀번호_업데이트_테스트() throws Exception {
         // Given
         String newPassword = "newPassword";
-//        Member member = new Member(memberId, email, password);
         ResolvedMember member = new ResolvedMember(memberId);
         MemberPasswordUpdateCommand updateCommand = new MemberPasswordUpdateCommand(newPassword);
 
@@ -158,7 +162,6 @@ public class MemberControllerTest {
     @Test
     void 회원_삭제_테스트() throws Exception {
         // Given
-//        Member member = new Member(memberId, email, password);
         MemberServiceResponse memberServiceResponse = new MemberServiceResponse(memberId, email, password);
         ResolvedMember member = new ResolvedMember(memberId);
         when(memberService.findById(anyLong())).thenReturn(memberServiceResponse);
@@ -169,5 +172,56 @@ public class MemberControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(memberService).delete(eq(member));
+    }
+
+    @Test
+    void refreshToken_정상작동_테스트() throws Exception {
+        // Given
+        String refreshToken = "valid_refresh_token";
+        KakaoToken kakaoToken = new KakaoToken("bearer", "new_access_token", null, 3600, refreshToken, 5184000, "scope");
+        when(kakaoService.refreshToken(refreshToken)).thenReturn(kakaoToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + refreshToken);
+
+        // When & Then
+        mockMvc.perform(post("/api/member/login/kakao/refresh-token")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoToken.accessToken()));
+
+        verify(kakaoService, times(1)).refreshToken(refreshToken);
+    }
+
+    @Test
+    void 카카오로그인_테스트() throws Exception {
+        // Given
+        String redirectUrl = "http://localhost:8080/api/member/login/kakao/callback";
+        when(kakaoService.getKakaoRedirectUrl()).thenReturn(redirectUrl);
+
+        // When & Then
+        mockMvc.perform(get("/api/member/login/kakao"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(redirectUrl));
+
+        verify(kakaoService, times(1)).getKakaoRedirectUrl();
+    }
+
+    @Test
+    void 카카오로그인_콜백_테스트() throws Exception {
+        // Given
+        String code = "valid_authorization_code";
+        Long memberId = 1L;
+        when(memberService.kakaoLogin(code)).thenReturn(memberId);
+        when(tokenService.createToken(memberId)).thenReturn(token);
+
+        // When & Then
+        mockMvc.perform(get("/api/member/login/kakao/callback")
+                        .param("code", code))
+                .andExpect(status().isOk())
+                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer " + token));
+
+        verify(memberService, times(1)).kakaoLogin(code);
+        verify(tokenService, times(1)).createToken(memberId);
     }
 }
