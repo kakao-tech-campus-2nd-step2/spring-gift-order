@@ -33,15 +33,11 @@ public class OptionService {
 
     @Transactional
     public void subtractAmount(Long optionId, int amount){
-        boolean updated = false;
-        while (!updated) {
-            Option option = optionRepository.findById(optionId)
-                    .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
-            if(option.isProductEnough(amount)){
-                option.updateAmount(amount);
-                optionRepository.save(option);
-                updated = true;
-            }
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new ValueNotFoundException("Option not found with ID"));
+        if(option.isProductEnough(amount)){
+            option.updateAmount(amount);
+            optionRepository.save(option);
         }
     }
 }

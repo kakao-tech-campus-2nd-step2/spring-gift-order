@@ -27,17 +27,13 @@ public class ProductService {
 
     @Transactional
     public void addNewProduct(ProductDto productDto){
-        boolean updated = false;
-        while (!updated) {
-            if (productRepository.existsByName(new ProductName(productDto.name()))) {
-                throw new ValueAlreadyExistsException("ProductName already exists in Database");
-            }
-            Category category = findElseSaveCategory(productDto.categoryName());
-            Product product = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
-
-            productRepository.save(product);
-            updated = true;
+        if (productRepository.existsByName(new ProductName(productDto.name()))) {
+            throw new ValueAlreadyExistsException("ProductName already exists in Database");
         }
+        Category category = findElseSaveCategory(productDto.categoryName());
+        Product product = new Product(category,new ProductName(productDto.name()),productDto.price(),productDto.imageUrl());
+
+        productRepository.save(product);
     }
 
     public void updateProduct(Long id, ProductDto productDto) {
