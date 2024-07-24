@@ -1,6 +1,7 @@
 package gift.auth.service;
 
 import gift.auth.domain.AuthInfo;
+import gift.auth.domain.KakaoProperties;
 import gift.auth.dto.LoginRequestDto;
 import gift.global.security.TokenManager;
 import gift.member.domain.Member;
@@ -15,11 +16,13 @@ import java.util.Map;
 public class AuthService {
     private final MemberRepository memberRepository;
     private final TokenManager tokenManager;
+    private final KakaoProperties kakaoProperties;
     public static final String BEARER_TYPE = "Bearer";
 
-    public AuthService(MemberRepository memberRepository, TokenManager tokenManager) {
+    public AuthService(MemberRepository memberRepository, TokenManager tokenManager, KakaoProperties kakaoProperties) {
         this.memberRepository = memberRepository;
         this.tokenManager = tokenManager;
+        this.kakaoProperties = kakaoProperties;
     }
 
     public Map<String, String> login(LoginRequestDto loginRequestDto) {
@@ -32,6 +35,7 @@ public class AuthService {
     }
 
     public String getKakaoAuthUrl() {
+        kakaoProperties.getClientId();
         return "http://localhost:8080";
     }
 }
