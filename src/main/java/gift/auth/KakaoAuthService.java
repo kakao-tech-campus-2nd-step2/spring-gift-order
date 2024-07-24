@@ -1,4 +1,4 @@
-package gift.service;
+package gift.auth;
 
 import gift.client.KakaoApiClient;
 import gift.config.KakaoProperties;
@@ -7,14 +7,15 @@ import gift.entity.KakaoUser;
 import gift.entity.User;
 import gift.repository.KakaoUserRepository;
 import gift.repository.UserRepository;
+import gift.service.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-public class KakaoAuthService {
+@Service("kakaoAuthService")
+public class KakaoAuthService implements AuthService {
 
     private final KakaoProperties kakaoProperties;
     private final KakaoApiClient kakaoApiClient;
@@ -30,12 +31,13 @@ public class KakaoAuthService {
         this.tokenService = tokenService;
     }
 
-    public String getKakaoLoginUrl() {
+    @Override
+    public String getLoginUrl() {
         return kakaoProperties.getAuthUrl() + "?response_type=code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri();
     }
 
     @Transactional
-    public Map<String, String> handleKakaoCallback(String authorizationCode) {
+    public Map<String, String> handleCallback(String authorizationCode) {
         String accessToken = kakaoApiClient.getAccessToken(authorizationCode);
         KakaoUserResponse kakaoUserResponse = kakaoApiClient.getUserInfo(accessToken);
 
@@ -54,5 +56,10 @@ public class KakaoAuthService {
         tokens.put("jwtToken", jwtToken);
 
         return tokens;
+    }
+
+    @Override
+    public String generateToken(User user) {
+        return tokenService.generateToken(user.getId().toString(), "kakao");
     }
 }

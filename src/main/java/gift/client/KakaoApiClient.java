@@ -27,17 +27,17 @@ public class KakaoApiClient {
     private final KakaoProperties kakaoProperties;
     private final WebClient webClient;
 
-    public KakaoApiClient(KakaoProperties kakaoProperties) {
+    public KakaoApiClient(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder) {
         this.kakaoProperties = kakaoProperties;
-        this.webClient = createWebClient();
+        this.webClient = createWebClient(webClientBuilder);
     }
 
-    private WebClient createWebClient() {
+    private WebClient createWebClient(WebClient.Builder webClientBuilder) {
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
                 .responseTimeout(Duration.ofSeconds(5));
 
-        return WebClient.builder()
+        return webClientBuilder
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();

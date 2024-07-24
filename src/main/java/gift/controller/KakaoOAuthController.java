@@ -1,7 +1,8 @@
 package gift.controller;
 
-import gift.service.KakaoAuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import gift.auth.AuthService;
+import gift.auth.KakaoAuthService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,22 +17,21 @@ import java.util.Map;
 @RequestMapping("/oauth")
 public class KakaoOAuthController {
 
-    private final KakaoAuthService kakaoAuthService;
+    private final AuthService kakaoAuthService;
 
-    @Autowired
-    public KakaoOAuthController(KakaoAuthService kakaoAuthService) {
+    public KakaoOAuthController(@Qualifier("kakaoAuthService") AuthService kakaoAuthService) {
         this.kakaoAuthService = kakaoAuthService;
     }
 
     @GetMapping("/kakao")
     public void redirectToKakaoLogin(HttpServletResponse response) throws IOException {
-        String kakaoLoginUrl = kakaoAuthService.getKakaoLoginUrl();
+        String kakaoLoginUrl = kakaoAuthService.getLoginUrl();
         response.sendRedirect(kakaoLoginUrl);
     }
 
     @GetMapping("/kakao/callback")
     public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) {
-        Map<String, String> tokens = kakaoAuthService.handleKakaoCallback(code);
+        Map<String, String> tokens = ((KakaoAuthService) kakaoAuthService).handleCallback(code);
         return ResponseEntity.ok(tokens);
     }
 }
