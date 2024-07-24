@@ -7,12 +7,12 @@ import gift.domain.Order;
 import gift.domain.Product;
 import gift.domain.member.Member;
 import gift.dto.OrderDto;
-import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
 import gift.service.kakao.KakaoMessageRequest;
+import gift.service.kakao.Oauth2TokenService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import static gift.exception.ErrorCode.*;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
@@ -33,25 +34,32 @@ public class OrderService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final OrderRepository orderRepository;
+    private final Oauth2TokenService oauth2TokenService;
 
-    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, RestTemplate restTemplate, ObjectMapper objectMapper, OrderRepository orderRepository) {
+    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, RestTemplate restTemplate, ObjectMapper objectMapper, OrderRepository orderRepository, Oauth2TokenService oauth2TokenService) {
         this.optionRepository = optionRepository;
         this.wishRepository = wishRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.orderRepository = orderRepository;
+        this.oauth2TokenService = oauth2TokenService;
     }
 
     public OrderDto processOrder(OrderDto dto) {
         Long optionId = dto.getOptionId();
         Long quantity = dto.getQuantity();
         Member member = dto.getMember();
+        String accessToken = member.getAccessToken();
         String message = dto.getMessage();
+
+        if (oauth2TokenService.isAccessTokenExpired(accessToken)) {
+            oauth2TokenService.refreshAccessToken(member);
+        }
 
         Option option = getOptionById(optionId);
         subtractOptionQuantity(option, quantity);
         removeMemberWish(member, option.getProduct());
-        sendKakaoMessage(member, message);
+        sendKakaoMessage(accessToken, message);
 
         Order order = new Order(option, quantity, message);
         orderRepository.save(order);
@@ -61,7 +69,7 @@ public class OrderService {
 
     private Option getOptionById(Long optionId) {
         return optionRepository.findById(optionId)
-                .orElseThrow(() -> new GiftException(ErrorCode.OPTION_NOT_FOUND));
+                .orElseThrow(() -> new GiftException(OPTION_NOT_FOUND));
     }
 
     private void subtractOptionQuantity(Option option, Long quantity) {
@@ -73,9 +81,8 @@ public class OrderService {
                 .ifPresent(wish -> wishRepository.delete(wish));
     }
 
-    private void sendKakaoMessage(Member member, String message) {
+    private void sendKakaoMessage(String accessToken, String message) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-        String accessToken = member.getAccessToken();
 
         HttpHeaders headers = createHeaders(accessToken);
         LinkedMultiValueMap<String, String> body = createRequestBody(message);
@@ -84,7 +91,7 @@ public class OrderService {
         ResponseEntity<String> response = restTemplate.exchange(url, POST, httpEntity, String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            throw new GiftException(ErrorCode.SEND_KAKAO_MESSAGE_FAILED);
+            throw new GiftException(SEND_KAKAO_MESSAGE_FAILED);
         }
     }
 
@@ -104,7 +111,7 @@ public class OrderService {
             String templateObject = objectMapper.writeValueAsString(request);
             body.add("template_object", templateObject);
         } catch (JsonProcessingException e) {
-            throw new GiftException(ErrorCode.JSON_PROCESSING_FAILED);
+            throw new GiftException(JSON_PROCESSING_FAILED);
         }
         return body;
     }

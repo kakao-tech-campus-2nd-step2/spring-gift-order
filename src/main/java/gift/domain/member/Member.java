@@ -51,11 +51,11 @@ public class Member {
         return wishes;
     }
 
-    public void setAccessToken(String accessToken) {
+    public void refreshAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public void setRefreshToken(String refreshToken) {
+    public void changeRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
