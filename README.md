@@ -1,5 +1,4 @@
 # spring-gift-order
-# spring-gift-order
 ## step1
 - 기능 요구 사항
     - 카카오 로그인을 통해 인가 코드를 받고, 인가 코드를 사용해 토큰을 받은 후 향후 카카오 API 사용을 준비한다.
