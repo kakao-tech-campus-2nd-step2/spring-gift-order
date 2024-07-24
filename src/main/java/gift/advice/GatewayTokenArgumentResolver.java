@@ -14,7 +14,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class GatewayTokenArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(@Nonnull MethodParameter parameter) {
-        System.out.println(parameter.hasParameterAnnotation(GatewayToken.class) && parameter.getParameterType().equals(String.class));
         return parameter.hasParameterAnnotation(GatewayToken.class) && parameter.getParameterType().equals(String.class);
     }
 
