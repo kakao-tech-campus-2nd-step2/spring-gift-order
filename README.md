@@ -254,6 +254,14 @@ var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url
 
 
 
+##### 리팩토링
+
+현재 코드 구현이 Controller - Client 연결로 되어있음
+
+- [ ] Controller - Service - Client 구조로 리팩토링 필요
+
+
+
 #### [테스트]
 
 - [ ] 서비스 서버 기능 통합 테스트
