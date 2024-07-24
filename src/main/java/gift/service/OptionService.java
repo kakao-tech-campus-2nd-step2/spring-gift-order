@@ -6,6 +6,7 @@ import gift.repository.ProductRepository;
 import gift.vo.Option;
 import gift.vo.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -35,17 +36,17 @@ public class OptionService {
                 () -> new IllegalArgumentException("해당 상품의 옵션이 존재하지 않습니다."));
     }
 
+    @Transactional
     public void addOption(List<OptionRequestDto> optionRequestDtos) {
         for (OptionRequestDto optionRequest : optionRequestDtos) {
             Product product = getProduct(optionRequest.productId());
             validateOptionNameDuplicate(optionRequest, product);
             Option option = optionRequest.toOption(product);
             product.addOption(option);
-            optionRepository.save(option);
-            productRepository.save(product);
         }
     }
 
+    @Transactional
     public void addOption(Product product, List<OptionRequestDto> optionRequestDtos) {
         for (OptionRequestDto optionRequest : optionRequestDtos) {
             validateOptionNameDuplicate(optionRequest, product);
