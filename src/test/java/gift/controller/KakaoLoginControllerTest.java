@@ -1,0 +1,96 @@
+package gift.controller;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.dto.KakaoProperties;
+import gift.security.LoginMemberArgumentResolver;
+import gift.service.MemberService;
+import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(KakaoLoginController.class)
+@TestPropertySource(properties = {"kakao.client-id=", "kakao.redirect-url="})
+class KakaoLoginControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private MemberService memberService;
+
+    @MockBean
+    private LoginMemberArgumentResolver loginMemberArgumentResolver;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private HttpSession session;
+
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-url}")
+    private String redirectUrl;
+
+    @Test
+    void kakaoLoginPageWithoutAuthCodeTest() throws Exception {
+        // when & then
+        mockMvc.perform(get("/").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk()).andExpect(view().name("kakaologin"));
+    }
+
+    @Test
+    void kakaoGetTokenTest() throws Exception {
+        // given
+        var url = new StringBuffer();
+        url.append("https://kauth.kakao.com/oauth/authorize?");
+        url.append("client_id=" + clientId);
+        url.append("&redirect_uri=" + redirectUrl);
+        url.append("&response_type=code");
+        given(memberService.getAuthentificationCode()).willReturn(url);
+
+        // when & then
+        mockMvc.perform(get("/kakao/authcode").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(header().string("Location", url.toString()));
+    }
+
+    @Test
+    void kakaoLoginPageWithAuthCodeTest() throws Exception {
+        // given
+        String testAuthCode = "TestAuthCode";
+
+        // when & then
+        mockMvc.perform(
+                get("/").contentType(MediaType.APPLICATION_JSON).param("code", testAuthCode))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(redirectedUrl("/kakao/token"))
+            .andExpect(result -> {
+                HttpSession session = result.getRequest().getSession();
+                assertNotNull(session);
+                assertEquals(testAuthCode, session.getAttribute("kakao_auth_code"));
+            });
+    }
+}
