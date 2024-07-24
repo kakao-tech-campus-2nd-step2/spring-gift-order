@@ -50,6 +50,7 @@ public class ProductService {
             Option option = new Option(optionRequest.getName(), optionRequest.getQuantity(),
                 product);
             optionRepository.save(option);
+            product.addOption(option);
         });
 
         return product;

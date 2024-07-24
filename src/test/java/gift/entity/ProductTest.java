@@ -1,7 +1,9 @@
 package gift.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import gift.exception.MinimumOptionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,14 +54,20 @@ class ProductTest {
     @Test
     @DisplayName("removeOption 테스트")
     void removeOptionTest() {
-        Option option = new Option("옵션", 300, product);
-        product.getOptions().add(option);
+        Option option1 = new Option("옵션", 300, product);
+        Option option2 = new Option("옵션2", 300, product);
+        product.getOptions().add(option1);
+        product.getOptions().add(option2);
 
         assertThat(product.getOptions().get(0).getName()).isEqualTo("옵션");
 
-        product.removeOption(option);
+        product.removeOption(option1, product);
 
-        assertThat(product.getOptions()).isEmpty();
+        assertThat(product.getOptions().get(0).getName()).isEqualTo("옵션2");
+
+        assertThatThrownBy(() -> product.removeOption(option2, product))
+            .hasMessage("상품의 옵션이 1개 이하인 경우 옵션을 삭제할 수 없습니다.")
+            .isInstanceOf(MinimumOptionException.class);
     }
 
     @Test
