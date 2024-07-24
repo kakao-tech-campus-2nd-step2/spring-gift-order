@@ -5,6 +5,9 @@ import gift.exception.CannotDeleteLastOptionException;
 import gift.exception.InsufficientQuantityException;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +23,10 @@ public class Option {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Wish> wishes = new ArrayList<>();
 
     protected Option() {
     }
@@ -49,6 +56,46 @@ public class Option {
         this.product = product;
         if (this.product != null) {
             this.product.addOption(this);
+        }
+    }
+
+    public void addWish(Wish wish) {
+        this.wishes.add(wish);
+        wish.setOption(this);
+    }
+
+    public void removeWish(Wish wish) {
+        wish.setOption(null);
+        this.wishes.remove(wish);
+    }
+
+    public void removeWishes() {
+        Iterator<Wish> iterator = wishes.iterator();
+
+        while(iterator.hasNext()) {
+            Wish wish = iterator.next();
+            wish.setOption(null);
+            iterator.remove();
+        }
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.setOption(this);
+    }
+
+    public void removeOrder(Order order) {
+        order.setOption(null);
+        this.orders.remove(order);
+    }
+
+    public void removeOrders() {
+        Iterator<Order> iterator = orders.iterator();
+
+        while(iterator.hasNext()){
+            Order order = iterator.next();
+            order.setOption(null);
+            iterator.remove();
         }
     }
 
