@@ -5,7 +5,7 @@
   <script>
     function placeOrder(rowId) {
       const selectedOption = document.querySelector(`#optionSelect_${rowId}`).value;
-      const amount = document.querySelector(`#amount_${rowId}`).textContent; // amount 필드의 값을 가져옵니다.
+      const amount = parseInt(document.querySelector(`#amount_${rowId}`).textContent, 10);
       const message = document.querySelector(`#message_${rowId}`).value;
 
       const data = {
