@@ -4,7 +4,10 @@ import gift.option.Option;
 import gift.option.OptionRepository;
 import gift.product.Product;
 import gift.user.User;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +53,14 @@ public class WishListService {
         WishList wishList = wishListRepository.findById(id).orElseThrow();
         wishList.setCount(count.getCount());
         return new WishListResponse(wishList);
+    }
+
+    public boolean existsWishList(Long optionID, User user){
+        return wishListRepository.existsByUserAndOptionId(user, optionID);
+    }
+
+    public Optional<WishList> findByUserAndOptionID(Long optionID, User user){
+        return wishListRepository.findByUserAndOptionId(user, optionID);
     }
 
     public void deleteByID(Long id) {
