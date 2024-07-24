@@ -8,6 +8,7 @@ public record KakaoTokenResponsed(
     String accessToken,
     String tokenType,
     String refreshToken,
+    String scope,
     int expiresIn,
     int refreshTokenExpiresIn
 ){
