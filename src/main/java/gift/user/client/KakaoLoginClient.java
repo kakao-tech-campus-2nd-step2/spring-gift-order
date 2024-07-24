@@ -36,13 +36,12 @@ public class KakaoLoginClient {
     }
 
     public KakaoUserInfoResponse getKakaoUserId(String token) {
-        var url = "https://kapi.kakao.com/v2/user/me?property_keys=[\"\"]";
-        var response = restClient.get()
+        var url = "https://kapi.kakao.com/v2/user/me?property_keys=[]";
+        return restClient.get()
             .uri(url)
             .header("Authorization", "Bearer " + token)
             .retrieve()
             .body(KakaoUserInfoResponse.class);
-        return response;
     }
 
 }
