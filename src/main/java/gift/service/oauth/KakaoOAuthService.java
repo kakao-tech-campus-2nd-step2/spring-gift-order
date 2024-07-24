@@ -19,6 +19,7 @@ import gift.exception.oauth.KakaoUnlinkException;
 import gift.exception.oauth.KakaoUserInfoException;
 import java.net.URI;
 import java.util.Map;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,12 +48,13 @@ public class KakaoOAuthService {
         requestBody.add("code", code);
 
         try {
-            ResponseEntity<Map> response = client.post()
+            ResponseEntity<Map<String, Object>> response = client.post()
                 .uri(URI.create(kakaoTokenUrl))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(requestBody)
                 .retrieve()
-                .toEntity(Map.class);
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody != null) {
@@ -74,11 +76,12 @@ public class KakaoOAuthService {
         String kakaoUnlinkUrl = "https://kapi.kakao.com/v1/user/unlink";
 
         try {
-            ResponseEntity<Map> response = client.post()
+            ResponseEntity<Map<String, Object>> response = client.post()
                 .uri(URI.create(kakaoUnlinkUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(Map.class);
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody != null) {
@@ -112,11 +115,12 @@ public class KakaoOAuthService {
         String kakaoUserInfoUrl = "https://kapi.kakao.com/v2/user/me";
 
         try {
-            ResponseEntity<Map> response = client.get()
+            ResponseEntity<Map<String, Object>> response = client.get()
                 .uri(URI.create(kakaoUserInfoUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(Map.class);
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody != null) {
