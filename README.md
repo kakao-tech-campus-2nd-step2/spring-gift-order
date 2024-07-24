@@ -16,6 +16,7 @@
         - 특수 문자는 (, ), [, ], +, -, &, /, _ 만 사용 가능하다.
     - "카카오"가 포함된 문구는 담당 MD와 협의한 뒤에 사용할 수 있다.
 - 회원가입/로그인 기능을 가진다.
+    - 카카오 인증을 통한 로그인도 지원한다.
     - 로그인 시, JWT를 발급하여 클라이언트에게 반환한다.
 - 위시 리스트 기능을 가진다.
     - 상품 조회 페이지에서 위시 리스트에 추가 버튼을 눌러 추가할 수 있다.
@@ -116,6 +117,18 @@ GET /api/members/login
 
 ```
 POST /api/members/login
+```
+
+### 카카오 로그인
+
+```
+GET /api/members/login/kakao
+```
+
+### 카카오 로그인 redirect URL
+
+```
+GET /api/members/login/kakao/oauth/token
 ```
 
 ## Wishlist API
