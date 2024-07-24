@@ -12,6 +12,7 @@ import gift.exception.user.MemberNotFoundException;
 import gift.jwt.JwtUtil;
 import gift.model.Member;
 import gift.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,8 @@ public class OAuthService {
     public Member register(OAuthLoginRequest request) {
         Member member = new Member(
                 request.id(),
-                "password"
+                "password",
+                request.accessToken()
         );
         return memberRepository.save(member);
     }
@@ -53,6 +55,14 @@ public class OAuthService {
         LoginResponse response = new LoginResponse(JwtUtil.createToken(member.getEmail()));
         return response;
     }
+
+    @Transactional
+    public void updateAccessToken(OAuthLoginRequest request) {
+        Member member = memberRepository.findByEmail(request.id())
+                .orElseThrow(() -> new MemberNotFoundException("해당 유저가 존재하지 않습니다."));
+        member.updateAccessToken(request.accessToken());
+    }
+
     public boolean isMemberAlreadyRegistered(OAuthLoginRequest request) {
         return memberRepository.findByEmail(request.id()).isPresent();
     }

@@ -18,10 +18,12 @@ public class OAuthController {
     public LoginResponse oAuthLogin(@RequestParam("code") String code) {
         String accessToken = oAuthService.getAccessToken(code);
         String memberProfileId = oAuthService.getMemberProfileId(accessToken);
-        OAuthLoginRequest request = new OAuthLoginRequest("kakao_" + memberProfileId);
+        OAuthLoginRequest request = new OAuthLoginRequest("kakao_" + memberProfileId, accessToken);
         if (!oAuthService.isMemberAlreadyRegistered(request)) {
             oAuthService.register(request);
+            return oAuthService.login(request);
         }
+        oAuthService.updateAccessToken(request);
         return oAuthService.login(request);
     }
 }
