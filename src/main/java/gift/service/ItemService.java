@@ -59,7 +59,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public Page<ItemDTO> getList(Pageable pageable) {
         Page<Item> list = itemRepository.findAll(pageable);
-        return list.map(Item::toDTO);
+        return list.map(o -> new ItemDTO(o));
     }
 
     @Transactional(readOnly = true)
@@ -68,7 +68,7 @@ public class ItemService {
             throw new CustomNotFoundException(ErrorCode.CATEGORY_NOT_FOUND);
         }
         Page<Item> list = itemRepository.findAllByCategoryId(categoryId, pageable);
-        return list.map(Item::toDTO);
+        return list.map(o -> new ItemDTO(o));
     }
 
     @Transactional
@@ -92,13 +92,13 @@ public class ItemService {
     @Transactional(readOnly = true)
     public List<OptionDTO> getOptionList(Long itemId) {
         Item item = findItemById(itemId);
-        return item.getOptions().stream().map(Option::toDTO).toList();
+        return item.getOptions().stream().map(o -> new OptionDTO(o)).toList();
     }
 
     @Transactional(readOnly = true)
     public OptionDTO getOption(Long itemId, Long optionId) {
         Item item = findItemById(itemId);
-        return item.getOptionByOptionId(optionId).toDTO();
+        return new OptionDTO(item.getOptionByOptionId(optionId));
     }
 
     @Transactional

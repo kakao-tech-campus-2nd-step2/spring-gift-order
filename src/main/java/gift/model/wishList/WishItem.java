@@ -1,6 +1,7 @@
 package gift.model.wishList;
 
 import gift.model.item.Item;
+import gift.model.item.ItemDTO;
 import gift.model.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -53,6 +54,6 @@ public class WishItem {
     }
 
     public WishListResponse toResponse() {
-        return new WishListResponse(id, item.toDTO());
+        return new WishListResponse(id, new ItemDTO(item));
     }
 }

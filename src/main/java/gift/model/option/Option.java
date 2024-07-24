@@ -61,10 +61,6 @@ public class Option {
         return item;
     }
 
-    public OptionDTO toDTO() {
-        return new OptionDTO(id, name, quantity);
-    }
-
     public void update(String name, Long quantity) throws CustomArgumentNotValidException {
         this.name = name;
         this.quantity = quantity;

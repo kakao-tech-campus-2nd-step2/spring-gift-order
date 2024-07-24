@@ -29,8 +29,9 @@ public class User {
     private String password;
     @BatchSize(size = 100)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<WishItem> wishItemList = new ArrayList<>();
-
+    private final List<WishItem> wishItemList = new ArrayList<>();
+    @Column
+    private Long kakaoId;
 
     protected User() {
     }
@@ -39,6 +40,16 @@ public class User {
         this.id = id;
         this.password = password;
         this.email = email;
+    }
+
+    public User(String email, String password, Long kakaoId) {
+        this.email = email;
+        this.password = password;
+        this.kakaoId = kakaoId;
+    }
+
+    public Long getKakaoId() {
+        return kakaoId;
     }
 
     public User(String email, String password) {
@@ -55,10 +66,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public UserDTO toDTO() {
-        return new UserDTO(id, password, email);
     }
 
     public List<WishItem> getWishItemList() {

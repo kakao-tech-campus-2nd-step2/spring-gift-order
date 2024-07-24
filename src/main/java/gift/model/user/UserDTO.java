@@ -18,6 +18,12 @@ public class UserDTO {
         this.email = email;
     }
 
+    public UserDTO(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
+    }
+
     public Long getId() {
         return id;
     }

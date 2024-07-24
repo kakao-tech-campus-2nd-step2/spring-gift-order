@@ -29,6 +29,12 @@ public class OptionDTO {
         this.quantity = quantity;
     }
 
+    public OptionDTO(Option option) {
+        this.id = option.getId();
+        this.name = option.getName();
+        this.quantity = option.getQuantity();
+    }
+
     public OptionDTO(String name, Long quantity) {
         this(null, name, quantity);
     }

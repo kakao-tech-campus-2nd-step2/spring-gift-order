@@ -5,15 +5,21 @@ import gift.exception.customException.CustomArgumentNotValidException;
 import gift.exception.customException.CustomDuplicateException;
 import gift.exception.customException.CustomException;
 import gift.exception.customException.PassWordMissMatchException;
+import gift.model.user.UserDTO;
 import gift.model.user.UserForm;
+import gift.oauth.KakaoApiClient;
 import gift.service.JwtProvider;
 import gift.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,10 +27,29 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
+    private final KakaoApiClient kakaoApiClient;
 
-    public AuthController(UserService userService, JwtProvider jwtProvider) {
+    public AuthController(UserService userService, JwtProvider jwtProvider,
+        KakaoApiClient kakaoApiClient) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
+        this.kakaoApiClient = kakaoApiClient;
+    }
+
+    @GetMapping("/login/kakao")
+    public ResponseEntity<?> getKakaoLoginPage() {
+        var header = new HttpHeaders();
+        var uri = kakaoApiClient.requestLogin();
+        return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<?> handleKakaoLoginRequest(@RequestParam("code") String code) {
+        var token = kakaoApiClient.requestToken(code);
+        Long kakaoId = kakaoApiClient.getKakaoId(token.accessToken());
+        UserDTO userDTO = userService.findByKakaoId(kakaoId);
+        String newToken = jwtProvider.generateToken(userDTO);
+        return ResponseEntity.ok(newToken);
     }
 
     @PostMapping("/login")
