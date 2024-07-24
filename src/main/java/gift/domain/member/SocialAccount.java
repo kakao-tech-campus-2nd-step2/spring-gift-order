@@ -33,6 +33,11 @@ public class SocialAccount {
         this.refreshToken = refreshToken;
     }
 
+    public SocialAccount(SocialType socialType, String refreshToken) {
+        this.socialType = socialType;
+        this.refreshToken = refreshToken;
+    }
+
     public Long getId() {
         return id;
     }

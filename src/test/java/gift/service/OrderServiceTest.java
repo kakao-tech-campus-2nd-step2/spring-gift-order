@@ -5,6 +5,8 @@ import gift.domain.Order;
 import gift.domain.Product;
 import gift.domain.Wish;
 import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
+import gift.domain.member.SocialType;
 import gift.dto.OrderDto;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
@@ -49,8 +51,8 @@ public class OrderServiceTest {
     @Test
     void processOrder() throws Exception {
         //given
-        Member member = new Member();
-        member.setAccessToken("test-access-token");
+        SocialAccount socialAccount = new SocialAccount(SocialType.KAKAO, 123L, "test-access-token", "test-refresh-token");
+        Member member = new Member.MemberBuilder().socialAccount(socialAccount).build();
 
         Long originalQuantity = 10L;
         Long orderQuantity = 5L;
@@ -85,12 +87,12 @@ public class OrderServiceTest {
         then(orderRepository).should().save(any(Order.class));
     }
 
-    @DisplayName("주문을 처리하고 카카오 메시지를 전송하는데, 만료된 accessToken 이면 refreshToken 을 통해 재발급 받고 진행한다.")
+    @DisplayName("주문을 처리하고 카카오 메시지를 전송하는데, 만료된 Access Token 이면 Refresh Token 을 통해 재발급 받고 진행한다.")
     @Test
     void processOrderWithExpiredAccessToken() throws Exception {
         //given
-        Member member = new Member();
-        member.setAccessToken("test-access-token");
+        SocialAccount socialAccount = new SocialAccount(SocialType.KAKAO, 123L, "test-access-token", "test-refresh-token");
+        Member member = new Member.MemberBuilder().socialAccount(socialAccount).build();
 
         Long originalQuantity = 10L;
         Long orderQuantity = 5L;
@@ -104,7 +106,7 @@ public class OrderServiceTest {
         option.setQuantity(originalQuantity);
 
         given(oauth2TokenService.isAccessTokenExpired(anyString())).willReturn(true);
-        willDoNothing().given(oauth2TokenService).refreshAccessToken(any(Member.class));
+        willDoNothing().given(oauth2TokenService).refreshAccessToken(any(SocialAccount.class));
         given(optionRepository.findById(anyLong())).willReturn(Optional.of(option));
         given(wishRepository.findByMemberAndProduct(any(Member.class), any(Product.class))).willReturn(Optional.of(new Wish()));
         willDoNothing().given(wishRepository).delete(any(Wish.class));
@@ -119,7 +121,7 @@ public class OrderServiceTest {
         assertThat(result.getMessage()).isEqualTo(message);
 
         then(oauth2TokenService).should().isAccessTokenExpired(anyString());
-        then(oauth2TokenService).should().refreshAccessToken(any(Member.class));
+        then(oauth2TokenService).should().refreshAccessToken(any(SocialAccount.class));
         then(optionRepository).should().findById(anyLong());
         then(wishRepository).should().findByMemberAndProduct(any(Member.class), any(Product.class));
         then(wishRepository).should().delete(any(Wish.class));

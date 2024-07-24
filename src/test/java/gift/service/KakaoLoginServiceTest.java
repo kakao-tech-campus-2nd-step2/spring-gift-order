@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.JwtProvider;
 import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
+import gift.domain.member.SocialType;
 import gift.repository.MemberRepository;
 import gift.service.kakao.KakaoApiService;
 import gift.service.kakao.KakaoTokenInfoResponse;
@@ -60,7 +62,7 @@ class KakaoLoginServiceTest {
         then(kakaoApiService).should().createLoginUrl();
     }
 
-    @DisplayName("카카오톡 로그인을 수행한다. 로그인이 완료되면 JWt를 발행해 응답한다.")
+    @DisplayName("카카오톡 로그인을 수행한다. 로그인이 완료되면 JWT 를 발행해 응답한다.")
     @Test
     void processKakaoAuth() throws Exception {
         //given
@@ -74,7 +76,10 @@ class KakaoLoginServiceTest {
         given(kakaoApiService.getTokenInfo(anyString())).willReturn(tokenInfo);
         given(kakaoApiService.getUserInfo(anyString())).willReturn(ResponseEntity.ok().body("test-body"));
         given(kakaoApiService.parseJson(anyString())).willReturn(jsonNode);
-        given(memberRepository.findByKakaoId(anyLong())).willReturn(Optional.of(new Member()));
+
+        SocialAccount socialAccount = new SocialAccount(SocialType.KAKAO, 123L, accessToken, refreshToken);
+        Member member = new Member.MemberBuilder().socialAccount(socialAccount).build();
+        given(memberRepository.findBySocialAccount_SocialIdAndSocialAccount_SocialType(anyLong(), any(SocialType.class))).willReturn(Optional.of(member));
         given(jwtProvider.create(any(Member.class))).willReturn(jwt);
 
         //when
@@ -87,7 +92,7 @@ class KakaoLoginServiceTest {
         then(kakaoApiService).should().getTokenInfo(anyString());
         then(kakaoApiService).should().getUserInfo(anyString());
         then(kakaoApiService).should().parseJson(anyString());
-        then(memberRepository).should().findByKakaoId(anyLong());
+        then(memberRepository).should().findBySocialAccount_SocialIdAndSocialAccount_SocialType(anyLong(), any(SocialType.class));
         then(jwtProvider).should().create(any(Member.class));
     }
 

@@ -48,12 +48,13 @@ public class Member {
         return socialAccount;
     }
 
-    public Member(Long id, String name, String email, String password, MemberRole role) {
+    public Member(Long id, String name, String email, String password, MemberRole role, SocialAccount socialAccount) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.socialAccount = socialAccount;
     }
 
     public void setSocialAccount(SocialAccount socialAccount) {
@@ -67,6 +68,7 @@ public class Member {
         private String email;
         private String password;
         private MemberRole role;
+        private SocialAccount socialAccount;
 
         public MemberBuilder id(Long id) {
             this.id = id;
@@ -93,8 +95,13 @@ public class Member {
             return this;
         }
 
+        public MemberBuilder socialAccount(SocialAccount socialAccount) {
+            this.socialAccount = socialAccount;
+            return this;
+        }
+
         public Member build() {
-            return new Member(id, name, email, password, role);
+            return new Member(id, name, email, password, role, socialAccount);
         }
     }
 

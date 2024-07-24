@@ -1,7 +1,8 @@
 package gift.service.kakao;
 
 import gift.config.RestTemplateConfig;
-import gift.domain.member.Member;
+import gift.domain.member.SocialAccount;
+import gift.domain.member.SocialType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,11 +40,11 @@ public class Oauth2TokenServiceTest {
         mockServer = MockRestServiceServer.createServer(restTemplate);
     }
 
-    @DisplayName("accessToken 을 refresh 토큰을 통해 갱신한다.")
+    @DisplayName("Access Token 을 refresh 토큰을 통해 갱신한다.")
     @Test
     void refreshAccessToken() throws Exception {
         //given
-        Member member = new Member.MemberBuilder().refreshToken("test-refresh-token").build();
+        SocialAccount socialAccount = new SocialAccount(SocialType.KAKAO, "test-refresh-token");
 
         String expectedResponse = "{ \"access_token\": \"new-access-token\", \"refresh_token\": \"new-refresh-token\" }";
 
@@ -56,15 +57,15 @@ public class Oauth2TokenServiceTest {
         given(kakaoProperties.clientId()).willReturn("test-client-id");
 
         //when
-        oauth2TokenService.refreshAccessToken(member);
+        oauth2TokenService.refreshAccessToken(socialAccount);
 
         //then
-        assertThat(member.getAccessToken()).isEqualTo("new-access-token");
-        assertThat(member.getRefreshToken()).isEqualTo("new-refresh-token");
+        assertThat(socialAccount.getAccessToken()).isEqualTo("new-access-token");
+        assertThat(socialAccount.getRefreshToken()).isEqualTo("new-refresh-token");
         mockServer.verify();
     }
 
-    @DisplayName("accessToken 의 만료 시간이 다 되었으면 만료된 것으로 판단한다.")
+    @DisplayName("Access Token 의 만료 시간이 다 되었으면 만료된 것으로 판단한다.")
     @Test
     void isAccessTokenExpired() throws Exception {
         //given
