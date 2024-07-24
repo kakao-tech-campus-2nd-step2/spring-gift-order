@@ -90,7 +90,6 @@ public class ProductController {
     public String showAddProductForm(Model model) {
         model.addAttribute("productDto", new ProductDto());
         model.addAttribute("categories", categoryService.getAllCategories());
-//        model.addAttribute("options", optionService.retreiveOptions());
         return "addproductform";
     }
 
