@@ -8,7 +8,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import gift.auth.Login;
+import gift.auth.domain.Login;
 import gift.domain.Category.CreateCategory;
 import gift.domain.Category.UpdateCategory;
 import org.junit.jupiter.api.BeforeEach;

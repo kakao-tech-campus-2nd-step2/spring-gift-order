@@ -1,5 +1,6 @@
 package gift.auth;
 
+import gift.auth.domain.Token;
 import gift.entity.UserEntity;
 import gift.util.errorException.BaseHandler;
 import io.jsonwebtoken.Claims;
