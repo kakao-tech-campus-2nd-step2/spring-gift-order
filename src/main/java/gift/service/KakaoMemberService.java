@@ -62,6 +62,24 @@ public class KakaoMemberService {
         return accessToken;
     }
 
+    public void sendKakaoMessage(String accessToken, String message) {
+        var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        var body = new LinkedMultiValueMap<String, String>();
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"object_type\":\"text\",\"text\":\"")
+                .append(message)
+                .append("\",\"link\":{\"web_url\":\"\"}}");
+        body.add("template_object",sb.toString());
+
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+        var response = new RestTemplate().exchange(request, Map.class);
+    }
+
     @Transactional
     public void save(String token, String email) {
         kakaoMemberRepository.save(new KakaoMember(token, email));
