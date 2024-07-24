@@ -29,16 +29,30 @@ public class Member {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "kakao_id", unique = true)
+    private String kakaoId;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishList = new ArrayList<>();
 
     public Member() {
     }
 
+    public Member(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
     }
+
+    public Member(String email, String password, String kakaoId) {
+        this.email = email;
+        this.password = password;
+        this.kakaoId = kakaoId;
+    }
+
 
     public Long getId() {
         return id;
@@ -89,5 +103,13 @@ public class Member {
             ", password='" + password + '\'' +
             ", wishList=" + wishList +
             '}';
+    }
+
+    public String getKakaoId() {
+        return kakaoId;
+    }
+
+    public void setKakaoId(String kakaoId) {
+        this.kakaoId = kakaoId;
     }
 }
