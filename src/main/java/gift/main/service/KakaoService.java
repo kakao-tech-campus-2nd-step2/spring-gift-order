@@ -17,7 +17,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
-
 import static io.jsonwebtoken.lang.Strings.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
@@ -126,6 +125,7 @@ public class KakaoService {
                 .toEntity(String.class);
 
     }
+
 
 
 }

@@ -1,13 +1,9 @@
 package gift.main.controller;
 
-import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
 import gift.main.dto.KakaoToken;
 import gift.main.dto.KakaoUser;
-import gift.main.dto.UserVo;
-import gift.main.entity.User;
 import gift.main.service.KakaoService;
-import gift.main.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
