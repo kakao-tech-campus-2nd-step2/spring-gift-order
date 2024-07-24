@@ -48,7 +48,9 @@ public class WishlistViewController {
         Page<WishlistResponse> wishlists = wishlistService.getWishlistResponseByUserId(userId, pageable);
         model.addAttribute("wishlists", wishlists);
         model.addAttribute("id", userId);
-        model.addAttribute("token", ((KakaoUser) userRepository.findById(userId).get()).getToken());
+        String token = ((KakaoUser) userRepository.findById(userId).get()).getToken();
+        model.addAttribute("token", token);
+        System.out.println("token: " + token);
         return "wishlist";
     }
 
