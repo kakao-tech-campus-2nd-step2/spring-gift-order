@@ -12,6 +12,7 @@ import gift.user.repository.UserJpaRepository;
 import gift.util.auth.JwtUtil;
 import gift.util.mapper.UserMapper;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,13 @@ public class UserService {
             .ifPresent(user -> {
                 throw new CustomException(ErrorCode.USER_ALREADY_EXIST);
             });
-        User registeredUser = userRepository.save(UserMapper.toUser(request));
+        User registeredUser = userRepository.save(
+            User.builder()
+                .email(request.email())
+                .password(request.password())
+                .userRoles(new HashSet<>())
+                .build()
+        );
         List<String> roles = new ArrayList<>();
 
         return UserMapper.toResponse(jwtUtil.generateToken(registeredUser.getId(),
