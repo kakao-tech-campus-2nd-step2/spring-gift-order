@@ -28,7 +28,6 @@ public class UserController {
         Map<String, Object> responseBody = new HashMap<>();
         String token = userService.joinUser(userJoinRequest);
         responseBody.put("redirectUrl", "/spring-gift");
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .body(responseBody);
@@ -39,7 +38,6 @@ public class UserController {
         Map<String, Object> responseBody = new HashMap<>();
         String token = userService.loginUser(userloginDto);
         responseBody.put("redirectUrl", "/spring-gift");
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)
                 .body(responseBody);

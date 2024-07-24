@@ -79,13 +79,13 @@ public class OptionService {
 
     private Option validOption(Long optionId) {
         Option targetOption = optionRepository.findById(optionId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FAILED_OPTION_LOADING));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_OPTION));
         return targetOption;
     }
 
     private List<Option> validOptions(Long productId) {
         List<Option> options = optionRepository.findAllByProductId(productId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FAILED_OPTION_LOADING));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_OPTION));
         return options;
     }
 }

@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 public record KakaoToken(
         String accessToken,        //사용자 액세스 토큰 값
         String tokenType,          //토큰타입, bearer로 고정
-        String refreshToken,       //사용자 리프레시 토큰 값
-        int expiresIn,             //액세스 토큰과 ID 토큰의 만료 시간(초)
-        int refreshTokenExpiresIn  //리프레시 토큰 만료 시간(초)
+        String refreshToken    //사용자 리프레시 토큰 값
 ) {
 }

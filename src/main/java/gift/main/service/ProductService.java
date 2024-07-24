@@ -2,10 +2,7 @@ package gift.main.service;
 
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
-import gift.main.dto.OptionListRequest;
-import gift.main.dto.ProductRequest;
-import gift.main.dto.ProductResponce;
-import gift.main.dto.UserVo;
+import gift.main.dto.*;
 import gift.main.entity.Category;
 import gift.main.entity.Product;
 import gift.main.entity.User;
@@ -36,6 +33,7 @@ public class ProductService {
                           WishProductRepository wishProductRepository,
                           OptionService optionService) {
 
+
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.categoryRepository = categoryRepository;
@@ -50,22 +48,24 @@ public class ProductService {
     }
 
     @Transactional
-    public void registerProduct(ProductRequest productRequest, OptionListRequest optionListRequest, UserVo user) {
+    public void registerProduct(ProductAllRequest productAllRequest, UserVo user) {
+        ProductRequest productRequest = new ProductRequest(productAllRequest);
         User seller = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
         Category category = categoryRepository.findByUniNumber(productRequest.categoryUniNumber())
-                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
 
         Product product = new Product(productRequest, seller, category);
         Product saveProduct = productRepository.save(product);
 
+        OptionListRequest optionListRequest = new OptionListRequest(productAllRequest.optionRequests());
         optionService.registerOptionsFirstTime(saveProduct, optionListRequest);
     }
 
     @Transactional
     public void deleteProduct(long id) {
         productRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
         productRepository.deleteById(id);
 
         List<WishProduct> wishProducts = wishProductRepository.findAllByProductId(id);
@@ -75,16 +75,16 @@ public class ProductService {
     @Transactional
     public void updateProduct(long id, ProductRequest productRequest) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
         Category category = categoryRepository.findByUniNumber(productRequest.categoryUniNumber())
-                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         product.updateValue(productRequest, category);
     }
 
 
     public ProductResponce getProduct(long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
         return new ProductResponce(product);
     }
 

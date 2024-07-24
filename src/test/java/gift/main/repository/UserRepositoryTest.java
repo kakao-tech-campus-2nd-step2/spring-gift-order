@@ -16,6 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest {
+
     private final EntityManager entityManager;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
@@ -53,7 +54,6 @@ class UserRepositoryTest {
         entityManager.flush();
         entityManager.clear();
 
-
         //when
         User searchUser = userRepository.findByEmail("user@").get();
         userRepository.delete(searchUser);
@@ -72,6 +72,7 @@ class UserRepositoryTest {
 
         //when
         User saveUser = userRepository.save(user);
+
 
         //then
         assertThat(saveUser.getRole()).isEqualTo(Role.ADMIN);
@@ -94,6 +95,7 @@ class UserRepositoryTest {
     public void saveDuplicateEmailTest() {
         //given
         final String EMAIL = "이메일";
+
         User user = new User("name", EMAIL, "123", "USER");
         userRepository.save(user);
 
@@ -102,6 +104,6 @@ class UserRepositoryTest {
         //when
         //then
         assertThatThrownBy(() -> userRepository.save(duplicateUser)).isInstanceOf(DataIntegrityViolationException.class);
-
     }
+
 }

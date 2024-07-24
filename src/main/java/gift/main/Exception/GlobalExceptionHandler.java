@@ -30,7 +30,6 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(SignatureException.class)
     public ResponseEntity<?> handleTokenException(Model model, SignatureException e) {
-        System.out.println("e.getClass() = " + e.getClass());
         System.out.println("e.getMessage() = " + e.getMessage());
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("errorMessage", e.getMessage());
@@ -41,7 +40,6 @@ public class GlobalExceptionHandler {
     @ResponseBody
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleInvalidArgument(IllegalArgumentException e) {
-        System.out.println("e.getClass() = " + e.getClass());
         System.out.println("e.getMessage() = " + e.getMessage());
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("errorMessage", e.getMessage());

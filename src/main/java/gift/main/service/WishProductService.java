@@ -54,14 +54,15 @@ public class WishProductService {
 
     private Product validateProduct(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PRODUCT));
         return product;
     }
 
     private User validateUser(UserVo sessionUser) {
         User user = userRepository.findByEmail(sessionUser.getEmail())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
         return user;
     }
+
 
 }

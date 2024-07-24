@@ -1,6 +1,7 @@
 package gift.main.controller;
 
 import gift.main.dto.OptionResponse;
+import gift.main.dto.ProductAllResponse;
 import gift.main.dto.ProductResponce;
 import gift.main.service.OptionService;
 import gift.main.service.ProductService;
@@ -21,6 +22,7 @@ public class ProductController {
     public ProductController(ProductService productService, OptionService optionService) {
         this.productService = productService;
         this.optionService = optionService;
+
     }
 
     @GetMapping("/products")
@@ -32,7 +34,14 @@ public class ProductController {
     @GetMapping("/product/{id}")
     public ResponseEntity<?> findProduct(@PathVariable(name = "id") Long id) {
         ProductResponce product = productService.getProduct(id);
-        List<OptionResponse> optionResponses = optionService.findAllOption(id);
         return ResponseEntity.ok(product);
+    }
+
+    @GetMapping("/product/{id}/options")
+    public ResponseEntity<?> findAllOption(@PathVariable(value = "id") long productId) {
+        ProductResponce product = productService.getProduct(productId);
+        List<OptionResponse> options = optionService.findAllOption(productId);
+        ProductAllResponse productAllResponse = new ProductAllResponse(product, options);
+        return ResponseEntity.ok(productAllResponse);
     }
 }

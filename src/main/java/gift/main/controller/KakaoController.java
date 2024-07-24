@@ -2,9 +2,10 @@ package gift.main.controller;
 
 import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
-import gift.main.dto.KakaoProfile;
 import gift.main.dto.KakaoToken;
 import gift.main.dto.KakaoUser;
+import gift.main.dto.UserVo;
+import gift.main.entity.User;
 import gift.main.service.KakaoService;
 import gift.main.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,8 +25,6 @@ public class KakaoController {
     private final KakaoProperties kakaoProperties;
     private final UserService userService;
     private final KakaoService kakaoService;
-    private String code;
-    private HttpServletResponse response;
 
     public KakaoController(KakaoProperties kakaoProperties, UserService userService, KakaoService kakaoService) {
         this.kakaoProperties = kakaoProperties;
@@ -55,7 +54,12 @@ public class KakaoController {
         Map<String, Object> responseBody = new HashMap<>();
         KakaoToken kakaoToken = kakaoService.requestKakaoToken(code);
         KakaoUser kakaoUser = kakaoService.getKakaoProfile(kakaoToken);
-        String token = userService.loginKakaoUser(kakaoUser);
+        Map<String, Object> map = userService.loginKakaoUser(kakaoUser);
+
+        String token = (String) map.get("token");
+        User user = (User) map.get("user");
+
+        kakaoService.SaveToken(user, kakaoToken);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)

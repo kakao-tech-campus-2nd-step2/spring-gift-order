@@ -10,4 +10,7 @@ public record ProductRequest(
         @NotBlank(message = "이미지주소를 등록해주세요.") String imageUrl,
         int categoryUniNumber) {
 
+    public ProductRequest(ProductAllRequest productAllRequest) {
+        this(productAllRequest.name(), productAllRequest.price(), productAllRequest.imageUrl(), productAllRequest.categoryUniNumber());
+    }
 }

@@ -1,6 +1,5 @@
 package gift.main.entity;
 
-import gift.main.dto.KakaoProfile;
 import gift.main.dto.KakaoUser;
 import gift.main.dto.UserJoinRequest;
 import jakarta.persistence.*;
@@ -109,4 +108,5 @@ public class User {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }

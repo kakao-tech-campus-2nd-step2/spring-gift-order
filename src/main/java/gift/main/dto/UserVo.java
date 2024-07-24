@@ -1,6 +1,7 @@
 package gift.main.dto;
 
 import gift.main.entity.Role;
+import gift.main.entity.User;
 
 public class UserVo {
 
@@ -38,5 +39,12 @@ public class UserVo {
         this.name = name;
         this.email = email;
         this.role = Role.toRole(role);
+    }
+
+    public UserVo(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.role = user.getRole();
     }
 }

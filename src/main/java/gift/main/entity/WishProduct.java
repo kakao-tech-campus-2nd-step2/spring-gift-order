@@ -21,6 +21,7 @@ public class WishProduct {
     public User user;
 
     public WishProduct() {
+
     }
 
     public WishProduct(Product product, User user) {

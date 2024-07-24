@@ -39,7 +39,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         if (productRepository.existsByCategoryId(id)) {
 
             throw new CustomException(ErrorCode.EXISTS_PRODUCT);
@@ -56,7 +56,7 @@ public class CategoryService {
             throw new CustomException(ErrorCode.ALREADY_CATEGORY_UNI_NUMBER);
         }
         Category category = categoryRepository.findById(categoryid)
-                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_CATEGORY));
         category.updateCategory(categoryRequest);
     }
 

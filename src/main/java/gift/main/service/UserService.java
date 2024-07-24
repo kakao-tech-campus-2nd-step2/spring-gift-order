@@ -2,15 +2,15 @@ package gift.main.service;
 
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
-import gift.main.dto.KakaoProfile;
-import gift.main.dto.KakaoUser;
-import gift.main.dto.UserJoinRequest;
-import gift.main.dto.UserLoginRequest;
+import gift.main.dto.*;
 import gift.main.entity.User;
 import gift.main.repository.UserRepository;
 import gift.main.util.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Service
@@ -42,9 +42,18 @@ public class UserService {
     }
 
     @Transactional
-    public String loginKakaoUser(KakaoUser kakaoUser) {
+    public Map<String, Object> loginKakaoUser(KakaoUser kakaoUser) {
         User user = userRepository.findByEmail(kakaoUser.email())
                 .orElseGet(() -> userRepository.save(new User(kakaoUser)));
-        return jwtUtil.createToken(user);
+        String token = jwtUtil.createToken(user);
+        Map<String, Object> responseMap = new HashMap<>();
+
+        // token과 userVo를 Map에 추가
+        responseMap.put("token", token);
+        responseMap.put("user", user);
+
+        // Map 반환
+        return responseMap;
+
     }
 }

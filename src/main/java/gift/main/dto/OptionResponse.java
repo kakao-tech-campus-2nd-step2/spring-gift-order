@@ -10,4 +10,5 @@ public record OptionResponse(
     public OptionResponse(Option option) {
         this(option.getId(), option.getOptionName(), option.getQuantity());
     }
+
 }
