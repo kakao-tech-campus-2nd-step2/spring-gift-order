@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class AuthFilter implements Filter {
@@ -35,7 +36,7 @@ public class AuthFilter implements Filter {
         String path = httpRequest.getRequestURI();
 
         // Filter 를 통과하지 않아도 되는 url
-        if (path.equals("/home") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
+        if (path.equals("/home") || path.equals("/oauth/renew/kakao") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,9 +50,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // bearer 인증방식을 이용하기 때문에 header 7번째 문자부터 유효한 key 값
-        // key 값이 DB에 저장되어 있지 않다면 발급받아야 함
-        // 없으면 누구나 접근할 수 있는 페이지로 리다이렉트
         Optional<AuthToken> token = tokenRepository.findAuthTokenByToken(authHeader.substring(7));
 
         if (token.isEmpty()){
@@ -59,7 +57,9 @@ public class AuthFilter implements Filter {
             return;
         }
 
+        httpRequest.setAttribute("AuthToken",token.get());
         filterChain.doFilter(request, response);
     }
+
 
 }
