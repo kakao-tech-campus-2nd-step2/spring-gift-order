@@ -72,7 +72,7 @@ public class Oauth2TokenService {
             String newAccessToken = root.path("access_token").asText();
             String newRefreshToken = root.path("refresh_token").asText();
 
-            member.refreshAccessToken(newAccessToken);
+            member.changeAccessToken(newAccessToken);
             if (!newRefreshToken.isEmpty()) {
                 member.changeRefreshToken(newRefreshToken);
             }

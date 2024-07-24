@@ -51,7 +51,7 @@ public class Member {
         return wishes;
     }
 
-    public void refreshAccessToken(String accessToken) {
+    public void changeAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 

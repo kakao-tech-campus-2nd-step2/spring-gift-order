@@ -57,6 +57,11 @@ public class KakaoLoginService {
         String nickname = jsonNode.get("properties").get("nickname").asText();
 
         return memberRepository.findByKakaoId(kakaoId)
+                .map(member -> {
+                    member.changeAccessToken(accessToken);
+                    member.changeRefreshToken(refreshToken);
+                    return member;
+                })
                 .orElseGet(() -> createAndSaveMember(kakaoId, nickname, accessToken, refreshToken));
     }
 
