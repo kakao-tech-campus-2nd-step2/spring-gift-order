@@ -2,7 +2,7 @@ package gift.vo;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table
@@ -20,7 +20,7 @@ public class Option {
     private String name;
 
     @NotNull
-    @Positive
+    @PositiveOrZero
     private int quantity;
 
     public Option(Long id, Product product, String name, int quantity) {
