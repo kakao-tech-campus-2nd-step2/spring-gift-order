@@ -1,4 +1,4 @@
-package gift.login;
+package gift.kakao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

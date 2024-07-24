@@ -1,6 +1,6 @@
-package gift.login.service;
+package gift.kakao.login.service;
 
-import gift.login.dto.KakaoTokenResponseDTO;
+import gift.kakao.login.dto.KakaoTokenResponseDTO;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,13 +10,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class LoginService {
+public class KakaoLoginService {
     private final RestClient client;
 
     private final String clientId;
     private final String redirectUri;
 
-    public LoginService(@Value("${kakao.client-id}") String clientId,
+    public KakaoLoginService(@Value("${kakao.client-id}") String clientId,
         @Value("${kakao.redirect-uri}") String redirectUri){
         this.clientId = clientId;
         this.redirectUri = redirectUri;

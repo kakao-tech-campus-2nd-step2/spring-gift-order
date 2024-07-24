@@ -1,4 +1,4 @@
-package gift.login.dto;
+package gift.kakao.login.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

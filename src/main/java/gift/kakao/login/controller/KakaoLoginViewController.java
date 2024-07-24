@@ -1,4 +1,4 @@
-package gift.login.controller;
+package gift.kakao.login.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/login")
-public class LoginViewController {
+public class KakaoLoginViewController {
     @Value("${kakao.client-id}")
     private String clientId;
 
