@@ -5,14 +5,17 @@ import gift.global.exception.UnauthorizedMemberException;
 import gift.global.utils.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
 
 @Service
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final KakaoProperties properties;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, KakaoProperties properties) {
         this.memberRepository = memberRepository;
+        this.properties = properties;
     }
 
     @Transactional
@@ -32,5 +35,14 @@ public class MemberService {
             throw new UnauthorizedMemberException();
         }
         throw new ForbiddenMemberException();
+    }
+
+    public LinkedMultiValueMap<Object, Object> createBody(String code) {
+        var body = new LinkedMultiValueMap<>();
+        body.add("grant_type", properties.grantType());
+        body.add("client_id", properties.clientId());
+        body.add("redirect_url", properties.redirectUrl());
+        body.add("code", code);
+        return body;
     }
 }
