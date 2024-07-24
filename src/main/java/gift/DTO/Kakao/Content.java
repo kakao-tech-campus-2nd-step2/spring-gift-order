@@ -1,14 +1,18 @@
 package gift.DTO.Kakao;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Content {
     private String title;
-    private String image_url;
+    private String imageUrl;
     private String description;
     private Link link;
 
-    public Content(String title, String image_url, String description, Link link) {
+    public Content(String title, String imageUrl, String description, Link link) {
         this.title = title;
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.description = description;
         this.link = link;
     }
@@ -17,8 +21,8 @@ public class Content {
         return title;
     }
 
-    public String getImage_url() {
-        return image_url;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     public String getDescription() {

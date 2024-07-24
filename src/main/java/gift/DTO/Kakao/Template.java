@@ -1,18 +1,22 @@
 package gift.DTO.Kakao;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Template {
-    private String object_type;
+    private String objectType;
     private Content content;
     private Commerce commerce;
 
-    public Template(String object_type, Content content, Commerce commerce) {
-        this.object_type = object_type;
+    public Template(String objectType, Content content, Commerce commerce) {
+        this.objectType = objectType;
         this.content = content;
         this.commerce = commerce;
     }
 
     public String getObject_type() {
-        return object_type;
+        return objectType;
     }
 
     public Content getContent() {

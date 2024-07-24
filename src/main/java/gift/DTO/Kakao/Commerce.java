@@ -1,19 +1,23 @@
 package gift.DTO.Kakao;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Commerce {
-    private String product_name;
-    private int regular_price;
+    private String productName;
+    private int regularPrice;
 
-    public Commerce(String product_name, int regular_price) {
-        this.product_name = product_name;
-        this.regular_price = regular_price;
+    public Commerce(String productName, int regularPrice) {
+        this.productName = productName;
+        this.regularPrice = regularPrice;
     }
 
-    public String getProduct_name(){
-        return product_name;
+    public String getProductName() {
+        return productName;
     }
 
-    public int getRegular_price() {
-        return regular_price;
+    public int getRegularPrice() {
+        return regularPrice;
     }
 }
