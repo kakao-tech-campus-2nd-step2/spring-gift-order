@@ -38,11 +38,11 @@ public class UserService {
                 throw new CustomException(ErrorCode.USER_ALREADY_EXIST);
             });
         User registeredUser = userRepository.save(
-            User.builder()
-                .email(request.email())
-                .password(request.password())
-                .userRoles(new HashSet<>())
-                .build()
+            new User(
+                request.email(),
+                request.password(),
+                new HashSet<>()
+            )
         );
         List<String> roles = new ArrayList<>();
 
