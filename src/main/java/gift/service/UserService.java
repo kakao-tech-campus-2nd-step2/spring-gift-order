@@ -27,7 +27,15 @@ public class UserService {
     public UserDTO findByEmail(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new CustomNotFoundException(ErrorCode.USER_NOT_FOUND));
-        return user.toDTO();
+        return new UserDTO(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO findByKakaoId(Long kakaoId) {
+        User user = userRepository.findByKakaoId(kakaoId)
+            .orElseGet(() -> userRepository.save(
+                new User(String.valueOf(kakaoId), String.valueOf(kakaoId), kakaoId)));
+        return new UserDTO(user);
     }
 
     @Transactional(readOnly = true)
