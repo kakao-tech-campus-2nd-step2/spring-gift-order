@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -36,7 +37,7 @@ public class KakaoOrderAlarmGateway implements OrderAlarmGateway {
                 .body(String.class);
     }
 
-    private LinkedMultiValueMap<String, String> buildParams(String message) {
+    private MultiValueMap<String, String> buildParams(String message) {
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("template_object", message);
         return params;

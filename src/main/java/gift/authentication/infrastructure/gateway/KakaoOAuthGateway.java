@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
@@ -56,7 +57,7 @@ public class KakaoOAuthGateway implements OAuthGateway {
                 .body(KakaoTokenResponse.class);
     }
 
-    private LinkedMultiValueMap<String, String> buildParams(String code) {
+    private MultiValueMap<String, String> buildParams(String code) {
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
