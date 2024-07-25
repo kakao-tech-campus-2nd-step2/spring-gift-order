@@ -23,7 +23,7 @@ public class CategoryService {
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findByName(categoryDTO.name());
 
         if(categoryEntityOptional.isPresent()){
-            throw new CategoryDuplicatedException();
+            throw new CategoryDuplicatedException("중복된 카테고리가 이미 있습니다.");
         }
 
         categoryRepository.save(new CategoryEntity(categoryDTO.name(), categoryDTO.color(), categoryDTO.imageUrl(), categoryDTO.description()));
@@ -45,7 +45,7 @@ public class CategoryService {
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findByName(categoryDTO.name());
 
         if(categoryEntityOptional.isEmpty()){
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
         }
         CategoryEntity categoryEntity = new CategoryEntity(categoryDTO.name(), categoryDTO.color(), categoryDTO.imageUrl(), categoryDTO.description());
         categoryEntity.setId(categoryEntityOptional.get().getId());
@@ -56,7 +56,7 @@ public class CategoryService {
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(id);
 
         if(categoryEntityOptional.isEmpty()){
-            throw new CategoryNotFoundException();
+            throw new CategoryNotFoundException("카테고리를 찾을 수 없습니다.");
         }
 
         categoryRepository.deleteById(id);
