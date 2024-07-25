@@ -2,6 +2,9 @@ package gift.service;
 
 import gift.config.KakaoProperties;
 import gift.entity.Order;
+import gift.entity.Product;
+import gift.exception.ProductNotFoundException;
+import gift.repository.OptionRepository;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,10 +20,13 @@ public class KakaoMessageService {
 
     private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
+    private final OptionRepository optionRepository;
 
-    public KakaoMessageService(RestTemplate restTemplate, KakaoProperties kakaoProperties) {
+    public KakaoMessageService(RestTemplate restTemplate, KakaoProperties kakaoProperties,
+        OptionRepository optionRepository) {
         this.restTemplate = restTemplate;
         this.kakaoProperties = kakaoProperties;
+        this.optionRepository = optionRepository;
     }
 
     public void sendOrderMessage(Order order) {
@@ -40,6 +46,8 @@ public class KakaoMessageService {
     }
 
     private String createTemplateObject(Order order) {
+        Product product = optionRepository.findProductByOptionId(order.getOption().getId())
+            .orElseThrow(() -> new ProductNotFoundException("상품이 없습니다."));
         return """
                 {
                     "object_type": "feed",
@@ -59,7 +67,7 @@ public class KakaoMessageService {
                         ]
                     }
                 }
-            """.formatted(order.getMessage(), order.getProductName(), order.getQuantity(),
-            order.getTotalPrice());
+            """.formatted(order.getMessage(), product.getName(), order.getQuantity(),
+            order.getTotalPrice(product));
     }
 }
