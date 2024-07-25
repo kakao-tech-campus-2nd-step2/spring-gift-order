@@ -26,16 +26,13 @@ public class KakaoLoginService {
     private final String redirectUri;
 
     private final UserRepository userRepository;
-    private final UserService userService;
 
     public KakaoLoginService(@Value("${kakao.client-id}") String clientId,
         @Value("${kakao.redirect-uri}") String redirectUri,
-        UserRepository userRepository,
-        UserService userService){
+        UserRepository userRepository){
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.userRepository = userRepository;
-        this.userService = userService;
         client = RestClient.builder().build();
     }
 
