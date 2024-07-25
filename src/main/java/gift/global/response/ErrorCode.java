@@ -10,6 +10,7 @@ public enum ErrorCode {
 
     // Auth
     KAKAO_TOKEN_ERROR(HttpStatus.UNAUTHORIZED, "EA001", "Kakao token is not valid"),
+    KAKAO_MEMBER_ERROR(HttpStatus.UNAUTHORIZED, "EA001", "Kakao member is not valid"),
 
     // Member
     MEMBER_NOT_FOUND_ERROR(HttpStatus.BAD_REQUEST, "EM001", "Member Not Found Error"),

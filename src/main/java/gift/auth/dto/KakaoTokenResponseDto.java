@@ -1,7 +1,8 @@
 package gift.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gift.member.domain.KakaoMember;
+import gift.member.domain.Email;
+import gift.member.domain.Member;
 
 public record KakaoTokenResponseDto(
         @JsonProperty("access_token") String accessToken,
@@ -9,9 +10,4 @@ public record KakaoTokenResponseDto(
         @JsonProperty("refresh_token") String refreshToken,
         @JsonProperty("expires_in") Integer expiresIn,
         @JsonProperty("scope") String scope) {
-
-    public KakaoMember toKakaoMember() {
-        return new KakaoMember(accessToken, tokenType, refreshToken, expiresIn, scope);
-    }
-
 }

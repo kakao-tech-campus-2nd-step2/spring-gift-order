@@ -13,12 +13,12 @@
                 url: '/api/auth/kakao/login?code=' + code,
                 type: 'GET',
                 success: function(response, textStatus, request) {
-                    const kakaoAuth = request.getResponseHeader('KakaoAuthorization');
+                    const kakaoAuth = request.getResponseHeader('Authorization');
                     if (kakaoAuth) {
-                        document.cookie = "KakaoAuthorization=" + kakaoAuth + "; path=/";
+                        document.cookie = "accessToken=" + kakaoAuth + "; path=/";
                         window.location.href = "/";
                     } else {
-                        alert("Kakao login failed: KakaoAuthorization not found");
+                        alert("Kakao login failed: Authorization not found");
                     }
                 },
                 error: function() {

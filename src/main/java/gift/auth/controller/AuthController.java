@@ -1,10 +1,12 @@
 package gift.auth.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.auth.dto.LoginRequestDto;
 import gift.auth.service.AuthService;
 import gift.global.response.ResultCode;
 import gift.global.response.SimpleResultResponseDto;
 import gift.global.utils.ResponseHelper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<SimpleResultResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        Map<String, String> headers = authService.login(loginRequestDto);
+        HttpHeaders headers = authService.login(loginRequestDto);
         return ResponseHelper.createSimpleResponse(ResultCode.LOGIN_SUCCESS, headers);
     }
 
@@ -34,8 +36,8 @@ public class AuthController {
     }
 
     @GetMapping("/kakao/login")
-    public ResponseEntity<SimpleResultResponseDto> kakaoLogin(@RequestParam("code") String code) {
-        Map<String, String> headers = authService.kakaoLogin(code);
+    public ResponseEntity<SimpleResultResponseDto> kakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
+        HttpHeaders headers = authService.kakaoLogin(code);
         return ResponseHelper.createSimpleResponse(ResultCode.LOGIN_SUCCESS, headers);
     }
 }

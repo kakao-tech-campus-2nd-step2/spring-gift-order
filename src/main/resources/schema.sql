@@ -8,16 +8,6 @@ CREATE TABLE IF NOT EXISTS categories
     CONSTRAINT pk_categories PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS kakao_members
-(
-    access_token  VARCHAR(255) NOT NULL,
-    token_type    VARCHAR(255) NULL,
-    refresh_token VARCHAR(255) NULL,
-    expires_in    INT          NULL,
-    scope         VARCHAR(255) NULL,
-    CONSTRAINT pk_kakao_members PRIMARY KEY (access_token)
-);
-
 CREATE TABLE IF NOT EXISTS members
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
