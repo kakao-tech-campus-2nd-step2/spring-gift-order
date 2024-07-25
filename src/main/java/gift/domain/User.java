@@ -22,6 +22,8 @@ public class User {
     @Column(nullable = false)
     private String password;
     private String role;
+    private String accessToken;
+
     @OneToMany(mappedBy = "user")
     private List<Wish> wishList = new ArrayList<>();
 
@@ -48,6 +50,10 @@ public class User {
 
     public String getRole() {
         return role;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public List<Wish> getWishList() {
