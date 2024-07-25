@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.config.KakaoProperties;
 import gift.dto.OrderDetailResponse;
 import gift.dto.OrderRequest;
 import gift.dto.OrderResponse;
@@ -26,13 +27,16 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final UserRepository userRepository;
     private final KakaoMessageService kakaoMessageService;
+    private final KakaoProperties kakaoProperties;
 
     public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
-        UserRepository userRepository, KakaoMessageService kakaoMessageService) {
+        UserRepository userRepository, KakaoMessageService kakaoMessageService,
+        KakaoProperties kakaoProperties) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.userRepository = userRepository;
         this.kakaoMessageService = kakaoMessageService;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @Transactional
@@ -51,7 +55,9 @@ public class OrderService {
         option.subtractQuantity(request.getQuantity());
         user.subtractWishNumber(request.getQuantity(), product);
 
-        kakaoMessageService.sendOrderMessage(order);
+        if (kakaoProperties.checkKakaoLogin()) { //kakaologin을 수행하지 않으면 카카오 메시지를 보내지 않음
+            kakaoMessageService.sendOrderMessage(order);
+        }
 
         return new OrderResponse(order.getId(), option.getId(), request.getQuantity(),
             LocalDateTime.now(),

@@ -43,4 +43,8 @@ public class KakaoProperties {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+
+    public boolean checkKakaoLogin() {
+        return !this.accessToken.equals("demoToken");
+    }
 }
