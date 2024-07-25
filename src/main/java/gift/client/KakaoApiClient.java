@@ -53,20 +53,20 @@ public class KakaoApiClient {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(requestBody)
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
-                });
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
             Map<String, Object> responseBody = response.getBody();
 
-            if (responseBody != null) {
-                String accessToken = (String) responseBody.get("access_token");
-                Integer expiresIn = (Integer) responseBody.get("expires_in");
-                String refreshToken = (String) responseBody.get("refresh_token");
-                Integer refreshTokenExpiresIn = (Integer) responseBody.get("refresh_token_expires_in");
-
-                return new KakaoTokenResponse(accessToken, expiresIn, refreshToken, refreshTokenExpiresIn);
-            } else {
+            if (responseBody == null) {
                 throw new KakaoTokenException(TOKEN_RESPONSE_ERROR);
             }
+
+            String accessToken = (String) responseBody.get("access_token");
+            Integer expiresIn = (Integer) responseBody.get("expires_in");
+            String refreshToken = (String) responseBody.get("refresh_token");
+            Integer refreshTokenExpiresIn = (Integer) responseBody.get("refresh_token_expires_in");
+
+            return new KakaoTokenResponse(accessToken, expiresIn, refreshToken, refreshTokenExpiresIn);
+
         } catch (RestClientResponseException e) {
             throw new KakaoTokenException(TOKEN_FAILURE_ERROR);
         }
@@ -80,16 +80,16 @@ public class KakaoApiClient {
                 .uri(URI.create(kakaoUnlinkUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
-                });
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
             Map<String, Object> responseBody = response.getBody();
 
-            if (responseBody != null) {
-                Long id = ((Number) responseBody.get("id")).longValue();
-                return new KakaoUnlinkResponse(id);
-            } else {
+            if (responseBody == null) {
                 throw new KakaoUnlinkException(UNLINK_RESPONSE_ERROR);
             }
+
+            Long id = ((Number) responseBody.get("id")).longValue();
+            return new KakaoUnlinkResponse(id);
+
         } catch (RestClientResponseException e) {
             throw new KakaoUnlinkException(UNLINK_FAILURE_ERROR);
         }
@@ -119,20 +119,20 @@ public class KakaoApiClient {
                 .uri(URI.create(kakaoUserInfoUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
-                });
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
             Map<String, Object> responseBody = response.getBody();
 
-            if (responseBody != null) {
-                Long id = ((Number) responseBody.get("id")).longValue();
-                Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
-                String nickname = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
-                String email = (String) kakaoAccount.get("email");
-
-                return new KakaoUserResponse(id, nickname, email);
-            } else {
+            if (responseBody == null) {
                 throw new KakaoUserInfoException(USERINFO_RESPONSE_ERROR);
             }
+
+            Long id = ((Number) responseBody.get("id")).longValue();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get("kakao_account");
+            String nickname = (String) ((Map<String, Object>) kakaoAccount.get("profile")).get("nickname");
+            String email = (String) kakaoAccount.get("email");
+
+            return new KakaoUserResponse(id, nickname, email);
+
         } catch (RestClientResponseException e) {
             throw new KakaoUserInfoException(USERINFO_FAILURE_ERROR);
         }
