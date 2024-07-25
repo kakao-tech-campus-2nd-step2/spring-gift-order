@@ -21,6 +21,7 @@ import gift.exception.oauth.KakaoScopeException;
 import gift.exception.oauth.KakaoTokenException;
 import gift.exception.oauth.KakaoUnlinkException;
 import gift.exception.oauth.KakaoUserInfoException;
+import gift.model.RegisterType;
 import gift.service.MemberService;
 import java.net.URI;
 import java.util.Map;
@@ -151,7 +152,7 @@ public class KakaoOAuthService {
 
     public MemberResponse registerOrLoginKakaoUser(KakaoUserResponse userResponse) {
         try {
-            MemberRegisterRequest registerRequest = new MemberRegisterRequest(userResponse.email(), kakaoPassword);
+            MemberRegisterRequest registerRequest = new MemberRegisterRequest(userResponse.email(), kakaoPassword, RegisterType.KAKAO);
             return memberService.registerMember(registerRequest);
         } catch (EmailAlreadyUsedException e) {
             return memberService.loginKakaoMember(userResponse.email());
