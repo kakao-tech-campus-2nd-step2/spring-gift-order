@@ -83,4 +83,15 @@ public class MemberController {
         MemberResponse memberResponse = memberService.findById(id);
         return ResponseEntity.ok(memberResponse);
     }
+
+    @GetMapping("/oauth/kakao")
+    public String oauthKakao(@RequestParam("code") String code, HttpSession session, Model model) {
+        try {
+            String token = memberService.kakaoLogin(code);
+            session.setAttribute("token", token);
+            return "redirect:/wishes/items";
+        } catch (Exception e) {
+            return "redirect:/members/login?error";
+        }
+    }
 }
