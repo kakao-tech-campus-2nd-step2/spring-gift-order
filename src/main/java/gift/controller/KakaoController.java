@@ -3,7 +3,6 @@ package gift.controller;
 import gift.domain.Member;
 import gift.service.KakaoService;
 import gift.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class KakaoController {
     KakaoService kakaoService;
-    MemberService memberServic;
+    MemberService memberService;
 
     public KakaoController(KakaoService kakaoService, MemberService memberService) {
         this.kakaoService = kakaoService;
-        this.memberServic = memberService;
+        this.memberService = memberService;
     }
 
     @GetMapping("/")
@@ -24,7 +23,7 @@ public class KakaoController {
         String Token = kakaoService.getToken(code);
         String userId = kakaoService.getUserInfo(Token);
         Member member = new Member(userId+"@kakao.com","kakao");
-        memberServic.register(member);
+        memberService.register(member);
         return ResponseEntity.ok("User registered successfully");
     }
 

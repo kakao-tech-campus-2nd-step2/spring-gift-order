@@ -38,3 +38,14 @@ out/
 
 ### Mac OS ###
 .DS_Store
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+
+# application.properties 파일 무시 규칙 추가
+/src/main/resources/application.properties
