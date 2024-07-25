@@ -1,5 +1,11 @@
 # spring-gift-order
 
+## 1단계 구현 내용
+- 로그인 앤드포인트를 구현하여 카카오 로그인을 하면 엑세스 토큰을 받기
+- login.html 에서 로그인 인가 코드 받기
+- home.html 리디렉션 페이지에 엑세스 토큰 보여주기
+- 테스트 코드 추가(계속해서 추가)
+
 ## 현재 코드 구조
 ```plaintext
 └── src
@@ -68,10 +74,19 @@
 └── src
     └── test
         └── java
-            └── gift  
-                ├── KakaoController.java
-                ├── CategoryRepositoryTest.java
-                ├── MemberRepositoryTest.java
-                ├── OptionRepositoryTest.java
-                ├── ProductRepositoryTest.java
-                └── WishRepositoryTest.java
+            └── gift 
+                ├── controller
+                │    ├── AdminControllerTest.java
+                │    ├── CategoryControllerTest.java
+                │    ├── KakaoControllerTest.java
+                │    └── MemberControllerTest.java
+                ├── entity
+                │    └── ProductTest.java
+                ├── Repository
+                │    ├── CategoryrepositoryTest.java
+                │    ├── MemberRepositoryTest.java
+                │    ├── OptionRepositoryTest.java
+                │    ├── ProductReposiroryTest.java
+                │    └── WishRepositoryTest.java
+                └──entity
+                     └── KakaoServiceTest.java
