@@ -1,8 +1,12 @@
 package gift.api;
 
 import gift.KakaoProperties;
+import gift.model.User;
+import gift.service.KakaoService;
 import gift.service.OptionService;
 import gift.service.ProductService;
+import gift.service.UserService;
+import gift.service.WishListService;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,12 +31,18 @@ public class OrderController {
     private final ProductService productService;
     private final KakaoProperties kakaoProperties;
     private final WebClient webClient;
+    private final UserService userService;
+    private final WishListService wishListService;
+    private final KakaoService kakaoService;
 
-    public OrderController(OptionService optionService, ProductService productService, KakaoProperties kakaoProperties, WebClient webClient) {
+    public OrderController(OptionService optionService, ProductService productService, KakaoProperties kakaoProperties, WebClient webClient, UserService userService, WishListService wishListService, KakaoService kakaoService) {
         this.optionService = optionService;
         this.productService = productService;
         this.kakaoProperties = kakaoProperties;
         this.webClient = webClient;
+        this.userService = userService;
+        this.wishListService = wishListService;
+        this.kakaoService = kakaoService;
     }
 
     @PostMapping("/api/orders")
@@ -50,11 +60,21 @@ public class OrderController {
         // 카카오톡 메시지 전송
         boolean messageSent = sendKakaoMessage(token, orderRequest);
 
-        if (messageSent) {
-            return ResponseEntity.ok("Order created and message sent.");
-        } else {
+        if (!messageSent) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Order created but failed to send message.");
         }
+
+        // access token에서 이메일 추출
+        String email = kakaoService.getUserEmail(token);
+
+        // 이메일로 사용자 조회
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            // 위시리스트에서 주문한 제품 ID 삭제
+            wishListService.removeProductFromWishList(email, orderRequest.getProductId());
+        }
+
+        return ResponseEntity.ok("Order created and message sent.");
     }
 
     private boolean sendKakaoMessage(String accessToken, OrderRequest orderRequest) {

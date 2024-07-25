@@ -1,7 +1,10 @@
 package gift.controller;
 
 import gift.KakaoProperties;
+import gift.PasswordEncoder;
+import gift.model.User;
 import gift.service.KakaoService;
+import gift.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +22,12 @@ public class KakaoController {
 
     private final KakaoProperties kakaoProperties;
     private final KakaoService kakaoService;
+    private final UserService userService;
 
-    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService) {
+    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService, UserService userService) {
         this.kakaoProperties = kakaoProperties;
         this.kakaoService = kakaoService;
+        this.userService = userService;
     }
 
     @GetMapping("/kakao/login")
@@ -43,6 +48,13 @@ public class KakaoController {
         // 이메일을 로그로 출력
         logger.info("User email: " + email);
         logger.info("auth: " + accessToken);
+
+        // 사용자 존재 여부 확인 및 생성
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            user = new User(null, email, PasswordEncoder.encode("1234"));
+            userService.save(user);
+        }
 
         return ResponseEntity.ok("Login successful");
     }
