@@ -3,10 +3,14 @@ package gift.service;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.time.Duration;
 
 @Service
 public class KakaoLoginService {
@@ -21,7 +25,18 @@ public class KakaoLoginService {
     private final RestClient restClient;
 
     public KakaoLoginService(RestClient.Builder builder) {
-        this.restClient = builder.build();
+        this.restClient = builder
+                .requestFactory(getClientHttpRequestFactory())
+                .build();
+    }
+
+    private ClientHttpRequestFactory getClientHttpRequestFactory() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+
+        factory.setConnectTimeout(Duration.ofSeconds(1));
+        factory.setReadTimeout(Duration.ofSeconds(1));
+
+        return factory;
     }
 
     public KakaoTokenResponse getToken(String code) {
