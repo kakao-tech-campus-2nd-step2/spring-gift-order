@@ -3,12 +3,14 @@ package gift.controller.kakao;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URI;
 import javax.json.Json;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,20 +35,29 @@ public class KakaoController {
     public ResponseEntity<String> kakaoLogin(@RequestParam("code") String authCode) {
         String tokenRequestUrl = "https://kauth.kakao.com/oauth/token";
 
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> body = createRequestBody(authCode);
+        String tokenResponse = sendTokenRequest(tokenRequestUrl, body);
+        String accessToken = extractAccessToken(tokenResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(accessToken);
+    }
+
+    private MultiValueMap<String, String> createRequestBody(String authCode) {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", authCode);
+        return body;
+    }
 
-        String tokenResponse = restClient.post()
-                                        .uri(tokenRequestUrl)
-                                        .body(body)
-                                        .retrieve()
-                                        .body(String.class);
-        String accessToken = extractAccessToken(tokenResponse);
-
-        return ResponseEntity.status(HttpStatus.OK).body(accessToken);
+    private String sendTokenRequest(String url, MultiValueMap<String, String> body) {
+        return restClient.post()
+                        .uri(URI.create(url))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .body(body)
+                        .retrieve()
+                        .body(String.class);
     }
 
     private String extractAccessToken(String tokenResponse) {
