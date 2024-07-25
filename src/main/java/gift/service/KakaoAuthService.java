@@ -30,12 +30,14 @@ public class KakaoAuthService {
     private final RestClient client = RestClient.builder().build();
 
     private final ProductService productService;
+    private final OptionService optionService;
     private final OptionRepository optionRepository;
     private final MemberRepository memberRepository;
     private final WishRepository wishRepository;
 
-    public KakaoAuthService(ProductService productService, OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
+    public KakaoAuthService(ProductService productService, OptionService optionService, OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
         this.productService = productService;
+        this.optionService = optionService;
         this.optionRepository = optionRepository;
         this.memberRepository = memberRepository;
         this.wishRepository = wishRepository;
@@ -75,6 +77,10 @@ public class KakaoAuthService {
             throw new IllegalArgumentException("해당 옵션이 없습니다.");
         }
         //옵션 수량 만큼 감소(remove) num
+        Optional<Option> option = optionRepository.findByNameAndProduct_Id(optionName, productId);
+        if(option.isPresent()){
+            optionService.removeOption(option.get(), num);
+        }
         //멤버 ID찾음 token
         Member member = getDBMemberByToken(token);
         //위시리스트에 상품있으면 삭제 멤버iD, productID
