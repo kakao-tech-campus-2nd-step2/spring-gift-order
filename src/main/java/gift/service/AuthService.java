@@ -21,7 +21,7 @@ public class AuthService {
     }
 
     public AuthResponse addMember(AuthRequest authRequest) {
-        Member requestMember = new Member(authRequest.email(), authRequest.password());
+        Member requestMember = new Member(authRequest.email(), authRequest.password(), false);
         Member savedMember = memberRepository.save(requestMember);
         return new AuthResponse(jwtUtil.createJWT(savedMember.getId()));
     }
