@@ -43,7 +43,7 @@ public class OrderController {
         // 2. 옵션 수량 차감, wishlist에서 제거
         optionService.subtract(optionService.convertToDTO(optionService.findById(orderResponse.optionid())),
                                 orderResponse.quantity());
-        wishlistService.deleteByUserIdProductId(userId, optionService.findById(orderResponse.optionid()).getId());
+        wishlistService.deleteByUserIdProductId(userId, optionService.findById(orderResponse.optionid()).getProduct().getId());
         // 3. 카카오톡 메시지 api 전송
         orderService.sendMessage(jwtAccessToken, orderRequest.message());
         // 4. response 반환
