@@ -9,8 +9,8 @@ public class KaKaoUserFactory {
     private static String PASSWORD = "kakao2024";
     public static User convertKakaoUserToUser(KakaoProfile kakaoProfile) {
         //String name, String email, String password, String role
-        String name = kakaoProfile.properties().nickname();
-        String email = kakaoProfile.id().toString() + kakaoProfile.properties().nickname();
+        String name = kakaoProfile.nickname();
+        String email = kakaoProfile.idToString() + kakaoProfile.nickname();
         String password = PASSWORD;
         Role role = Role.USER;
 
