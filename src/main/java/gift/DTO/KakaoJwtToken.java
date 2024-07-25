@@ -1,6 +1,8 @@
 package gift.DTO;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -9,6 +11,8 @@ import jakarta.persistence.Table;
 public class KakaoJwtToken {
 
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
   private String accessToken;
 
   private String tokenType;
@@ -16,6 +20,17 @@ public class KakaoJwtToken {
   private int expiresIn;
   private String scope;
   private int refreshTokenExpiresIn;
+
+  public KakaoJwtToken(Long id,String accessToken, String tokenType, String refreshToken, int expiresIn,
+    String scope, int refreshTokenExpiresIn) {
+    this.id=id;
+    this.accessToken = accessToken;
+    this.tokenType = tokenType;
+    this.refreshToken = refreshToken;
+    this.expiresIn = expiresIn;
+    this.scope = scope;
+    this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+  }
 
   public KakaoJwtToken(String accessToken, String tokenType, String refreshToken, int expiresIn,
     String scope, int refreshTokenExpiresIn) {

@@ -2,6 +2,7 @@ package gift.DTO;
 
 public class KakaoJwtTokenDto {
 
+  private Long id;
   private final String accessToken;
 
   private final String tokenType;
@@ -10,8 +11,21 @@ public class KakaoJwtTokenDto {
   private final String scope;
   private final int refreshTokenExpiresIn;
 
+
+
   public KakaoJwtTokenDto(String accessToken, String tokenType, String refreshToken, int expiresIn,
     String scope, int refreshTokenExpiresIn) {
+    this.accessToken = accessToken;
+    this.tokenType = tokenType;
+    this.refreshToken = refreshToken;
+    this.expiresIn = expiresIn;
+    this.scope = scope;
+    this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+  }
+
+  public KakaoJwtTokenDto(Long id, String accessToken, String tokenType, String refreshToken, int expiresIn,
+    String scope, int refreshTokenExpiresIn) {
+    this.id = id;
     this.accessToken = accessToken;
     this.tokenType = tokenType;
     this.refreshToken = refreshToken;
