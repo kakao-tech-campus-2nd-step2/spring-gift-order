@@ -27,7 +27,7 @@ public class KakaoLoginController {
     public ResponseEntity<TokenResponse> getJwtToken(@RequestParam("code") String code) {
         KakaoTokenResponse kakaoToken = kakaoLoginService.getToken(code);
 
-        String email = kakaoLoginService.getEmail(kakaoToken.access_token());
+        String email = kakaoLoginService.getEmail(kakaoToken.accessToken());
 
         Long memberId = memberService.findMemberIdByEmail(email);
         TokenResponse tokenResponse = jwtTokenService.generateToken(memberId);

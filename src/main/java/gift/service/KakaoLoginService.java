@@ -63,7 +63,7 @@ public class KakaoLoginService {
                 .retrieve()
                 .body(KakaoUserInfoResponse.class);
 
-        return body.kakao_account()
+        return body.kakaoAccount()
                 .email();
     }
 }
