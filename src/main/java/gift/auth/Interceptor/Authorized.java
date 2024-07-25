@@ -1,4 +1,4 @@
-package gift.auth.Interceptor;
+package gift.auth.interceptor;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

@@ -1,6 +1,6 @@
 package gift.product.application;
 
-import gift.auth.Interceptor.Authorized;
+import gift.auth.interceptor.Authorized;
 import gift.member.domain.Role;
 import gift.product.application.dto.request.CategoryRequest;
 import gift.product.application.dto.response.CategoryPageResponse;

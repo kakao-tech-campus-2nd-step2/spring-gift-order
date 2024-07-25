@@ -1,7 +1,7 @@
 package gift.auth.service;
 
-import gift.auth.repository.OAuthAccessTokenRepository;
-import gift.auth.repository.OAuthRefreshTokenRepository;
+import gift.auth.persistence.OAuthAccessTokenRepository;
+import gift.auth.persistence.OAuthRefreshTokenRepository;
 import gift.auth.service.dto.KakaoTokenResponse;
 import gift.auth.service.dto.KakaoUserInfoResponse;
 import gift.config.KakaoOauthConfig;
@@ -53,7 +53,7 @@ public class KakaoOAuthService {
                 .header("Authorization", accessToken)
                 .retrieve()
                 .toEntity(KakaoUserInfoResponse.class);
-        System.out.println(userInfo);
+
         return userInfo.getBody();
     }
 }

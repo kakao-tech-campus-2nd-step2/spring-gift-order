@@ -1,4 +1,4 @@
-package gift.auth.controller;
+package gift.auth.application;
 
 import gift.auth.service.KakaoOAuthService;
 import org.springframework.http.HttpStatus;

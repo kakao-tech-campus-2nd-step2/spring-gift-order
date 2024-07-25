@@ -1,4 +1,4 @@
-package gift.auth.repository;
+package gift.auth.persistence;
 
 import gift.auth.token.OAuthAccessToken;
 import org.springframework.data.repository.CrudRepository;

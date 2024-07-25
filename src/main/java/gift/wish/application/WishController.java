@@ -1,6 +1,6 @@
 package gift.wish.application;
 
-import gift.auth.Interceptor.Authorized;
+import gift.auth.interceptor.Authorized;
 import gift.auth.resolver.LoginMember;
 import gift.member.domain.Role;
 import gift.wish.application.dto.request.WishRequest;
