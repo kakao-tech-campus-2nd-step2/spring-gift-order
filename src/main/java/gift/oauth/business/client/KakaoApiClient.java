@@ -3,6 +3,7 @@ package gift.oauth.business.client;
 import gift.global.util.StringUtils;
 import gift.oauth.business.dto.OAuthParam;
 import gift.oauth.business.dto.OAuthProvider;
+import gift.oauth.business.dto.OauthInfo;
 import gift.oauth.business.dto.OauthToken;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -71,5 +72,27 @@ public class KakaoApiClient implements OAuthApiClient {
         log.info("Kakao access token: {}", result.access_token());
 
         return result.access_token();
+    }
+
+    @Override
+    public String getEmail(String accessToken, OAuthParam param) {
+        var url = "https://kapi.kakao.com/v2/user/me";
+
+        var result = restClient.post()
+            .uri(url)
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(param.getEmailRequestBody())
+            .retrieve()
+            .onStatus(
+                HttpStatusCode::isError,
+                (request, response) -> {
+                    log.error("Error Response Body: {}", StringUtils.convert(response.getBody()));
+                    throw new RuntimeException("Failed to get email from Kakao API.");
+                }
+            )
+            .body(OauthInfo.Kakao.class);
+
+        return result.kakao_account().email();
     }
 }
