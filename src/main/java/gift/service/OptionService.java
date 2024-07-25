@@ -44,6 +44,9 @@ public class OptionService {
 
     public Option subtract(Long id, int amount) {
         Option option = findById(id);
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid quantity");
+        }
         if (option.getQuantity() < amount) {
             throw new IllegalArgumentException("Not enough quantity");
         }
