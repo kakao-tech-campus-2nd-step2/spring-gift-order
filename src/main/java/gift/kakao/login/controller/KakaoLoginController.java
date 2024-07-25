@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class KakaoLoginController {
+
     private final KakaoLoginService kakaoLoginService;
 
     public KakaoLoginController(KakaoLoginService kakaoLoginService) {
