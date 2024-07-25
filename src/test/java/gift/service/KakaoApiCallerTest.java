@@ -1,9 +1,11 @@
-package gift;
+package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.exception.AuthenticationException;
 import gift.common.properties.KakaoProperties;
+import gift.model.Orders;
+import gift.service.dto.KakaoRequest;
 import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
@@ -23,35 +25,9 @@ import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-record Template(
-        String object_type,
-        Content content,
-        ItemContent item_content
-) {}
-
-record Content(
-        String title,
-        String description,
-        Link[] link
-){}
-
-record ItemContent(
-        String profile_text,
-        String title_image_text,
-        String title_image_category,
-        Item[] items,
-        String sum,
-        String sum_op
-){}
-record Item(
-        String item,
-        String item_op){}
-
-record Link() {}
-
 @ActiveProfiles("test")
 @SpringBootTest
-public class RestClientTest {
+public class KakaoApiCallerTest {
     private final RestClient client = RestClient.builder().build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,7 +45,7 @@ public class RestClientTest {
     @Test
     void getKakaoAccessToken() {
         var url = properties.tokenUrl();
-        var code = "sJD6Gv6NGW0x6R69ff3_AxIy-gVjuI0-yz8I5M8DxXNd4fG3r4gGbgAAAAQKPCPnAAABkOUv0jjSDh85zpcCzQ";
+        var code = "rm8IdrNXuL_DW2gUvEpqax3f4oQzJyDInTnyqlTXqUG0jcjIAzdORAAAAAQKKclgAAABkOqP91Sxu3fh8M0xkQ";
         final var body = createBody(code);
         var response = client.post()
                 .uri(URI.create(url))
@@ -77,11 +53,11 @@ public class RestClientTest {
                 .body(body)     // request body
                 .exchange((req, res) -> {
                     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-            if (res.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
-                return objectMapper.readValue(res.getBody(), KakaoTokenDto.class);
-            }
-            return "";
-        });
+                    if (res.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
+                        return objectMapper.readValue(res.getBody(), KakaoTokenDto.class);
+                    }
+                    return "";
+                });
         System.out.println(response);
     }
 
@@ -131,22 +107,17 @@ public class RestClientTest {
 
     @Test
     void sendSelfMessage() throws JsonProcessingException {
-        String accessToken = "I58AJ4Yu3IOtwfmuCskpu820VLLJQVGqAAAAAQo9cpcAAAGQ5TDRVSn2EFsnJsRZ";
-        Item item = new Item("상품1", "1000원");
-        ItemContent itemContent = new ItemContent(
-                "선물하기", "상품명1", "옵션1",
-                new Item[]{item}, "Total",
-                "1000원");
-        String description = "여기에 메세지가 표시될듯?";
-        Content content = new Content("상품을 주문했습니다.",  description, null);
-        Template template = new Template("feed", content, itemContent);
+        String accessToken = "9oPh4kFJB_mKt-94b_3hXPZ9HEwB1UiDAAAAAQo8JCAAAAGQ6pC9Eyn2EFsnJsRZ";
+        Orders orders = new Orders(1L, 2L, 3L, "상품명", "옵션명",
+                1000, 10, "이건 설명이다.");
+        KakaoRequest.Feed feed = KakaoRequest.Feed.from(orders);
 
-        String template_str = objectMapper.writeValueAsString(template);
+        String template_str = objectMapper.writeValueAsString(feed);
         MultiValueMap<Object, Object> map = new LinkedMultiValueMap<>();
         map.set("template_object", template_str);
 
         var res = client.post()
-                .uri(properties.selfMessageUrl())
+                .uri(URI.create(properties.selfMessageUrl()))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
                 .body(map)
@@ -160,7 +131,7 @@ public class RestClientTest {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
-        body.add("redirect_uri", "http://localhost:8080");
+        body.add("redirect_uri", properties.redirectUrl());
         body.add("code", code);
         return body;
     }

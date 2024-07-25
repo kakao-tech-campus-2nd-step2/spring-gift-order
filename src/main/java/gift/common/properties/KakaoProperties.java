@@ -10,6 +10,7 @@ public record KakaoProperties(
         String tokenUrl,
         String memberInfoUrl,
         String loginUrl,
+        String adminLoginUrl,
         String logoutUrl,
         String refreshUrl,
         String selfMessageUrl
