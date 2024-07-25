@@ -44,8 +44,8 @@ public class MyTokenFilter implements Filter {
 
         AuthToken authToken = (AuthToken) httpRequest.getAttribute("AuthToken");
 
-        if(authToken.getAccessToken() == null){
-            if(authToken.getCreatedAt().plusSeconds(authToken.getTokenTime()).isBefore(LocalDateTime.now())){
+        if(isMyServerToken(authToken)){
+            if(isMyServerTokenExpired(authToken)){
                 tokenRepository.deleteById(authToken.getId());
                 httpResponse.sendRedirect("/home");
                 return;
@@ -53,6 +53,14 @@ public class MyTokenFilter implements Filter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isMyServerTokenExpired(AuthToken authToken) {
+        return authToken.getCreatedAt().plusSeconds(authToken.getTokenTime()).isBefore(LocalDateTime.now());
+    }
+
+    private boolean isMyServerToken(AuthToken authToken) {
+        return authToken.getAccessToken() == null;
     }
 
 }
