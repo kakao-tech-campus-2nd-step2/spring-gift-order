@@ -1,7 +1,9 @@
 package gift.auth.application;
 
+import gift.auth.dto.KakaoMessageResponse;
 import gift.auth.dto.KakaoTokenResponse;
 import gift.auth.dto.KakaoUserInfoResponse;
+import gift.auth.dto.TemplateObject;
 import gift.auth.vo.KakaoProperties;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
@@ -21,6 +23,9 @@ public class KakaoClient {
 
     private static final String KAKAO_TOKEN_PATH = "/oauth/token";
     private static final String KAKAO_USER_INFO_PATH = "/v2/user/me";
+    private static final String KAKAO_MESSAGE_PATH = "/v2/api/talk/memo/default/send";
+    private static final String TEXT_OBJECT_TYPE = "text";
+
 
     public KakaoClient(RestTemplate restTemplate,
                        KakaoProperties kakaoProperties) {
@@ -29,12 +34,13 @@ public class KakaoClient {
     }
 
     public KakaoTokenResponse getTokenResponse(String authCode) {
-        RequestEntity<LinkedMultiValueMap<String, String>> request = RequestEntity.post(authCode)
+        String url = kakaoProperties.authDomainName() + KAKAO_TOKEN_PATH;
+        RequestEntity<LinkedMultiValueMap<String, String>> request = RequestEntity.post(url)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(kakaoProperties.getRequestBody(authCode));
+                .body(kakaoProperties.getAuthRequestBody(authCode));
 
         KakaoTokenResponse response = restTemplate.postForObject(
-                kakaoProperties.tokenDomainName() + KAKAO_TOKEN_PATH,
+                url,
                 request,
                 KakaoTokenResponse.class
         );
@@ -47,12 +53,13 @@ public class KakaoClient {
     }
 
     public Long getUserId(String token) {
-        RequestEntity<Void> request = RequestEntity.get(KAKAO_USER_INFO_PATH)
+        String url = kakaoProperties.apiDomainName() + KAKAO_USER_INFO_PATH;
+        RequestEntity<Void> request = RequestEntity.get(url)
                 .header(HttpHeaders.AUTHORIZATION, kakaoProperties.authorizationPrefix() + token)
                 .build();
 
         KakaoUserInfoResponse response = restTemplate.exchange(
-                kakaoProperties.userInfoDomainName() + KAKAO_USER_INFO_PATH,
+                url,
                 HttpMethod.GET,
                 request,
                 KakaoUserInfoResponse.class
@@ -63,6 +70,50 @@ public class KakaoClient {
         }
 
         return response.id();
+    }
+
+    public KakaoTokenResponse getRefreshTokenResponse(String refreshToken) {
+        String url = kakaoProperties.authDomainName() + KAKAO_TOKEN_PATH;
+        RequestEntity<LinkedMultiValueMap<String, String>> request = RequestEntity.post(url)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(kakaoProperties.getRefreshRequestBody(refreshToken));
+
+        KakaoTokenResponse response = restTemplate.postForObject(
+                url,
+                request,
+                KakaoTokenResponse.class
+        );
+
+        if (response == null) {
+            throw new CustomException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
+        }
+
+        return response;
+    }
+
+    public void sendMessageToMeOrFalse(String token,
+                                          String text,
+                                          String path) {
+        String apiUrl = kakaoProperties.apiDomainName() + KAKAO_MESSAGE_PATH;
+        TemplateObject templateObject = new TemplateObject(
+                TEXT_OBJECT_TYPE,
+                text,
+                kakaoProperties.baseDomainName() + path
+        );
+
+        RequestEntity<TemplateObject> request = RequestEntity.post(apiUrl)
+                .header(HttpHeaders.AUTHORIZATION, kakaoProperties.authorizationPrefix() + token)
+                .body(templateObject);
+
+        KakaoMessageResponse response = restTemplate.postForObject(
+                apiUrl,
+                request,
+                KakaoMessageResponse.class
+        );
+
+        if (response == null || !response.isSuccessful()) {
+            throw new CustomException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
+        }
     }
 
 }

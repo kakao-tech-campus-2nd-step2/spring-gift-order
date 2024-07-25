@@ -2,6 +2,7 @@ package gift.member.application;
 
 import gift.auth.application.KakaoClient;
 import gift.auth.dto.AuthResponse;
+import gift.auth.dto.KakaoTokenResponse;
 import gift.auth.util.KakaoAuthUtil;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
@@ -11,6 +12,7 @@ import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
 import gift.member.util.MemberMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
@@ -54,20 +56,40 @@ public class MemberService {
     }
 
     public AuthResponse authenticate(String code) {
-        String accessToken = kakaoClient.getAccessToken(code);
-        Long kakaoUserId = kakaoClient.getUserId(accessToken);
+        KakaoTokenResponse tokenResponse = kakaoClient.getTokenResponse(code);
+        Long kakaoUserId = kakaoClient.getUserId(tokenResponse.accessToken());
         String email = "kakao_user" + kakaoUserId + "@kakao.com";
 
-        MemberDto member = memberRepository.findByEmail(email)
-                .map(MemberMapper::toDto)
+        Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
                     String password = KakaoAuthUtil.generateTemporaryPassword();
-                    MemberDto newMember = new MemberDto(email, password);
-                    registerMember(newMember);
-                    return newMember;
+                    Member newMember = new Member(
+                            email,
+                            password,
+                            tokenResponse.accessToken(),
+                            tokenResponse.refreshToken()
+                    );
+                    return memberRepository.save(newMember);
                 });
 
-        return authenticate(member);
+        return AuthResponse.of(
+                jwtUtil.generateToken(member.getId())
+        );
+    }
+
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional
+    public void refreshKakaoAccessToken(Long id) {
+        Member member = getMemberById(id);
+        KakaoTokenResponse refreshTokenResponse = kakaoClient.getRefreshTokenResponse(member.getKakaoRefreshToken());
+        member.updateTokens(
+                refreshTokenResponse.accessToken(),
+                refreshTokenResponse.refreshToken()
+        );
     }
 
 }

@@ -139,12 +139,9 @@ class OptionServiceTest {
         OptionRequest request = new OptionRequest("옵션1", 10);
         Option option = OptionMapper.toEntity(request, product);
         int result = option.getQuantity() - quantity;
-        given(optionRepository.findByProduct_IdAndName(anyLong(), anyString()))
-                .willReturn(Optional.of(option));
 
-        optionService.subtractQuantityOfOption(productId, request, quantity);
+        optionService.subtractQuantity(option, quantity);
 
-        verify(optionRepository).findByProduct_IdAndName(anyLong(), anyString());
         assertThat(option.getQuantity()).isEqualTo(result);
     }
 
@@ -154,10 +151,8 @@ class OptionServiceTest {
         OptionRequest request = new OptionRequest("옵션1", 10);
         Option option = OptionMapper.toEntity(request, product);
         int quantity = option.getQuantity() + 1;
-        given(optionRepository.findByProduct_IdAndName(anyLong(), anyString()))
-                .willReturn(Optional.of(option));
 
-        assertThatThrownBy(() -> optionService.subtractQuantityOfOption(productId, request, quantity))
+        assertThatThrownBy(() -> optionService.subtractQuantity(option, quantity))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.OPTION_QUANTITY_SUBTRACT_FAILED
                                      .getMessage());

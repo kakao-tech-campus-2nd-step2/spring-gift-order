@@ -103,7 +103,7 @@ class WishesServiceTest {
         given(wishesRepository.findByMember_IdAndProduct_Id(anyLong(), anyLong()))
                 .willReturn(Optional.of(wish));
 
-        wishesService.removeProductFromWishlist(memberId, productId);
+        wishesService.removeWishIfPresent(memberId, productId);
 
         verify(wishesRepository).findByMember_IdAndProduct_Id(memberId, productId);
         verify(wishesRepository).deleteById(any());
@@ -115,7 +115,7 @@ class WishesServiceTest {
         given(wishesRepository.findByMember_IdAndProduct_Id(anyLong(), anyLong()))
                 .willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> wishesService.removeProductFromWishlist(memberId, productId))
+        assertThatThrownBy(() -> wishesService.removeWishIfPresent(memberId, productId))
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.WISH_NOT_FOUND
                                      .getMessage());

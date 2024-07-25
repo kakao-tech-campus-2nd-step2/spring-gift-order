@@ -42,7 +42,7 @@ public class WishesController {
     @DeleteMapping("/{productId}")
     public void removeWish(@LoginMember Long memberId,
                            @PathVariable("productId") Long productId) {
-        wishesService.removeProductFromWishlist(memberId, productId);
+        wishesService.removeWishIfPresent(memberId, productId);
     }
 
 }

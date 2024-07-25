@@ -26,12 +26,26 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Wish> wishList = new ArrayList<>();
 
+    private String kakaoAccessToken;
+
+    private String kakaoRefreshToken;
+
     protected Member() {
     }
 
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(String email,
+                  String password,
+                  String kakaoAccessToken,
+                  String kakaoRefreshToken) {
+        this.email = email;
+        this.password = password;
+        this.kakaoAccessToken = kakaoAccessToken;
+        this.kakaoRefreshToken = kakaoRefreshToken;
     }
 
     public Long getId() {
@@ -50,9 +64,22 @@ public class Member {
         return wishList;
     }
 
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
+    }
+
+    public String getKakaoRefreshToken() {
+        return kakaoRefreshToken;
+    }
+
     public void update(MemberDto memberDto) {
         email = memberDto.email();
         password = memberDto.password();
+    }
+
+    public void updateTokens(String accessToken, String refreshToken) {
+        kakaoAccessToken = accessToken;
+        kakaoRefreshToken = refreshToken;
     }
 
 }

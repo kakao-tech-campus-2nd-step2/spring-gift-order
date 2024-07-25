@@ -38,7 +38,7 @@ public class WishesService {
         wishesRepository.save(createWish(memberId, productId));
     }
 
-    public void removeProductFromWishlist(Long memberId, Long productId) {
+    public void removeWishIfPresent(Long memberId, Long productId) {
         Wish wish = wishesRepository.findByMember_IdAndProduct_Id(memberId, productId)
                 .orElseThrow(() -> new CustomException(ErrorCode.WISH_NOT_FOUND));
 

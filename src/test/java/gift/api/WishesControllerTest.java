@@ -128,7 +128,7 @@ class WishesControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
                 .andExpect(status().isOk());
 
-        verify(wishesService).removeProductFromWishlist(memberId, productId);
+        verify(wishesService).removeWishIfPresent(memberId, productId);
     }
 
 }
