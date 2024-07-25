@@ -67,7 +67,7 @@ class WishIntegrityTest {
     void 로그인() {
         MemberDto memberDto = new MemberDto("test@test.com", "1234");
         authService.register(memberDto);
-        accessToken = authService.login(memberDto).token();
+        accessToken = authService.login(memberDto).accessToken();
     }
 
     @BeforeAll

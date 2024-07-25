@@ -9,7 +9,7 @@ import static org.mockito.BDDMockito.then;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.AccessAndRefreshToken;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
 import gift.product.exception.LoginFailedException;
@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Properties;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -31,10 +30,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -114,7 +109,10 @@ class AuthServiceTest {
         JwtResponse jwtResponse = authService.login(memberDto);
 
         //then
-        assertThat(jwtResponse.token()).isNotEmpty();
+        assertSoftly(softly -> {
+            assertThat(jwtResponse.accessToken()).isNotEmpty();
+            assertThat(jwtResponse.refreshToken()).isNotEmpty();
+        });
     }
 
     @Test
@@ -131,20 +129,20 @@ class AuthServiceTest {
     }
 
     @Test
-    void 토큰_발급() throws JsonProcessingException {
+    void OAuth_토큰_발급() throws JsonProcessingException {
         //given
-        AccessAndRefreshToken responseBody = new AccessAndRefreshToken("test_access_token",
-            "test_refresh_token");
+        OAuthJwt responseBody = new OAuthJwt("test_oauth_access_token",
+            "test_oauth_refresh_token");
         mockWebServer.enqueue(new MockResponse().setBody(objectMapper.writeValueAsString(responseBody)));
 
         //when
         String mockUrl = mockWebServer.url("/oauth/token").toString();
-        AccessAndRefreshToken response = authService.getAccessAndRefreshToken("test_authorization_code", mockUrl);
+        OAuthJwt response = authService.getOAuthToken("test_authorization_code", mockUrl);
 
         //then
         assertSoftly(softly -> {
-            assertThat(response.accessToken()).isEqualTo("test_access_token");
-            assertThat(response.refreshToken()).isEqualTo("test_refresh_token");
+            assertThat(response.accessToken()).isEqualTo("test_oauth_access_token");
+            assertThat(response.refreshToken()).isEqualTo("test_oauth_refresh_token");
         });
     }
 
@@ -159,10 +157,26 @@ class AuthServiceTest {
 
         //when
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
-        authService.registerKakaoMember("test_access_token", mockUrl);
+        authService.registerKakaoMember("test_oauth_access_token", mockUrl);
 
         //then
         then(authRepository).should().save(any());
+    }
+
+    @Test
+    void 자체_토큰_발급() {
+        //given
+        Member member = new Member(1L, "test@test.com", "test");
+        OAuthJwt oAuthJwt = new OAuthJwt("test_oauth_access_token", "test_oauth_refresh_token");
+
+        //when
+        JwtResponse jwtResponse = authService.getToken(member, oAuthJwt);
+
+        //then
+        assertSoftly(softly -> {
+            assertThat(jwtResponse.accessToken()).isNotNull();
+            assertThat(jwtResponse.refreshToken()).isNotNull();
+        });
     }
 
     @Test
@@ -174,7 +188,7 @@ class AuthServiceTest {
 
         //when
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
-        Long id = authService.unlinkKakaoAccount("test_access_token", mockUrl);
+        Long id = authService.unlinkKakaoAccount("test_oauth_access_token", mockUrl);
 
         //then
         assertThat(id).isEqualTo(testId);
@@ -199,7 +213,7 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/oauth/token").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.getAccessAndRefreshToken("test_authorization_code", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.getOAuthToken("test_authorization_code", mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 
@@ -210,7 +224,7 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.registerKakaoMember("test_access_token", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.registerKakaoMember("test_oauth_access_token", mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 
@@ -221,7 +235,7 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.unlinkKakaoAccount("test_access_token", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.unlinkKakaoAccount("test_oauth_access_token", mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 }
