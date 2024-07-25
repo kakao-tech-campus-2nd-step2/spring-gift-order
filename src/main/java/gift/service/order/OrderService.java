@@ -7,11 +7,13 @@ import gift.exception.WishItemNotFoundException;
 import gift.model.gift.Gift;
 import gift.model.option.Option;
 import gift.model.order.Order;
+import gift.model.token.KakaoToken;
 import gift.model.user.User;
 import gift.model.wish.Wish;
 import gift.repository.gift.GiftRepository;
 import gift.repository.option.OptionRepository;
 import gift.repository.order.OrderRepository;
+import gift.repository.token.KakaoTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
 import gift.util.AuthUtil;
@@ -24,28 +26,38 @@ import java.util.NoSuchElementException;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private OptionRepository optionRepository;
 
-    private GiftRepository giftRepository;
+    private final OptionRepository optionRepository;
 
-    private WishRepository wishRepository;
+    private final GiftRepository giftRepository;
 
-    private UserRepository userRepository;
+    private final WishRepository wishRepository;
+
+    private final UserRepository userRepository;
+
+    private final KakaoTokenRepository kakaoTokenRepository;
 
     private final AuthUtil authUtil;
 
     @Autowired
-    public OrderService(OptionRepository optionRepository, GiftRepository giftRepository, WishRepository wishRepository, UserRepository userRepository, OrderRepository orderRepository, AuthUtil authUtil) {
+    public OrderService(OptionRepository optionRepository,
+                        GiftRepository giftRepository,
+                        WishRepository wishRepository,
+                        UserRepository userRepository,
+                        OrderRepository orderRepository,
+                        KakaoTokenRepository kakaoTokenRepository,
+                        AuthUtil authUtil) {
         this.optionRepository = optionRepository;
         this.giftRepository = giftRepository;
         this.wishRepository = wishRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
+        this.kakaoTokenRepository = kakaoTokenRepository;
         this.authUtil = authUtil;
     }
 
 
-    public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest,String accessToken){
+    public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
         Gift gift = giftRepository.findById(giftId)
@@ -63,14 +75,15 @@ public class OrderService {
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message());
         orderRepository.save(order);
 
-        sendMessage(orderRequest, accessToken, gift, option);
+        sendMessage(orderRequest, user, gift, option);
         return OrderResponse.fromEntity(order);
     }
 
-    private void sendMessage(OrderRequest.Create orderRequest, String accessToken, Gift gift, Option option) {
+    private void sendMessage(OrderRequest.Create orderRequest, User user, Gift gift, Option option) {
+        KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(()->new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
-        authUtil.sendMessage(accessToken, message);
+        authUtil.sendMessage(kakaoToken.getAccessToken(), message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {

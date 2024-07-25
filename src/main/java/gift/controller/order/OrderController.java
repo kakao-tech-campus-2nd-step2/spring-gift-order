@@ -24,9 +24,8 @@ public class OrderController {
     @PostMapping("/{giftId}")
     public ResponseEntity<OrderResponse> order(@RequestAttribute("user") User user,
                                                @PathVariable Long giftId,
-                                               @Valid @RequestBody OrderRequest.Create orderRequest,
-                                               @RequestParam String accessToken){
-        OrderResponse orderResponse = orderService.order(user.getId(), giftId, orderRequest,accessToken);
+                                               @Valid @RequestBody OrderRequest.Create orderRequest){
+        OrderResponse orderResponse = orderService.order(user.getId(), giftId, orderRequest);
         return ResponseEntity.ok(orderResponse);
     }
 }
