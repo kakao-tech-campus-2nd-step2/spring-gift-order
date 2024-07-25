@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static gift.domain.LoginType.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,10 +35,10 @@ public class MemberServiceTest {
     public void testRegister() {
         MemberRequest memberRequest = new MemberRequest("test@example.com", "password");
 
-        when(memberRepository.findByEmail("test@example.com")).thenReturn(Optional.empty());
+        when(memberRepository.findByEmailAndLoginType("test@example.com", NORMAL)).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Member member = memberService.register(memberRequest);
+        Member member = memberService.register(memberRequest, NORMAL);
 
         assertThat(member.getEmail()).isEqualTo("test@example.com");
     }
@@ -45,10 +46,10 @@ public class MemberServiceTest {
     @Test
     public void testDuplicateRegister() {
         MemberRequest memberRequest = new MemberRequest("test@example.com", "password");
-        when(memberRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new Member()));
+        when(memberRepository.findByEmailAndLoginType("test@example.com", NORMAL)).thenReturn(Optional.of(new Member()));
 
         assertThrows(DuplicateMemberEmailException.class, () -> {
-            memberService.register(memberRequest);
+            memberService.register(memberRequest, NORMAL);
         });
     }
 
@@ -57,10 +58,10 @@ public class MemberServiceTest {
         MemberRequest memberRequest = new MemberRequest("test@example.com", "password");
         Member member = mock(Member.class);
 
-        when(memberRepository.findByEmail("test@example.com")).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmailAndLoginType("test@example.com", NORMAL)).thenReturn(Optional.of(member));
         when(member.getPassword()).thenReturn("password");
 
-        Member authenticatedMember = memberService.authenticate(memberRequest);
+        Member authenticatedMember = memberService.authenticate(memberRequest, NORMAL);
 
         assertThat(authenticatedMember.getEmail()).isEqualTo("test@example.com");
     }
@@ -70,11 +71,11 @@ public class MemberServiceTest {
         MemberRequest memberRequest = new MemberRequest("test@example.com", "wrongpassword");
         Member member = mock(Member.class);
 
-        when(memberRepository.findByEmail("test@example.com")).thenReturn(Optional.of(member));
+        when(memberRepository.findByEmailAndLoginType("test@example.com", NORMAL)).thenReturn(Optional.of(member));
         when(member.getPassword()).thenReturn("password");
 
         assertThrows(InvalidCredentialsException.class, () -> {
-            memberService.authenticate(memberRequest);
+            memberService.authenticate(memberRequest, NORMAL);
         });
     }
 
@@ -82,10 +83,10 @@ public class MemberServiceTest {
     public void testAuthenticateWithNonExistentEmail() {
         MemberRequest memberRequest = new MemberRequest("nonexistent@example.com", "password");
 
-        when(memberRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+        when(memberRepository.findByEmailAndLoginType("nonexistent@example.com", NORMAL)).thenReturn(Optional.empty());
 
         assertThrows(MemberNotFoundException.class, () -> {
-            memberService.authenticate(memberRequest);
+            memberService.authenticate(memberRequest, NORMAL);
         });
     }
 }

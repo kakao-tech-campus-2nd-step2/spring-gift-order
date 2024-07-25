@@ -17,6 +17,7 @@ import org.springframework.test.annotation.Rollback;
 
 import java.util.List;
 
+import static gift.domain.LoginType.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -42,7 +43,7 @@ public class WishlistSpringDataJpaRepositoryTest {
 
     @Test
     public void testAddItemToWishlist() {
-        Member member = new Member("test@example.com", "password");
+        Member member = new Member("test@example.com", "password", NORMAL);
         memberRepository.save(member);
 
         Category category = createCategory();
@@ -59,7 +60,7 @@ public class WishlistSpringDataJpaRepositoryTest {
 
     @Test
     public void testDeleteItemFromWishlist() {
-        Member member = new Member("test2@example.com", "password");
+        Member member = new Member("test2@example.com", "password", NORMAL);
         memberRepository.save(member);
 
         Category category = createCategory();
@@ -78,7 +79,7 @@ public class WishlistSpringDataJpaRepositoryTest {
 
     @Test
     public void testGetWishlistByMemberId() {
-        Member member = new Member("test3@example.com", "password");
+        Member member = new Member("test3@example.com", "password", NORMAL);
         memberRepository.save(member);
 
         Category category = createCategory();

@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.LoginType;
 import gift.domain.Member;
 import gift.dto.request.MemberRequest;
 import gift.exception.DuplicateMemberEmailException;
@@ -25,7 +26,7 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Member register(MemberRequest memberRequest, String loginType) {
+    public Member register(MemberRequest memberRequest, LoginType loginType) {
         Optional<Member> oldMember = memberRepository.findByEmailAndLoginType(memberRequest.getEmail(), loginType);
 
         if (oldMember.isPresent()) {
@@ -36,7 +37,7 @@ public class MemberService {
         return member;
     }
 
-    public Member authenticate(MemberRequest memberRequest, String loginType) {
+    public Member authenticate(MemberRequest memberRequest, LoginType loginType) {
         Member member = memberRepository.findByEmailAndLoginType(memberRequest.getEmail(), loginType)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
 
@@ -46,7 +47,7 @@ public class MemberService {
         return member;
     }
 
-    public Member findByEmailAndLoginType(String email, String loginType) {
+    public Member findByEmailAndLoginType(String email, LoginType loginType) {
         return memberRepository.findByEmailAndLoginType(email, loginType)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
     }

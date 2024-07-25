@@ -19,8 +19,9 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String loginType;
+    private LoginType loginType;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
@@ -31,7 +32,7 @@ public class Member {
     public Member() {
     }
 
-    public Member(String email, String password, String loginType) {
+    public Member(String email, String password, LoginType loginType) {
         this.email = email;
         this.password = password;
         this.loginType = loginType;

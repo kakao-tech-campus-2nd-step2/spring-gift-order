@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.domain.LoginType;
 import gift.domain.Member;
 import gift.dto.request.MemberRequest;
 import gift.dto.response.KakaoProfileResponse;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static gift.domain.LoginType.KAKAO;
+import static gift.domain.LoginType.NORMAL;
 
 @RestController
 @RequestMapping("/members")
@@ -33,7 +37,7 @@ public class MemberController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@RequestBody MemberRequest memberRequest) {
-        Member member = memberService.register(memberRequest, "NORMAL");
+        Member member = memberService.register(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("token", token);
@@ -44,7 +48,7 @@ public class MemberController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody MemberRequest memberRequest) {
-        Member member = memberService.authenticate(memberRequest, "NORMAL");
+        Member member = memberService.authenticate(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("token", token);
@@ -65,7 +69,7 @@ public class MemberController {
             return new ResponseEntity<>(Map.of("error", "이메일을 가져올 수 없습니다."), HttpStatus.BAD_REQUEST);
         }
 
-        String loginType = "KAKAO";
+        LoginType loginType = KAKAO;
         Member member;
         try {
             member = memberService.register(new MemberRequest(email, "kakao"), loginType);
