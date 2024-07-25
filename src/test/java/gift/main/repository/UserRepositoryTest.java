@@ -71,11 +71,11 @@ class UserRepositoryTest {
         User user = new User("testuser", "email", "1234", "admin");
 
         //when
-        User saveUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
 
         //then
-        assertThat(saveUser.getRole()).isEqualTo(Role.ADMIN);
+        assertThat(savedUser.getRole()).isEqualTo(Role.ADMIN);
     }
 
     @Test
