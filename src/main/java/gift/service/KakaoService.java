@@ -23,8 +23,6 @@ public class KakaoService {
     @Value( "${kakao.redirect_uri}" )
     String redirect_uri;
 
-    String code = "";
-
     public String getClientId() {
         return client_id;
     }
