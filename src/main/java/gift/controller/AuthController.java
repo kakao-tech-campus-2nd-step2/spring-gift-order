@@ -43,7 +43,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> handleKakaoLoginRequest(@RequestParam("code") String code) {
         var token = kakaoApiClient.requestToken(code);
         Long kakaoId = kakaoApiClient.getKakaoId(token.accessToken());
