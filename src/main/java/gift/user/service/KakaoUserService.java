@@ -5,7 +5,6 @@ import gift.user.dto.request.UserLoginRequest;
 import gift.user.dto.request.UserRegisterRequest;
 import gift.user.dto.response.UserResponse;
 import gift.user.repository.UserJpaRepository;
-import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 
@@ -29,19 +28,13 @@ public class KakaoUserService {
         var token = kakaoLoginClient.getKakaoTokenResponse(code).accessToken();
         var userInfo = kakaoLoginClient.getKakaoUserId(token);
         String email = userInfo.id() + "@kakao.com";
-        String password = generateDummyPassword(userInfo.id());
+        String password = "";
 
         if (!userRepository.existsByEmail(email)) {
-            userService.registerUser(new UserRegisterRequest(email, password));
+            userService.registerUser(new UserRegisterRequest(email, password, true));
         }
 
         return userService.loginUser(new UserLoginRequest(email, password));
     }
 
-    private String generateDummyPassword(Long id) {
-        RANDOM.setSeed(id);
-        byte[] array = new byte[20];
-        RANDOM.nextBytes(array);
-        return new String(array, Charset.forName("UTF-8"));
-    }
 }

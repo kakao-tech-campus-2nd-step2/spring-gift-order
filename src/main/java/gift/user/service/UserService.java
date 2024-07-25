@@ -41,6 +41,7 @@ public class UserService {
             new User(
                 request.email(),
                 request.password(),
+                request.isKakao(),
                 new HashSet<>()
             )
         );
