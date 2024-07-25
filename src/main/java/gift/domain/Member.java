@@ -22,8 +22,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<TokenAuth> tokenAuths = new ArrayList<>();
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private TokenAuth tokenAuth;
 
     public Member() {
     }
@@ -49,4 +49,7 @@ public class Member {
         return password;
     }
 
+    public void setTokenAuth(TokenAuth tokenAuth) {
+        this.tokenAuth = tokenAuth;
+    }
 }

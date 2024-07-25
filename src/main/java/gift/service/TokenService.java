@@ -35,9 +35,18 @@ public class TokenService {
                 .claim("email", member.getEmail())
                 .signWith(getSecretKey())
                 .compact();
-        TokenAuth newTokenAuth = new TokenAuth(accessToken, member);
-        tokenRepository.save(newTokenAuth);
-        return newTokenAuth.getToken();
+
+       return saveToken(member, accessToken);
+    }
+
+    public String saveToken(Member member, String accessToken) {
+        TokenAuth tokenAuth = tokenRepository.findByMember(member)
+                .orElse(new TokenAuth(accessToken, member));
+
+        tokenAuth.setToken(accessToken);
+        tokenRepository.save(tokenAuth);
+
+        return tokenAuth.getToken();
     }
 
     public TokenAuth findToken(String token) {

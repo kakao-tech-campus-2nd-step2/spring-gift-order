@@ -23,7 +23,7 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public KakaoTokenResponse getAccessToken(String authorizationCode) {
+    public KakaoTokenResponse getKakaoToken(String authorizationCode) {
         String url = "https://kauth.kakao.com/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
