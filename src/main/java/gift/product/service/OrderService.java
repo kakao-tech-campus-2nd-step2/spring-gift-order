@@ -1,0 +1,141 @@
+package gift.product.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.product.dto.auth.KakaoMessage;
+import gift.product.dto.auth.Link;
+import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.OAuthJwt;
+import gift.product.dto.auth.OAuthLoginMember;
+import gift.product.dto.order.OrderDto;
+import gift.product.exception.LoginFailedException;
+import gift.product.model.Option;
+import gift.product.model.Order;
+import gift.product.model.Product;
+import gift.product.repository.AuthRepository;
+import gift.product.repository.OptionRepository;
+import gift.product.repository.OrderRepository;
+import gift.product.repository.WishRepository;
+import java.net.URI;
+import java.util.List;
+import java.util.NoSuchElementException;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestClient;
+
+@Transactional(readOnly = true)
+public class OrderService {
+    private final OrderRepository orderRepository;
+    private final WishRepository wishRepository;
+    private final OptionRepository optionRepository;
+    private final AuthRepository authRepository;
+    private final RestClient restClient = RestClient.builder().build();
+    private final String LINK_URL = "http://localhost:8080";
+
+    public OrderService(OrderRepository orderRepository, WishRepository wishRepository, OptionRepository optionRepository, AuthRepository authRepository) {
+        this.orderRepository = orderRepository;
+        this.wishRepository = wishRepository;
+        this.optionRepository = optionRepository;
+        this.authRepository = authRepository;
+    }
+
+    public List<Order> getOrderAll(OAuthLoginMember loginMember) {
+        return orderRepository.findAllByMemberId(loginMember.id());
+    }
+
+    public Order getOrder(Long id, OAuthLoginMember loginMember) {
+        return orderRepository.findByIdAndMemberId(id, loginMember.id()).orElseThrow(() -> new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다."));
+    }
+
+    @Transactional
+    public Order doOrder(OrderDto orderDto, OAuthLoginMember loginMember, String externalApiUrl) {
+        Order order = processOrder(orderDto, loginMember);
+        LinkedMultiValueMap<String, String> body = getRequestBody(
+            orderDto);
+
+        ResponseEntity<String> response = restClient.post()
+            .uri(URI.create(externalApiUrl))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header("Authorization", "Bearer " + loginMember.accessToken())
+            .body(body)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
+            .toEntity(String.class);
+
+        checkApiResultCode(response);
+        return order;
+    }
+
+    @Transactional
+    public void deleteOrder(Long orderId, OAuthLoginMember loginMember) {
+        validateExistenceOrder(orderId);
+        orderRepository.deleteByIdAndMemberId(orderId, loginMember.id());
+    }
+
+    private Option getValidatedOption(Long optionId) {
+        return optionRepository.findById(optionId).orElseThrow(() -> new NoSuchElementException("해당 ID의 옵션이 존재하지 않습니다."));
+    }
+
+    private void validateExistenceMember(Long memberId) {
+        if (!authRepository.existsById(memberId)) {
+            throw new NoSuchElementException("해당 ID의 회원이 존재하지 않습니다.");
+        }
+    }
+
+    private void validateExistenceOrder(Long orderId) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다.");
+        }
+    }
+
+    private LinkedMultiValueMap<String, String> getRequestBody(OrderDto orderDto) {
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        Link link = new Link(LINK_URL, LINK_URL);
+        KakaoMessage kakaoMessage = new KakaoMessage("text", orderDto.message(), link);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            body.add("template_object", objectMapper.writeValueAsString(kakaoMessage));
+        } catch (Exception e) {
+            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+        return body;
+    }
+
+    private void checkApiResultCode(ResponseEntity<String> response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            int resultCode = rootNode.path("result_code").asInt();
+
+            if (resultCode != 0) {
+                throw new LoginFailedException("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }
+        } catch (Exception e) {
+            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+    }
+
+    private Order processOrder(OrderDto orderDto, OAuthLoginMember loginMember) {
+        Option option = getValidatedOption(orderDto.optionId());
+        Long productId = option.getProduct().getId();
+        validateExistenceMember(loginMember.id());
+        option.subtract(orderDto.quantity());
+        optionRepository.save(option);
+
+        if (wishRepository.existsByProductIdAndMemberId(productId, loginMember.id())) {
+            wishRepository.deleteByProductIdAndMemberId(productId, loginMember.id());
+        }
+
+        Order order = orderRepository.save(new Order(orderDto.optionId(), loginMember.id(),
+            orderDto.quantity(), orderDto.message()));
+        return order;
+    }
+}
+
+

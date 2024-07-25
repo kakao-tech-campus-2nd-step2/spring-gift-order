@@ -6,13 +6,16 @@ import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
 import gift.product.repository.CategoryRepository;
 import gift.product.repository.OptionRepository;
+import gift.product.repository.OrderRepository;
 import gift.product.repository.ProductRepository;
 import gift.product.repository.WishRepository;
 import gift.product.service.AuthService;
 import gift.product.service.CategoryService;
 import gift.product.service.OptionService;
+import gift.product.service.OrderService;
 import gift.product.service.ProductService;
 import gift.product.service.WishService;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -26,17 +29,19 @@ public class WebConfig implements WebMvcConfigurer {
     private final AuthRepository authRepository;
     private final CategoryRepository categoryRepository;
     private final OptionRepository optionRepository;
+    private final OrderRepository orderRepository;
     private final KakaoProperties kakaoProperties;
 
 
     public WebConfig(ProductRepository productRepository, WishRepository wishRepository,
         AuthRepository authRepository, CategoryRepository categoryRepository,
-        OptionRepository optionRepository, KakaoProperties kakaoProperties) {
+        OptionRepository optionRepository, OrderRepository orderRepository, KakaoProperties kakaoProperties) {
         this.productRepository = productRepository;
         this.wishRepository = wishRepository;
         this.authRepository = authRepository;
         this.categoryRepository = categoryRepository;
         this.optionRepository = optionRepository;
+        this.orderRepository = orderRepository;
         this.kakaoProperties = kakaoProperties;
     }
 
@@ -66,6 +71,11 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public OrderService orderService() {
+        return new OrderService(orderRepository, wishRepository, optionRepository, authRepository);
+    }
+
+    @Bean
     public TokenValidationInterceptor tokenValidationInterceptor() {
         return new TokenValidationInterceptor(authRepository);
     }
@@ -75,7 +85,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(tokenValidationInterceptor())
             .order(2)
             .addPathPatterns("/admin/wishes/**")
-            .addPathPatterns("/api/wishes/**");
+            .addPathPatterns("/api/wishes/**")
+            .addPathPatterns("/api/orders/**");
 
         registry.addInterceptor(new JwtCookieToHeaderInterceptor())
             .order(1)
