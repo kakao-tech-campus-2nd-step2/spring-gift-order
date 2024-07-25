@@ -1,6 +1,6 @@
 package gift.oauth.business.dto;
 
-import org.springframework.core.env.Environment;
+import gift.oauth.presentation.config.KakaoConfig;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -10,10 +10,10 @@ public class KakaoParam implements OAuthParam {
     private final String redirectUri;
     private final String code;
 
-    public KakaoParam(Environment env, String code) {
-        this.grantType = env.getProperty("spring.oauth.kakao.grant_type");
-        this.clientId = env.getProperty("spring.oauth.kakao.client_id");
-        this.redirectUri = env.getProperty("spring.oauth.kakao.redirect_uri");
+    public KakaoParam(KakaoConfig kakaoConfig, String code) {
+        this.grantType = kakaoConfig.getGrantType();
+        this.clientId = kakaoConfig.getClientId();
+        this.redirectUri = kakaoConfig.getRedirectUri();
         this.code = code;
     }
 
