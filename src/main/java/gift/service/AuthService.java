@@ -52,7 +52,6 @@ public class AuthService {
     }
 
     public KakaoProperties getProperties(){
-        System.out.println(kakaoClient.getProperties());
         return kakaoClient.getProperties();
     }
 
