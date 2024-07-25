@@ -34,6 +34,18 @@ public class KakaoApiSecurityProperties {
             this.token = token;
             this.userInfo = userInfo;
         }
+
+        public String getLogin() {
+            return login;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public String getUserInfo() {
+            return userInfo;
+        }
     }
 
     public String getClientId() {
@@ -54,10 +66,10 @@ public class KakaoApiSecurityProperties {
     }
 
     public URI getTokenUri() {
-        return URI.create(url.token);
+        return URI.create(url.getToken());
     }
 
     public URI getUserInfoUri() {
-        return URI.create(url.userInfo);
+        return URI.create(url.getUserInfo());
     }
 }
