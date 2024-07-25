@@ -1,9 +1,11 @@
 package gift.main.controller;
 
+import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
 import gift.main.dto.KakaoToken;
-import gift.main.dto.KakaoUser;
+import gift.main.entity.User;
 import gift.main.service.KakaoService;
+import gift.main.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -49,13 +51,13 @@ public class KakaoController {
 
         Map<String, Object> responseBody = new HashMap<>();
         KakaoToken kakaoToken = kakaoService.requestKakaoToken(code);
-        KakaoUser kakaoUser = kakaoService.getKakaoProfile(kakaoToken);
-        Map<String, Object> map = userService.loginKakaoUser(kakaoUser);
+        User user= kakaoService.getKakaoProfile(kakaoToken);
+        Map<String, Object> map = userService.loginKakaoUser(user);
 
         String token = (String) map.get("token");
-        User user = (User) map.get("user");
+        User saveUser = (User) map.get("user");
 
-        kakaoService.SaveToken(user, kakaoToken);
+        kakaoService.SaveToken(saveUser, kakaoToken);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)
