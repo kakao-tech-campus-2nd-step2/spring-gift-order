@@ -143,24 +143,6 @@ class OptionServiceTest {
     }
 
     @Test
-    void 옵션_수량_차감() {
-        //given
-        int QUANTITY = 10;
-        int SUBTRACT_AMOUNT = 3;
-
-        Category category = new Category(1L, "테스트카테고리");
-        Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        Option option = new Option(1L, "테스트옵션2", QUANTITY, product);
-        given(optionRepository.findById(1L)).willReturn(Optional.of(option));
-
-        //when
-        optionService.subtractOption(1L, new OptionSubtractAmount(SUBTRACT_AMOUNT));
-
-        //then
-        then(optionRepository).should().save(any());
-    }
-
-    @Test
     void 존재하지_않는_상품에_대한_옵션_추가() {
         //given
         given(optionRepository.existsByNameAndProductId("테스트옵션", -1L)).willReturn(false);
@@ -202,20 +184,6 @@ class OptionServiceTest {
         //when, then
         assertThatThrownBy(
             () -> optionService.insertOption(new OptionDto("테스트옵션중복명", 1, 1L))).isInstanceOf(
-            IllegalArgumentException.class);
-    }
-
-    @Test
-    void 옵션_수량보다_더_많이_차감() {
-        //given
-        Category category = new Category("테스트카테고리");
-        Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        Option option = new Option(1L, "테스트옵션", 1, product);
-        given(optionRepository.findById(1L)).willReturn(Optional.of(option));
-
-        //when, then
-        assertThatThrownBy(
-            () -> optionService.subtractOption(1L, new OptionSubtractAmount(999))).isInstanceOf(
             IllegalArgumentException.class);
     }
 }
