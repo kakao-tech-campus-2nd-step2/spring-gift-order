@@ -1,7 +1,5 @@
 package gift.product.config;
 
-import static jdk.internal.org.jline.reader.impl.LineReaderImpl.CompletionType.List;
-
 import gift.product.intercepter.AuthInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
