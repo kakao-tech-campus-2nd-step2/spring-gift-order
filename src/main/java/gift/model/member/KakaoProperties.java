@@ -6,19 +6,19 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 @ConfigurationProperties(prefix = "kakao")
 public class KakaoProperties {
     private final String clientId;
-    private final String redirectUrl;
+    private final String redirectUri;
 
     @ConstructorBinding
-    public KakaoProperties(String clientId, String redirectUrl) {
+    public KakaoProperties(String clientId, String redirectUri) {
         this.clientId = clientId;
-        this.redirectUrl = redirectUrl;
+        this.redirectUri = redirectUri;
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public String getRedirectUrl() {
-        return redirectUrl;
+    public String getRedirectUri() {
+        return redirectUri;
     }
 }
