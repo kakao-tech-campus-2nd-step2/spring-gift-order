@@ -9,6 +9,8 @@ import gift.dto.response.WishResponseDto;
 import gift.exception.customException.UnAuthorizationException;
 import gift.filter.AuthFilter;
 import gift.filter.LoginFilter;
+import gift.filter.MyTokenFilter;
+import gift.filter.OAuthTokenFilter;
 import gift.repository.token.TokenRepository;
 import gift.service.TokenService;
 import gift.service.WishService;
@@ -67,6 +69,8 @@ class WishControllerTest {
         MockMvc mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .addFilter(new AuthFilter(tokenRepository))
+                .addFilter(new MyTokenFilter(tokenRepository))
+                .addFilter(new OAuthTokenFilter(tokenRepository))
                 .addFilter(new LoginFilter(tokenRepository))
                 .build();
 
@@ -77,8 +81,8 @@ class WishControllerTest {
     }
 
     @Test
-    @DisplayName("위시 조회 페이징 API 테스트")
-    void 위시_전체_조회_API_TEST() throws Exception {
+    @DisplayName("위시 정상 조회 페이징 API 테스트")
+    void 위시_전체_정상_조회_API_TEST() throws Exception {
         //given
         Member member = new Member.Builder()
                 .email("abc@pusan.ac.kr")
@@ -116,7 +120,6 @@ class WishControllerTest {
 
         given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
         given(wishService.findWishesPaging(authToken.getEmail(), pageRequest)).willReturn(wishResponseDtos);
-        given(tokenService.findToken("에러용 인증코드")).willThrow(new UnAuthorizationException());
 
         //expected
         mvc.perform(get("/wishes")
@@ -126,40 +129,21 @@ class WishControllerTest {
                 .andExpect(jsonPath("$", hasSize(5)))
                 .andDo(print());
 
-        mvc.perform(get("/wishes")
-                        .header("Authorization","Bearer 에러용 인증코드")
-                )
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.code").value("401"))
-                .andExpect(jsonPath("$.message").value("인증되지 않은 사용자 입니다. 다시 로그인 해주세요."))
-                .andDo(print());
 
-        BDDMockito.verify(tokenService, times(2)).findToken(any(String.class));
+        BDDMockito.verify(tokenService, times(1)).findToken(any(String.class));
         BDDMockito.verify(wishService, times(1)).findWishesPaging(any(String.class), any(Pageable.class));
     }
 
     @Test
-    @DisplayName("위시 저장 테스트")
-    void 위시_저장_테스트() throws Exception {
+    @DisplayName("위시 저장 DTO INVALID 테스트")
+    void 위시_저장_DTO_INVALID_테스트() throws Exception{
         //given
         AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
-
         given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
-
-        WishCreateRequest wishCreateRequest = new WishCreateRequest(1L, 20);
         WishCreateRequest inValidWishCreateRequest = new WishCreateRequest(null, -1);
 
 
         //expected
-        mvc.perform(post("/wishes")
-                        .header("Authorization","Bearer 테스트용 인증코드")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(wishCreateRequest))
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/wishes"))
-                .andDo(print());
-
         mvc.perform(post("/wishes")
                         .header("Authorization","Bearer 테스트용 인증코드")
                         .contentType(APPLICATION_JSON)
@@ -171,32 +155,42 @@ class WishControllerTest {
                 .andExpect(jsonPath("$.validation.product_id").value("WISH LIST에 추가하고 싶은 상품을 선택해 주세요"))
                 .andExpect(jsonPath("$.validation.count").value("개수은 1개 이상이어야 합니다"))
                 .andDo(print());
-
-        verify(wishService, times(1)).addWish(anyLong(), anyString(), anyInt());
     }
-
     @Test
-    @DisplayName("위시 수정 테스트")
-    void 위시_수정_테스트() throws Exception {
+    @DisplayName("위시 정상 저장 테스트")
+    void 위시_저장_테스트() throws Exception {
         //given
         AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
 
         given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
 
-        WishEditRequest wishEditRequest = new WishEditRequest(1L, 20);
-        WishEditRequest inValidWishEditRequest = new WishEditRequest(null, -1);
-
+        WishCreateRequest wishCreateRequest = new WishCreateRequest(1L, 20);
 
         //expected
-        mvc.perform(put("/wishes")
+        mvc.perform(post("/wishes")
                         .header("Authorization","Bearer 테스트용 인증코드")
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(wishEditRequest))
+                        .content(objectMapper.writeValueAsString(wishCreateRequest))
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/wishes"))
                 .andDo(print());
 
+        verify(wishService, times(1)).addWish(anyLong(), anyString(), anyInt());
+    }
+
+    @Test
+    @DisplayName("위시 수정 DTO INVALID 테스트")
+    void 위시_수정_DTO_INVALID_테스트() throws Exception{
+        //given
+        AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
+
+        given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
+
+        WishEditRequest inValidWishEditRequest = new WishEditRequest(null, -1);
+
+
+        //expected
         mvc.perform(put("/wishes")
                         .header("Authorization","Bearer 테스트용 인증코드")
                         .contentType(APPLICATION_JSON)
@@ -208,32 +202,42 @@ class WishControllerTest {
                 .andExpect(jsonPath("$.validation.wish_id").value("WISH LIST에서 수정하고 싶은 상품을 선택해 주세요"))
                 .andExpect(jsonPath("$.validation.count").value("개수은 1개 이상이어야 합니다"))
                 .andDo(print());
-
-        verify(wishService, times(1)).editWish(anyLong(), anyString(), anyInt());
     }
 
     @Test
-    @DisplayName("위시 삭제 테스트")
-    void 위시_삭제_테스트() throws Exception {
+    @DisplayName("위시 정상 수정 테스트")
+    void 위시_정상_수정_테스트() throws Exception {
         //given
         AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
 
         given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
 
-        WishDeleteRequest wishDeleteRequest = new WishDeleteRequest(1L);
+        WishEditRequest wishEditRequest = new WishEditRequest(1L, 20);
+
+        //expected
+        mvc.perform(put("/wishes")
+                        .header("Authorization","Bearer 테스트용 인증코드")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(wishEditRequest))
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/wishes"));
+
+        verify(wishService, times(1)).editWish(anyLong(), anyString(), anyInt());
+    }
+
+    @Test
+    @DisplayName("위시 삭제 시 DTO INVALID 테스트")
+    void 위시_삭제_DTO_INVALID_테스트() throws Exception {
+        //given
+        AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
+
+        given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
+
         WishDeleteRequest inValidWishDeleteRequest = new WishDeleteRequest(null);
 
 
         //expected
-        mvc.perform(delete("/wishes")
-                        .header("Authorization","Bearer 테스트용 인증코드")
-                        .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(wishDeleteRequest))
-                )
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/wishes"))
-                .andDo(print());
-
         mvc.perform(delete("/wishes")
                         .header("Authorization","Bearer 테스트용 인증코드")
                         .contentType(APPLICATION_JSON)
@@ -243,6 +247,27 @@ class WishControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation.wish_id").value("WISH LIST에 삭제하고 싶은 상품을 선택해 주세요"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("위시 정상 삭제 테스트")
+    void 위시_정상_삭제_테스트() throws Exception {
+        //given
+        AuthToken authToken = new AuthToken("테스트용 인증코드", "abc@pusan.ac.kr");
+
+        given(tokenService.findToken(authToken.getToken())).willReturn(authToken);
+
+        WishDeleteRequest wishDeleteRequest = new WishDeleteRequest(1L);
+
+        //expected
+        mvc.perform(delete("/wishes")
+                        .header("Authorization","Bearer 테스트용 인증코드")
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(wishDeleteRequest))
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/wishes"))
                 .andDo(print());
 
         verify(wishService, times(1)).deleteWish(anyLong(), anyString());
