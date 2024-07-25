@@ -67,8 +67,7 @@ public class UserTest {
         User savedUser = userRepository.save(user);
 
         // when
-        savedUser.setEmail("updated@example.com");
-        savedUser.setPassword("newpassword123");
+        savedUser.update("updated@example.com", "newpassword123");
         User updatedUser = userRepository.save(savedUser);
 
         // then
