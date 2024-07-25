@@ -36,8 +36,8 @@ public class UserUtility {
         return accessToken;
     }
 
-    public Object accessTokenToObject(String accessToken) {
-        Map<String, Object> obj = new HashMap<>();
+    public Map<String, String> accessTokenToObject(String accessToken) {
+        Map<String, String> obj = new HashMap<>();
         obj.put("accessToken", accessToken);
         return obj;
     }
