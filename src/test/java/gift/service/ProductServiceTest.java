@@ -63,12 +63,12 @@ class ProductServiceTest {
         given(productRepository.findByName("product"))
                 .willReturn(Optional.of(savedProduct));
         // When
-        InputProductDTO inputProductDTO = new InputProductDTO("product", 1000, "image.url", "교환권", "option1,option2");
+        InputProductDTO inputProductDTO = new InputProductDTO("product", 1000, "image.url", "교환권", "option1,option2", "100,200");
         productService.saveProduct(inputProductDTO);
 
         // Then
         then(productRepository).should().save(any(Product.class));
-        then(optionService).should().addOptions("option1,option2", 1L);
+        then(optionService).should().addOptions("option1,option2", "100,200", 1L);
     }
 
     @Test
