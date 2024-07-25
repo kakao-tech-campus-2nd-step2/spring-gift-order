@@ -61,7 +61,6 @@ public class MemberController {
     @PostMapping("/token-login")
     public ResponseEntity<String> tokenLogin(@LoginMember TokenLoginRequestDTO tokenLoginRequestDTO) {
         memberService.tokenLogin(tokenLoginRequestDTO);
-//      String token = tokenLoginRequestDTO.getToken();
         return ResponseEntity.status(HttpStatus.OK)
                 .body("토큰 인증 성공");
     }
