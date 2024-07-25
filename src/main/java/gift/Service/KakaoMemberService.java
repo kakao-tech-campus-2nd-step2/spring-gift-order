@@ -26,11 +26,10 @@ public class KakaoMemberService {
 
   public KakaoJwtToken getToken(String autuhorizationKey) {
     var body = new LinkedMultiValueMap<String, String>();
-    String clientId = API_KEY;
     String code = autuhorizationKey;
 
     body.add("grant_type", "authorization_code");
-    body.add("client_id", clientId);
+    body.add("client_id", API_KEY);
     body.add("redirect_url", "http://localhost:8080");
     body.add("code", code);
     var response = restClient.post()
