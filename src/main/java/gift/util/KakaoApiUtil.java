@@ -84,8 +84,7 @@ public class KakaoApiUtil {
 
     public String getAccessToken(String code) {
         OauthTokenDTO token = getToken(code);
-        String accessToken = token.getAccessToken();
-        return accessToken;
+        return token.getAccessToken();
 
     }
 
