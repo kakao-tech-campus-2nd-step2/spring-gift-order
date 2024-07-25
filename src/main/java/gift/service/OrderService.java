@@ -11,7 +11,9 @@ import gift.model.Product;
 import gift.repository.MemberRepository;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
+import gift.repository.WishRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -19,28 +21,37 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
+    private final WishRepository wishRepository;
 
     private final KakaoTokenService kakaoTokenService;
     private final KakaoApiCaller kakaoApiCaller;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, MemberRepository memberRepository, KakaoTokenService kakaoTokenService, KakaoApiCaller kakaoApiCaller) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, MemberRepository memberRepository, WishRepository wishRepository, KakaoTokenService kakaoTokenService, KakaoApiCaller kakaoApiCaller) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
+        this.wishRepository = wishRepository;
         this.kakaoTokenService = kakaoTokenService;
         this.kakaoApiCaller = kakaoApiCaller;
     }
 
+    @Transactional
     public OrderResponse createOrder(Long memberId, OrderRequest orderRequest) {
         Product product = productRepository.findProductByOptionId(orderRequest.optionId())
                         .orElseThrow(()->new EntityNotFoundException("Product with option_id " + orderRequest.optionId() + " not found"));
         Option option = product.findOptionByOptionId(orderRequest.optionId());
         Member member = memberRepository.getReferenceById(memberId);
         Orders orders = orderRepository.save(new Orders(product.getId(), option.getId(), memberId, product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
+        deleteWishIfExists( product.getId(), memberId);
 
         sendKakaoMessage(memberId, member.getLoginType(), orders);
-        // wish에 해당 상품이 존재하면 삭제
-        return new OrderResponse(null, null, 0, null, null);
+        return new OrderResponse(orders.getId(), orders.getOptionId(), orders.getQuantity(), orders.getCreatedAt(), orders.getDescription());
+    }
+
+    public void deleteWishIfExists(Long productId, Long memberId) {
+        if (wishRepository.existsByProductIdAndMemberId(productId, memberId)) {
+            wishRepository.deleteByProductIdAndMemberId(productId, memberId);
+        }
     }
 
     private void sendKakaoMessage(Long memberId, SocialLoginType type, Orders orders) {

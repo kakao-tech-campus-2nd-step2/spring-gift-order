@@ -9,14 +9,18 @@ import gift.service.dto.KakaoInfoDto;
 import gift.service.dto.KakaoRequest;
 import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
+import java.time.Duration;
 
 @Component
 public class KakaoApiCaller {
@@ -26,8 +30,13 @@ public class KakaoApiCaller {
     private final RestClient client;
 
     public KakaoApiCaller(ObjectMapper objectMapper, KakaoProperties properties) {
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+                .withReadTimeout(Duration.ofSeconds(2))
+                .withConnectTimeout(Duration.ofSeconds(5));
+        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(settings);
+
+        this.client = RestClient.builder().requestFactory(requestFactory).build();
         this.objectMapper = objectMapper;
-        this.client = RestClient.builder().build();
         this.properties = properties;
     }
 
