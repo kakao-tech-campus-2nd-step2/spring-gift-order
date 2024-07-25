@@ -15,6 +15,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import static gift.utils.StringConstant.*;
+
 @Service
 public class KakaoService {
 
@@ -109,12 +111,12 @@ public class KakaoService {
     }
 
     private void makeKakaoTokenInformation(Map<String, String> tokenInfo, JsonNode jsonNode) {
-        tokenInfo.put("access_token", jsonNode.get("access_token").asText());
-        tokenInfo.put("expires_in", jsonNode.get("expires_in").asText());
+        tokenInfo.put(ACCESS_TOKEN, jsonNode.get(ACCESS_TOKEN).asText());
+        tokenInfo.put(EXPIRES_IN, jsonNode.get(EXPIRES_IN).asText());
 
-        if(jsonNode.has("refresh_token") && jsonNode.has("refresh_token_expires_in")){
-            tokenInfo.put("refresh_token", jsonNode.get("refresh_token").asText());
-            tokenInfo.put("refresh_token_expires_in", jsonNode.get("refresh_token_expires_in").asText());
+        if(jsonNode.has(REFRESH_TOKEN) && jsonNode.has(REFRESH_TOKEN_EXPIRES_IN)){
+            tokenInfo.put(REFRESH_TOKEN, jsonNode.get(REFRESH_TOKEN).asText());
+            tokenInfo.put(REFRESH_TOKEN_EXPIRES_IN, jsonNode.get(REFRESH_TOKEN_EXPIRES_IN).asText());
         }
     }
 
@@ -129,7 +131,7 @@ public class KakaoService {
 
     private LinkedMultiValueMap<String, String> makeTokenRenewBody(String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "refresh_token");
+        body.add("grant_type", REFRESH_TOKEN);
         body.add("client_id", CLIENT_ID);
         body.add("refresh_token", refreshToken);
         return body;

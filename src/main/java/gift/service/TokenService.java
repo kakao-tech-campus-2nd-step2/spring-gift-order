@@ -12,11 +12,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static gift.exception.exceptionMessage.ExceptionMessage.ALREADY_TOKEN_GET_EMAIL;
+import static gift.utils.StringConstant.*;
 
 @Service
 @Transactional(readOnly = true)
 public class TokenService {
 
+    public static final int EXPIRATION_OFFSET = 3600;
     private final TokenRepository tokenRepository;
 
     public TokenService(TokenRepository tokenRepository) {
@@ -52,12 +54,12 @@ public class TokenService {
 
         AuthToken authToken = new AuthToken.Builder()
                 .token(uuid.toString())
-                .tokenTime(Integer.parseInt(tokenInfo.get("expires_in")) - 1000)
+                .tokenTime(Integer.parseInt(tokenInfo.get(EXPIRES_IN)) - EXPIRATION_OFFSET)
                 .email(email)
-                .accessToken(String.valueOf(tokenInfo.get("access_token")))
-                .accessTokenTime(Integer.parseInt(tokenInfo.get("expires_in")))
-                .refreshToken(String.valueOf(tokenInfo.get("refresh_token")))
-                .refreshTokenTime(Integer.valueOf(tokenInfo.get("refresh_token_expires_in")))
+                .accessToken(String.valueOf(tokenInfo.get(ACCESS_TOKEN)))
+                .accessTokenTime(Integer.parseInt(tokenInfo.get(EXPIRES_IN)))
+                .refreshToken(String.valueOf(tokenInfo.get(REFRESH_TOKEN)))
+                .refreshTokenTime(Integer.valueOf(tokenInfo.get(REFRESH_TOKEN_EXPIRES_IN)))
                 .build();
 
         return tokenRepository.save(authToken);
