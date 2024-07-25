@@ -19,7 +19,11 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public KakaoService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public String getAccessToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
@@ -40,19 +44,7 @@ public class KakaoService {
         if (response.getStatusCode() == HttpStatus.OK) {
             return (String) response.getBody().get("access_token");
         } else {
-            throw new RuntimeException("액세스 토큰 요청에 실패했습니다.: " + response.getStatusCode());
+            throw new RuntimeException("액세스 토큰 요청에 실패했습니다.: " + response.getBody());
         }
-    }
-
-    public Map<String, Object> getUserInfo(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-
-        HttpEntity<String> request = new HttpEntity<>(headers);
-        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
-
-        return response.getBody();
     }
 }
