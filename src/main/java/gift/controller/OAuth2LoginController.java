@@ -2,7 +2,7 @@ package gift.controller;
 
 import gift.auth.JwtService;
 import gift.model.Member;
-import gift.response.oauth2.oAuth2TokenResponse;
+import gift.response.oauth2.OAuth2TokenResponse;
 import gift.service.MemberService;
 import gift.service.OAuth2LoginService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class oAuth2LoginController {
+public class OAuth2LoginController {
 
     private final OAuth2LoginService loginService;
     private final MemberService memberService;
     private final JwtService jwtService;
 
-    public oAuth2LoginController(OAuth2LoginService loginService, MemberService memberService,
+    public OAuth2LoginController(OAuth2LoginService loginService, MemberService memberService,
         JwtService jwtService) {
         this.loginService = loginService;
         this.memberService = memberService;
@@ -44,15 +44,17 @@ public class oAuth2LoginController {
 
     @RequestMapping("/kakao/login/oauth2/code")
     @ResponseBody
-    public ResponseEntity<oAuth2TokenResponse> getToken(HttpServletRequest request,
+    public ResponseEntity<OAuth2TokenResponse> getToken(HttpServletRequest request,
         HttpServletResponse response) {
         loginService.checkRedirectUriParams(request);
         String code = request.getParameter("code");
-        oAuth2TokenResponse dto = loginService.getToken(code);
+        OAuth2TokenResponse dto = loginService.getToken(code);
 
-        String memberId = loginService.getMemberInfo(dto.accessToken());
-        Member member = memberService.loginByOAuth2(memberId + "@kakao.com");
-        jwtService.createToken(member, response);
+        String kakaoId = loginService.getMemberInfo(dto.accessToken());
+        Member member = memberService.loginByOAuth2(kakaoId + "@kakao.com");
+        jwtService.addTokenInHeader(member, response);
+
+        loginService.saveAccessToken(member.getId(), dto.accessToken());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

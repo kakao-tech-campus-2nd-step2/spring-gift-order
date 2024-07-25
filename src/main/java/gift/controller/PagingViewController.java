@@ -64,7 +64,7 @@ public class PagingViewController {
         }
 
         Member joinedMember = memberService.join(joinRequest.email(), joinRequest.password());
-        jwtService.createToken(joinedMember, response);
+        jwtService.addTokenInHeader(joinedMember, response);
         return "redirect:/view/products";
     }
 

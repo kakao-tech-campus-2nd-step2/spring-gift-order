@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.response.oauth2.oAuth2TokenResponse;
+import gift.response.oauth2.OAuth2TokenResponse;
 import gift.service.KakaoLoginService;
 import java.io.IOException;
 import java.net.URI;
@@ -66,7 +66,7 @@ class oAuth2LoginControllerTest {
     private String demoToken = "demoToken";
     LinkedMultiValueMap<String, String> demoBody;
 
-    private oAuth2TokenResponse demoTokenResponse;
+    private OAuth2TokenResponse demoTokenResponse;
 
 
     @Test
@@ -168,7 +168,7 @@ class oAuth2LoginControllerTest {
     @Test
     void token() throws Exception {
         //given
-        demoTokenResponse = new oAuth2TokenResponse(demoToken, "bearer", null,
+        demoTokenResponse = new OAuth2TokenResponse(demoToken, "bearer", null,
             21599, null, "talk_message");
         String tokenRequestUri = "/oauth/token";
         mockWebServerUri = mockServer.url(tokenRequestUri).toString();
@@ -190,8 +190,8 @@ class oAuth2LoginControllerTest {
             .block();
         //then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        oAuth2TokenResponse tokenResponse = objectMapper.readValue(response.getBody(),
-            oAuth2TokenResponse.class);
+        OAuth2TokenResponse tokenResponse = objectMapper.readValue(response.getBody(),
+            OAuth2TokenResponse.class);
         System.out.println(response.getBody());
         assertThat(tokenResponse.accessToken()).isEqualTo(demoTokenResponse.accessToken());
     }
@@ -201,7 +201,7 @@ class oAuth2LoginControllerTest {
     @Test
     void failToken() throws Exception {
         //given
-        demoTokenResponse = new oAuth2TokenResponse(demoToken, "bearer", null,
+        demoTokenResponse = new OAuth2TokenResponse(demoToken, "bearer", null,
             21599, null, "talk_message");
         String tokenRequestUri = "/oauth/token";
         mockWebServerUri = mockServer.url(tokenRequestUri).toString();

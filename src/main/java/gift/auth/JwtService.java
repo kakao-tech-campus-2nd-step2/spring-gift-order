@@ -14,7 +14,7 @@ public class JwtService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void createToken(Member member, HttpServletResponse response) {
+    public void addTokenInHeader(Member member, HttpServletResponse response) {
         response.setHeader("Authorization",jwtTokenProvider.generateToken(member));
     }
 

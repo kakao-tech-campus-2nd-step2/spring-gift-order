@@ -1,27 +1,24 @@
 package gift.exception.oauth2;
 
 import gift.exception.ErrorResult;
-import io.netty.channel.ConnectTimeoutException;
-import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.TimeoutException;
-import io.netty.handler.timeout.WriteTimeoutException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class oAuth2ExceptionHandler {
+public class OAuth2ExceptionHandler {
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(oAuth2Exception.class)
-    public ErrorResult authExHandle(oAuth2Exception e) {
+    @ExceptionHandler(OAuth2Exception.class)
+    public ErrorResult authExHandle(OAuth2Exception e) {
         return new ErrorResult("인가코드 에러", e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(oAuth2TokenException.class)
-    public ErrorResult tokenExHandle(oAuth2TokenException e) {
+    @ExceptionHandler(OAuth2TokenException.class)
+    public ErrorResult tokenExHandle(OAuth2TokenException e) {
         return new ErrorResult("토큰 에러", e.getMessage());
     }
 
