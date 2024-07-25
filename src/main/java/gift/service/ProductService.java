@@ -11,6 +11,7 @@ import gift.exception.CategoryNotFoundException;
 import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
+import gift.validator.ProductNameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,7 +63,7 @@ public class ProductService {
     }
 
     public Long save(ProductDto productDto) {
-        validateProductName(productDto.getName()); // 이름 검증
+        ProductNameValidator.validate(productDto.getName()); // 이름 검증
         Category category = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("카테고리가 없습니다."));
         Product product = new Product(productDto.getName(), productDto.getPrice(), productDto.getImgUrl(), category);
@@ -71,7 +72,7 @@ public class ProductService {
     }
 
     public void update(Long id, ProductDto productDto) {
-        validateProductName(productDto.getName()); // 이름 검증
+        ProductNameValidator.validate(productDto.getName()); // 이름 검증
         Category category = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("카테고리가 없습니다."));
         Product product = productRepository.findById(id)
@@ -82,12 +83,6 @@ public class ProductService {
 
     public void delete(Long id) {
         productRepository.deleteById(id);
-    }
-
-    private void validateProductName(String name) {
-        if (name.contains("카카오")) {
-            throw new InvalidProductNameException("상품명에 '카카오'를 포함할 경우, 담당 MD에게 문의바랍니다.");
-        }
     }
 
     public List<OptionDto> getProductOptions(Long productId) {

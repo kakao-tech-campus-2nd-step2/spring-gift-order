@@ -38,6 +38,23 @@ public class Product {
         this.category = category;
     }
 
+    public void update(String name, Integer price, String imgUrl, Category category) {
+        this.name = name;
+        this.price = price;
+        this.imgUrl = imgUrl;
+        this.category = category;
+    }
+
+    public void addOption(Option option) {
+        options.add(option);
+        option.assignToProduct(this);
+    }
+
+    public void removeOption(Option option) {
+        options.remove(option);
+        option.removeFromProduct();
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,22 +77,5 @@ public class Product {
 
     public Set<Option> getOptions() {
         return options;
-    }
-
-    public void update(String name, Integer price, String imgUrl, Category category) {
-        this.name = name;
-        this.price = price;
-        this.imgUrl = imgUrl;
-        this.category = category;
-    }
-
-    public void addOption(Option option) {
-        options.add(option);
-        option.assignToProduct(this);
-    }
-
-    public void removeOption(Option option) {
-        options.remove(option);
-        option.removeFromProduct();
     }
 }
