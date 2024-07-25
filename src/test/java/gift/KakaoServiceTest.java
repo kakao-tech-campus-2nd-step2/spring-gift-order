@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +47,8 @@ public class KakaoServiceTest {
     private KakaoService kakaoService;
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    @Qualifier("kakaoWebClient")
+    private WebClient webClient;
 
     private MockWebServer mockWebServer;
 
@@ -57,9 +59,14 @@ public class KakaoServiceTest {
             return WebClient.builder();
         }
 
+        @Bean(name = "kakaoWebClient")
+        public WebClient kakaoWebClient(WebClient.Builder webClientBuilder) {
+            return webClientBuilder.build();
+        }
+
         @Bean
-        public KakaoService kakaoService(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder) {
-            return new KakaoService(kakaoProperties, webClientBuilder);
+        public KakaoService kakaoService(KakaoProperties kakaoProperties, @Qualifier("kakaoWebClient") WebClient webClient) {
+            return new KakaoService(kakaoProperties, webClient);
         }
     }
 
@@ -71,7 +78,8 @@ public class KakaoServiceTest {
         // Mock KakaoProperties values
         when(kakaoProperties.getClientId()).thenReturn("your_client_id");
         when(kakaoProperties.getRedirectUri()).thenReturn("your_redirect_uri");
-        kakaoService = new KakaoService(kakaoProperties, webClientBuilder.baseUrl(mockWebServer.url("/").toString()));
+        when(kakaoProperties.getUserInfoUrl()).thenReturn(mockWebServer.url("/v2/user/me").toString());
+        kakaoService = new KakaoService(kakaoProperties, webClient.mutate().baseUrl(mockWebServer.url("/").toString()).build());
     }
 
     @AfterEach
