@@ -17,10 +17,10 @@ public class ProductViewController {
         this.productService = productService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/admin")
     public String home(Model model) {
         Page<ProductResponseDto> productPage = productService.getAllProducts(0, ProductSortBy.ID_DESC);
         model.addAttribute("productPage", productPage);
-        return "index";
+        return "admin";
     }
 }
