@@ -69,7 +69,7 @@ public class OrderController {
 
         // 이메일로 사용자 조회
         User user = userService.findByEmail(email);
-        if (user != null) {
+        if (user != null && wishListService.isProductInWishList(email, orderRequest.getProductId())) {
             // 위시리스트에서 주문한 제품 ID 삭제
             wishListService.removeProductFromWishList(email, orderRequest.getProductId());
         }
