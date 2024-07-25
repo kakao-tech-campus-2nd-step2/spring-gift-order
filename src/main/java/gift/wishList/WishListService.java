@@ -3,6 +3,7 @@ package gift.wishList;
 import gift.option.Option;
 import gift.option.OptionRepository;
 import gift.product.Product;
+import gift.user.KakaoUser;
 import gift.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +62,10 @@ public class WishListService {
 
     public Optional<WishList> findByUserAndOptionID(Long optionID, User user){
         return wishListRepository.findByUserAndOptionId(user, optionID);
+    }
+
+    public Optional<WishList> findByKakaoUserAndOptionID(Long optionID, KakaoUser kakaoUser){
+        return wishListRepository.findByKakaouserAndOptionId(kakaoUser, optionID);
     }
 
     public void deleteByID(Long id) {

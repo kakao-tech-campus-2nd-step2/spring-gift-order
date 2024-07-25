@@ -1,16 +1,20 @@
 package gift.user;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KakaoUserRepository kakaoUserRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, KakaoUserRepository kakaoUserRepository) {
         this.userRepository = userRepository;
+        this.kakaoUserRepository = kakaoUserRepository;
     }
 
     public User registerUser(UserDTO userDTO) {
@@ -20,6 +24,28 @@ public class UserService {
                         userDTO.getEmail(),
                         userDTO.getPassword(),
                         userDTO.getNickname()));
+    }
+
+    public KakaoUser registerKakaoUser(KakaoUserDTO kakaoUserDTO) {
+
+        return kakaoUserRepository.save(
+                new KakaoUser(
+                        kakaoUserDTO.getId(),
+                        kakaoUserDTO.getAccessToken(),
+                        kakaoUserDTO.getRefreshToken()
+                ));
+    }
+
+    public Optional<KakaoUser> findByKakaoSocialID(Long id){
+        return kakaoUserRepository.findById(id);
+    }
+
+    @Transactional
+    public KakaoUser updateKakaoUserToken(KakaoUserDTO kakaoUserDTO){
+        KakaoUser kakaoUser = findByKakaoSocialID(kakaoUserDTO.getId()).orElseThrow();
+        kakaoUser.setAccessToken(kakaoUser.accessToken);
+        kakaoUser.setRefreshToken(kakaoUser.refreshToken);
+        return kakaoUser;
     }
 
     public boolean validateUser(LoginDTO loginDTO) {
@@ -34,6 +60,11 @@ public class UserService {
 
     public User getUserById(Long id){
         return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+    }
+
+    public KakaoUser getKakaoUserById(Long id){
+        return kakaoUserRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
     }
 

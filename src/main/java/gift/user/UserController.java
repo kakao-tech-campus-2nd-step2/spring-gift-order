@@ -39,11 +39,4 @@ public class UserController {
     }
 
 
-    @PostMapping("/signup")
-    public Token signupUser(@RequestBody @Valid KakaoUserDTO kakaoUserDTO) {
-        User user = userService.registerUser(kakaoUserDTO.getUserDTO());
-        String accessToken = jwtService.generateAccessToken(user, kakaoUserDTO.getAccessToken());
-        return new Token(accessToken);
-    }
-
 }

@@ -1,5 +1,6 @@
 package gift.wishList;
 
+import gift.user.KakaoUser;
 import gift.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
     public Page<WishList> findByUser(User user, Pageable pageable);
 
     public Optional<WishList> findByUserAndOptionId(User user, Long optionID);
+    public Optional<WishList> findByKakaouserAndOptionId(KakaoUser kakaoUser, Long optionID);
 
     public boolean existsByUserAndOptionId(User user, Long optionID);
 }

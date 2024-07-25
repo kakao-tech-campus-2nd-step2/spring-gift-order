@@ -2,6 +2,7 @@ package gift.wishList;
 
 import gift.option.Option;
 import gift.product.Product;
+import gift.user.KakaoUser;
 import gift.user.User;
 import jakarta.persistence.*;
 
@@ -14,6 +15,10 @@ public class WishList {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kakao_user_id")
+    private KakaoUser kakaouser;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
     private Option option;
