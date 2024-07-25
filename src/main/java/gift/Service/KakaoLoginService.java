@@ -16,10 +16,11 @@ public class KakaoLoginService {
     private static final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String LOGIN_URI= "https://kauth.kakao.com/oauth/authorize";
 
-    private final RestClient client = RestClient.builder().build();
+    private final RestClient client;
     private final KakaoProperties properties;
 
-    public KakaoLoginService(KakaoProperties properties) {
+    public KakaoLoginService(RestClient client, KakaoProperties properties) {
+        this.client = client;
         this.properties = properties;
     }
 
