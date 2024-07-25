@@ -44,4 +44,12 @@ public class ApplicationExceptionAdvice {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(responseUtility.makeResponse(e.getMessage()));
     }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<Map<String, String>> handleConflict(ResponseStatusException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(responseUtility.makeResponse(e.getMessage()));
+    }
 }
