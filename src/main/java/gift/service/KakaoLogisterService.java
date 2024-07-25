@@ -29,9 +29,11 @@ public class KakaoLogisterService {
                 throw new BadRequestException("해당 email로 가입된 계정이 이미 존재합니다.");
 
             memberService.login(memberDTO);
+            memberService.setMemeberAccessToken(memberDTO.getEmail(), accessToken);
             return memberDTO;
         } catch (UserNotFoundException e) {
             memberService.register(memberDTO);
+            memberService.setMemeberAccessToken(memberDTO.getEmail(), accessToken);
             return memberDTO;
         } catch (InternalServerException | BadRequestException e){
             throw e;
