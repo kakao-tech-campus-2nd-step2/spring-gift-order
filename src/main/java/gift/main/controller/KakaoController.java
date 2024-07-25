@@ -2,6 +2,7 @@ package gift.main.controller;
 
 import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
+import gift.main.dto.KakaoProfileRequest;
 import gift.main.dto.KakaoToken;
 import gift.main.entity.User;
 import gift.main.service.KakaoService;
@@ -42,17 +43,16 @@ public class KakaoController {
 
     //1. 전달받은 코드로 엑세스 토큰 요청하기
     @GetMapping("/callback")
-    public ResponseEntity<?> getKakaoCode(@RequestParam(value = "code",required = false) String code,
+    public ResponseEntity<?> LoginKakaoUser(@RequestParam(value = "code",required = false) String code,
                                           @RequestParam(value = "error",required = false) String error,
                                           @RequestParam(value = "error_description",required = false) String errorDescription) {
         if (error!=null || errorDescription!=null ) {
             throw new CustomException(HttpStatus.BAD_REQUEST, errorDescription);
         }
 
-        Map<String, Object> responseBody = new HashMap<>();
         KakaoToken kakaoToken = kakaoService.requestKakaoToken(code);
-        User user= kakaoService.getKakaoProfile(kakaoToken);
-        Map<String, Object> map = userService.loginKakaoUser(user);
+        KakaoProfileRequest kakaoProfile = kakaoService.getKakaoProfile(kakaoToken);
+        Map<String, Object> map = userService.loginKakaoUser(kakaoProfile);
 
         String token = (String) map.get("token");
         User saveUser = (User) map.get("user");
@@ -61,7 +61,7 @@ public class KakaoController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)
-                .body(responseBody);
+                .body("");
     }
 
 

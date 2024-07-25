@@ -3,7 +3,7 @@ package gift.main.service;
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
 import gift.main.dto.UserVo;
-import gift.main.dto.WishProductResponce;
+import gift.main.dto.WishProductResponse;
 import gift.main.entity.Product;
 import gift.main.entity.User;
 import gift.main.entity.WishProduct;
@@ -28,9 +28,9 @@ public class WishProductService {
         this.userRepository = userRepository;
     }
 
-    public Page<WishProductResponce> getWishProductPage(UserVo sessionUser, Pageable pageable) {
-        Page<WishProductResponce> wishProductResponcePage = wishProductRepository.findAllByUserId(sessionUser.getId(), pageable)
-                .map(wishProduct -> new WishProductResponce(wishProduct));
+    public Page<WishProductResponse> getWishProductPage(UserVo sessionUser, Pageable pageable) {
+        Page<WishProductResponse> wishProductResponcePage = wishProductRepository.findAllByUserId(sessionUser.getId(), pageable)
+                .map(wishProduct -> new WishProductResponse(wishProduct));
         return wishProductResponcePage;
 
     }

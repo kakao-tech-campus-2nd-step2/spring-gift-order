@@ -27,7 +27,6 @@ public class KakaoService {
     private static final String TEMPLATE_OBJECT = "template_object";
     private static final String KAKAO_USER_REQUEST_LIST = "kakao_account.profile";
 
-
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
     private final TokenRepository tokenRepository;
@@ -57,8 +56,8 @@ public class KakaoService {
     }
 
     //카카오 엑세스 토큰을 이용한 유저정보 가져오기
-    public User getKakaoProfile(KakaoToken tokenResponse) {
-        KakaoProfileRequest kakaoProfileRequest = restClient.post()
+    public KakaoProfileRequest getKakaoProfile(KakaoToken tokenResponse) {
+        return restClient.post()
                 .uri(kakaoProperties.userRequestUri() + KAKAO_USER_REQUEST_LIST)
                 .contentType(CONTENT_TYPE)
                 .header(AUTHORIZATION, BEARER + tokenResponse.accessToken())
@@ -66,8 +65,7 @@ public class KakaoService {
                 .toEntity(KakaoProfileRequest.class)
                 .getBody();
 
-        assert kakaoProfileRequest != null;
-        return kakaoProfileRequest.convertToUser();
+
     }
 
     public void saveToken(User user, KakaoToken kakaoToken) {
@@ -110,7 +108,6 @@ public class KakaoService {
         //요청을 위한 토큰을 만드는 부분
         Token token = tokenRepository.findByUserId(userVo.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TOKEN));
-
 
         restClient.post()
                 .uri(kakaoProperties.messageRequestUri())

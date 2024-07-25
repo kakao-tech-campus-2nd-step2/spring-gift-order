@@ -2,7 +2,7 @@ package gift.main.controller;
 
 import gift.main.annotation.SessionUser;
 import gift.main.dto.UserVo;
-import gift.main.dto.WishProductResponce;
+import gift.main.dto.WishProductResponse;
 import gift.main.service.WishProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ public class WishlistController {
 
     @GetMapping("/wishlists")
     public ResponseEntity<?> getWishProductPage(@SessionUser UserVo sessionUserVo, Pageable pageable) {
-        Page<WishProductResponce> wishProductPage = wishProductService.getWishProductPage(sessionUserVo, pageable);
+        Page<WishProductResponse> wishProductPage = wishProductService.getWishProductPage(sessionUserVo, pageable);
         return ResponseEntity.ok(wishProductPage);
     }
 
