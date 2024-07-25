@@ -91,9 +91,9 @@ public class KakaoClient {
         return response;
     }
 
-    public void sendMessageToMeOrFalse(String token,
-                                       String text,
-                                       String path) {
+    public void sendMessageToMe(String token,
+                                String text,
+                                String path) {
         String apiUrl = kakaoProperties.apiDomainName() + KAKAO_MESSAGE_PATH;
         TemplateObject templateObject = new TemplateObject(
                 TEXT_OBJECT_TYPE,

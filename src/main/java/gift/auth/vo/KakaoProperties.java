@@ -25,7 +25,7 @@ public record KakaoProperties(
 
     public LinkedMultiValueMap<String, String> getRefreshRequestBody(String refreshToken) {
         LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("grant_type", this.authGrantType);
+        requestBody.add("grant_type", this.refreshGrantType);
         requestBody.add("client_id", this.clientId);
         requestBody.add("refresh_token", refreshToken);
         return requestBody;

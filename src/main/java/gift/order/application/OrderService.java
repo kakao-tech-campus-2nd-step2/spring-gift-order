@@ -1,7 +1,6 @@
 package gift.order.application;
 
 import gift.auth.application.KakaoClient;
-import gift.global.error.CustomException;
 import gift.member.application.MemberService;
 import gift.member.entity.Member;
 import gift.order.dao.OrderRepository;
@@ -12,6 +11,8 @@ import gift.product.application.OptionService;
 import gift.product.entity.Option;
 import gift.wishlist.application.WishesService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class OrderService {
@@ -34,8 +35,8 @@ public class OrderService {
         this.kakaoClient = kakaoClient;
     }
 
-    public OrderResponse order(Long memberId,
-                               OrderRequest request) {
+    @Transactional(noRollbackFor = HttpClientErrorException.Unauthorized.class)
+    public OrderResponse order(Long memberId, OrderRequest request) {
         Option option = optionService.getOptionById(request.optionId());
         optionService.subtractQuantity(option, request.quantity());
 
@@ -43,15 +44,12 @@ public class OrderService {
         wishesService.removeWishIfPresent(memberId, productId);
 
         Member member = memberService.getMemberById(memberId);
+
         try {
-            kakaoClient.sendMessageToMeOrFalse(
-                    member.getKakaoAccessToken(),
-                    request.message(),
-                    "/member/orders/" + option.getId()
-            );
-        } catch (CustomException exception) {
+            sendKakaoMessage(member, request.message(), option);
+        } catch (HttpClientErrorException.Unauthorized exception) {
             memberService.refreshKakaoAccessToken(memberId);
-            throw exception;
+            sendKakaoMessage(member, request.message(), option);
         }
 
         return OrderMapper.toResponseDto(
@@ -59,5 +57,12 @@ public class OrderService {
         );
     }
 
+    public void sendKakaoMessage(Member member, String message, Option option) {
+        kakaoClient.sendMessageToMe(
+                member.getKakaoAccessToken(),
+                message,
+                "/members/order/" + option.getId()
+        );
+    }
 
 }
