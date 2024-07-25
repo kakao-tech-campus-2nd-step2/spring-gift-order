@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.AuthToken;
+import gift.dto.response.OrderResponseDto;
 import gift.exception.customException.JsonException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -110,6 +112,19 @@ public class KakaoService {
         }
     }
 
+    public void sendKakaoMessage(String accessToken, OrderResponseDto orderResponseDto){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.setBearerAuth(accessToken);
+
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("template_object", makeMessageBody(orderResponseDto));
+
+        RequestEntity request = new RequestEntity<>(parameters, headers, HttpMethod.POST, URI.create(SEND_MESSAGE_URL));
+        restTemplate.exchange(SEND_MESSAGE_URL, HttpMethod.POST, request, String.class);
+    }
+
+
     private void makeKakaoTokenInformation(Map<String, String> tokenInfo, JsonNode jsonNode) {
         tokenInfo.put(ACCESS_TOKEN, jsonNode.get(ACCESS_TOKEN).asText());
         tokenInfo.put(EXPIRES_IN, jsonNode.get(EXPIRES_IN).asText());
@@ -135,6 +150,18 @@ public class KakaoService {
         body.add("client_id", CLIENT_ID);
         body.add("refresh_token", refreshToken);
         return body;
+    }
+
+    private String makeMessageBody(OrderResponseDto orderResponseDto) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{\"object_type\":\"text\",\"text\":\"")
+                .append(orderResponseDto.id())
+                .append(" 번 옵션이 주문 되었습니다. ")
+                .append(orderResponseDto.message())
+                .append("\",\"link\":{\"web_url\":\"\"}}");
+
+        return  sb.toString();
     }
 
 }
