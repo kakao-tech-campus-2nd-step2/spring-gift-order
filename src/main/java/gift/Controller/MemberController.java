@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Optional;
+
 @Controller
 public class MemberController {
 
@@ -38,8 +40,8 @@ public class MemberController {
         boolean isAuthenticated = memberService.authenticate(email, password);
         if (isAuthenticated) {
             boolean isAdmin = memberService.isAdmin(email);
-            MemberDto authenticatedMember = memberService.findByEmail(email);
-            String token = jwtUtil.generateToken(authenticatedMember, isAdmin);
+            Optional<MemberDto> authenticatedMember = memberService.findByEmail(email);
+            String token = jwtUtil.generateToken(authenticatedMember.get(), isAdmin);
             // Set token in HttpOnly cookie
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
