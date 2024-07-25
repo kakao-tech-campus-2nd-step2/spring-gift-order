@@ -49,9 +49,10 @@ class WishServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        Member member = new Member(1L, "tset@test.com", "test");
+        Member member = new Member(1L, "test@test.com", "test");
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.of(member));
+        given(wishRepository.existsByProductId(1L)).willReturn(false);
 
         //when
         WishDto wishDto = new WishDto(1L);
@@ -115,5 +116,20 @@ class WishServiceTest {
         assertThatThrownBy(
             () -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(
             NoSuchElementException.class);
+    }
+
+    @Test
+    void 위시_리스트에_상품_중복_추가() {
+        //given
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
+        WishDto wishDto = new WishDto(1L);
+        LoginMember loginMember = new LoginMember(1L);
+
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
+        given(wishRepository.existsByProductId(product.getId())).willReturn(true);
+
+        //when, then
+        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(IllegalArgumentException.class);
     }
 }
