@@ -61,7 +61,7 @@ public class KakaoLoginService implements OAuth2LoginService {
         }
     }
 
-    public Long getMemberInfo(String accessToken) {
+    public String getMemberInfo(String accessToken) {
 
         try {
             oAuth2MemberInfoResponse response = client.get()
@@ -81,7 +81,6 @@ public class KakaoLoginService implements OAuth2LoginService {
         }
 
     }
-
 
     public LinkedMultiValueMap<String, String> createTokenRequest(String clientId,
         String redirectUri, String code) {

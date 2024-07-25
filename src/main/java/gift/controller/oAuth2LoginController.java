@@ -1,10 +1,12 @@
 package gift.controller;
 
 import gift.auth.JwtService;
+import gift.model.Member;
 import gift.response.oauth2.oAuth2TokenResponse;
 import gift.service.MemberService;
 import gift.service.OAuth2LoginService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +44,15 @@ public class oAuth2LoginController {
 
     @RequestMapping("/kakao/login/oauth2/code")
     @ResponseBody
-    public ResponseEntity<oAuth2TokenResponse> getToken(HttpServletRequest request) {
+    public ResponseEntity<oAuth2TokenResponse> getToken(HttpServletRequest request,
+        HttpServletResponse response) {
         loginService.checkRedirectUriParams(request);
         String code = request.getParameter("code");
         oAuth2TokenResponse dto = loginService.getToken(code);
-        Long memberId = loginService.getMemberInfo(dto.accessToken());
 
+        String memberId = loginService.getMemberInfo(dto.accessToken());
+        Member member = memberService.loginByOAuth2(memberId + "@kakao.com");
+        jwtService.createToken(member, response);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 

@@ -35,4 +35,9 @@ public class MemberService {
             .orElseThrow(NotFoundMemberException::new);
     }
 
+    public Member loginByOAuth2(String email) {
+        return memberRepository.findByEmail(email)
+            .orElse(memberRepository.save(new Member(email)));
+    }
+
 }

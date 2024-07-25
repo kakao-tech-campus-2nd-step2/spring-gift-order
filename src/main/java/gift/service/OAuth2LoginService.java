@@ -10,7 +10,7 @@ public interface OAuth2LoginService {
 
     oAuth2TokenResponse getToken(String code);
 
-    Long getMemberInfo(String accessToken);
+    String getMemberInfo(String accessToken);
 
     LinkedMultiValueMap<String, String> createTokenRequest(String clientId,
         String redirectUri, String code);

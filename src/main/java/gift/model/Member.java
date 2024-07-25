@@ -39,6 +39,14 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
+    //oAuth2 가입
+    public Member(String email) {
+        validEmail(email);
+        this.email = email;
+        this.password = null;
+        this.role = Role.ROLE_USER;
+    }
+
     // 회원가입 시 ROLE 기본값은 일반 유저로 한다.
     public Member(String email, String password) {
         validEmail(email);
