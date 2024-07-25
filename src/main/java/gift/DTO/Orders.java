@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table
-public class Order {
+public class Orders {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class Order {
   private String orderDateTime;
   private String message;
 
-  public Order(Long id, Option option, int quantity, String orderDateTime, String message) {
+  public Orders(Long id, Option option, int quantity, String orderDateTime, String message) {
     this.id = id;
     this.option = option;
     this.quantity = quantity;
@@ -32,7 +32,7 @@ public class Order {
     this.message = message;
   }
 
-  protected Order() {
+  protected Orders() {
   }
 
   public Long getId() {

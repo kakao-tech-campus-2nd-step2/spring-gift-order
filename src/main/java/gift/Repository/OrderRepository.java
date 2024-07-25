@@ -1,8 +1,8 @@
 package gift.Repository;
 
-import gift.DTO.Order;
+import gift.DTO.Orders;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Orders, Long> {
 
 }
