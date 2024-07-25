@@ -25,10 +25,10 @@ public class WebConfig implements WebMvcConfigurer {
                 "/api/login/*",
                 "/api/user",
                 "/api/social/token/*",
+                "/api/social/code/**",
                 "/swagger-ui/**",
                 "/swagger-resources/**",
-                "/v3/api-docs/**",
-                "/v3/api-docs"
+                "/v3/api-docs/**"
             );
     }
 }
