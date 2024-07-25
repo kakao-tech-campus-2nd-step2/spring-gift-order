@@ -47,27 +47,51 @@ public class OrderService {
         Map<String, String> userInfo = tokenService.extractUserInfo(jwt);
         String userId = userInfo.get("id");
 
-        User user = userRepository.findById(Long.valueOf(userId))
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        User user = findUserById(userId);
+        ProductOption productOption = findProductOptionById(requestDto.getProductOptionId());
 
-        ProductOption productOption = productOptionRepository.findById(requestDto.getProductOptionId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_OPTION_NOT_FOUND));
+        validateProductOptionQuantity(productOption, requestDto.getQuantity());
 
-        if (productOption.getQuantity() < requestDto.getQuantity()) {
-            throw new BusinessException(ErrorCode.INSUFFICIENT_QUANTITY);
-        }
+        updateProductOptionQuantity(productOption, requestDto.getQuantity());
 
-        productOption.decreaseQuantity(requestDto.getQuantity());
-        productOptionRepository.save(productOption);
+        Order order = saveOrder(user, productOption, requestDto);
 
-        Order order = new Order(productOption, user, requestDto.getQuantity(), LocalDateTime.now(), requestDto.getMessage());
-        orderRepository.save(order);
-
-        wishRepository.deleteByUserAndProduct(user, productOption.getProduct());
+        removeWish(user, productOption);
 
         sendOrderConfirmationMessage(kakaoToken, order);
 
         return new OrderResponseDto(order.getId(), productOption.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
+    }
+
+    private User findUserById(String userId) {
+        return userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private ProductOption findProductOptionById(Long productOptionId) {
+        return productOptionRepository.findById(productOptionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_OPTION_NOT_FOUND));
+    }
+
+    private void validateProductOptionQuantity(ProductOption productOption, int requestedQuantity) {
+        if (productOption.getQuantity() < requestedQuantity) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_QUANTITY);
+        }
+    }
+
+    private void updateProductOptionQuantity(ProductOption productOption, int requestedQuantity) {
+        productOption.decreaseQuantity(requestedQuantity);
+        productOptionRepository.save(productOption);
+    }
+
+    private Order saveOrder(User user, ProductOption productOption, OrderRequestDto requestDto) {
+        Order order = new Order(productOption, user, requestDto.getQuantity(), LocalDateTime.now(), requestDto.getMessage());
+        orderRepository.save(order);
+        return order;
+    }
+
+    private void removeWish(User user, ProductOption productOption) {
+        wishRepository.deleteByUserAndProduct(user, productOption.getProduct());
     }
 
     private void sendOrderConfirmationMessage(String kakaoAccessToken, Order order) {
