@@ -127,7 +127,8 @@ class KakaoUserE2ETest {
             .andRespond(withStatus(HttpStatus.NOT_FOUND).body("no resource"));
 
         assertThatThrownBy(() -> {
-            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode,
+                String.class);
         }).isInstanceOf(KakaoNotFoundException.class)
             .hasMessage("리소스를 찾을 수 없습니다. - Response body: no resource");
     }
@@ -140,7 +141,8 @@ class KakaoUserE2ETest {
             .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
         assertThatThrownBy(() -> {
-            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode,
+                String.class);
         }).isInstanceOf(HttpClientErrorException.class)
             .hasMessage("400 Bad Request");
     }
@@ -153,7 +155,8 @@ class KakaoUserE2ETest {
             .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
 
         assertThatThrownBy(() -> {
-            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode,
+                String.class);
         }).isInstanceOf(HttpServerErrorException.class)
             .hasMessage("500 Internal Server Error");
     }

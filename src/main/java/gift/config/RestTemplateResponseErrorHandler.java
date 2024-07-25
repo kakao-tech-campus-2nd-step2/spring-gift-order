@@ -14,7 +14,8 @@ import org.springframework.web.client.ResponseErrorHandler;
 @Component
 public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestTemplateResponseErrorHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+        RestTemplateResponseErrorHandler.class);
 
     @Override
     public boolean hasError(ClientHttpResponse httpResponse) throws IOException {
@@ -29,13 +30,16 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
         if (statusCode.is5xxServerError()) {
             LOGGER.error("Server error: {} - Response body: {}", statusCode, responseBody);
-            throw new HttpServerErrorException(statusCode, httpResponse.getStatusText(), httpResponse.getHeaders(), responseBody.getBytes(), null);
+            throw new HttpServerErrorException(statusCode, httpResponse.getStatusText(),
+                httpResponse.getHeaders(), responseBody.getBytes(), null);
         } else if (statusCode.is4xxClientError()) {
             LOGGER.error("Client error: {} - Response body: {}", statusCode, responseBody);
             if (statusCode == HttpStatus.NOT_FOUND) {
-                throw new KakaoNotFoundException("리소스를 찾을 수 없습니다. - Response body: " + responseBody);
+                throw new KakaoNotFoundException(
+                    "리소스를 찾을 수 없습니다. - Response body: " + responseBody);
             } else {
-                throw new HttpClientErrorException(statusCode, httpResponse.getStatusText(), httpResponse.getHeaders(), responseBody.getBytes(), null);
+                throw new HttpClientErrorException(statusCode, httpResponse.getStatusText(),
+                    httpResponse.getHeaders(), responseBody.getBytes(), null);
             }
         }
     }

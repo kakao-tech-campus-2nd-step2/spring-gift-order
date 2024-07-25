@@ -22,7 +22,8 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder, RestTemplateResponseErrorHandler errorHandler) {
+    public RestTemplate restTemplate(RestTemplateBuilder builder,
+        RestTemplateResponseErrorHandler errorHandler) {
         return builder.errorHandler(errorHandler).build();
     }
 
