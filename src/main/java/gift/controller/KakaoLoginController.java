@@ -38,8 +38,8 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/getauth")
-    public ResponseEntity<String> getAuth(@RequestParam("code") String code) {
+    public ResponseEntity<?> getAuth(@RequestParam("code") String code) {
         String accessToken = kakaoLoginService.getToken(code);
-        return ResponseEntity.ok("토큰을 받았습니다.");
+        return ResponseEntity.ok().build();
     }
 }
