@@ -64,7 +64,6 @@ public class UserService {
         User user = userRepository.findByEmail(loginDTO.email()).orElseThrow(() -> new NotFoundException("존재하지 않는 계정"));
         if (!user.getPassword().equals(loginDTO.password()))
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
-
         return new Token(jwtUtil.generateToken(user, null));
     }
 

@@ -50,7 +50,6 @@ public class JWTUtil {
     }
 
     public Integer getUserIdFromToken(String token) {
-
         return Integer.parseInt(Jwts.parser()
                 .verifyWith(key)
                 .build()

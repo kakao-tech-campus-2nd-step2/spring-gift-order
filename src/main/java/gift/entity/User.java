@@ -49,7 +49,7 @@ public class User {
     public void deleteWishlist(WishList wishList) {
         this.wishlist.remove(wishList);
     }
-
+  
     public void addOrder(Order order) {
         this.orders.add(order);
     }
