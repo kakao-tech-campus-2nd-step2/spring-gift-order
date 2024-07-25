@@ -8,13 +8,15 @@ public class InputProductDTO {
     private String imageUrl;
     private String category;
     private String option;
+    private String quantity;
 
-    public InputProductDTO(String name, int price, String imageUrl, String category, String option) {
+    public InputProductDTO(String name, int price, String imageUrl, String category, String option, String quantity) {
         this.setName(name);
         this.price = price;
         this.imageUrl = imageUrl;
         this.setCategory(category);
         this.setOption(option);
+        this.quantity = quantity;
     }
 
     public void setName(String name) {
@@ -44,16 +46,6 @@ public class InputProductDTO {
         this.imageUrl = imageUrl;
     }
 
-    @Override
-    public String toString() {
-        return "SaveProductDTO{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", category='" + category + '\'' +
-                '}';
-    }
-
     public String getName() {
         return name;
     }
@@ -72,5 +64,19 @@ public class InputProductDTO {
 
     public String getOption() {
         return option;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "SaveProductDTO{" +
+                "name='" + name + '\'' +
+                ", price=" + price +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", category='" + category + '\'' +
+                '}';
     }
 }

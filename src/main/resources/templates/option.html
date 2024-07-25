@@ -51,7 +51,8 @@
 <div>
     <form th:action="@{/options/add/{productId}(productId=${productId})}" method="post">
         <input type="hidden" name="productId" th:value="${productId}">
-        new option: <input type="text" id="option" name="option" required>
+        new option: <input type="text" id="optionName" name="optionName" required>
+        new option: <input type="text" id="quantity" name="quantity" required>
         <button type="submit">Add</button>
     </form>
 </div>
