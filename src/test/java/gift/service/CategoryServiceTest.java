@@ -13,13 +13,13 @@ import gift.administrator.category.Category;
 import gift.administrator.category.CategoryDTO;
 import gift.administrator.category.CategoryRepository;
 import gift.administrator.category.CategoryService;
+import gift.error.NotFoundIdException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 public class CategoryServiceTest {
 
@@ -57,7 +57,7 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("아이디로 카테고리 검색")
-    void getCategoryById() throws NotFoundException {
+    void getCategoryById() {
         //given
         CategoryDTO expected = new CategoryDTO(2L, "인형", "#dd11ff", "image.jpg", "none");
         given(categoryRepository.findById(any())).willReturn(
@@ -76,7 +76,7 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("아이디로 카테고리 검색시 없는 아이디일 때 오류")
-    void getCategoryByIdNotFoundException() throws NotFoundException {
+    void getCategoryByIdNotFoundException() {
         //given
         given(categoryRepository.findById(any())).willReturn(Optional.empty());
 
@@ -84,7 +84,7 @@ public class CategoryServiceTest {
 
         //then
         assertThatThrownBy(() -> categoryService.getCategoryById(2L)).isInstanceOf(
-            NotFoundException.class);
+            NotFoundIdException.class).hasMessageContaining("카테고리 아이디를 찾을 수 없습니다.");
     }
 
     @Test
@@ -118,16 +118,16 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("카테고리 업데이트시 없는 아이디일 때 오류")
-    void updateCategoryNotFoundException() throws NotFoundException {
+    void updateCategoryNotFoundException() {
         //given
-        given(categoryRepository.findById(any())).willReturn(Optional.empty());
-        CategoryDTO categoryDTO = new CategoryDTO("상품권", "#11ff11", null, null);
+        given(categoryRepository.findById(1L)).willReturn(Optional.empty());
+        CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#11ff11", null, null);
 
         //when
 
         //then
         assertThatThrownBy(() -> categoryService.updateCategory(categoryDTO)).isInstanceOf(
-            NotFoundException.class);
+            NotFoundIdException.class).hasMessageContaining("카테고리 아이디를 찾을 수 없습니다.");
     }
 
     @Test
@@ -135,7 +135,6 @@ public class CategoryServiceTest {
     void updateCategoryExistingName() {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", null, null);
-        Category category = new Category(2L, "상품권", "#ff11ff", null, null);
         given(categoryRepository.findById(1L)).willReturn(Optional.of(categoryDTO.toCategory()));
         given(categoryRepository.existsByNameAndIdNot(categoryDTO.getName(),
             categoryDTO.getId())).willReturn(true);
@@ -149,7 +148,7 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("카테고리 업데이트")
-    void updateCategory() throws NotFoundException {
+    void updateCategory() {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", null, null);
         CategoryDTO categoryDTO1 = new CategoryDTO(1L, "인형", "#ff11ff", "image.url", "dolls");
@@ -166,11 +165,9 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("카테고리 삭제")
-    void deleteCategory() throws NotFoundException {
+    void deleteCategory() {
         //given
-        CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", null, null);
-        given(categoryRepository.findById(1L)).willReturn(
-            Optional.ofNullable(categoryDTO.toCategory()));
+        given(categoryRepository.existsById(1L)).willReturn(true);
 
         //when
         categoryService.deleteCategory(1L);
@@ -181,7 +178,7 @@ public class CategoryServiceTest {
 
     @Test
     @DisplayName("카테고리 삭제시 아이디가 없는 오류")
-    void deleteCategoryNotFoundException() throws NotFoundException {
+    void deleteCategoryNotFoundException() {
         //given
         given(categoryRepository.findById(any())).willReturn(Optional.empty());
 
@@ -189,6 +186,6 @@ public class CategoryServiceTest {
 
         //then
         assertThatThrownBy(() -> categoryService.deleteCategory(1L)).isInstanceOf(
-            NotFoundException.class);
+            NotFoundIdException.class).hasMessageContaining("삭제하려는 카테고리가 존재하지 않습니다.");
     }
 }

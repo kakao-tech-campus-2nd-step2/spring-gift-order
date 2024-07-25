@@ -1,6 +1,5 @@
 package gift.util;
 
-import gift.users.user.UserDTO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -19,16 +18,16 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
-    public String generateToken(UserDTO userDTO) {
+    public String generateToken(String emailOrId){
         return Jwts.builder()
-            .setSubject(userDTO.email())
+            .setSubject(emailOrId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
             .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
             .compact();
     }
 
-    public String extractEmail(String token) {
+    public String extractUserId(String token) {
         Jws<Claims> claims = parseClaimsJws(token);
         return claims.getBody().getSubject();
     }
