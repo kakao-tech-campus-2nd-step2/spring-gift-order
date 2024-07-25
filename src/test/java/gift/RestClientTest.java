@@ -30,7 +30,7 @@ public class RestClientTest {
         var url = "https://kauth.kakao.com/oauth/token";
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoProperties.getRestAPiKey());
+        body.add("client_id", kakaoProperties.restAPiKey());
         body.add("redirect_url","http://localhost:8080");
         body.add("code","ZjX1dBYc4mQufxfZKzyYdkDPGwvvUB7Tui91ZafEaCnEJEYyQxkZaQAAAAQKPXNNAAABkN8ZKY-t1856Xp2T3g");
         var response = restClient.post()
