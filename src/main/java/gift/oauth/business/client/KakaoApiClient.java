@@ -1,10 +1,9 @@
 package gift.oauth.business.client;
 
+import gift.global.util.StringUtils;
 import gift.oauth.business.dto.OAuthParam;
 import gift.oauth.business.dto.OAuthProvider;
 import gift.oauth.business.dto.OauthToken;
-import java.io.InputStream;
-import java.util.Scanner;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
@@ -63,7 +62,7 @@ public class KakaoApiClient implements OAuthApiClient {
             .onStatus(
                 HttpStatusCode::isError,
                 (request, response) -> {
-                    log.error("Error Response Body: {}", convert(response.getBody()));
+                    log.error("Error Response Body: {}", StringUtils.convert(response.getBody()));
                     throw new RuntimeException("Failed to get access token from Kakao API.");
                 }
             )
@@ -72,10 +71,5 @@ public class KakaoApiClient implements OAuthApiClient {
         log.info("Kakao access token: {}", result.access_token());
 
         return result.access_token();
-    }
-
-    private String convert(InputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream, "UTF-8");
-        return scanner.useDelimiter("\\A").next();
     }
 }
