@@ -1,20 +1,16 @@
 package gift.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public record KakaoUserResponse(
-    @JsonProperty("id") Long id,
-    @JsonProperty("connected_at") String connectedAt,
-    @JsonProperty("kakao_account") KakaoAccount kakaoAccount) {
+    Long id, String connectedAt, KakaoAccount kakaoAccount) {
 
     public record KakaoAccount(
-        @JsonProperty("profile") Profile profile,
-        @JsonProperty("is_email_valid") boolean isEmailValid,
-        @JsonProperty("is_email_verified") boolean isEmailVerified,
-        @JsonProperty("email") String email) {
+        Profile profile, boolean isEmailValid, boolean isEmailVerified, String email) {
 
-        public record Profile(
-            @JsonProperty("nickname") String nickname) {
+        public record Profile(String nickname) {
 
         }
     }
