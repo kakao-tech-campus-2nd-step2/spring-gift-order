@@ -43,7 +43,7 @@ public class WishService {
     @Transactional
     public Wish insertWish(WishDto wishDto, LoginMember loginMember) {
         Product product = getValidatedProduct(wishDto.productId());
-        validateRedundancyWishByProductId(wishDto.productId());
+        validateRedundancyWishByProductIdAndMemberId(wishDto.productId(), loginMember.id());
 
         Member member = getMember(loginMember);
         Wish wish = new Wish(member, product);
@@ -53,7 +53,7 @@ public class WishService {
     @Transactional
     public void deleteWish(Long id, LoginMember loginMember) {
         getValidatedWish(id, loginMember);
-        wishRepository.deleteById(id);
+        wishRepository.deleteByIdAndMemberId(id, loginMember.id());
     }
 
     private Member getMember(LoginMember loginMember) {
@@ -71,8 +71,8 @@ public class WishService {
             .orElseThrow(() -> new NoSuchElementException("해당 ID의 상품이 존재하지 않습니다."));
     }
 
-    private void validateRedundancyWishByProductId(Long productId) {
-        if (wishRepository.existsByProductId(productId)) {
+    private void validateRedundancyWishByProductIdAndMemberId(Long productId, Long memberId) {
+        if (wishRepository.existsByProductIdAndMemberId(productId, memberId)) {
             throw new IllegalArgumentException("해당 상품이 이미 위시 리스트에 존재합니다.");
         }
     }
