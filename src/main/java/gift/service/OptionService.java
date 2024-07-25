@@ -15,6 +15,7 @@ import gift.exception.exception.UnAuthException;
 import gift.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,8 @@ public class OptionService {
     private final WishListRepository wishListRepository;
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper objectMapper = new ObjectMapper();
+    @Value("${kakao.send_message_url}")
+    String send_message_url;
 
     @Transactional
     public void refillQuantity(OptionQuantityDTO optionQuantityDTO) {
@@ -67,11 +70,28 @@ public class OptionService {
     }
 
     private void sendMessage(Order order, String token) {
-        var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        var url = send_message_url;
+        var headers = makeSendMessageHeader(token);
+        var body = makeSendMessageBody(order);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+
+        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED)
+            throw new UnAuthException("인증되지 않은 요청");
+        if (response.getStatusCode() != HttpStatus.OK)
+            throw new BadRequestException("잘못된 요청");
+    }
+
+    private HttpHeaders makeSendMessageHeader(String token){
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
+    }
 
+    private MultiValueMap<String, String> makeSendMessageBody(Order order){
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         Map<String, Object> templateObject = new HashMap<>();
         templateObject.put("object_type", "text");
         templateObject.put("text", order.getMessage());
@@ -87,17 +107,8 @@ public class OptionService {
         } catch (JsonProcessingException e) {
             throw new ServerInternalException("파싱 에러");
         }
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("template_object", templateObjectJson);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-
-        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED)
-            throw new UnAuthException("인증되지 않은 요청");
-        if (response.getStatusCode() != HttpStatus.OK)
-            throw new BadRequestException("잘못된 요청");
+        return body;
     }
 
     public void saveOption(SaveOptionDTO saveOptionDTO) {
