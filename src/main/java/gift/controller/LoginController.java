@@ -19,7 +19,7 @@ public class LoginController {
 
     @GetMapping("/code")
     public ResponseEntity<String> LoginAndGetAccessToken(String code) {
-        String accessToken = loginService.getAccessTokenByCode(code);
+        String accessToken = loginService.oauthLogin(code);
 
         return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
