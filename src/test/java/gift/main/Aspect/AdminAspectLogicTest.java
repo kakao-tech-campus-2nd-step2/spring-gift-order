@@ -13,8 +13,8 @@ public final class AdminAspectLogicTest {
      */
     @Test
     public void testEnum() {
-        UserVo user = new UserVo(1l, "test", "email", "user");
-        UserVo admin = new UserVo(1l, "test", "email", "admin");
+        UserVo user = new UserVo(1L, "test", "email", "user");
+        UserVo admin = new UserVo(1L, "test", "email", "admin");
         System.out.println("Role.ADMIN.equals(user.getRole()) = " + Role.ADMIN.equals(user.getRole()));
         System.out.println("Role.ADMIN.equals(admin.getRole()) = " + Role.ADMIN.equals(admin.getRole()));
         /*

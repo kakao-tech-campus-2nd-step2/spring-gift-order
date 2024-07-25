@@ -52,10 +52,7 @@ public class JwtUtil {
 
 
     public boolean validateToken(String token) {
-        if (isExpired(token)) {
-            return false;
-        }
-        return true;
+        return !isExpired(token);
 
     }
 

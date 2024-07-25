@@ -9,11 +9,11 @@ public record TextTemplate(
         Link link
 ) {
 
-    record Link(String wep_url) {
+    public TextTemplate(@JsonProperty("object_type")
+                        String objectType, String text, String link) {
+        this(objectType, text, new Link(link));
     }
 
-    public TextTemplate(@JsonProperty("object_type")
-                          String objectType, String text, String link) {
-        this(objectType, text, new Link(link));
+    record Link(String wep_url) {
     }
 }

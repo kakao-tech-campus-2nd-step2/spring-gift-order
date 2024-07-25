@@ -3,10 +3,10 @@ POST http://localhost:8080/spring-gift/members/join
 Content-Type: application/json
 
 {
-  "name" : "admin소문자",
-  "email" : "1234ds@123",
-  "password" : "1234",
-  "role" : "ADMIN"
+  "name": "admin소문자",
+  "email": "1234ds@123",
+  "password": "1234",
+  "role": "ADMIN"
 }
 
 ### Product Request with Headers

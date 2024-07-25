@@ -2,7 +2,9 @@ package gift.main.service;
 
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
-import gift.main.dto.*;
+import gift.main.dto.KakaoToken;
+import gift.main.dto.UserJoinRequest;
+import gift.main.dto.UserLoginRequest;
 import gift.main.entity.ApiToken;
 import gift.main.entity.User;
 import gift.main.repository.ApiTokenRepository;
@@ -49,7 +51,7 @@ public class UserService {
 
         ApiToken apiToken = new ApiToken(savedUser, kakaoToken);
         apiTokenRepository.save(apiToken);
-        
+
         return jwtToken;
 
     }

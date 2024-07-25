@@ -4,7 +4,6 @@ import gift.main.dto.OrderRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import org.springframework.data.repository.cdi.Eager;
 
 @Entity
 @Table(name = "orders")

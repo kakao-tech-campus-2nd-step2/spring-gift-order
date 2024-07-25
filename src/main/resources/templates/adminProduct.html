@@ -3,8 +3,8 @@
 <head>
     <title>Bootstrap Example</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -21,11 +21,11 @@
         <p>상품을 등록하세요.</p>
     </div>
     <div class="container">
-        <div id="registerInPut" class="form-inline">
-            <input type="text" class="form-control" id="name" placeholder="물건명" required>
-            <input type="text" class="form-control" id="price" placeholder="가격" required>
-            <input type="text" class="form-control" id="imageUrl" placeholder="이미지 주소" required>
-            <button id="registerButton" class="btn btn-primary btn-sm">등록하기</button>
+        <div class="form-inline" id="registerInPut">
+            <input class="form-control" id="name" placeholder="물건명" required type="text">
+            <input class="form-control" id="price" placeholder="가격" required type="text">
+            <input class="form-control" id="imageUrl" placeholder="이미지 주소" required type="text">
+            <button class="btn btn-primary btn-sm" id="registerButton">등록하기</button>
         </div>
     </div>
 </div>
@@ -39,9 +39,9 @@
     <div class="container">
         <div id="searchForm" style="display: flex; align-items: center; gap: 10px;">
             <div class="form-group">
-                <input type="number" placeholder="id값" class="form-control" id="id" required>
+                <input class="form-control" id="id" placeholder="id값" required type="number">
             </div>
-            <button id="searchButton" class="btn btn-primary btn-sm">조회하기</button>
+            <button class="btn btn-primary btn-sm" id="searchButton">조회하기</button>
         </div>
     </div>
     <div class="container">
@@ -66,7 +66,7 @@
                 <th>Image</th>
                 <th>Seller</th>
                 <th>
-                    페이지당 항목 수<b></b><input type="number" id="sizeInput" value="10" min="1" style="width: 60px;">
+                    페이지당 항목 수<b></b><input id="sizeInput" min="1" style="width: 60px;" type="number" value="10">
 
                 </th>
             </tr>
@@ -80,35 +80,35 @@
 </div>
 
 <!-- 모달 창 -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div aria-hidden="true" aria-labelledby="editModalLabel" class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">상품 수정하기</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="editForm">
-                    <input type="hidden" id="editId">
+                    <input id="editId" type="hidden">
                     <div class="form-group">
                         <label for="editName">상품명</label>
-                        <input type="text" class="form-control" id="editName" required>
+                        <input class="form-control" id="editName" required type="text">
                     </div>
                     <div class="form-group">
                         <label for="editPrice">가격</label>
-                        <input type="text" class="form-control" id="editPrice" required>
+                        <input class="form-control" id="editPrice" required type="text">
                     </div>
                     <div class="form-group">
                         <label for="editImageUrl">이미지 주소</label>
-                        <input type="text" class="form-control" id="editImageUrl" required>
+                        <input class="form-control" id="editImageUrl" required type="text">
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" id="saveChanges">저장</button>
+                <button class="btn btn-secondary" data-dismiss="modal" type="button">닫기</button>
+                <button class="btn btn-primary" id="saveChanges" type="button">저장</button>
             </div>
         </div>
     </div>

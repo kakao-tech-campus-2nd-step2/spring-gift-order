@@ -12,7 +12,7 @@ public record UserJoinRequest(
         String password,
         Role role) {
 
-        public UserJoinRequest(KakaoProfileRequest kakaoProfileRequest) {
-                this(kakaoProfileRequest.nickname(),kakaoProfileRequest.email(),"kakaoPassword",Role.USER);
-        }
+    public UserJoinRequest(KakaoProfileRequest kakaoProfileRequest) {
+        this(kakaoProfileRequest.nickname(), kakaoProfileRequest.email(), "kakaoPassword", Role.USER);
+    }
 }

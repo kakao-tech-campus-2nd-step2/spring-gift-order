@@ -1,7 +1,5 @@
 package gift.main.dto;
 
-import gift.main.entity.Product;
-
 import java.util.List;
 
 public record ProductAllResponse(

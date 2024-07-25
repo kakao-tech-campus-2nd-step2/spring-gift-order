@@ -11,22 +11,6 @@ public class UserVo {
     private final String email;
     private final Role role;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
     public UserVo(Long id, String name, String email, Role role) {
         this.id = id;
         this.name = name;
@@ -46,5 +30,21 @@ public class UserVo {
         this.name = user.getName();
         this.email = user.getEmail();
         this.role = user.getRole();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }

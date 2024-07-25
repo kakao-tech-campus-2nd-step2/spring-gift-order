@@ -10,7 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -41,10 +44,10 @@ public class KakaoController {
 
     //1. 전달받은 코드로 엑세스 토큰 요청하기
     @GetMapping("/callback")
-    public ResponseEntity<?> LoginKakaoUser(@RequestParam(value = "code",required = false) String code,
-                                          @RequestParam(value = "error",required = false) String error,
-                                          @RequestParam(value = "error_description",required = false) String errorDescription) {
-        if (error!=null || errorDescription!=null ) {
+    public ResponseEntity<?> LoginKakaoUser(@RequestParam(value = "code", required = false) String code,
+                                            @RequestParam(value = "error", required = false) String error,
+                                            @RequestParam(value = "error_description", required = false) String errorDescription) {
+        if (error != null || errorDescription != null) {
             throw new CustomException(HttpStatus.BAD_REQUEST, errorDescription);
         }
 
@@ -56,10 +59,6 @@ public class KakaoController {
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .body("");
     }
-
-
-
-
 
 
 }
