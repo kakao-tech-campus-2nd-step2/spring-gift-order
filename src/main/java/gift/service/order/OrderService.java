@@ -60,7 +60,7 @@ public class OrderService {
         wishRepository.findByUserAndGift(user,gift)
                 .ifPresent(wish -> wishRepository.deleteById(wish.getId()));
 
-        Order order = new Order(option.getId(), orderRequest.quantity(), orderRequest.message());
+        Order order = new Order(option, orderRequest.quantity(), orderRequest.message());
         orderRepository.save(order);
 
         sendMessage(orderRequest, accessToken, gift, option);

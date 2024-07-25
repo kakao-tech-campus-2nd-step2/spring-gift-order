@@ -25,7 +25,7 @@ public class OrderResponse {
     }
 
     public static OrderResponse fromEntity(Order order){
-        return new OrderResponse(order.getId(), order.getOptionId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
+        return new OrderResponse(order.getId(), order.getOption().getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
 
     public Long getId() {

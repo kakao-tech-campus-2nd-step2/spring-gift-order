@@ -1,5 +1,6 @@
 package gift.model.order;
 
+import gift.model.option.Option;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,8 +17,10 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_id")
     @NotNull
-    private Long optionId;
+    private Option option;
 
     @NotNull
     private int quantity;
@@ -31,16 +34,16 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long id, Long optionId, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Long id, Option option, int quantity, LocalDateTime orderDateTime, String message) {
         this.id = id;
-        this.optionId = optionId;
+        this.option = option;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;
         this.message = message;
     }
 
-    public Order(Long optionId, int quantity, String message) {
-        this.optionId = optionId;
+    public Order(Option option, int quantity, String message) {
+        this.option = option;
         this.quantity = quantity;
         this.message = message;
     }
@@ -49,8 +52,8 @@ public class Order {
         return id;
     }
 
-    public Long getOptionId() {
-        return optionId;
+    public Option getOption() {
+        return option;
     }
 
     public int getQuantity() {
