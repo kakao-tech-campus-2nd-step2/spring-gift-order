@@ -27,7 +27,7 @@ public class LoginRestController {
     }
 
     @GetMapping("/kakao/link")
-    public void kakaoLink(HttpServletResponse response) throws IOException {
+    public void test(HttpServletResponse response) throws IOException {
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.setHeader("Location", userService.getKakaoLoginUrl());
     }
