@@ -3,6 +3,8 @@ package gift.oauth.business.client;
 import gift.oauth.business.dto.OAuthParam;
 import gift.oauth.business.dto.OAuthProvider;
 import gift.oauth.business.dto.OauthToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoApiClient implements OAuthApiClient {
 
     private final RestClient restClient;
+    private Logger log = LoggerFactory.getLogger(KakaoApiClient.class);
 
     public KakaoApiClient() {
         this.restClient = RestClient.create();
@@ -39,7 +42,7 @@ public class KakaoApiClient implements OAuthApiClient {
             )
             .body(OauthToken.Kakao.class);
 
-        System.out.println(result);
+        log.info("Kakao access token: {}", result.access_token());
 
         return result.access_token();
     }
