@@ -12,13 +12,12 @@ public class OrderResponse {
     // 활용 메서드들
     @Override
     public String toString() {
-        return "OrderResponse{" +
-                "id=" + id +
+        return "주문 내역 확인 부탁드립니다. " + '\n' +
+                "orderId=" + id +
                 ", optionId=" + optionId +
-                ", quantity=" + quantity +
-                ", orderDateTime=" + orderDateTime +
-                ", message='" + message + '\'' +
-                '}';
+                ", 수량 =" + quantity +
+                ", 주문 시간 =" + orderDateTime +
+                ", 메시지 ='" + message;
     }
 
     // Constructors
