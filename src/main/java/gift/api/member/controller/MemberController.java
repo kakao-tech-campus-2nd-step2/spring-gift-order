@@ -1,13 +1,16 @@
 package gift.api.member.controller;
 
-import gift.api.member.MemberRequest;
+import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.MediaType.*;
+
+import gift.api.member.config.KakaoProperties;
+import gift.api.member.dto.MemberRequest;
 import gift.api.member.MemberService;
+import gift.api.member.dto.TokenResponse;
 import gift.global.utils.JwtUtil;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,17 +20,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/members")
 public class MemberController {
 
     private final MemberService memberService;
+    private final KakaoProperties properties;
     private final RestClient restClient;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, KakaoProperties properties) {
         this.memberService = memberService;
+        this.properties = properties;
         restClient = RestClient.create();
     }
 
@@ -47,11 +51,19 @@ public class MemberController {
 
     @GetMapping("/oauth/kakao")
     public void requestKakaoToken(@RequestParam("code") String code) {
-        final String uri = "https://kauth.kakao.com/oauth/token";
-        ResponseEntity<String> response = restClient.post()
-            .uri(URI.create(uri))
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+        ResponseEntity<TokenResponse> tokenResponse = restClient.post()
+            .uri(URI.create(properties.url().token()))
+            .contentType(APPLICATION_FORM_URLENCODED)
             .body(memberService.createBody(code))
+            .retrieve()
+            .toEntity(TokenResponse.class);
+
+        ResponseEntity<String> userResponse = restClient.get()
+            .uri(properties.url().user(), uriBuilder -> uriBuilder
+                .queryParam("property_keys", "[\"kakao_account.email\"]")
+                .build())
+            .header(CONTENT_TYPE, APPLICATION_FORM_URLENCODED_VALUE)
+            .header(AUTHORIZATION, "Bearer " + tokenResponse.getBody().accessToken())
             .retrieve()
             .toEntity(String.class);
     }

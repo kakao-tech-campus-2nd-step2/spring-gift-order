@@ -1,5 +1,7 @@
 package gift.api.member;
 
+import gift.api.member.config.KakaoProperties;
+import gift.api.member.dto.MemberRequest;
 import gift.global.exception.ForbiddenMemberException;
 import gift.global.exception.UnauthorizedMemberException;
 import gift.global.utils.JwtUtil;
@@ -41,7 +43,7 @@ public class MemberService {
         var body = new LinkedMultiValueMap<>();
         body.add("grant_type", properties.grantType());
         body.add("client_id", properties.clientId());
-        body.add("redirect_url", properties.redirectUrl());
+        body.add("redirect_url", properties.url().redirect());
         body.add("code", code);
         return body;
     }
