@@ -37,6 +37,23 @@
    우리 서비스의 회원이 아니라면, 회원 가입 처리 후 우리 서비스 토큰을 넣어서 반환한다.
 5) 카카오 토큰은 <Long memberId, String token> 형태로 별도의 저장소에 저장해둔다.
 
+#### Orders
+- order_id
+- member_id (외래키만 참조)
+- option (다대일 연관관계 매핑)
+- quantity: 주문 수량
+- message: 주문 시 메시지
+
+#### OrderService
+- 주문 생성
+  - 옵션에서 수량 차감(OptionService.subtractQuantity())
+  - 해당 옵션의 상품이 위시 리스트에 존재하는 경우 위시 리스트에서 삭제
+  - 주문 save 및 response 데이터 반환
+
+#### OrderApiController
+- 주문 요청
+  - 카카오 메시지 API로 메시지 전송
+
 #### 주문 시 동작
 1) 클라이언트가 우리 서비스 토큰을 넣어 주문 요청을 보낸다.
 2) 우리 서버에서 주문을 처리한다. (옵션 수량 차감, 카카오 토큰 획득)

@@ -29,12 +29,12 @@ public class MemberService {
     }
 
     public Member login(String email, String password) {
-
         return memberRepository.findByEmail(email)
             .filter(member -> member.validating(email, password))
             .orElseThrow(NotFoundMemberException::new);
     }
 
+    @Transactional
     public Member loginByOAuth2(String email) {
         return memberRepository.findByEmail(email)
             .orElse(memberRepository.save(new Member(email)));
