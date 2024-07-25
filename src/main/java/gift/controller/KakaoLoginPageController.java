@@ -1,25 +1,35 @@
 package gift.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+import gift.config.KakaoAuthProperties;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller
 @RequestMapping("/kakao/login")
 public class KakaoLoginPageController {
-    @Value("${kakao.client_id}")
-    private String client_id;
+    private final KakaoAuthProperties kakaoAuthProperties;
 
-    @Value("${kakao.redirect_uri}")
-    private String redirect_uri;
+    public KakaoLoginPageController(KakaoAuthProperties kakaoAuthProperties) {
+        this.kakaoAuthProperties = kakaoAuthProperties;
+    }
 
     @GetMapping("/page")
-    public String loginPage(Model model) {
-        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
-        model.addAttribute("location", location);
-
+    public String loginPage() {
         return "kakao-login";
+    }
+
+    @GetMapping("/redirect")
+    public RedirectView redirectLoginPage() {
+        String location = UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/authorize")
+            .queryParam("response_type", "code")
+            .queryParam("client_id", kakaoAuthProperties.getClientId())
+            .queryParam("redirect_uri", kakaoAuthProperties.getRedirectUri())
+            .toUriString();
+
+        return new RedirectView(location);
     }
 }
