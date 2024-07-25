@@ -3,7 +3,6 @@ package gift.service;
 import gift.converter.NameConverter;
 import gift.converter.OptionConverter;
 import gift.converter.ProductConverter;
-import gift.dto.OptionDTO;
 import gift.dto.PageRequestDTO;
 import gift.dto.ProductDTO;
 import gift.model.Option;
@@ -112,5 +111,11 @@ public class ProductService {
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public String getProductNameById(Long productId) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        return product.getName().getName();
     }
 }
