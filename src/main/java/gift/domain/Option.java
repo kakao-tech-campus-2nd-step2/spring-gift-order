@@ -25,7 +25,7 @@ public class Option {
     private int quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
-    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "option")
     private List<Order> orders = new ArrayList<>();
 
     public Option(String name, int quantity) {
