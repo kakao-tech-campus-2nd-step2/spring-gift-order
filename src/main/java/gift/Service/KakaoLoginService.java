@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
@@ -13,6 +14,7 @@ import java.net.URI;
 public class KakaoLoginService {
 
     private static final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String LOGIN_URI= "https://kauth.kakao.com/oauth/authorize";
 
     private final RestClient client = RestClient.builder().build();
     private final KakaoProperties properties;
@@ -34,11 +36,12 @@ public class KakaoLoginService {
     }
 
     private String generateLoginUrl() {
-        String url = "https://kauth.kakao.com/oauth/authorize?client_id="
-                + properties.clientId() + "&redirect_uri="
-                + properties.redirectUrl() + "&response_type=code";
-
-        return url;
+       return UriComponentsBuilder.fromUriString(LOGIN_URI)
+                .queryParam("client_id", properties.clientId())
+                .queryParam("redirect_uri", properties.redirectUrl())
+                .queryParam("response_type", "code")
+                .build()
+                .toUriString();
     }
 
     public String getToken(String oauthCode){
