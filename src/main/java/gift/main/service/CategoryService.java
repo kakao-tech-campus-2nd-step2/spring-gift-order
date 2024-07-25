@@ -34,6 +34,8 @@ public class CategoryService {
             throw new CustomException(ErrorCode.ALREADY_CATEGORY_UNI_NUMBER);
         }
         Category category = new Category(categoryRequest);
+
+        categoryRepository.save(category);
     }
 
     @Transactional
