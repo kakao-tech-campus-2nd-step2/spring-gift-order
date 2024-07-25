@@ -25,57 +25,49 @@ public class KakaoLogin {
     }
 
     public KakaoUserInfo getUserInfo(KakaoTokenResponse response) {
-        KakaoUserInfo userInfo = restClient.post()
+        return restClient.post()
             .uri(kakaoProperties.getUserInfoUrl())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .header("Authorization", "Bearer " + response.getAccessToken())
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(400),
-                (req, res) -> {
-                    throw new KakaoLoginBadRequestException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
-                })
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(401),
-                (req, res) -> {
-                    throw new KakaoLoginUnauthorizedException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
-                })
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(403),
-                (req, res) -> {
-                    throw new KakaoLoginForbiddenException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
-                })
+            .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
+                switch (res.getStatusCode().value()) {
+                    case 400:
+                        throw new KakaoLoginBadRequestException(
+                            ErrorMessage.KAKAO_BAD_REQUEST_MSG);
+                    case 401:
+                        throw new KakaoLoginUnauthorizedException(
+                            ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
+                    case 403:
+                        throw new KakaoLoginForbiddenException(
+                            ErrorMessage.KAKAO_FORBIDDEN_MSG);
+                }
+            })
             .body(KakaoUserInfo.class);
-
-        return userInfo;
     }
 
     public KakaoTokenResponse getKakaoToken(String code) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoProperties.getClientId());
-        body.add("redirect_uri", kakaoProperties.getRedirectUrl());
-        body.add("code", code);
-
-        KakaoTokenResponse response = restClient.post()
+        return restClient.post()
             .uri(kakaoProperties.getTokenUrl())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
+            .body(generateGetTokenRequestBody(code))
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(400),
-                (req, res) -> {
-                    throw new KakaoLoginBadRequestException(ErrorMessage.KAKAO_BAD_REQUEST_MSG);
-                })
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(401),
-                (req, res) -> {
-                    throw new KakaoLoginUnauthorizedException(ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
-                })
-            .onStatus(httpStatusCode -> httpStatusCode == HttpStatusCode.valueOf(403),
-                (req, res) -> {
-                    throw new KakaoLoginForbiddenException(ErrorMessage.KAKAO_FORBIDDEN_MSG);
-                })
+            .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
+                switch (res.getStatusCode().value()) {
+                    case 400:
+                        throw new KakaoLoginBadRequestException(
+                            ErrorMessage.KAKAO_BAD_REQUEST_MSG);
+                    case 401:
+                        throw new KakaoLoginUnauthorizedException(
+                            ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
+                    case 403:
+                        throw new KakaoLoginForbiddenException(
+                            ErrorMessage.KAKAO_FORBIDDEN_MSG);
+                }
+            })
             .body(KakaoTokenResponse.class);
-
-        return response;
     }
 
     public Member generateMemberByKakaoUserInfo(KakaoUserInfo kakaoUserInfo) {
@@ -83,5 +75,15 @@ public class KakaoLogin {
             kakaoUserInfo.getId() + "@kakao.com",
             Long.toString(kakaoUserInfo.getId())
         );
+    }
+
+    private LinkedMultiValueMap<String, String> generateGetTokenRequestBody(String code) {
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUrl());
+        body.add("code", code);
+
+        return body;
     }
 }
