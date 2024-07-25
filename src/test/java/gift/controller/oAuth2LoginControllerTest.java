@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.response.oAuth2TokenResponse;
+import gift.response.oauth2.oAuth2TokenResponse;
 import gift.service.KakaoLoginService;
 import java.io.IOException;
 import java.net.URI;
@@ -28,9 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClient.RequestBodySpec;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
 import org.springframework.web.reactive.function.client.WebClientResponseException;

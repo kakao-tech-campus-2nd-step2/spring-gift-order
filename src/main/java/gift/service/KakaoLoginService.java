@@ -3,14 +3,15 @@ package gift.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.exception.oauth2.oAuth2Exception;
 import gift.exception.oauth2.oAuth2TokenException;
-import gift.response.oAuth2TokenResponse;
+import gift.response.oauth2.oAuth2MemberInfoResponse;
+import gift.response.oauth2.oAuth2TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 public class KakaoLoginService implements OAuth2LoginService {
 
     public static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
+    public static final String MEMBER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
     public static final String AUTH_ERROR = "error";
     public static final String AUTH_ERROR_DESCRIPTION = "error_description";
     private final ObjectMapper mapper;
@@ -58,6 +60,28 @@ public class KakaoLoginService implements OAuth2LoginService {
             throw new oAuth2TokenException(e);
         }
     }
+
+    public Long getMemberInfo(String accessToken) {
+
+        try {
+            oAuth2MemberInfoResponse response = client.get()
+                .uri(URI.create(MEMBER_INFO_REQUEST_URI))
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(oAuth2MemberInfoResponse.class)
+                .retry(3)
+                .block();
+
+            return Optional.ofNullable(response)
+                .map(oAuth2MemberInfoResponse::id)
+                .orElseThrow(() -> new oAuth2TokenException("Member ID is null"));
+
+        } catch (WebClientResponseException e) {
+            throw new oAuth2TokenException(e);
+        }
+
+    }
+
 
     public LinkedMultiValueMap<String, String> createTokenRequest(String clientId,
         String redirectUri, String code) {

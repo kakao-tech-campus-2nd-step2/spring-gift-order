@@ -1,6 +1,8 @@
 package gift.controller;
 
-import gift.response.oAuth2TokenResponse;
+import gift.auth.JwtService;
+import gift.response.oauth2.oAuth2TokenResponse;
+import gift.service.MemberService;
 import gift.service.OAuth2LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +18,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class oAuth2LoginController {
 
     private final OAuth2LoginService loginService;
+    private final MemberService memberService;
+    private final JwtService jwtService;
 
-    public oAuth2LoginController(OAuth2LoginService loginService) {
+    public oAuth2LoginController(OAuth2LoginService loginService, MemberService memberService,
+        JwtService jwtService) {
         this.loginService = loginService;
+        this.memberService = memberService;
+        this.jwtService = jwtService;
     }
 
     @Value("${kakao.client-id}")
@@ -39,6 +46,8 @@ public class oAuth2LoginController {
         loginService.checkRedirectUriParams(request);
         String code = request.getParameter("code");
         oAuth2TokenResponse dto = loginService.getToken(code);
+        Long memberId = loginService.getMemberInfo(dto.accessToken());
+
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
