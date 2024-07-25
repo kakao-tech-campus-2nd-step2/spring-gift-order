@@ -52,7 +52,8 @@ public class AuthController {
     public String redirect() {
         KakaoProperties properties = authService.getProperties();
         String clientId = properties.clientId();
-        return "redirect:https://kauth.kakao.com/oauth/authorize?client_id=" + clientId;
+        String redirectUri = properties.redirectUrl();
+        return "redirect:https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=" + redirectUri +  "&client_id=" + clientId;
     }
 
     @PostMapping("/kakao/login")
