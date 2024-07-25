@@ -37,32 +37,34 @@ public class AdminAuthController {
     @PostMapping("/login")
     public String login(MemberDto memberDto, RedirectAttributes redirectAttributes) {
         JwtResponse jwtResponse = authService.login(memberDto);
-        redirectAttributes.addAttribute("accessToken", jwtResponse.token());
+        redirectAttributes.addAttribute("accessToken", jwtResponse.accessToken());
+        redirectAttributes.addAttribute("refreshToken", jwtResponse.refreshToken());
 
         return REDIRECT_ADMIN_LOGIN_PROCESSING;
     }
 
     @GetMapping("/login/process")
-    public String loginProcess(@RequestParam("accessToken") String accessToken, Model model) {
+    public String loginProcess(@RequestParam("accessToken") String accessToken, @RequestParam("refreshToken") String refreshToken, Model model) {
         model.addAttribute("accessToken", accessToken);
+        model.addAttribute("refreshToken", refreshToken);
 
         return "admin/loginProcess";
     }
 
     @PostMapping("login/process")
     @ResponseBody
-    public ResponseEntity<Void> loginSuccess(@RequestParam("accessToken") JwtResponse jwtResponse,
+    public ResponseEntity<Void> loginSuccess(@RequestParam("accessToken") String accessToken,
         HttpServletResponse response) {
-        addAccessTokenCookieInResponse(jwtResponse, response);
+        addAccessTokenCookieInResponse(accessToken, response);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create("/admin/products"));
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
-    private void addAccessTokenCookieInResponse(JwtResponse jwtResponse,
+    private void addAccessTokenCookieInResponse(String accessToken,
         HttpServletResponse response) {
-        Cookie cookie = new Cookie("accessToken", jwtResponse.token());
+        Cookie cookie = new Cookie("accessToken", accessToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);

@@ -67,8 +67,12 @@ public class TokenValidationInterceptor implements HandlerInterceptor {
             .parseSignedClaims(accessToken);
 
         Long memberId = claims.getPayload().get("id", Long.class);
+        boolean isOAuthMember = claims.getPayload().get("isOAuthMember", Boolean.class);
+        String oAuthAccessToken = claims.getPayload().get("oAuthAccessToken", String.class);
         validateMemberExistence(response, memberId);
         request.setAttribute("id", memberId);
+        request.setAttribute("isOAuthMember", isOAuthMember);
+        request.setAttribute("oAuthAccessToken", oAuthAccessToken);
     }
 
     private void validateMemberExistence(HttpServletResponse response, Long memberId)

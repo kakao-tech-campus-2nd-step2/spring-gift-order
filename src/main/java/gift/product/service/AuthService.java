@@ -2,7 +2,7 @@ package gift.product.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.AccessAndRefreshToken;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
 import gift.product.exception.LoginFailedException;
@@ -15,6 +15,7 @@ import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -58,8 +59,9 @@ public class AuthService {
         Member member = authRepository.findByEmail(memberDto.email());
 
         String accessToken = getAccessToken(member);
+        String refreshToken = getRefreshToken(member);
 
-        return new JwtResponse(accessToken);
+        return new JwtResponse(accessToken, refreshToken);
     }
 
     public String getKakaoAuthCodeUrl() {
@@ -67,7 +69,7 @@ public class AuthService {
             + "&client_id=" + kakaoProperties.clientId();
     }
 
-    public AccessAndRefreshToken getAccessAndRefreshToken(String code, String externalApiUrl) {
+    public OAuthJwt getOAuthToken(String code, String externalApiUrl) {
         LinkedMultiValueMap<String, String> body = generateBodyForToken(code);
 
         ResponseEntity<String> response = restClient.post()
@@ -86,17 +88,17 @@ public class AuthService {
             String accessToken = rootNode.path("access_token").asText();
             String refreshToken = rootNode.path("refresh_token").asText();
 
-            return new AccessAndRefreshToken(accessToken, refreshToken);
+            return new OAuthJwt(accessToken, refreshToken);
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
         }
     }
 
-    public void registerKakaoMember(String accessToken, String externalApiUrl) {
+    public Member registerKakaoMember(String oAuthAccessToken, String externalApiUrl) {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .header("Authorization", "Bearer " + accessToken)
+            .header("Authorization", "Bearer " + oAuthAccessToken)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
                 throw new LoginFailedException("카카오 유저 정보 조회 관련 에러가 발생하였습니다. 다시 시도해주세요.");
@@ -111,15 +113,24 @@ public class AuthService {
             if (!authRepository.existsByEmail(memberEmail)) {
                 authRepository.save(new Member(memberEmail, "oauth"));
             }
+
+            return authRepository.findByEmail(memberEmail);
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
         }
     }
 
-    public long unlinkKakaoAccount(String accessToken, String externalApiUrl) {
+    public JwtResponse getToken(Member member, OAuthJwt OAuthJwt) {
+        String accessToken = getAccessToken(member, OAuthJwt.accessToken());
+        String refreshToken = getRefreshToken(member, OAuthJwt.refreshToken());
+
+        return new JwtResponse(accessToken, refreshToken);
+    }
+
+    public long unlinkKakaoAccount(String oAuthAccessToken, String externalApiUrl) {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
-            .header("Authorization", "Bearer " + accessToken)
+            .header("Authorization", "Bearer " + oAuthAccessToken)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
                 throw new LoginFailedException("카카오 유저 연결을 끊는 도중 에러가 발생하였습니다. 다시 시도해주세요.");
@@ -129,7 +140,6 @@ public class AuthService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.getBody());
-
             return Long.parseLong(rootNode.path("id").asText());
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
@@ -143,6 +153,51 @@ public class AuthService {
         SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.builder()
             .claim("id", member.getId())
+            .claim("isOAuthMember", false)
+            .claim("oAuthAccessToken", "")
+            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .signWith(key)
+            .compact();
+    }
+
+    private String getRefreshToken(Member member) {
+        String EncodedSecretKey = Encoders.BASE64.encode(
+            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+        return Jwts.builder()
+            .claim("id", member.getId())
+            .claim("isOAuthMember", false)
+            .claim("oAuthRefreshToken", "")
+            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .signWith(key)
+            .compact();
+    }
+
+    private String getAccessToken(Member member, String oAuthAccessToken) {
+        String EncodedSecretKey = Encoders.BASE64.encode(
+            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+        return Jwts.builder()
+            .claim("id", member.getId())
+            .claim("isOAuthMember", true)
+            .claim("oAuthAccessToken", oAuthAccessToken)
+            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .signWith(key)
+            .compact();
+    }
+
+    private String getRefreshToken(Member member, String oAuthRefreshToken) {
+        String EncodedSecretKey = Encoders.BASE64.encode(
+            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+        return Jwts.builder()
+            .claim("id", member.getId())
+            .claim("isOAuthMember", true)
+            .claim("oAuthRefreshToken", oAuthRefreshToken)
+            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
             .signWith(key)
             .compact();
     }

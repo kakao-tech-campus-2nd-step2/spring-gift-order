@@ -1,9 +1,10 @@
 package gift.product.controller.auth;
 
-import gift.product.dto.auth.AccessAndRefreshToken;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.RegisterSuccessResponse;
+import gift.product.model.Member;
 import gift.product.service.AuthService;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
@@ -51,14 +52,15 @@ public class AuthController {
     }
 
     @GetMapping
-    public ResponseEntity<AccessAndRefreshToken> getKakaoJwt(@RequestParam(name = "code") String code) {
-        AccessAndRefreshToken accessAndRefreshToken = authService.getAccessAndRefreshToken(code, KAKAO_AUTH_TOKEN_URL);
-        authService.registerKakaoMember(accessAndRefreshToken.accessToken(), KAKAO_USER_INFO_URL);
-        return ResponseEntity.ok(accessAndRefreshToken);
+    public ResponseEntity<JwtResponse> getKakaoJwt(@RequestParam(name = "code") String code) {
+        OAuthJwt OAuthJwt = authService.getOAuthToken(code, KAKAO_AUTH_TOKEN_URL);
+        Member member = authService.registerKakaoMember(OAuthJwt.accessToken(), KAKAO_USER_INFO_URL);
+        JwtResponse jwtResponse = authService.getToken(member, OAuthJwt);
+        return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/members/login/kakao/unlink")
-    public ResponseEntity<Long> unlinkKakaoAccount(@RequestParam(name = "accessToken") String accessToken) {
-        return ResponseEntity.ok(authService.unlinkKakaoAccount(accessToken, KAKAO_UNLINK_USER_URL));
+    public ResponseEntity<Long> unlinkKakaoAccount(@RequestParam(name = "accessToken") String oAuthAccessToken) {
+        return ResponseEntity.ok(authService.unlinkKakaoAccount(oAuthAccessToken, KAKAO_UNLINK_USER_URL));
     }
 }
