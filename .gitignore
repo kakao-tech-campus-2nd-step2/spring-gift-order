@@ -41,4 +41,3 @@ out/
 
 ### 앱 키 추가 ###
 application-dev.properties
-application-test.properties
