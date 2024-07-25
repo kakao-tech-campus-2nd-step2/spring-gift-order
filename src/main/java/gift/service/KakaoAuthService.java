@@ -44,7 +44,13 @@ public class KakaoAuthService {
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
         } else {
-            throw new RuntimeException("Failed to get Kakao token");
+            throw new RuntimeException("카카오 토큰을 찾을 수 없습니다.");
         }
+    }
+
+    public String getKakaoLoginUrl() {
+        String url = "https://kauth.kakao.com/oauth/authorize";
+        String queryString = String.format("?response_type=code&client_id=%s&redirect_uri=%s", clientId, redirectUri);
+        return url + queryString;
     }
 }

@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/auth")
 public class KakaoAuthController {
 
     @Value("${kakao.client-id}")
@@ -29,13 +28,18 @@ public class KakaoAuthController {
 
     @GetMapping("/login/kakao")
     public void redirectKakaoLogin(HttpServletResponse response) throws IOException {
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri;
+        String url = kakaoAuthService.getKakaoLoginUrl();
         response.sendRedirect(url);
     }
 
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<KakaoTokenResponseDTO> kakaoCallback(@RequestParam String code) {
+    public ResponseEntity<String> kakaoCallback(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
         KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
-        return ResponseEntity.ok(tokenResponse);
+        if (tokenResponse != null) {
+            response.sendRedirect("/?accessToken=" + tokenResponse.getAccessToken());
+            return null;
+        } else {
+            return ResponseEntity.badRequest().body("카카오 로그인 실패");
+        }
     }
 }
