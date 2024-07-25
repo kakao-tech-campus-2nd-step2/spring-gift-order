@@ -3,6 +3,7 @@ package gift.service;
 import gift.auth.JwtUtil;
 import gift.auth.KakaoClient;
 import gift.auth.dto.KakaoProperties;
+import gift.auth.dto.KakaoUserInfo;
 import gift.domain.Role;
 import gift.domain.User;
 import gift.dto.requestdto.UserLoginRequestDTO;
@@ -36,7 +37,7 @@ public class AuthService {
     }
 
     public String getUserEmail(String accessToken){
-        return kakaoClient.getUserEmail(accessToken);
+        return kakaoClient.getUserEmail(accessToken).kakaoAccount().email();
     }
 
     public void authorizeUser(User user, Long userId) {

@@ -2,6 +2,7 @@ package gift.auth;
 
 import gift.auth.dto.KakaoAccessToken;
 import gift.auth.dto.KakaoProperties;
+import gift.auth.dto.KakaoUserInfo;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.http.HttpHeaders;
@@ -36,13 +37,13 @@ public class KakaoClient {
         return Objects.requireNonNull(response.getBody(), "reponse가 null 값입니다.").accessToken();
     }
 
-    public String getUserEmail(String accessToken){
+    public KakaoUserInfo getUserEmail(String accessToken){
         return client.get()
             .uri(KAKAO_USER_URL)
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .toEntity(String.class)
+            .toEntity(KakaoUserInfo.class)
             .getBody();
     }
 
