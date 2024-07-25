@@ -18,4 +18,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("select new gift.dto.product.ShowProductDTO(p.id, p.name, p.price, p.imageUrl, p.category.name) from Product p ")
     Page<ShowProductDTO> findAllProduct(Pageable pageable);
+
+    @Query("select p from Product p where p.name=:name and p.category.name = :categoryName")
+    Optional<Product> findByNameAndCategory(String name, String categoryName);
 }

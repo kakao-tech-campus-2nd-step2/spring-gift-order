@@ -18,7 +18,6 @@ public class Option {
     Product product;
 
     @Pattern(regexp = "^[a-zA-Z0-9()\\[\\]+\\-&/_]+$", message = "특수기호 안됨")
-
     String option;
 
     @Min(0)
