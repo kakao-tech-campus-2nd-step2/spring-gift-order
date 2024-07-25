@@ -50,13 +50,7 @@ public class OrderService {
             () -> new InvalidIdException(NOT_EXIST_ID)
         );
         option.subtractQuantity(orderDTO.getQuantity());
-        Order order = new Order(
-            optionRepository.findById(orderDTO.getOptionId())
-                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID)),
-            orderDTO.getQuantity(),
-            orderDTO.getMessage()
-        );
-        orderRepository.save(order);
+        Order order = orderRepository.save(orderDTO.convert(optionRepository));
         sendToMe(member.getPassword(), order);
         return createResponse(order);
     }
