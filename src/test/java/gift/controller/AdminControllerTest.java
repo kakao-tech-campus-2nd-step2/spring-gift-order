@@ -3,6 +3,7 @@ package gift.controller;
 import gift.dto.ProductDto;
 import gift.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 전체 조회")
     void listProducts() throws Exception {
         given(productService.findAll()).willReturn(Arrays.asList(product1, product2));
 
@@ -54,6 +56,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 상세정보 조회")
     void viewProduct() throws Exception {
         given(productService.findById(1L)).willReturn(Optional.of(product1));
 
@@ -65,6 +68,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("존재하지 않는 상품 조회시 404 발생 테스트")
     void viewProductNotFound() throws Exception {
         given(productService.findById(1L)).willReturn(Optional.empty());
 
@@ -73,6 +77,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 추가 폼 반환 테스트")
     void showAddProductForm() throws Exception {
         mockMvc.perform(get("/admin/product/add"))
                 .andExpect(status().isOk())
@@ -81,6 +86,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 추가 기능 테스트")
     void addProduct() throws Exception {
         mockMvc.perform(post("/admin/product/add")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -95,6 +101,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 추가 폼 반환 테스트")
     void showEditProductForm() throws Exception {
         given(productService.findById(1L)).willReturn(Optional.of(product1));
 
@@ -106,6 +113,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 추가 기능 테스트")
     void editProduct() throws Exception {
         mockMvc.perform(post("/admin/product/edit/1")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -120,6 +128,7 @@ public class AdminControllerTest {
     }
 
     @Test
+    @DisplayName("상품 삭제 테스트")
     void deleteProduct() throws Exception {
         mockMvc.perform(post("/admin/product/delete/1"))
                 .andExpect(status().is3xxRedirection())
