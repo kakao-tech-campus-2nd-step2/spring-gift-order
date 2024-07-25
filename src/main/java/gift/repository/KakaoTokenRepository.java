@@ -1,21 +1,21 @@
-package gift.util;
+package gift.repository;
 
-import gift.util.dto.KakaoTokenDto;
+import gift.service.dto.KakaoTokenDto;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 
-@Component
-public class KakaoTokenUtil {
+@Repository
+public class KakaoTokenRepository {
 
     private static final String KAKAO_ACCESS_TOKEN_PREFIX = "kakao:access:";
     private static final String KAKAO_REFRESH_TOKEN_PREFIX = "kakao:refresh:";
 
     private final RedissonClient redissonClient;
 
-    public KakaoTokenUtil(RedissonClient redissonClient) {
+    public KakaoTokenRepository(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
 

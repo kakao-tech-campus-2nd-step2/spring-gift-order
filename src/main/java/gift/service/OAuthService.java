@@ -8,9 +8,8 @@ import gift.controller.dto.response.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.security.JwtProvider;
-import gift.util.KakaoApiUtil;
-import gift.util.KakaoTokenUtil;
-import gift.util.dto.KakaoTokenDto;
+import gift.repository.KakaoTokenRepository;
+import gift.service.dto.KakaoTokenDto;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,15 +18,15 @@ public class OAuthService {
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final KakaoProperties properties;
-    private final KakaoApiUtil kakaoApiUtil;
-    private final KakaoTokenUtil kakaoTokenUtil;
+    private final KakaoApiCaller kakaoApiCaller;
+    private final KakaoTokenRepository kakaoTokenRepository;
 
-    public OAuthService(MemberRepository memberRepository, JwtProvider jwtProvider, KakaoProperties kakaoProperties, KakaoApiUtil kakaoApiUtil, KakaoTokenUtil kakaoTokenUtil) {
+    public OAuthService(MemberRepository memberRepository, JwtProvider jwtProvider, KakaoProperties kakaoProperties, KakaoApiCaller kakaoApiCaller, KakaoTokenRepository kakaoTokenRepository) {
         this.memberRepository = memberRepository;
         this.jwtProvider = jwtProvider;
         this.properties = kakaoProperties;
-        this.kakaoApiUtil = kakaoApiUtil;
-        this.kakaoTokenUtil = kakaoTokenUtil;
+        this.kakaoApiCaller = kakaoApiCaller;
+        this.kakaoTokenRepository = kakaoTokenRepository;
     }
 
     public TokenResponse signIn(String code) {
@@ -35,31 +34,31 @@ public class OAuthService {
     }
 
     public TokenResponse signIn(String code, String redirectUrl) {
-        KakaoTokenDto kakaoTokenDto = kakaoApiUtil.getKakaoAccessToken(code, redirectUrl);
-        String email = kakaoApiUtil.getKakaoMemberInfo(kakaoTokenDto.access_token());
+        KakaoTokenDto kakaoTokenDto = kakaoApiCaller.getKakaoAccessToken(code, redirectUrl);
+        String email = kakaoApiCaller.getKakaoMemberInfo(kakaoTokenDto.access_token());
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER, SocialLoginType.KAKAO)));
         member.checkLoginType(SocialLoginType.KAKAO);
 
-        kakaoTokenUtil.saveToken(member.getId(), kakaoTokenDto);
+        kakaoTokenRepository.saveToken(member.getId(), kakaoTokenDto);
         String token = jwtProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
         return TokenResponse.from(token);
     }
 
     public void signOut(Long memberId) {
         String accessToken = refreshIfAccessTokenExpired(memberId);
-        kakaoApiUtil.signOutKakao(accessToken);
-        kakaoTokenUtil.deleteAccessToken(memberId);
-        kakaoTokenUtil.deleteRefreshToken(memberId);
+        kakaoApiCaller.signOutKakao(accessToken);
+        kakaoTokenRepository.deleteAccessToken(memberId);
+        kakaoTokenRepository.deleteRefreshToken(memberId);
     }
 
     private String refreshIfAccessTokenExpired(Long memberId) {
-        if (kakaoTokenUtil.existsAccessToken(memberId)) {
-            return kakaoTokenUtil.getAccessToken(memberId);
+        if (kakaoTokenRepository.existsAccessToken(memberId)) {
+            return kakaoTokenRepository.getAccessToken(memberId);
         }
-        if(kakaoTokenUtil.existsRefreshToken(memberId)) {
-            String refreshToken = kakaoTokenUtil.getRefreshToken(memberId);
-            KakaoTokenDto tokenDto = kakaoApiUtil.refreshAccessToken(refreshToken);
+        if(kakaoTokenRepository.existsRefreshToken(memberId)) {
+            String refreshToken = kakaoTokenRepository.getRefreshToken(memberId);
+            KakaoTokenDto tokenDto = kakaoApiCaller.refreshAccessToken(refreshToken);
             return tokenDto.access_token();
         }
         throw new AuthenticationException("Login has expired");
