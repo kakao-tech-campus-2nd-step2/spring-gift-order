@@ -42,7 +42,8 @@ public class UserService {
     }
 
     @Transactional
-    public Map<String, Object> loginKakaoUser(User user) {
+    public Map<String, Object> loginKakaoUser(KakaoProfileRequest kakaoProfileRequest) {
+        User user = kakaoProfileRequest.convertToUser();
         User saveUser = userRepository.findByEmail(user.getEmail())
                 .orElseGet(() -> userRepository.save(user));
         String token = jwtUtil.createToken(saveUser);
