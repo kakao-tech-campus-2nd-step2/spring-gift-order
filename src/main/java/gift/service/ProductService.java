@@ -39,7 +39,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
     private final CategoryRepository categoryRepository;
-
     public Page<ProductWithOptionDTO> getAllProductsWithOption(Pageable pageable) {
         return optionRepository.findAllWithOption(pageable);
     }
