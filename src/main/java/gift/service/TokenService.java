@@ -1,8 +1,8 @@
-package gift.util;
+package gift.service;
 
 import java.util.Base64;
 
-public class TokenUtil {
+public class TokenService {
 
     public static String generateToken(String email, String password) {
         return Base64.getEncoder().encodeToString((email + ":" + password).getBytes());
