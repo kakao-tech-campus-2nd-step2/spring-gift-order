@@ -17,6 +17,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class AuthService {
 
+    public static final String KAKAO_COM = "@kakao.com";
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
 
@@ -56,8 +57,8 @@ public class AuthService {
     @Transactional
     public MemberResponseDto memberKakaoJoin(String kakaoId){
         Member member = new Member.Builder()
-                .email(kakaoId+"@kakao.com")
-                .password(kakaoId+"@kakao.com")
+                .email(kakaoId+ KAKAO_COM)
+                .password(kakaoId+KAKAO_COM)
                 .kakaoId(kakaoId)
                 .build();
 
