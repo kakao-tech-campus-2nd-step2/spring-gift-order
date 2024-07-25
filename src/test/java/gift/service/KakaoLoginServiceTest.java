@@ -20,14 +20,14 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @DisplayName("카카오 로그인 서비스 테스트")
 class KakaoLoginServiceTest {
 
+    @MockBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @Autowired
     private KakaoLoginService kakaoLoginService;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private MockRestServiceServer server;
-    @MockBean
-    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Test
     @DisplayName("파싱이 제대로 되는지 테스트")
@@ -43,6 +43,6 @@ class KakaoLoginServiceTest {
 
         //Then
         assertThat(token).isInstanceOf(KakaoTokenResponse.class);
-        assertThat(token.access_token()).isEqualTo("access");
+        assertThat(token.accessToken()).isEqualTo("access");
     }
 }

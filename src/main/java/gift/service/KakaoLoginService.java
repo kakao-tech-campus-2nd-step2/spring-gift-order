@@ -3,14 +3,10 @@ package gift.service;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-
-import java.time.Duration;
 
 @Service
 public class KakaoLoginService {
@@ -20,23 +16,12 @@ public class KakaoLoginService {
     private static final String USER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
     private static final String GRANT_TYPE = "authorization_code";
     @Value("${clientId}")
-    private String CLIENT_ID;
+    private String clientId;
 
     private final RestClient restClient;
 
     public KakaoLoginService(RestClient.Builder builder) {
-        this.restClient = builder
-                .requestFactory(getClientHttpRequestFactory())
-                .build();
-    }
-
-    private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-
-        factory.setConnectTimeout(Duration.ofSeconds(1));
-        factory.setReadTimeout(Duration.ofSeconds(1));
-
-        return factory;
+        this.restClient = builder.build();
     }
 
     public KakaoTokenResponse getToken(String code) {
@@ -44,7 +29,7 @@ public class KakaoLoginService {
 
         multiValueMap.add("grant_type", GRANT_TYPE);
         multiValueMap.add("redirect_uri", REDIRECT_URI);
-        multiValueMap.add("client_id", CLIENT_ID);
+        multiValueMap.add("client_id", clientId);
         multiValueMap.add("code", code);
 
         return restClient
