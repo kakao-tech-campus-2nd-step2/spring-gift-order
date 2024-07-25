@@ -49,7 +49,7 @@ public class AuthApiController {
     }
 
     @GetMapping("/members/login/oauth/kakao")
-    public ResponseEntity<Map<String, String>> renewOAuthToken(HttpServletRequest servletRequest){
+    public ResponseEntity<Map<String, String>> memberKakaoLogin(HttpServletRequest servletRequest){
         String code = servletRequest.getParameter("code");
 
         Map<String, String> kakaoTokenInfo = kakaoService.getKakaoOauthToken(code);
@@ -65,14 +65,14 @@ public class AuthApiController {
     }
 
     @GetMapping("/oauth/renew/kakao")
-    public ResponseEntity<Map<String, String>> memberKakaoLogin(HttpServletRequest servletRequest){
+    public ResponseEntity<Map<String, String>> renewOAuthToken(HttpServletRequest servletRequest){
         String tokenId = servletRequest.getParameter("token");
 
         AuthToken findToken = tokenService.findTokenById(Long.valueOf(tokenId));
 
         Map<String, String> renewTokenInfo = kakaoService.renewToken(findToken);
 
-        AuthToken updateToken = tokenService.updateToken(renewTokenInfo);
+        AuthToken updateToken = tokenService.updateToken(findToken.getId(), renewTokenInfo);
 
         Map<String, String> response = new HashMap<>();
         response.put("token", updateToken.getToken());

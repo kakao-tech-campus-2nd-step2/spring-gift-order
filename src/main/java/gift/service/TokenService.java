@@ -64,8 +64,8 @@ public class TokenService {
     }
 
     @Transactional
-    public AuthToken updateToken(Map<String, String> tokenInfo){
-        AuthToken findToken = findTokenById(Long.valueOf(tokenInfo.get("id")));
+    public AuthToken updateToken(Long tokenId, Map<String, String> tokenInfo){
+        AuthToken findToken = findTokenById(tokenId);
 
         findToken.update(tokenInfo);
 

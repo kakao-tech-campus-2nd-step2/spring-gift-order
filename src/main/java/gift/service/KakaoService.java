@@ -99,7 +99,6 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             Map<String, String> tokenInfo = new HashMap<>();
-            tokenInfo.put("id", String.valueOf(authToken.getId()));
             makeKakaoTokenInformation(tokenInfo, jsonNode);
             return tokenInfo;
         }catch (JsonProcessingException e) {
