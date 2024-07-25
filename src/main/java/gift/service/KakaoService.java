@@ -3,6 +3,7 @@ package gift.service;
 import gift.KakaoProperties;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,19 +22,18 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class KakaoService {
 
     private final KakaoProperties kakaoProperties;
-    private final WebClient webClient;
+    private final WebClient kakaoWebClient;
 
-    public KakaoService(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder) {
+    public KakaoService(KakaoProperties kakaoProperties, @Qualifier("kakaoWebClient") WebClient kakaoWebClient) {
         this.kakaoProperties = kakaoProperties;
-        this.webClient = webClientBuilder.baseUrl("https://kauth.kakao.com").build();
+        this.kakaoWebClient = kakaoWebClient;
     }
 
     public String getAccessToken(String authorizationCode) {
         try {
             String url = "/oauth/token";
-            String response = webClient.post()
+            String response = kakaoWebClient.post()
                 .uri(url)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData("grant_type", "authorization_code")
                     .with("client_id", kakaoProperties.getClientId())
                     .with("redirect_uri", kakaoProperties.getRedirectUri())
@@ -52,7 +52,7 @@ public class KakaoService {
     public String getUserEmail(String accessToken) {
         try {
             String url = kakaoProperties.getUserInfoUrl();
-            String response = webClient.get()
+            String response = kakaoWebClient.get()
                 .uri(url)
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
