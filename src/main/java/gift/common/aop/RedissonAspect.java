@@ -19,11 +19,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedissonAspect {
     private final RedissonClient redissonClient;
-    private final AopForTransaction aopForTransaction;
 
-    public RedissonAspect(RedissonClient redissonClient, AopForTransaction aopForTransaction) {
+    public RedissonAspect(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
-        this.aopForTransaction = aopForTransaction;
     }
 
     @Around("@annotation(gift.common.annotation.RedissonLock)")
@@ -40,7 +38,7 @@ public class RedissonAspect {
             if (!lockable) {
                 return false;
             }
-            return aopForTransaction.proceed(joinPoint);
+            return joinPoint.proceed();
         } catch (Exception e) {
             throw new RedissonLockException("Temporary errors failed to access the service");
         } finally {

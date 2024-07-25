@@ -1,4 +1,4 @@
-package gift.controller.restcontroller;
+package gift.controller;
 
 import gift.common.annotation.LoginMember;
 import gift.common.properties.KakaoProperties;
@@ -10,17 +10,21 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "OAuth", description = "OAuth API")
-@RestController
+@Controller
 @RequestMapping("/api/v1/oauth")
-public class OAuthRestController {
+public class OAuthController {
 
     private final OAuthService oAuthService;
     private final KakaoProperties properties;
 
-    public OAuthRestController(OAuthService oAuthService, KakaoProperties properties) {
+    public OAuthController(OAuthService oAuthService, KakaoProperties properties) {
         this.oAuthService = oAuthService;
         this.properties = properties;
     }

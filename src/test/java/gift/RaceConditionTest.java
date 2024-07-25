@@ -6,7 +6,7 @@ import gift.model.Option;
 import gift.model.Product;
 import gift.repository.CategoryRepository;
 import gift.repository.ProductRepository;
-import gift.service.ProductService;
+import gift.service.RedisService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class RaceConditionTest {
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
-    private ProductService productService;
+    private RedisService redisService;
 
     @Test
     @DisplayName("동시에 삭제 요청[성공]-Redisson 분산락")
@@ -52,7 +52,7 @@ public class RaceConditionTest {
             Product finalProduct = product;
             executorService.submit(() -> {
                 try {
-                    int q = productService.subtractQuantity(finalProduct.getId(), optionId, subtractAmount);
+                    int q = redisService.subtractQuantityRedisLock(finalProduct.getId(), optionId, subtractAmount);
                 } catch (TransactionTimedOutException e) {
                     System.out.println("TimeOut");
                 }catch (Exception e) {
