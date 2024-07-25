@@ -6,7 +6,6 @@ import gift.main.config.KakaoProperties;
 import gift.main.dto.*;
 import gift.main.entity.Token;
 import gift.main.entity.User;
-import gift.main.handler.KaKaoUserFactory;
 import gift.main.handler.TextTemplateFactory;
 import gift.main.repository.TokenRepository;
 import org.springframework.http.MediaType;
@@ -65,7 +64,8 @@ public class KakaoService {
                 .toEntity(KakaoProfileRequest.class)
                 .getBody();
 
-        return KaKaoUserFactory.convertKakaoUserToUser(kakaoProfileRequest);
+        assert kakaoProfileRequest != null;
+        return kakaoProfileRequest.convertToUser();
     }
 
     public void SaveToken(User user, KakaoToken kakaoToken) {

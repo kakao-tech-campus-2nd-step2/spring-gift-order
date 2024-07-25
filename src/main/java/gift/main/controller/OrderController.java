@@ -29,7 +29,7 @@ public class OrderController {
 
     @PostMapping("/{id}")//@PathVariable
     public ResponseEntity<?> orderProduct(@PathVariable(name = "id") Long productId, @RequestBody OrderRequest orderRequest, @SessionUser UserVo sessionUserVo) throws JsonProcessingException {
-        optionService.removeOptionQuantity(orderRequest.optionId(), orderRequest.quantity());
+        optionService.removeOptionQuantity(orderRequest.optionId(), orderRequest.quantity()); //이 부분을 바꿀까 생각 중
         OrderResponce orderResponce = orderService.orderProduct(orderRequest,sessionUserVo,productId); //상품을 주문하고, 해당 상품의 옵션을 제거해야한다.
         kakaoService.SendOrderMessage(orderResponce,sessionUserVo);
 
