@@ -22,7 +22,7 @@ public class FilterConfig {
     public FilterRegistrationBean<JwtFilter> jwtFilter() {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new JwtFilter(tokenPrefix, userUtility));
-        registrationBean.addUrlPatterns("/api/wishlist/*");
+        registrationBean.addUrlPatterns("/api/wishlists/*");
         return registrationBean;
     }
 }
