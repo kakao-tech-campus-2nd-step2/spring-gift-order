@@ -41,7 +41,11 @@ public class MemberService {
             throw new EmailAlreadyUsedException(EMAIL_ALREADY_USED);
         }
 
-        Member member = new Member(memberRegisterRequest.email(), memberRegisterRequest.password(), memberRegisterRequest.registerType());
+        Member member = new Member(
+            memberRegisterRequest.email(),
+            memberRegisterRequest.password(),
+            memberRegisterRequest.registerType()
+        );
         Member savedMember = memberRepository.save(member);
 
         String token = jwtUtil.generateToken(savedMember.getId(), member.getEmail());
@@ -67,6 +71,10 @@ public class MemberService {
     public MemberResponse loginKakaoMember(String email) {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
+
+        if (member.getRegisterType() != RegisterType.KAKAO) {
+            throw new ForbiddenException(INVALID_REGISTER_TYPE);
+        }
 
         String token = jwtUtil.generateToken(member.getId(), member.getEmail());
         return new MemberResponse(member.getId(), member.getEmail(), token, member.getRegisterType());

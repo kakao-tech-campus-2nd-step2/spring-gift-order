@@ -9,7 +9,6 @@ import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
 import static gift.util.constants.KakaoOAuthConstants.USERINFO_RESPONSE_ERROR;
 
 import gift.config.KakaoProperties;
-import gift.dto.member.MemberLoginRequest;
 import gift.dto.member.MemberRegisterRequest;
 import gift.dto.member.MemberResponse;
 import gift.dto.oauth.KakaoScopeResponse;
@@ -152,7 +151,11 @@ public class KakaoOAuthService {
 
     public MemberResponse registerOrLoginKakaoUser(KakaoUserResponse userResponse) {
         try {
-            MemberRegisterRequest registerRequest = new MemberRegisterRequest(userResponse.email(), kakaoPassword, RegisterType.KAKAO);
+            MemberRegisterRequest registerRequest = new MemberRegisterRequest(
+                userResponse.email(),
+                kakaoPassword,
+                RegisterType.KAKAO
+            );
             return memberService.registerMember(registerRequest);
         } catch (EmailAlreadyUsedException e) {
             return memberService.loginKakaoMember(userResponse.email());

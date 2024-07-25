@@ -79,5 +79,7 @@ public class Member {
         return this.id.equals(id);
     }
 
-    public boolean isRegisterTypeDefault() { return this.registerType == RegisterType.DEFAULT; }
+    public boolean isRegisterTypeDefault() {
+        return this.registerType == RegisterType.DEFAULT;
+    }
 }
