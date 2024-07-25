@@ -2,8 +2,10 @@ package gift.order.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import gift.common.config.KakaoProperties;
-import gift.order.dto.KakaoMember;
+import gift.order.domain.Token;
+import gift.order.dto.KakaoUser;
 import gift.order.dto.KakaoTokenResponse;
+import gift.order.repository.TokenJPARepository;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,8 +24,10 @@ public class KakaoService {
     private final KakaoProperties kakaoProperties;
     private final RestClient client = RestClient.builder().build();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    public KakaoService(KakaoProperties kakaoProperties) {
+    private final TokenJPARepository tokenJPARepository;
+    public KakaoService(KakaoProperties kakaoProperties, TokenJPARepository tokenJPARepository) {
         this.kakaoProperties = kakaoProperties;
+        this.tokenJPARepository = tokenJPARepository;
     }
 
     // accessToken과 refreshToken을 받아와 저장하기
@@ -59,7 +63,7 @@ public class KakaoService {
 
     // accesstoken을 활용하여 사용자 정보 받아와 저장하기
     @Transactional
-    public KakaoMember getMemberInfo(String accessToken) throws IOException {
+    public KakaoUser getUserInfo(String accessToken) throws IOException {
         String url = "https://kapi.kakao.com/v2/user/me";
 
         // response
@@ -75,19 +79,18 @@ public class KakaoService {
         JsonNode kakaoAccount = jsonNode.get("kakao_account");
         Long id = jsonNode.get("id").asLong();
         String nickname = kakaoAccount.get("profile").get("nickname").asText();
-        String email = kakaoAccount.get("email").asText();
-        String name = kakaoAccount.get("name").asText();
-        String phoneNumber = kakaoAccount.get("phone_number").asText();
 
-        return new KakaoMember(id, nickname, email, name);
+        return new KakaoUser(id, nickname);
     }
 
     // 토큰값과 사용자 정보 저장하기
     @Transactional
-    public void saveTokenAndMember(KakaoTokenResponse tokenResponse, KakaoMember kakaoMember) {
+    public void saveToken(KakaoTokenResponse tokenResponse, KakaoUser kakaoUser) {
         String accessToken = tokenResponse.accessToken();
         String refreshToken = tokenResponse.refreshToken();
-        String name = kakaoMember.name();
+        String userName = kakaoUser.nickname();
+        Token token = new Token(accessToken, refreshToken, userName);
 
+        tokenJPARepository.save(token);
     }
 }

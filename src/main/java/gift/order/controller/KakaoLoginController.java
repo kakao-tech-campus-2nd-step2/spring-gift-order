@@ -2,20 +2,17 @@ package gift.order.controller;
 
 import gift.common.config.KakaoProperties;
 import gift.common.util.CommonResponse;
-import gift.order.dto.KakaoMember;
+import gift.order.dto.KakaoUser;
 import gift.order.dto.KakaoTokenResponse;
 import gift.order.service.KakaoService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/kakao/login")
@@ -45,8 +42,9 @@ public class KakaoLoginController {
         if (tokenResponse == null) {
             return ResponseEntity.badRequest().body(new CommonResponse<>(null, "토큰 추출 실패", false));
         }
-        KakaoMember kakaoMemberInfo = kakaoService.getMemberInfo(tokenResponse.accessToken());
+        KakaoUser kakaoUserInfo = kakaoService.getUserInfo(tokenResponse.accessToken());
 
+        kakaoService.saveToken(tokenResponse, kakaoUserInfo);
 
         return ResponseEntity.ok(new CommonResponse<>(tokenResponse, "토큰 추출 성공", true));
     }
