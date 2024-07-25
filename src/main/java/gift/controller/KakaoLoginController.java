@@ -5,12 +5,10 @@ import gift.domain.KakaoInfo;
 import gift.service.KakaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/kakao")
 public class KakaoLoginController {
     private final KakaoService kakaoService;
 
@@ -18,7 +16,7 @@ public class KakaoLoginController {
         this.kakaoService = kakaoService;
     }
 
-    @GetMapping
+    @GetMapping("/kakao")
     public ResponseEntity<KakaoInfo> kakaoLogin(@RequestParam("code") String code) {
         // 1. 인가 코드 받기 (code)
 
