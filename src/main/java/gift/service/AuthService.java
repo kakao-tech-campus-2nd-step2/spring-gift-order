@@ -35,6 +35,10 @@ public class AuthService {
         return new UserResponseDTO(token);
     }
 
+    public String getUserEmail(String accessToken){
+        return kakaoClient.getUserEmail(accessToken);
+    }
+
     public void authorizeUser(User user, Long userId) {
         if (!user.getId().equals(userId)) {
             throw new IllegalStateException("권한이 없습니다.");
