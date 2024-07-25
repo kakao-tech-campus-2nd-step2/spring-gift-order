@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/kakao-oauth")
 public class KakaoOauthController {
 
     private KakaoLoginService kakaoLoginService;
@@ -23,13 +22,13 @@ public class KakaoOauthController {
         this.kakaoLoginService = kakaoLoginService;
     }
 
-    @GetMapping
+    @GetMapping("/kakao-oauth")
     public RedirectView requestLogin(){
         URI redirectURI = kakaoLoginService.requestLogin();
         return new RedirectView(redirectURI.toString());
     }
 
-    @GetMapping("/oauth-code")
+    @GetMapping("/kakao-token")
     public ResponseEntity<Map<String,String>> getToken(@RequestParam ("code") String oauthCode) {
         String accessToken = kakaoLoginService.getToken(oauthCode);
         Map<String, String> response = new HashMap<>();
