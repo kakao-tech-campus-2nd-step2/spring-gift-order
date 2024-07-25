@@ -4,7 +4,7 @@ import gift.main.dto.KakaoToken;
 import jakarta.persistence.*;
 
 @Entity
-public class Token {
+public class ApiToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,13 +20,13 @@ public class Token {
     @Column(nullable = false)
     private String refreshToken;
 
-    public Token(User user, KakaoToken kakaoToken) {
+    public ApiToken(User user, KakaoToken kakaoToken) {
         this.user = user;
         this.accessToken = kakaoToken.accessToken();
         this.refreshToken = kakaoToken.refreshToken();
     }
 
-    public Token() {
+    public ApiToken() {
 
     }
 
