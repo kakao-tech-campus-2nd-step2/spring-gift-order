@@ -1,7 +1,7 @@
 package gift.service;
 
-import gift.dto.OptionRequestDTO;
-import gift.dto.OptionResponseDTO;
+import gift.dto.betweenClient.option.OptionRequestDTO;
+import gift.dto.betweenClient.option.OptionResponseDTO;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;
@@ -10,7 +10,10 @@ import gift.exception.BadRequestExceptions.NoSuchProductIdException;
 import gift.exception.InternalServerExceptions.InternalServerException;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,24 @@ public class OptionService {
     public List<OptionResponseDTO> getOneProductIdAllOptions(Long productId) {
         List<Option> optionList = optionRepository.findAllByProductId(productId);
         return optionList.stream().map(OptionResponseDTO::convertToDTO).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String>  getOptionInfoForOrder(Long optionId) {
+
+        Map<String, String> orderInfo = new HashMap<>();
+
+        Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequestException("해당 옵션 Id를 찾지 못했습니다."));
+
+        orderInfo.put("optionName", option.getName());
+        orderInfo.put("productId", option.getProduct().getId().toString());
+        orderInfo.put("productName", option.getProduct().getName());
+        orderInfo.put("productImage", option.getProduct().getImageUrl());
+
+        DecimalFormat df = new DecimalFormat("###,###");
+        orderInfo.put("productPrice", df.format(Long.valueOf(option.getProduct().getPrice())));
+
+        return orderInfo;
     }
 
     @Transactional
@@ -67,9 +88,9 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractOptionQuantity(Long productId, Long optionId, Integer quantity){
+    public void subtractOptionQuantity(Long optionId, Integer quantity){
         try {
-            Option optionInDb = optionRepository.findByIdAndProductId(optionId, productId).orElseThrow(
+            Option optionInDb = optionRepository.findById(optionId).orElseThrow(
                     () -> new BadRequestException("그러한 Id를 가지는 옵션을 찾을 수 없습니다."));
             optionInDb.subtractQuantity(quantity);
         } catch (BadRequestException e) {
