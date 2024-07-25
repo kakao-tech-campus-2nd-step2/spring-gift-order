@@ -11,7 +11,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -24,14 +23,11 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ContextConfiguration(classes = KakaoServiceTest.TestConfig.class)
 public class KakaoServiceTest {
 
-    @MockBean
-    private KakaoProperties kakaoProperties;
 
     @Autowired
     private KakaoService kakaoService;
@@ -55,6 +51,18 @@ public class KakaoServiceTest {
         }
 
         @Bean
+        public KakaoProperties kakaoProperties() {
+            return new KakaoProperties(
+                "your_client_id",
+                "your_redirect_uri",
+                "https://kauth.kakao.com/oauth/token",
+                "https://kapi.kakao.com/v2/user/me",
+                "https://kapi.kakao.com/v2/api/talk/memo/default/send",
+                "https://kauth.kakao.com"
+            );
+        }
+
+        @Bean
         public KakaoService kakaoService(KakaoProperties kakaoProperties, @Qualifier("kakaoWebClient") WebClient webClient) {
             return new KakaoService(kakaoProperties, webClient);
         }
@@ -65,10 +73,16 @@ public class KakaoServiceTest {
         MockitoAnnotations.openMocks(this);
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        // Mock KakaoProperties values
-        when(kakaoProperties.getClientId()).thenReturn("your_client_id");
-        when(kakaoProperties.getRedirectUri()).thenReturn("your_redirect_uri");
-        when(kakaoProperties.getUserInfoUrl()).thenReturn(mockWebServer.url("/v2/user/me").toString());
+
+        KakaoProperties kakaoProperties = new KakaoProperties(
+            "your_client_id",
+            "your_redirect_uri",
+            mockWebServer.url("/oauth/token").toString(),
+            mockWebServer.url("/v2/user/me").toString(),
+            "https://kapi.kakao.com/v2/api/talk/memo/default/send",
+            mockWebServer.url("/").toString()
+        );
+
         kakaoService = new KakaoService(kakaoProperties, webClient.mutate().baseUrl(mockWebServer.url("/").toString()).build());
     }
 
