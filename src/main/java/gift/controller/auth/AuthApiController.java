@@ -34,7 +34,7 @@ public class AuthApiController {
     public ResponseEntity<Map<String, String>> memberSignUp(@RequestBody @Valid MemberRequestDto memberRequestDto){
         authService.memberJoin(memberRequestDto);
 
-        Map<String, String> response = getToken(memberRequestDto.email());
+        Map<String, String> response = generateToken(memberRequestDto.email());
 
         return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
@@ -43,7 +43,7 @@ public class AuthApiController {
     public ResponseEntity<Map<String, String>> memberLogin(@RequestBody @Valid MemberRequestDto memberRequestDto){
         MemberResponseDto memberResponseDto = authService.findOneByEmailAndPassword(memberRequestDto);
 
-        Map<String, String> response = getToken(memberResponseDto.email());
+        Map<String, String> response = generateToken(memberResponseDto.email());
 
         return ResponseEntity.status(HttpStatus.CREATED).contentType(MediaType.APPLICATION_JSON).body(response);
     }
@@ -80,7 +80,7 @@ public class AuthApiController {
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(response);
     }
 
-    public Map<String, String> getToken(String memberRequestDto) {
+    public Map<String, String> generateToken(String memberRequestDto) {
         UUID uuid = UUID.randomUUID();
         tokenService.tokenSave(uuid.toString(), memberRequestDto);
 
