@@ -10,10 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "`Order`")
 public class Order {
 
     @Id
@@ -37,10 +39,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Option option, String message) {
-        this.option = option;
+    public Order(String message,
+                 Option option,
+                 Member member) {
         this.orderDateTime = LocalDateTime.now();
         this.message = message;
+        this.option = option;
+        this.member = member;
     }
 
     public Long getId() {

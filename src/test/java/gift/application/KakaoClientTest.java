@@ -49,6 +49,8 @@ class KakaoClientTest {
         String responseBody = "{ \"access_token\": \"test-token\"}";
         String responseToken = "test-token";
         String url = "https://kauth.kakao.com/oauth/token";
+        given(kakaoProperties.authDomainName())
+                .willReturn("https://kauth.kakao.com");
 
         server.expect(requestTo(url))
                 .andExpect(method(HttpMethod.POST))
@@ -72,6 +74,9 @@ class KakaoClientTest {
         Long userInfoId = 123L;
         given(kakaoProperties.authorizationPrefix())
                 .willReturn(authPrefix);
+        given(kakaoProperties.apiDomainName())
+                .willReturn("https://kapi.kakao.com");
+
         server.expect(requestTo(url))
                 .andExpect(header(HttpHeaders.AUTHORIZATION, authHeader))
                 .andExpect(method(HttpMethod.GET))

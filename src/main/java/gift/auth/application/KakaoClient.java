@@ -92,8 +92,8 @@ public class KakaoClient {
     }
 
     public void sendMessageToMeOrFalse(String token,
-                                          String text,
-                                          String path) {
+                                       String text,
+                                       String path) {
         String apiUrl = kakaoProperties.apiDomainName() + KAKAO_MESSAGE_PATH;
         TemplateObject templateObject = new TemplateObject(
                 TEXT_OBJECT_TYPE,
@@ -101,9 +101,10 @@ public class KakaoClient {
                 kakaoProperties.baseDomainName() + path
         );
 
-        RequestEntity<TemplateObject> request = RequestEntity.post(apiUrl)
+        RequestEntity<LinkedMultiValueMap<String, String>> request = RequestEntity.post(apiUrl)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header(HttpHeaders.AUTHORIZATION, kakaoProperties.authorizationPrefix() + token)
-                .body(templateObject);
+                .body(templateObject.toRequestBody());
 
         KakaoMessageResponse response = restTemplate.postForObject(
                 apiUrl,

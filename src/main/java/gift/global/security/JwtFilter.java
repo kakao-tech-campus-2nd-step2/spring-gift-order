@@ -27,8 +27,8 @@ public class JwtFilter extends OncePerRequestFilter  {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = {"/members/register", "/members/login"};
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String[] excludePath = {"/members/register", "/members/login", "/members/order"};
         String path = request.getRequestURI();
         return Arrays
                 .stream(excludePath)

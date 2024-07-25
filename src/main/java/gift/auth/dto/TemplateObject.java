@@ -1,5 +1,7 @@
 package gift.auth.dto;
 
+import org.springframework.util.LinkedMultiValueMap;
+
 public record TemplateObject(
         String objectType,
         String text,
@@ -11,4 +13,18 @@ public record TemplateObject(
         this(objectType, text, new Link(url));
     }
 
+    public LinkedMultiValueMap<String, String> toRequestBody() {
+        LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("template_object", this.toString());
+        return requestBody;
+    }
+
+    @Override
+    public String toString() {
+        return "{\"object_type\":\"" + objectType + "\"," +
+                "\"text\":\"" + text + "\"," +
+                "\"link\":{" +
+                "\"web_url\":\"" + link.webUrl() + "\"," +
+                "\"mobile_url\":\"" + link.mobileUrl() + "\"}}";
+    }
 }

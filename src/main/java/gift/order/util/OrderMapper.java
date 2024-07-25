@@ -10,8 +10,9 @@ public class OrderMapper {
 
     public static Order toEntity(OrderRequest request, Option option, Member member) {
         return new Order(
+                request.message(),
                 option,
-                request.message()
+                member
         );
     }
 
