@@ -10,6 +10,7 @@ import java.net.URI;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,15 +25,23 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KaKaoUserService {
 
-    private final JpaUserRepository userRepository;
-    @Value("${kakao.client.id}")
+    @Value("${kakao.client-id}")
     private String clientId; // 카카오 개발자 콘솔에서 발급받은 클라이언트 ID
-    @Value("${kakao.redirect.url}")
+    @Value("${kakao.redirect-url}")
     private String redirectUri; // 카카오 로그인 후 리다이렉트될 URI
+    private final JpaUserRepository userRepository;
+    private final RestTemplateBuilder restTemplateBuilder;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public KaKaoUserService(JpaUserRepository userRepository) {
+    public KaKaoUserService(
+        JpaUserRepository userRepository,
+        RestTemplateBuilder restTemplateBuilder,
+        ObjectMapper objectMapper
+    ) {
         this.userRepository = userRepository;
+        this.restTemplateBuilder = restTemplateBuilder;
+        this.objectMapper = objectMapper;
     }
 
     public KaKaoToken getKaKaoToken(String authorizedCode) {
@@ -49,13 +58,12 @@ public class KaKaoUserService {
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplateBuilder.build();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request,
             String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
 
                 String accessToken = rootNode.path("access_token").asText();
@@ -79,7 +87,7 @@ public class KaKaoUserService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
@@ -91,7 +99,6 @@ public class KaKaoUserService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
                 JsonNode rootNode = objectMapper.readTree(response.getBody());
 
                 // 사용자 정보 추출

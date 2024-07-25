@@ -17,32 +17,28 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-@DataJpaTest
 @ActiveProfiles("test")
 public class ProductTest {
-
-    @Autowired
-    private JpaCategoryRepository categoryRepository;
 
     @Test
     void 카카오_문구_포함하는_경우() {
         // given
-        Category savedCategory = categoryRepository.saveAndFlush(new Category("카테고리1", "카테고리1 입니다."));
+        Category category = new Category(1L, "카테고리1", "카테고리1 입니다.");
 
         // when, then
         assertThatExceptionOfType(BusinessException.class)
-            .isThrownBy(() -> new Product("카카오이름", savedCategory, 1000, "https://example.com/image.jpg"))
+            .isThrownBy(() -> new Product("카카오이름", category, 1000, "https://example.com/image.jpg"))
             .withMessageContaining("'카카오' 문구를 포함할 수 없습니다. 담당 MD와 협의하세요.");
     }
 
     @Test
     void 카카오_문구_포함하지_않는_경우() {
         // given
-        Category savedCategory = categoryRepository.saveAndFlush(new Category("카테고리1", "카테고리1 입니다."));
+        Category category = new Category(1L, "카테고리1", "카테고리1 입니다.");
 
         // when, then
         assertThatCode(() -> {
-            new Product("일반이름", savedCategory, 1000, "https://example.com/image.jpg");
+            new Product("일반이름", category, 1000, "https://example.com/image.jpg");
         }).doesNotThrowAnyException();
     }
 

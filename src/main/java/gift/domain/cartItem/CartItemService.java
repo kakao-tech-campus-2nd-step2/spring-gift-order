@@ -58,9 +58,7 @@ public class CartItemService {
     /**
      * 장바구니 상품 조회 - 페이징(매개변수별)
      */
-    public List<CartItemDTO> getProductsInCartByUserIdAndPageAndSort(Long userId, int page,
-        int size,
-        Sort sort) {
+    public List<CartItemDTO> getProductsInCartByUserIdAndPageAndSort(Long userId, int page, int size, Sort sort) {
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
         Page<CartItem> cartItemsPage = cartItemRepository.findAllByUserId(userId,

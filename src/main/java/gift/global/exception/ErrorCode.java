@@ -4,11 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
-    NOT_FOUND(HttpStatus.NOT_FOUND),
-    BAD_REQUEST(HttpStatus.BAD_REQUEST),
-    JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR),
-    FORBIDDEN(HttpStatus.FORBIDDEN);
+    BAD_REQUEST(HttpStatus.BAD_REQUEST),         // 400
+    JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED),   // 401
+    FORBIDDEN(HttpStatus.FORBIDDEN),             // 403
+    NOT_FOUND(HttpStatus.NOT_FOUND),             // 404
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR);   // 500
+
 
     private final HttpStatus httpStatus;
 

@@ -55,7 +55,7 @@ public class UserRestController {
     /**
      * 카카오 회원 로그인
      */
-    @GetMapping("/kakaoLogin")
+    @GetMapping("/kakao-login")
     public ResponseEntity<SimpleResultResponseDto> kakaoLogin(
         @RequestParam(value = "code", required = false) String authorizedCode, // 없으면 null
         @RequestParam(value = "error", required = false) String error // 없으면 null
