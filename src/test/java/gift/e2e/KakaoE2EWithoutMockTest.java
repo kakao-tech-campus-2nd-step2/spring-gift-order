@@ -18,6 +18,7 @@ class KakaoE2EWithoutMockTest {
 
     @Autowired
     private KakaoUserService kakaoUserService;
+
     @Test
     @DisplayName("accessToken 오류 테스트")
     void accessTokenErrorTest() {
