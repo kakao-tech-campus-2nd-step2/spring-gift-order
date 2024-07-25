@@ -26,20 +26,22 @@ public class KakaoLoginService {
         this.clientSecret = clientSecret;
     }
 
-    public String getToken(String code) {
-        var url = "https://kauth.kakao.com/oauth/token";
+    public LinkedMultiValueMap<String, String> getBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
         body.add("client_secret", clientSecret);
+        return body;
+    }
 
+    public String getToken(String code) {
         KakaoTokenResponseDTO kakaoTokenResponseDTO = client.post()
-                .uri(URI.create(url))
+                .uri(URI.create("https://kauth.kakao.com/oauth/token"))
                 .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
+                .body(getBody(code))
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     throw new RuntimeException("잘못된 토큰 요청입니다.");
@@ -51,5 +53,4 @@ public class KakaoLoginService {
 
         return kakaoTokenResponseDTO.getAccessToken();
     }
-
 }
