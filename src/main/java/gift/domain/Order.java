@@ -19,6 +19,10 @@ public class Order {
     @JoinColumn(name = "option_id", nullable = false)
     private Option option;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     @Positive(message = POSITIVE_NUMBER_REQUIRED_MSG)
     @Column(nullable = false)
     private int quantity;
@@ -33,8 +37,9 @@ public class Order {
 
     }
 
-    public Order(Option option, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Option option, Member member, int quantity, LocalDateTime orderDateTime, String message) {
         this.option = option;
+        this.member = member;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;
         this.message = message;
@@ -46,6 +51,10 @@ public class Order {
 
     public Option getOption() {
         return option;
+    }
+
+    public Member getMember() {
+        return member;
     }
 
     public int getQuantity() {
