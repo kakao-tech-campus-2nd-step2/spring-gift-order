@@ -40,13 +40,19 @@ public class MemberService {
     public MemberSignInInfo signIn(MemberInfoCommand memberInfoCommand) {
         Member savedMember = memberRepository.findByUsername(memberInfoCommand.username())
                 .orElseThrow(MemberNotFoundException::new);
-        if (PasswordProvider.match(memberInfoCommand.username(), memberInfoCommand.password(),
-                savedMember.getPassword())) {
-            throw new MemberNotFoundException();
+        if (savedMember.isNotOAuthAccount()) {
+            checkPassword(memberInfoCommand, savedMember);
         }
 
         String token = jwtProvider.generateToken(savedMember.getId(), savedMember.getUsername(), savedMember.getRole());
 
         return MemberSignInInfo.of(token);
+    }
+
+    private void checkPassword(MemberInfoCommand memberInfoCommand, Member savedMember) {
+        if (PasswordProvider.match(memberInfoCommand.username(), memberInfoCommand.password(),
+                savedMember.getPassword())) {
+            throw new MemberNotFoundException();
+        }
     }
 }

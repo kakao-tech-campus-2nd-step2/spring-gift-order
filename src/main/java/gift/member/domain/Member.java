@@ -53,4 +53,12 @@ public class Member {
     public Role getRole() {
         return role;
     }
+
+    public boolean isOauthAccount() {
+        return isOauthAccount;
+    }
+
+    public boolean isNotOAuthAccount() {
+        return !isOauthAccount();
+    }
 }
