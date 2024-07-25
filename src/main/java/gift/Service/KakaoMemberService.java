@@ -3,7 +3,8 @@ package gift.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
-import gift.DTO.KakaoMemberDto;
+import gift.Repository.KakaoJwtTokenRepository;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,13 +13,20 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoMemberService {
 
+  private KakaoJwtTokenRepository kakaoJwtTokenRepository;
   RestClient restClient = RestClient.builder().build();
+  static Dotenv dotenv = Dotenv.configure().load();
+  private static final String API_KEY = dotenv.get("API_KEY");
 
-  public KakaoJwtToken getToken(KakaoMemberDto kakaoMemberDto) {
+  public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository){
+    this.kakaoJwtTokenRepository=kakaoJwtTokenRepository;
+  }
+
+  public KakaoJwtToken getToken(String autuhorizationKey) {
     var url = "https://kauth.kakao.com/oauth/token";
     var body = new LinkedMultiValueMap<String, String>();
-    String clientId = kakaoMemberDto.getClientId();
-    String code = kakaoMemberDto.getCode();
+    String clientId = API_KEY;
+    String code = autuhorizationKey;
 
     body.add("grant_type", "authorization_code");
     body.add("client_id", clientId);
@@ -41,8 +49,12 @@ public class KakaoMemberService {
       String scope = jsonNode.get("scope").asText();
       int refreshTokenExpiresIn = jsonNode.get("refresh_token_expires_in").asInt();
 
-      return new KakaoJwtToken(accessToken, tokenType, refreshToken, expiresIn, scope,
+      KakaoJwtToken kakaoJwtToken = new KakaoJwtToken(accessToken, tokenType, refreshToken, expiresIn, scope,
         refreshTokenExpiresIn);
+      kakaoJwtTokenRepository.save(kakaoJwtToken);
+
+      return kakaoJwtToken;
+
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

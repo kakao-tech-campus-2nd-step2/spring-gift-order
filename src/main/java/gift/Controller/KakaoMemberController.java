@@ -1,7 +1,6 @@
 package gift.Controller;
 
 import gift.DTO.KakaoJwtToken;
-import gift.DTO.KakaoMemberDto;
 import gift.Service.KakaoMemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +19,8 @@ public class KakaoMemberController {
   }
 
   @PostMapping("/token")
-  public ResponseEntity<KakaoJwtToken> getToken(@RequestBody KakaoMemberDto kakaoMemberDto) {
-    KakaoJwtToken kakaoJwtToken = kakaoMemberService.getToken(kakaoMemberDto);
+  public ResponseEntity<KakaoJwtToken> getToken(@RequestBody String authorizationKey) {
+    KakaoJwtToken kakaoJwtToken = kakaoMemberService.getToken(authorizationKey);
     return ResponseEntity.ok(kakaoJwtToken);
   }
 
