@@ -3,23 +3,24 @@ package gift.main.service;
 import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
 import gift.main.dto.*;
+import gift.main.entity.ApiToken;
 import gift.main.entity.User;
+import gift.main.repository.ApiTokenRepository;
 import gift.main.repository.UserRepository;
 import gift.main.util.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-
 
 @Service
 public class UserService {
 
+    private final ApiTokenRepository apiTokenRepository;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
-    public UserService(JwtUtil jwtUtil, UserRepository userRepository) {
+    public UserService(ApiTokenRepository apiTokenRepository, JwtUtil jwtUtil, UserRepository userRepository) {
+        this.apiTokenRepository = apiTokenRepository;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
     }
@@ -32,7 +33,6 @@ public class UserService {
         User userdto = new User(userJoinRequest);
         User user = userRepository.save(userdto);
         return jwtUtil.createToken(user);
-
     }
 
     public String loginUser(UserLoginRequest userLoginRequest) {
@@ -42,19 +42,15 @@ public class UserService {
     }
 
     @Transactional
-    public Map<String, Object> loginKakaoUser(KakaoProfileRequest kakaoProfileRequest) {
-        User user = kakaoProfileRequest.convertToUser();
-        User saveUser = userRepository.findByEmail(user.getEmail())
-                .orElseGet(() -> userRepository.save(user));
-        String token = jwtUtil.createToken(saveUser);
-        Map<String, Object> responseMap = new HashMap<>();
+    public String loginKakaoUser(UserJoinRequest userJoinRequest, KakaoToken kakaoToken) {
+        User savedUser = userRepository.findByEmail(userJoinRequest.email())
+                .orElseGet(() -> userRepository.save(new User(userJoinRequest)));
+        String jwtToken = jwtUtil.createToken(savedUser);
 
-        // token과 userVo를 Map에 추가
-        responseMap.put("token", token);
-        responseMap.put("user", saveUser);
-
-        // Map 반환
-        return responseMap;
+        ApiToken apiToken = new ApiToken(savedUser, kakaoToken);
+        apiTokenRepository.save(apiToken);
+        
+        return jwtToken;
 
     }
 }

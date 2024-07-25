@@ -4,13 +4,11 @@ import gift.main.Exception.CustomException;
 import gift.main.Exception.ErrorCode;
 import gift.main.config.KakaoProperties;
 import gift.main.dto.*;
-import gift.main.entity.Token;
-import gift.main.entity.User;
+import gift.main.entity.ApiToken;
 import gift.main.handler.TextTemplateFactory;
-import gift.main.repository.TokenRepository;
+import gift.main.repository.ApiTokenRepository;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -21,20 +19,18 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 @Service
 public class KakaoService {
 
-    private static final MediaType CONTENT_TYPE = new MediaType(APPLICATION_FORM_URLENCODED, UTF_8);
+    private static final MediaType FORM_URLENCODED = new MediaType(APPLICATION_FORM_URLENCODED, UTF_8);
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
     private static final String TEMPLATE_OBJECT = "template_object";
-    private static final String KAKAO_USER_REQUEST_LIST = "kakao_account.profile";
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
-    private final TokenRepository tokenRepository;
+    private final ApiTokenRepository apiTokenRepository;
 
-    public KakaoService(KakaoProperties kakaoProperties,
-                        TokenRepository tokenRepository) {
+    public KakaoService(KakaoProperties kakaoProperties, ApiTokenRepository apiTokenRepository) {
         this.kakaoProperties = kakaoProperties;
-        this.tokenRepository = tokenRepository;
+        this.apiTokenRepository = apiTokenRepository;
         restClient = RestClient.create();
     }
 
@@ -48,7 +44,7 @@ public class KakaoService {
 
         return restClient.post()
                 .uri(kakaoProperties.tokenRequestUri())
-                .contentType(CONTENT_TYPE)
+                .contentType(FORM_URLENCODED)
                 .body(map)
                 .retrieve()
                 .toEntity(KakaoToken.class)
@@ -56,69 +52,60 @@ public class KakaoService {
     }
 
     //카카오 엑세스 토큰을 이용한 유저정보 가져오기
-    public KakaoProfileRequest getKakaoProfile(KakaoToken tokenResponse) {
-        return restClient.post()
-                .uri(kakaoProperties.userRequestUri() + KAKAO_USER_REQUEST_LIST)
-                .contentType(CONTENT_TYPE)
+    public UserJoinRequest getKakaoProfile(KakaoToken tokenResponse) {
+        KakaoProfileRequest kakaoProfileRequest = restClient.post()
+                .uri(kakaoProperties.userRequestUri())
+                .contentType(FORM_URLENCODED)
                 .header(AUTHORIZATION, BEARER + tokenResponse.accessToken())
                 .retrieve()
                 .toEntity(KakaoProfileRequest.class)
                 .getBody();
 
+        System.out.println("kakaoProfileRequest = " + kakaoProfileRequest);
+        return new UserJoinRequest(kakaoProfileRequest);
 
     }
 
-    public void saveToken(User user, KakaoToken kakaoToken) {
-        Token token = new Token(user, kakaoToken);
-        tokenRepository.save(token);
-    }
-
-    @Transactional
     public void renewToken(UserVo userVo) {
 
-        Token token = tokenRepository.findById(userVo.getId())
+        ApiToken apiToken = apiTokenRepository.findByUserId(userVo.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TOKEN));
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type",kakaoProperties.refreshToken());
+        map.add("grant_type", kakaoProperties.refreshToken());
         map.add("client_id", kakaoProperties.clientId());
-        map.add("refresh_token",token.getRefreshToken());
+        map.add("refresh_token", apiToken.getRefreshToken());
 
-        KakaoToken renewToken= restClient.post()
+        KakaoToken renewToken = restClient.post()
                 .uri(kakaoProperties.tokenRenewalRequestUri())
-                .contentType(CONTENT_TYPE)
+                .contentType(FORM_URLENCODED)
                 .body(map)
                 .retrieve()
                 .toEntity(KakaoToken.class)
                 .getBody();
 
         assert renewToken != null;
-        token.updete(renewToken);
+        apiToken.updete(renewToken);
+        apiTokenRepository.save(apiToken);
     }
 
-    public void sendOrderMessage(OrderResponce orderResponce, UserVo userVo)  {
-        //토큰을 갱신하는 부분
-        renewToken(userVo);
-
+    public void sendOrderMessage(OrderResponce orderResponce, UserVo userVo) {
         //요청바디 객체를 만드는 부분
         MultiValueMap<Object, Object> map = new LinkedMultiValueMap<>();
         String templateObjectJson = TextTemplateFactory.convertOrderResponseToTextTemplateJson(orderResponce);
         map.set(TEMPLATE_OBJECT, templateObjectJson);
 
-        //요청을 위한 토큰을 만드는 부분
-        Token token = tokenRepository.findByUserId(userVo.getId())
+        //요청을 위한 토큰을 가지고 오는 로직
+        ApiToken apiToken = apiTokenRepository.findByUserId(userVo.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TOKEN));
 
         restClient.post()
                 .uri(kakaoProperties.messageRequestUri())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .header(AUTHORIZATION, BEARER + token.getAccessToken())
+                .header(AUTHORIZATION, BEARER + apiToken.getAccessToken())
                 .body(map)
                 .retrieve()
                 .toEntity(String.class);
-
     }
-
-
 
 }

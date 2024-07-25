@@ -2,9 +2,8 @@ package gift.main.controller;
 
 import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
-import gift.main.dto.KakaoProfileRequest;
 import gift.main.dto.KakaoToken;
-import gift.main.entity.User;
+import gift.main.dto.UserJoinRequest;
 import gift.main.service.KakaoService;
 import gift.main.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/kakao/login")
@@ -41,6 +38,7 @@ public class KakaoController {
         response.sendRedirect(url);
     }
 
+
     //1. 전달받은 코드로 엑세스 토큰 요청하기
     @GetMapping("/callback")
     public ResponseEntity<?> LoginKakaoUser(@RequestParam(value = "code",required = false) String code,
@@ -51,16 +49,11 @@ public class KakaoController {
         }
 
         KakaoToken kakaoToken = kakaoService.requestKakaoToken(code);
-        KakaoProfileRequest kakaoProfile = kakaoService.getKakaoProfile(kakaoToken);
-        Map<String, Object> map = userService.loginKakaoUser(kakaoProfile);
-
-        String token = (String) map.get("token");
-        User saveUser = (User) map.get("user");
-
-        kakaoService.saveToken(saveUser, kakaoToken);
+        UserJoinRequest userJoinRequest = kakaoService.getKakaoProfile(kakaoToken);
+        String jwtToken = userService.loginKakaoUser(userJoinRequest, kakaoToken);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.AUTHORIZATION, token)
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .body("");
     }
 
