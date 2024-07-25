@@ -1,6 +1,7 @@
 package gift.auth.application;
 
 import gift.auth.service.KakaoOAuthService;
+import gift.auth.service.facade.OAuthFacade;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/oauth/kakao")
 public class KakaoOauthController {
+    private final OAuthFacade oAuthFacade;
     private final KakaoOAuthService kakaoOAuthService;
 
-    public KakaoOauthController(KakaoOAuthService kakaoOAuthService) {
+    public KakaoOauthController(OAuthFacade oAuthFacade, KakaoOAuthService kakaoOAuthService) {
+        this.oAuthFacade = oAuthFacade;
         this.kakaoOAuthService = kakaoOAuthService;
     }
 
@@ -26,10 +29,12 @@ public class KakaoOauthController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<String> callBack(@RequestParam("code") String code) {
-        kakaoOAuthService.callBack(code);
-//        kakaoOAuthService.(code);
-        return ResponseEntity.ok()
-                .body(code);
+    public ResponseEntity<Void> callBack(@RequestParam("code") String code) {
+        var response = oAuthFacade.kakaoCallBack(code);
+
+        return ResponseEntity.status(HttpStatus.SEE_OTHER)
+                .header("Location", "http://localhost:8080/admin")
+                .header("Authorization", response.token())
+                .build();
     }
 }
