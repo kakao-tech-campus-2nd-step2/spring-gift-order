@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.KakaoProperties;
 import gift.vo.Product;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +15,11 @@ import java.util.Map;
 public class ViewController {
 
     private final Map<Long, Product> products = new HashMap<>();
+    private final KakaoProperties kakaoProperties;
+
+    public ViewController(KakaoProperties kakaoProperties) {
+        this.kakaoProperties = kakaoProperties;
+    }
 
     @GetMapping("/")
     public String home(Model model) {
@@ -34,6 +40,8 @@ public class ViewController {
 
     @GetMapping("/login")
     public String login(Model model) {
+        model.addAttribute("kakaoClientId", kakaoProperties.kakaoClientId());
+        model.addAttribute("kakaoRedirectUrl", kakaoProperties.kakaoRedirectUrl());
         return "login";
     }
 
