@@ -2,6 +2,7 @@ package gift.auth.service;
 
 import gift.auth.persistence.OAuthAccessTokenRepository;
 import gift.auth.persistence.OAuthRefreshTokenRepository;
+import gift.auth.service.dto.KakaoCallbackInfo;
 import gift.auth.service.dto.KakaoTokenResponse;
 import gift.auth.service.dto.KakaoUserInfoResponse;
 import gift.config.KakaoOauthConfig;
@@ -25,7 +26,7 @@ public class KakaoOAuthService {
         return kakaoOauthConfig.createLoginUrl();
     }
 
-    public void callBack(final String code) {
+    public KakaoCallbackInfo callBack(final String code) {
         var kakaoTokenResponse = getKakaoTokenResponse(code);
         var userInfo = getKakaoUserInfoResponse(kakaoTokenResponse.getAccessTokenWithTokenType());
 
@@ -34,6 +35,8 @@ public class KakaoOAuthService {
 
         OAuthAccessTokenRepository.save(accessToken);
         OAuthRefreshTokenRepository.save(refreshToken);
+
+        return KakaoCallbackInfo.of(userInfo.kakaoAccount().email());
     }
 
     private KakaoTokenResponse getKakaoTokenResponse(final String code) {
