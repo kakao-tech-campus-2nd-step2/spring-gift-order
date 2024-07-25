@@ -19,7 +19,7 @@ public class OauthController {
     }
 
     @GetMapping
-    public void kakao(@RequestParam String code) {
+    public void signInKakao(@RequestParam String code) {
         OAuthParam param = new KakaoParam(kakaoConfig, code);
         oauthService.getAccessToken(param);
     }
