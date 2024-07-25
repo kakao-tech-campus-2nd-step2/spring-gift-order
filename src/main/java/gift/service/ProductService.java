@@ -5,17 +5,15 @@ import gift.dto.ProductDto;
 import gift.entity.Category;
 import gift.entity.Option;
 import gift.entity.Product;
-import gift.exception.InvalidProductNameException;
 import gift.exception.ProductNotFoundException;
 import gift.exception.CategoryNotFoundException;
 import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
-import gift.validator.ProductNameValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import gift.value.ProductName;
 
 import java.util.List;
 import java.util.Optional;
@@ -62,21 +60,21 @@ public class ProductService {
     }
 
     public Long save(ProductDto productDto) {
-        ProductNameValidator.validate(productDto.getName()); // 이름 검증
+        ProductName productName = new ProductName(productDto.getName()); // 값 객체를 사용하여 이름 검증
         Category category = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("카테고리가 없습니다."));
-        Product product = new Product(productDto.getName(), productDto.getPrice(), productDto.getImgUrl(), category);
+        Product product = new Product(productName.getName(), productDto.getPrice(), productDto.getImgUrl(), category);
         product = productRepository.save(product);
         return product.getId();
     }
 
     public void update(Long id, ProductDto productDto) {
-        ProductNameValidator.validate(productDto.getName()); // 이름 검증
+        ProductName productName = new ProductName(productDto.getName()); // 값 객체를 사용하여 이름 검증
         Category category = categoryRepository.findById(productDto.getCategoryId())
                 .orElseThrow(() -> new CategoryNotFoundException("카테고리가 없습니다."));
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("id로 상품을 찾을 수 없습니다." + id));
-        product.update(productDto.getName(), productDto.getPrice(), productDto.getImgUrl(), category);
+        product.update(productName.getName(), productDto.getPrice(), productDto.getImgUrl(), category);
         productRepository.save(product);
     }
 
