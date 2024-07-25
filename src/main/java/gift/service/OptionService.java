@@ -32,9 +32,4 @@ public class OptionService {
         optionRepository.save(new Option(addOptionRequest, product));
         return new MessageResponse(ADD_OPTION_SUCCESS_MSG);
     }
-
-    public void order(OrderRequest orderRequest) {
-        Option option = optionRepository.findById(orderRequest.optionId()).orElseThrow(() -> new CustomException(DATA_NOT_FOUND));
-        option.subtract(orderRequest.quantity());
-    }
 }

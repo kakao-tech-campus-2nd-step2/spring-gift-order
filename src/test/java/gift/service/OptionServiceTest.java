@@ -18,12 +18,12 @@ import static org.mockito.Mockito.mock;
 class OptionServiceTest {
 
     private OptionRepository optionRepository;
-    private OptionService optionService;
+    private OrderService orderService;
 
     @BeforeEach
     void setUp() {
         optionRepository = mock(OptionRepository.class);
-        optionService = new OptionService(optionRepository);
+        orderService = new OrderService(optionRepository);
     }
 
     @Test
@@ -41,7 +41,7 @@ class OptionServiceTest {
         given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         // when
-        optionService.order(orderRequest);
+        orderService.order(orderRequest);
 
         // then
         Assertions.assertThat(option.getQuantity())
