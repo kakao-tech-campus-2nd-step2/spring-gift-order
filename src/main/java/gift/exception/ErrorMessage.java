@@ -18,4 +18,5 @@ public class ErrorMessage {
     public static final String OPTION_NAME_ALLOWED_CHARACTER = "Option name must consist of English, Korean, numbers, blank and special symbols (, ), [, ], +, -, &, /, _";
     public static final String OPTION_QUANTITY_SIZE = "Option quantity size must be between 1 and 100,000,000";
     public static final String OPTION_SUBTRACT_NOT_ALLOWED_NEGATIVE_NUMBER = "Option subtract quantity not allowed negative numbers";
+    public static final String KAKAO_AUTHENTICATION_FAILED = "Kakao authentication failed";
 }

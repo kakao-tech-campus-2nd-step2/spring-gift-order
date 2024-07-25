@@ -1,9 +1,12 @@
 package gift.login;
 
+import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import java.net.URI;
 import java.util.Objects;
+import javax.security.sasl.AuthenticationException;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,12 +29,17 @@ public class OauthService {
     }
 
     public URI loginKakao() {
-        ResponseEntity<String> response = restClient.get()
+        ResponseEntity<String> kakaoLoginPage = restClient.get()
             .uri(generateKakaoLoginURL())
             .retrieve()
-            .toEntity(String.class);
+            .onStatus(
+                HttpStatusCode::is4xxClientError,
+                (request, response) -> {
+                    throw new AuthenticationException(KAKAO_AUTHENTICATION_FAILED);
+                }
+            ).toEntity(String.class);
 
-        return response.getHeaders().getLocation();
+        return kakaoLoginPage.getHeaders().getLocation();
     }
 
     private String generateKakaoLoginURL() {
@@ -43,15 +51,20 @@ public class OauthService {
     }
 
     public String getTokenFromKakao(String code) {
-        KakaoTokenResponseDTO response = restClient.post()
+        KakaoTokenResponseDTO kakaoToken = restClient.post()
             .uri(kakaoOauthConfigure.getTokenURL())
             .contentType(APPLICATION_FORM_URLENCODED)
             .body(generateBodyToKakao(code))
             .retrieve()
-            .toEntity(KakaoTokenResponseDTO.class)
+            .onStatus(
+                HttpStatusCode::is4xxClientError,
+                (request, response) -> {
+                    throw new AuthenticationException(KAKAO_AUTHENTICATION_FAILED);
+                }
+            ).toEntity(KakaoTokenResponseDTO.class)
             .getBody();
 
-        return Objects.requireNonNull(response).getAccessToken();
+        return Objects.requireNonNull(kakaoToken).getAccessToken();
     }
 
     private LinkedMultiValueMap<String, String> generateBodyToKakao(String code) {
