@@ -38,4 +38,4 @@ out/
 
 ### Mac OS ###
 .DS_Store
-src/main/resources/application-kakao.properties
+src/main/resources/application.properties
