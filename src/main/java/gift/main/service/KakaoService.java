@@ -100,7 +100,7 @@ public class KakaoService {
         renewToken(userVo);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        TemplateObject templateObject = new TemplateObject("text", orderResponce.toString(), new Link("link"));
+        TemplateObject templateObject = new TemplateObject("text", orderResponce.toString(), "link");
 
         String templateObjectJson = null;
         try {
