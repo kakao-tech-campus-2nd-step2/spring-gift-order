@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.naming.AuthenticationException;
+import java.io.IOException;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -35,6 +36,11 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
     public String handleAuthenticationException(AuthenticationException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(IOException.class)
+    public String handleIOException(AuthenticationException e) {
         return e.getMessage();
     }
 }

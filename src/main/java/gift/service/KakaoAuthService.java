@@ -9,21 +9,26 @@ import gift.repository.OptionRepository;
 import gift.repository.WishRepository;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
+import org.springframework.http.client.ClientHttpRequest;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 public class KakaoAuthService {
-    private final RestClient client = RestClient.builder().build();
+    private final RestClient client;
 
     private final KakaoProperties kakaoProperties;
     private final ProductService productService;
@@ -32,21 +37,31 @@ public class KakaoAuthService {
     private final MemberRepository memberRepository;
     private final WishRepository wishRepository;
 
-    public KakaoAuthService(KakaoProperties kakaoProperties, ProductService productService, OptionService optionService,
-                            OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
+    public KakaoAuthService(RestClient.Builder builder, KakaoProperties kakaoProperties, ProductService productService,
+                            OptionService optionService, OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
         this.kakaoProperties = kakaoProperties;
         this.productService = productService;
         this.optionService = optionService;
         this.optionRepository = optionRepository;
         this.memberRepository = memberRepository;
         this.wishRepository = wishRepository;
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout((int) Duration.ofSeconds(1L).toMillis());
+        requestFactory.setReadTimeout((int) Duration.ofSeconds(5L).toMillis());
+
+        this.client = builder
+                .requestFactory(requestFactory)
+                .requestInterceptor(new ClientInterceptor())
+                .build();
     }
+
 
     public String getKakaoToken(String code){
         var url = "https://kauth.kakao.com/oauth/token";
 
         var body = createBody(code);
-        var response =  client.post()
+        var response =  this.client.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
@@ -101,7 +116,7 @@ public class KakaoAuthService {
         var headers = new HttpHeaders();
         headers.setBearerAuth(token);
 
-        var response = client.get()
+        var response = this.client.get()
                 .uri(url)
                 .headers(httpHeaders -> {
                     httpHeaders.addAll(headers);
@@ -121,7 +136,7 @@ public class KakaoAuthService {
 
         var body = createTemplateObject(productName, optionName, num);
 
-        var response = client.post()
+        var response = this.client.post()
                 .uri(url)
                 .headers(httpHeaders -> {
                     httpHeaders.addAll(headers);
