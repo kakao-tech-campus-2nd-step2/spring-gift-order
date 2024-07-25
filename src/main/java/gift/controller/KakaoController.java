@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Controller
 public class KakaoController {
@@ -22,11 +23,12 @@ public class KakaoController {
     public String kakaoConnect() {
         System.out.println("redirect_uri=" + kakaoProperties.getRedirectUrl());
         System.out.println("client_id=" + kakaoProperties.getClientId());
-        StringBuffer url = new StringBuffer();
-        url.append(kakaoProperties.getLoginUrl());
-        url.append("redirect_uri=" + kakaoProperties.getRedirectUrl());
-        url.append("&client_id=" + kakaoProperties.getClientId());
-        return "redirect:" + url.toString();
+        String url = UriComponentsBuilder.fromHttpUrl(kakaoProperties.getLoginUrl())
+                .queryParam("redirect_uri", kakaoProperties.getRedirectUrl())
+                .queryParam("client_id", kakaoProperties.getClientId())
+                .build()
+                .toUriString();
+        return "redirect:" + url;
     }
 
     @GetMapping("/kakaoAuth")
