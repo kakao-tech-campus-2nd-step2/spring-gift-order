@@ -13,12 +13,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class OauthService {
 
-    private final RestClient restClient = RestClient.create();
+    private final RestClient restClient;
 
     private final KakaoOauthConfigure kakaoOauthConfigure;
 
-    public OauthService(KakaoOauthConfigure kakaoOauthConfigure) {
+    public OauthService(
+        KakaoOauthConfigure kakaoOauthConfigure,
+        RestClient restClient
+    ) {
         this.kakaoOauthConfigure = kakaoOauthConfigure;
+        this.restClient = restClient;
     }
 
     public URI loginKakao() {
