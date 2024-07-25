@@ -44,9 +44,9 @@ public class KakaoController {
     @GetMapping("/callback")
     public ResponseEntity<?> getKakaoCode(@RequestParam(value = "code",required = false) String code,
                                           @RequestParam(value = "error",required = false) String error,
-                                          @RequestParam(value = "error_description",required = false) String error_description) {
-        if (error!=null || error_description!=null ) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, error_description);
+                                          @RequestParam(value = "error_description",required = false) String errorDescription) {
+        if (error!=null || errorDescription!=null ) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, errorDescription);
         }
 
         Map<String, Object> responseBody = new HashMap<>();
@@ -57,7 +57,7 @@ public class KakaoController {
         String token = (String) map.get("token");
         User saveUser = (User) map.get("user");
 
-        kakaoService.SaveToken(saveUser, kakaoToken);
+        kakaoService.saveToken(saveUser, kakaoToken);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, token)
