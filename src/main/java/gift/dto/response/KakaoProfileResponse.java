@@ -5,10 +5,13 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoProfileResponse(
-        Long id,
         KakaoAccount kakaoAccount
 ) {
-    public static record KakaoAccount(
-            String email
-    ) {}
+    public record KakaoAccount(
+            Profile profile
+    ) { // 권한 이슈로 이메일 대신 nickname으로 대체
+        public record Profile(
+                String nickname
+        ) {}
+    }
 }

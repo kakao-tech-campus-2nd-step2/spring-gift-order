@@ -56,9 +56,10 @@ public class MemberController {
     @GetMapping("/kakao/login")
     public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) {
         KakaoTokenResponse tokenResponse = kakaoLoginService.getKakaoToken(code);
+
         KakaoProfileResponse profileResponse = kakaoLoginService.getUserProfile(tokenResponse.accessToken());
 
-        String email = profileResponse.kakaoAccount().email();
+        String email = profileResponse.kakaoAccount().profile().nickname();
         if (email == null || email.isEmpty()) {
             return new ResponseEntity<>(Map.of("error", "이메일을 가져올 수 없습니다."), HttpStatus.BAD_REQUEST);
         }
@@ -66,7 +67,7 @@ public class MemberController {
         String loginType = "KAKAO";
         Member member;
         try {
-            member = memberService.register(new MemberRequest(email, null), loginType);
+            member = memberService.register(new MemberRequest(email, "kakao"), loginType);
         } catch (DuplicateMemberEmailException e) {
             member = memberService.findByEmailAndLoginType(email, loginType);
         }

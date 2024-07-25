@@ -3,7 +3,6 @@ package gift.service;
 import gift.dto.response.KakaoProfileResponse;
 import gift.dto.response.KakaoTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,7 +11,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Map;
 
 @Service
 public class KakaoLoginService {
@@ -48,7 +46,12 @@ public class KakaoLoginService {
                 throw new RuntimeException("access token 얻기 실패: HTTP 상태 " + response.getStatusCode());
             }
 
-            return response.getBody();
+            KakaoTokenResponse bodyResponse = response.getBody();
+            if (bodyResponse == null) {
+                throw new RuntimeException("access token 얻기 실패: 응답 바디가 null입니다.");
+            }
+
+            return bodyResponse;
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("access token 얻기 실패: "  + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
@@ -61,6 +64,7 @@ public class KakaoLoginService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
@@ -77,7 +81,13 @@ public class KakaoLoginService {
                 throw new RuntimeException("사용자 정보 얻기 실패: HTTP 상태 " + response.getStatusCode());
             }
 
-            return response.getBody();
+            KakaoProfileResponse body = response.getBody();
+            if (body == null) {
+                throw new RuntimeException("사용자 정보 얻기 실패: 응답 바디가 null입니다.");
+            }
+
+            return body;
+
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("사용자 정보 얻기 실패: " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
