@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.stereotype.Controller;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,16 +14,18 @@ import java.util.Map;
 @Controller
 public class KakaoController {
 
-    @Autowired
-    private KakaoProperties kakaoProperties;
+    private final KakaoProperties kakaoProperties;
+    private final KakaoService kakaoService;
 
-    @Autowired
-    private KakaoService kakaoService;
+    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService) {
+        this.kakaoProperties = kakaoProperties;
+        this.kakaoService = kakaoService;
+    }
 
     @GetMapping("/login")
     public void kakaoLogin(HttpServletResponse response) throws IOException {
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
-                + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri();
+                + removeNewlines(kakaoProperties.getClientId()) + "&redirect_uri=" + removeNewlines(kakaoProperties.getRedirectUri());
         response.sendRedirect(url);
     }
 
