@@ -1,29 +1,42 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.exception.AuthenticationException;
 import gift.common.properties.KakaoProperties;
+import gift.model.Orders;
 import gift.service.dto.KakaoInfoDto;
+import gift.service.dto.KakaoRequest;
 import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.web.client.ClientHttpRequestFactories;
+import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
+import java.time.Duration;
 
 @Component
 public class KakaoApiCaller {
+
+    private final KakaoProperties properties;
     private final ObjectMapper objectMapper;
     private final RestClient client;
-    private final KakaoProperties properties;
 
     public KakaoApiCaller(ObjectMapper objectMapper, KakaoProperties properties) {
+        ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
+                .withReadTimeout(Duration.ofSeconds(2))
+                .withConnectTimeout(Duration.ofSeconds(5));
+        ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(settings);
+
+        this.client = RestClient.builder().requestFactory(requestFactory).build();
         this.objectMapper = objectMapper;
-        this.client = RestClient.builder().build();
         this.properties = properties;
     }
 
@@ -72,13 +85,24 @@ public class KakaoApiCaller {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError,
-                        (request, response) -> {
-                            throw new AuthenticationException("Logout failed");
-                        }
-                );
-
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new AuthenticationException("Logout failed");
+                }).body(String.class);
     }
+
+    public void sendKakaoMessage(String accessToken, Orders orders) {
+        client.post()
+                .uri(URI.create(properties.selfMessageUrl()))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(createBodyForMessage(orders))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    System.out.println("error");
+                    throw new AuthenticationException("Message sending failed");
+                }).body(String.class);
+    }
+
 
     private @NotNull LinkedMultiValueMap<String, String> createBodyForAccessToken(String code, String redirectUrl) {
         var body = new LinkedMultiValueMap<String, String>();
@@ -95,5 +119,16 @@ public class KakaoApiCaller {
         body.add("client_id", properties.clientId());
         body.add("refresh_token", refreshToken);
         return body;
+    }
+
+    private @NotNull LinkedMultiValueMap<String, Object> createBodyForMessage(Orders orders) {
+        try {
+            String template = objectMapper.writeValueAsString(KakaoRequest.Feed.from(orders));
+            var body = new LinkedMultiValueMap<String, Object>();
+            body.set("template_object", template);
+            return body;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON Processing Error");
+        }
     }
 }
