@@ -2,7 +2,7 @@ package gift.main.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record TemplateObject(
+public record TextTemplate(
         @JsonProperty("object_type")
         String objectType,
         String text,
@@ -12,7 +12,7 @@ public record TemplateObject(
     record Link(String wep_url) {
     }
 
-    public TemplateObject(@JsonProperty("object_type")
+    public TextTemplate(@JsonProperty("object_type")
                           String objectType, String text, String link) {
         this(objectType, text, new Link(link));
     }
