@@ -37,7 +37,7 @@ public class MemberService {
     @Transactional
     public Member loginByOAuth2(String email) {
         return memberRepository.findByEmail(email)
-            .orElse(memberRepository.save(new Member(email)));
+            .orElseGet(() -> memberRepository.save(new Member(email)));
     }
 
 }

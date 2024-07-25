@@ -15,10 +15,10 @@ public class JwtService {
     }
 
     public void addTokenInHeader(Member member, HttpServletResponse response) {
-        response.setHeader("Authorization",jwtTokenProvider.generateToken(member));
+        response.setHeader("Authorization", jwtTokenProvider.generateToken(member));
     }
 
-    public void createTokenMVC(Member member, HttpServletResponse response) {
-        response.addCookie(new Cookie("jwtToken", jwtTokenProvider.generateToken(member) ));
+    public void addTokenInCookie(Member member, HttpServletResponse response) {
+        response.addCookie(new Cookie("jwtToken", jwtTokenProvider.generateToken(member)));
     }
 }

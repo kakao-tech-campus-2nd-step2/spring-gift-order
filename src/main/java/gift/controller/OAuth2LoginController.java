@@ -52,7 +52,7 @@ public class OAuth2LoginController {
 
         String kakaoId = loginService.getMemberInfo(dto.accessToken());
         Member member = memberService.loginByOAuth2(kakaoId + "@kakao.com");
-        jwtService.addTokenInHeader(member, response);
+        jwtService.addTokenInCookie(member, response);
 
         loginService.saveAccessToken(member.getId(), dto.accessToken());
         return new ResponseEntity<>(dto, HttpStatus.OK);

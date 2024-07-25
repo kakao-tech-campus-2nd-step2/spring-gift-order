@@ -88,8 +88,10 @@ public class KakaoLoginService implements OAuth2LoginService {
     }
 
     public void saveAccessToken(Long memberId, String accessToken) {
-        OAuth2AccessToken token = new OAuth2AccessToken(memberId, accessToken);
-        accessTokenRepository.save(token);
+        if (!accessTokenRepository.existsByMemberId(memberId)) {
+            OAuth2AccessToken token = new OAuth2AccessToken(memberId, accessToken);
+            accessTokenRepository.save(token);
+        }
     }
 
     public LinkedMultiValueMap<String, String> createTokenRequest(String clientId,

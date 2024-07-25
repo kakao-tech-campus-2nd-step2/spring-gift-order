@@ -52,7 +52,7 @@ public class AuthApiInterceptor implements HandlerInterceptor {
                 }
             }
 
-            request.setAttribute("member_id", claims.get("member_id"));
+            request.setAttribute("member_id", claims.get("member_id").toString());
         }
 
         return true;
