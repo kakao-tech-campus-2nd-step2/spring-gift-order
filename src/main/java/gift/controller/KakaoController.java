@@ -29,7 +29,6 @@ public class KakaoController {
 
     @GetMapping("/kakao/login")
     public RedirectView kakaoLogin() {
-        logger.info("qwer" + kakaoProperties.getClientId());
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri() + "&scope=account_email";
         return new RedirectView(url);
     }
