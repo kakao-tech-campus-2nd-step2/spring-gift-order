@@ -56,10 +56,6 @@ public class User {
         return accessToken;
     }
 
-    public List<Wish> getWishList() {
-        return wishList;
-    }
-
     public void updateRole(Role role) {
         this.role = role.name();
     }
