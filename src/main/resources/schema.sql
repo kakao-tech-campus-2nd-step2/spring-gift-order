@@ -1,0 +1,1 @@
+ALTER TABLE member ADD CONSTRAINT unique_email_login_type UNIQUE (email, login_type);

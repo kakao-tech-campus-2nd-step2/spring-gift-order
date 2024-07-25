@@ -13,11 +13,14 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String loginType;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
@@ -28,9 +31,10 @@ public class Member {
     public Member() {
     }
 
-    public Member(String email, String password) {
+    public Member(String email, String password, String loginType) {
         this.email = email;
         this.password = password;
+        this.loginType = loginType;
     }
 
     public Long getId() {
