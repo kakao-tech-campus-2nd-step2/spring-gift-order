@@ -1,6 +1,7 @@
 package gift.controller.auth;
 
 import gift.domain.AuthToken;
+import gift.domain.TokenInformation;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
 import gift.service.AuthService;
@@ -52,11 +53,11 @@ public class AuthApiController {
     public ResponseEntity<Map<String, String>> memberKakaoLogin(HttpServletRequest servletRequest){
         String code = servletRequest.getParameter("code");
 
-        Map<String, String> kakaoTokenInfo = kakaoService.getKakaoOauthToken(code);
+        TokenInformation tokenInfo = kakaoService.getKakaoOauthToken(code);
 
-        String kakaoUserInformation = kakaoService.getKakaoUserInformation(kakaoTokenInfo.get("access_token"));
+        String kakaoUserInformation = kakaoService.getKakaoUserInformation(tokenInfo.getAccessToken());
 
-        String token = authService.kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo);
+        String token = authService.kakaoMemberLogin(kakaoUserInformation, tokenInfo);
 
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
@@ -70,7 +71,7 @@ public class AuthApiController {
 
         AuthToken findToken = tokenService.findTokenById(Long.valueOf(tokenId));
 
-        Map<String, String> renewTokenInfo = kakaoService.renewToken(findToken);
+        TokenInformation renewTokenInfo = kakaoService.renewToken(findToken);
 
         AuthToken updateToken = tokenService.updateToken(findToken.getId(), renewTokenInfo);
 

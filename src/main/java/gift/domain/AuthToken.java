@@ -3,8 +3,9 @@ package gift.domain;
 import gift.utils.TimeStamp;
 import jakarta.persistence.*;
 
-import java.util.Map;
 import java.util.UUID;
+
+import static gift.utils.TokenConstant.*;
 
 @Entity
 public class AuthToken extends TimeStamp {
@@ -130,14 +131,15 @@ public class AuthToken extends TimeStamp {
         return refreshTokenTime;
     }
 
-    public void update(Map<String, String> tokenInfo){
+    public void update(TokenInformation tokenInfo){
         this.token = UUID.randomUUID().toString();
-        this.tokenTime = Integer.parseInt(tokenInfo.get("expires_in")) - 1;
-        this.accessToken = String.valueOf(tokenInfo.get("access_token"));
-        this.accessTokenTime = Integer.valueOf(tokenInfo.get("expires_in"));
-        if(tokenInfo.containsKey("refresh_token") && tokenInfo.containsKey("refresh_token_expires_in")){
-            this.refreshToken = String.valueOf(tokenInfo.get("refresh_token"));
-            this.refreshTokenTime = Integer.valueOf(tokenInfo.get("refresh_token_expires_in"));
+        this.tokenTime = tokenInfo.getAccessTokenTime()- EXPIRATION_OFFSET;
+        this.accessToken = tokenInfo.getAccessToken();
+        this.accessTokenTime = tokenInfo.getAccessTokenTime();
+
+        if(tokenInfo.getRefreshToken() != null){
+            this.refreshToken = tokenInfo.getRefreshToken();
+            this.refreshTokenTime = tokenInfo.getRefreshTokenTime();
         }
     }
 }
