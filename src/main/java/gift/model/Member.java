@@ -2,7 +2,7 @@ package gift.model;
 
 import gift.common.enums.Role;
 import gift.common.enums.SocialLoginType;
-import gift.common.exception.AuthenticationException;
+import gift.common.exception.AuthorizationException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,7 +59,7 @@ public class Member extends BasicEntity {
 
     public void checkLoginType(SocialLoginType loginType) {
         if (this.loginType != loginType) {
-            throw new AuthenticationException("Invalid login type");
+            throw new AuthorizationException("Invalid login type");
         }
     }
 

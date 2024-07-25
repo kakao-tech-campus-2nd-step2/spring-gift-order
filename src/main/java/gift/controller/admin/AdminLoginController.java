@@ -34,7 +34,7 @@ public class AdminLoginController {
 
     @GetMapping("kakao")
     public String kakaoLoginPage() {
-        return "redirect:" + properties.loginUrl() + properties.clientId();
+        return "redirect:" + properties.adminLoginUrl() + properties.clientId();
     }
 
     @PostMapping("/login")
@@ -52,7 +52,7 @@ public class AdminLoginController {
         return "redirect:/admin";
     }
 
-    @GetMapping("kakao/login")
+    @GetMapping("kakao/login/callback")
     public String kakaoLogin(@RequestParam("code") String code, HttpServletResponse response) {
         TokenResponse tokenResponse = oAuthService.signIn(code, properties.adminRedirectUrl());
         String token = tokenResponse.accessToken();
