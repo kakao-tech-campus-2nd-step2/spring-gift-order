@@ -1,11 +1,20 @@
 package gift.service;
 
-import gift.dto.KakaoUserInfoDTO;
-import gift.dto.MemberDTO;
-import gift.dto.TokenResponseDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.dto.betweenKakaoApi.KakaoMsgRequestDTO;
+import gift.dto.betweenKakaoApi.KakaoMsgRequestDTO.Content;
+import gift.dto.betweenKakaoApi.KakaoMsgRequestDTO.Content.Link;
+import gift.dto.betweenKakaoApi.KakaoMsgRequestDTO.ItemContent;
+import gift.dto.betweenKakaoApi.KakaoMsgRequestDTO.ItemContent.ItemInfo;
+import gift.dto.betweenKakaoApi.KakaoMsgResponseDTO;
+import gift.dto.betweenKakaoApi.KakaoUserInfoDTO;
+import gift.dto.betweenClient.member.MemberDTO;
+import gift.dto.betweenKakaoApi.TokenResponseDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.InternalServerExceptions.InternalServerException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -19,6 +28,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoTokenService {
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String ORDER_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
     private final RestClient client = RestClient.builder().build();
 
@@ -83,6 +93,33 @@ public class KakaoTokenService {
         }
     }
 
+    public void sendMsgToMe(String accessToken, Map<String, String> optionInfo, String message){
+        try {
+            var body = new LinkedMultiValueMap<String, String>();
+            ObjectMapper mapper = new ObjectMapper();
+            body.add("template_object", mapper.writeValueAsString(makeOrderMsgDTO(optionInfo, message)));
+
+            ResponseEntity<KakaoMsgResponseDTO> responseUserInfo = client.post()
+                    .uri(URI.create(ORDER_URL))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                    .body(body).retrieve().onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                        throw new BadRequestException("잘못된 요청으로 인한 오류입니다.\n" + response.getBody()
+                                .toString().replace("{", "").replace("}", "").trim()
+                        );
+                    })
+                    .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                                .toString().replace("{", "").replace("}", "").trim()
+                        );
+                    }).toEntity(KakaoMsgResponseDTO.class);
+        } catch (BadRequestException | InternalServerException e){
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+    }
+
 
     private LinkedMultiValueMap<String, String> makeBody(String clientId, String kakaoRedirectUri, String code){
         var body = new LinkedMultiValueMap<String, String>();
@@ -91,6 +128,20 @@ public class KakaoTokenService {
         body.add("redirect_url", kakaoRedirectUri);
         body.add("code", code);
         return body;
+    }
+
+    private KakaoMsgRequestDTO makeOrderMsgDTO(Map<String, String> optionInfo, String message){
+        Link link = new Link("https://github.com/rdme0/spring-gift-order");
+        Content content = new Content("https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg", link);
+
+        ItemInfo itemInfo = new ItemInfo("가격", optionInfo.get("productPrice") +"원");
+
+        ItemContent itemContent = new ItemContent(message,
+                optionInfo.get("productName"), optionInfo.get("productImage"),
+                optionInfo.get("optionName"), new ArrayList<>(), "합계", optionInfo.get("productPrice") +"원");
+        itemContent.priceList().add(itemInfo);
+
+        return new KakaoMsgRequestDTO("feed", content, itemContent);
     }
 
 }
