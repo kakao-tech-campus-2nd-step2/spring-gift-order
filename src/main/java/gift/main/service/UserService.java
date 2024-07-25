@@ -42,15 +42,15 @@ public class UserService {
     }
 
     @Transactional
-    public Map<String, Object> loginKakaoUser(KakaoUser kakaoUser) {
-        User user = userRepository.findByEmail(kakaoUser.email())
-                .orElseGet(() -> userRepository.save(new User(kakaoUser)));
-        String token = jwtUtil.createToken(user);
+    public Map<String, Object> loginKakaoUser(User user) {
+        User saveUser = userRepository.findByEmail(user.getEmail())
+                .orElseGet(() -> userRepository.save(user));
+        String token = jwtUtil.createToken(saveUser);
         Map<String, Object> responseMap = new HashMap<>();
 
         // token과 userVo를 Map에 추가
         responseMap.put("token", token);
-        responseMap.put("user", user);
+        responseMap.put("user", saveUser);
 
         // Map 반환
         return responseMap;

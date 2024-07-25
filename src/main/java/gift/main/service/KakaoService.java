@@ -8,6 +8,7 @@ import gift.main.config.KakaoProperties;
 import gift.main.dto.*;
 import gift.main.entity.Token;
 import gift.main.entity.User;
+import gift.main.handler.KaKaoUserFactory;
 import gift.main.repository.TokenRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,23 +41,23 @@ public class KakaoService {
 
     //카카오 인가코드를 이용한 엑세스 토큰 요청하기
     public KakaoToken requestKakaoToken(String code) {
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>(); //바디 객체를 만드는 부분 Map으로 만들면 되고 key 값은 카카오문서에서 요청하는 이ㄹ름으로
         map.add("grant_type", kakaoProperties.grantType());
         map.add("client_id", kakaoProperties.clientId());
         map.add("redirect_uri", kakaoProperties.redirectUri());
         map.add("code", code);
 
-        return restClient.post()
-                .uri(kakaoProperties.tokenRequestUri())
-                .contentType(CONTENT_TYPE)
-                .body(map)
-                .retrieve()
-                .toEntity(KakaoToken.class)
+        return restClient.post() //어떤 메서드로 요청할건지 , 클라이언트 생성은 간단하게 restClient = RestClient.create();로 하면돼 나는 초기화할때하는중
+                .uri(kakaoProperties.tokenRequestUri()) //요청 보낼 uri 등록하는데, 만약 요청에 쿼리 파라미터가 필요할 경우 여기다가 써야해 ?jdkfj= 이런식으로
+                .contentType(CONTENT_TYPE) //보내는 바디의 타입을 지정하는 부분인데, 이건 문서보고 어떤타입을 쓸지 고민해서 넣어바바 모르겠으면 물어보고
+                .body(map) //바디 객체를 넣는 방법
+                .retrieve() //요청을 보내고 응답을 가져오는 메서드, 실질적은 요청은 여기에서 일어남
+                .toEntity(KakaoToken.class) // 요청을 어떤 엔티티로 바꿀지 등록하는 부분이야 이 엔티티의 필드 명은 카카오가 전달해주는 이름이랑 동일해야하는데 자바는 보통 소문자대문자 하는데 JSon은 _으로 하잖아? 이거 매핑하는 방법이 여러개 있는데 일단 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class) 이거 전체 클래스명위에 붙여줘
                 .getBody();
     }
 
     //카카오 엑세스 토큰을 이용한 유저정보 가져오기
-    public KakaoUser getKakaoProfile(KakaoToken tokenResponse) {
+    public User getKakaoProfile(KakaoToken tokenResponse) {
         KakaoProfile kakaoProfile = restClient.post()
                 .uri(kakaoProperties.userRequestUri() + "[\"kakao_account.profile\"]")
                 .contentType(CONTENT_TYPE)
@@ -65,8 +66,7 @@ public class KakaoService {
                 .toEntity(KakaoProfile.class)
                 .getBody();
 
-        return new KakaoUser(kakaoProfile, kakaoProperties.password());
-
+        return KaKaoUserFactory.convertKakaoUserToUser(kakaoProfile);
     }
 
     public void SaveToken(User user, KakaoToken kakaoToken) {
