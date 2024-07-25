@@ -23,6 +23,8 @@ public class KakaoLoginService {
     private final KakaoApiClient kakaoApiClient;
     private final UserService userService;
 
+    private static final String[] SCOPE = { "profile_nickname", "talk_message", "account_email" };
+    private static final String RESPONSE_TYPE = "code";
     private static final String GRANT_TYPE = "authorization_code";
 
     public KakaoLoginService(KakaoProperties kakaoProperties, UserService userService,
@@ -31,6 +33,13 @@ public class KakaoLoginService {
         this.userService = userService;
         this.kakaoAuthClient = kakaoAuthClient;
         this.kakaoApiClient = kakaoApiClient;
+    }
+
+    public String getAuthCodeUrl() {
+        return kakaoProperties.authBaseUrl()
+            + "?scope=" + String.join(",", SCOPE)
+            + "&response_type=" + RESPONSE_TYPE
+            + "&redirect_uri=" + kakaoProperties.redirectUri();
     }
 
     public Token login(String code) {
