@@ -130,8 +130,6 @@ public class OrderControllerTest {
 
         Mockito.when(optionService.getOptionNameById(Mockito.anyLong())).thenReturn("Test Option");
 
-        Mockito.when(optionService.getRemainingQuantityById(Mockito.anyLong())).thenReturn(9);
-
         Mockito.when(kakaoService.getUserEmail(Mockito.anyString())).thenReturn("test@example.com");
 
         OrderRequest orderRequest = new OrderRequest();

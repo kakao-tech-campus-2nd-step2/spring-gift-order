@@ -48,6 +48,6 @@ public class KakaoController {
             userService.save(user);
         }
 
-        return ResponseEntity.ok("Login successful");
+        return ResponseEntity.ok("Login successful: "+accessToken);
     }
 }

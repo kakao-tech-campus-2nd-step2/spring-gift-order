@@ -7,6 +7,8 @@ import gift.service.OptionService;
 import gift.service.ProductService;
 import gift.service.UserService;
 import gift.service.WishListService;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -84,11 +86,14 @@ public class OrderController {
 
         String productName = productService.getProductNameById(orderRequest.getProductId());
         String optionName = optionService.getOptionNameById(orderRequest.getOptionId());
-        int remainingQuantity = optionService.getRemainingQuantityById(orderRequest.getOptionId());
+        // 현재 시각을 포맷팅
+        LocalDateTime orderDateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = orderDateTime.format(formatter);
 
         String messageContent = String.format(
-            "Order Details:\nProduct: %s\nOption: %s\nQuantity: %d\nMessage: %s\nRemaining Quantity: %d",
-            productName, optionName, orderRequest.getQuantity(), orderRequest.getMessage(), remainingQuantity
+            "Order Details:\nProduct: %s\nOption: %s\nQuantity: %d\nMessage: %s\nOrder DateTime: %s",
+            productName, optionName, orderRequest.getQuantity(), orderRequest.getMessage(), formattedDateTime
         );
 
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
