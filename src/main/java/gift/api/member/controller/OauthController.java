@@ -24,7 +24,7 @@ public class OauthController {
     @GetMapping("/kakao")
     public RedirectView requestAuthorizationCode() {
         return new RedirectView(
-            "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080/members/oauth/kakao&client_id="
-                + kakaoProperties.clientId());
+            String.format(kakaoProperties.url().requestFormat(),
+                kakaoProperties.url().redirect(), kakaoProperties.clientId()));
     }
 }

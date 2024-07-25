@@ -1,11 +1,13 @@
 package gift.api.member.controller;
 
-import static org.springframework.http.HttpHeaders.*;
-import static org.springframework.http.MediaType.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
+import gift.api.member.MemberService;
 import gift.api.member.config.KakaoProperties;
 import gift.api.member.dto.MemberRequest;
-import gift.api.member.MemberService;
 import gift.api.member.dto.TokenResponse;
 import gift.global.utils.JwtUtil;
 import jakarta.validation.Valid;
@@ -50,7 +52,7 @@ public class MemberController {
     }
 
     @GetMapping("/oauth/kakao")
-    public void requestKakaoToken(@RequestParam("code") String code) {
+    public void loginKakao(@RequestParam("code") String code) {
         ResponseEntity<TokenResponse> tokenResponse = restClient.post()
             .uri(URI.create(properties.url().token()))
             .contentType(APPLICATION_FORM_URLENCODED)
