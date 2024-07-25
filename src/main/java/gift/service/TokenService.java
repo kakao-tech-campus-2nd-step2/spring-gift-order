@@ -41,9 +41,11 @@ public class TokenService {
 
     public String saveToken(Member member, String accessToken) {
         TokenAuth tokenAuth = tokenRepository.findByMember(member)
-                .orElse(new TokenAuth(accessToken, member));
+                .orElse(new TokenAuth());
 
+        tokenAuth.setMember(member);
         tokenAuth.setToken(accessToken);
+
         tokenRepository.save(tokenAuth);
 
         return tokenAuth.getToken();

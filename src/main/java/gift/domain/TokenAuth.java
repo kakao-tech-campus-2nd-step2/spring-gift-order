@@ -18,8 +18,7 @@ public class TokenAuth {
 
     public TokenAuth(String token, Member member) {
         this.token = token;
-        this.member = member;
-        member.setTokenAuth(this);
+        setMember(member);
     }
 
     public TokenAuth() { }
@@ -38,7 +37,7 @@ public class TokenAuth {
         }
 
         this.member = member;
-        if (member != null) {
+        if (member != null && member.getTokenAuth() != this) {
             member.setTokenAuth(this);
         }
     }

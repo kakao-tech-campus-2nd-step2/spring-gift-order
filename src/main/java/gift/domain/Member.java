@@ -54,13 +54,10 @@ public class Member {
     }
 
     public void setTokenAuth(TokenAuth tokenAuth) {
-        if (this.tokenAuth != null && this.tokenAuth.getMember() == this) {
-            this.tokenAuth.setMember(null);
-        }
-
         this.tokenAuth = tokenAuth;
-        if (tokenAuth != null && tokenAuth.getMember() != this) {
-            tokenAuth.setMember(this);
-        }
+    }
+
+    public TokenAuth getTokenAuth() {
+        return tokenAuth;
     }
 }
