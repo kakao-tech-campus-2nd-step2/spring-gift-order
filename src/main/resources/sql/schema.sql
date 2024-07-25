@@ -7,6 +7,19 @@ create table users
     password varchar(50)
 );
 
+-- order
+drop table if exists orders CASCADE;
+create table orders
+(
+    id         bigint AUTO_INCREMENT PRIMARY KEY,
+    product_id bigint,
+    option_id  bigint,
+    quantity   int,
+    message    varchar(255),
+    user_id    bigint,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+
 -- category
 drop table if exists category CASCADE;
 create table category
@@ -38,7 +51,7 @@ create table product
     name        varchar(255),
     price       int,
     imageurl    varchar(255),
-    categoryid  BIGINT,
+    category_id BIGINT,
     wishlist_id BIGINT
 );
 
@@ -61,6 +74,7 @@ create table option
     name     varchar(50),
     quantity int
 );
+-- option default data
 INSERT INTO option (name, quantity)
 VALUES ('DefaultOption', 1);
 
