@@ -4,66 +4,65 @@ DROP TABLE IF EXISTS PRODUCTS;
 DROP TABLE IF EXISTS CATEGORIES;
 DROP TABLE IF EXISTS MEMBERS;
 DROP TABLE IF EXISTS KAKAO_MEMBERS;
+DROP TABLE IF EXISTS ORDERS;
 
--- Create table for categories
 CREATE TABLE CATEGORIES (
-                            ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                            NAME VARCHAR(255) NOT NULL UNIQUE,
-                            COLOR VARCHAR(255) NOT NULL,
-                            IMAGE_URL VARCHAR(255) NOT NULL,
-                            DESCRIPTION VARCHAR(255) NOT NULL
+                            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                            name VARCHAR(255) NOT NULL UNIQUE,
+                            color VARCHAR(255) NOT NULL,
+                            image_url VARCHAR(255) NOT NULL,
+                            description VARCHAR(255) NOT NULL
 );
 
--- Create table for products
 CREATE TABLE PRODUCTS (
-                          ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                          NAME VARCHAR(15) NOT NULL,
-                          PRICE INT NOT NULL,
-                          IMAGE_URL VARCHAR(255) NOT NULL,
-                          CATEGORY_ID BIGINT,
-                          CONSTRAINT FK_CATEGORY
-                              FOREIGN KEY (CATEGORY_ID)
-                                  REFERENCES CATEGORIES (ID)
-                                  ON DELETE SET NULL
+                          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                          name VARCHAR(15) NOT NULL,
+                          price INT NOT NULL,
+                          image_url VARCHAR(255) NOT NULL,
+                          category_id BIGINT,
+                          FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
--- Create table for options
 CREATE TABLE OPTIONS (
-                         ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         NAME VARCHAR(255) NOT NULL UNIQUE,
-                         QUANTITY INT,
-                         PRODUCT_ID BIGINT,
-                         CONSTRAINT FK_PRODUCT
-                             FOREIGN KEY (PRODUCT_ID)
-                                 REFERENCES PRODUCTS (ID)
-                                 ON DELETE SET NULL
+                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         name VARCHAR(255) NOT NULL UNIQUE,
+                         quantity INT,
+                         product_id BIGINT,
+                         FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
--- Create table for members
 CREATE TABLE MEMBERS (
-                         ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                         EMAIL VARCHAR(255) NOT NULL UNIQUE,
-                         PASSWORD VARCHAR(255)
+                         id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                         email VARCHAR(255) NOT NULL UNIQUE,
+                         password VARCHAR(255)
 );
 
--- Create table for wishes
 CREATE TABLE WISHES (
-                        ID BIGINT AUTO_INCREMENT PRIMARY KEY,
-                        MEMBER_ID BIGINT,
-                        PRODUCT_ID BIGINT,
-                        QUANTITY INT NOT NULL,
-                        CONSTRAINT FK_MEMBER
-                            FOREIGN KEY (MEMBER_ID)
-                                REFERENCES MEMBERS (ID)
-                                ON DELETE CASCADE,
-                        CONSTRAINT FK_PRODUCT_WISH
-                            FOREIGN KEY (PRODUCT_ID)
-                                REFERENCES PRODUCTS (ID)
-                                ON DELETE CASCADE
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        member_id BIGINT,
+                        option_id BIGINT,
+                        quantity INT NOT NULL,
+                        FOREIGN KEY (member_id) REFERENCES members(id) ON DELETE CASCADE,
+                        FOREIGN KEY (option_id) REFERENCES options(id) ON DELETE CASCADE
 );
 
 CREATE TABLE KAKAO_MEMBERS (
-                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                              email VARCHAR(255) NOT NULL,
-                              access_token VARCHAR(255) NOT NULL
+                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               email VARCHAR(255) NOT NULL,
+                               access_token VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE ORDERS (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        quantity INT NOT NULL,
+                        order_date_time TIMESTAMP NOT NULL,
+                        message VARCHAR(255),
+                        member_id BIGINT,
+                        option_id BIGINT,
+                        CONSTRAINT fk_member
+                            FOREIGN KEY (member_id)
+                                REFERENCES members (id),
+                        CONSTRAINT fk_option
+                            FOREIGN KEY (option_id)
+                                REFERENCES options (id)
 );

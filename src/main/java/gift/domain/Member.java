@@ -21,6 +21,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+
     public void addWish(Wish wish) {
         this.wishes.add(wish);
         wish.setMember(this);
@@ -37,6 +40,26 @@ public class Member {
         while(iterator.hasNext()){
             Wish wish = iterator.next();
             wish.setMember(null);
+            iterator.remove();
+        }
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+        order.setMember(this);
+    }
+
+    public void removeOrder(Order order) {
+        order.setMember(null);
+        this.orders.remove(order);
+    }
+
+    public void removeOrders() {
+        Iterator<Order> iterator = orders.iterator();
+
+        while(iterator.hasNext()){
+            Order order = iterator.next();
+            order.setMember(null);
             iterator.remove();
         }
     }

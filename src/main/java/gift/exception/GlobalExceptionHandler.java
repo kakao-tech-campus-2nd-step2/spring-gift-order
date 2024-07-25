@@ -57,6 +57,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(MissingAuthorizationCodeException.class)
+    public ResponseEntity<ErrorResponse> handleMissingAuthorizationCodeExceptionException(MissingAuthorizationCodeException ex, WebRequest request) {
+        String path = request.getDescription(false).replace("uri=", "");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage(), path);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(DuplicateCategoryNameException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateCategoryNameException(DuplicateCategoryNameException ex, WebRequest request) {
         String path = request.getDescription(false).replace("uri=", "");
@@ -66,6 +73,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateMemberEmailException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateMemberEmailException(DuplicateMemberEmailException ex, WebRequest request) {
+        String path = request.getDescription(false).replace("uri=", "");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), path);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+    }
+
+    @ExceptionHandler(OptionAlreadyInWishlistException.class)
+    public ResponseEntity<ErrorResponse> handleOptionAlreadyInWishlistException(OptionAlreadyInWishlistException ex, WebRequest request) {
         String path = request.getDescription(false).replace("uri=", "");
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage(), path);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
@@ -111,6 +125,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 
+    @ExceptionHandler(ResponseBodyNullException.class)
+    public ResponseEntity<ErrorResponse> handleResponseBodyNullException(ResponseBodyNullException ex, WebRequest request) {
+        String path = request.getDescription(false).replace("uri=", "");
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage(), path);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
         String path = request.getDescription(false).replace("uri=", "");

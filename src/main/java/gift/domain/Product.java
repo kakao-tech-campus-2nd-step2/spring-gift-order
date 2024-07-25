@@ -25,29 +25,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Wish> wishes = new ArrayList<>();
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Option> options = new ArrayList<>();
-
-    public void addWish(Wish wish) {
-        this.wishes.add(wish);
-        wish.setProduct(this);
-    }
-
-    public void removeWish(Wish wish) {
-        wish.setProduct(null);
-        this.wishes.remove(wish);
-    }
-
-    public void removeWishes() {
-        Iterator<Wish> iterator = wishes.iterator();
-
-        while(iterator.hasNext()) {
-            Wish wish = iterator.next();
-            wish.setProduct(null);
-            iterator.remove();
-        }
-    }
 
     public void addOption(Option option) {
         this.options.add(option);
@@ -113,10 +91,6 @@ public class Product {
 
     public String getImageUrl() {
         return imageUrl;
-    }
-
-    public List<Wish> getWishes() {
-        return wishes;
     }
 
     public Category getCategory() {

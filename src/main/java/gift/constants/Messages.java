@@ -7,11 +7,13 @@ public class Messages {
     public static final String NOT_FOUND_MEMBER = "해당 정보를 가진 회원이 존재하지 않습니다.";
     public static final String NOT_FOUND_CATEGORY = "해당 정보를 가진 카테고리가 존재하지 않습니다.";
     public static final String NOT_FOUND_OPTION = "해당 정보를 가진 옵션이 존재하지 않습니다.";
-    public static final String NOT_FOUND_KAKAO_MEMBER = "해당 정보를 가진 카카오 간편 회원이 존재하지 않습니다.";
     public static final String CATEGORY_NAME_ALREADY_EXISTS = "이미 존재하는 카테고리 이름입니다.";
     public static final String OPTION_NAME_ALREADY_EXISTS = "이미 존재하는 옵션 이름입니다.";
     public static final String CANNOT_DELETE_LAST_OPTION = "상품의 옵션은 1개 이상이어야 합니다. 옵션을 삭제할 수 없습니다";
     public static final String PRODUCT_OPTION_REQUIRED = "상품의 옵션은 1개 이상이어야 합니다.";
     public static final String INSUFFICIENT_QUANTITY = "옵션의 수량이 부족합니다.";
     public static final String MEMBER_EMAIL_ALREADY_EXISTS = "이미 사용된 이메일 입니다.";
+    public static final String OPTION_ALREADY_IN_WISHLIST = "이미 위시리스트에 존재하는 옵션입니다.";
+    public static final String MISSING_AUTHORIZATION_CODE = "인가 코드가 존재하지 않습니다.";
+    public static final String RESPONSE_BODY_NULL = "API의 응답값이 null 입니다.";
 }

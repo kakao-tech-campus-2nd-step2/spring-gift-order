@@ -1,4 +1,4 @@
 package gift.dto.request;
 
-public record WishRequest(String productName, int quantity) {
+public record WishRequest(Long optionId, int quantity) {
 }
