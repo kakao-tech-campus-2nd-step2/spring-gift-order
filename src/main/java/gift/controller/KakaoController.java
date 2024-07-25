@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/kakao/login")
+@RequestMapping("/api/kakao/login")
 public class KakaoController {
 
     private final KakaoProperties kakaoProperties;
@@ -26,13 +26,13 @@ public class KakaoController {
     }
 
     @GetMapping("")
-    public void getCode(HttpServletResponse response) throws IOException {
+    public void kakaoLogin(HttpServletResponse response) throws IOException {
         String codeUrl = kakaoService.getCode();
         response.sendRedirect(codeUrl);
     }
 
-    @GetMapping("/code")
-    public ResponseEntity<?> login(@RequestParam("code") String code) {
+    @GetMapping("/callback")
+    public ResponseEntity<?> loginByKakaoEmail(@RequestParam("code") String code) {
        Token token = kakaoService.login(code);
        return ResponseEntity.ok(token);
     }
