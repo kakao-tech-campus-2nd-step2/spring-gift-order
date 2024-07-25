@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.KakaoProperties;
+import gift.exception.KakaoServiceException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,8 +45,7 @@ public class KakaoService {
 
             return extractAccessToken(response);
         } catch (WebClientResponseException e) {
-            e.printStackTrace();
-            return null;
+            throw new KakaoServiceException("Failed to get access token from Kakao", e);
         }
     }
 
@@ -61,8 +61,7 @@ public class KakaoService {
 
             return extractEmail(response);
         } catch (WebClientResponseException e) {
-            e.printStackTrace();
-            return null;
+            throw new KakaoServiceException("Failed to get user email from Kakao", e);
         }
     }
 
@@ -71,8 +70,7 @@ public class KakaoService {
             JSONObject json = new JSONObject(responseBody);
             return json.getString("access_token");
         } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+            throw new KakaoServiceException("Failed to parse access token response", e);
         }
     }
 
@@ -81,8 +79,7 @@ public class KakaoService {
             JSONObject json = new JSONObject(responseBody);
             return json.getJSONObject("kakao_account").getString("email");
         } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+            throw new KakaoServiceException("Failed to parse user email response", e);
         }
     }
 }

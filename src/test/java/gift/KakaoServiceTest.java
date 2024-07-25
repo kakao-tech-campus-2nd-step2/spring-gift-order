@@ -1,13 +1,12 @@
 package gift;
 
+import gift.exception.KakaoServiceException;
 import gift.service.KakaoService;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,26 +14,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 
 import java.io.IOException;
-import java.net.URI;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.ExpectedCount.once;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 @SpringBootTest
 @ContextConfiguration(classes = KakaoServiceTest.TestConfig.class)
@@ -97,8 +87,13 @@ public class KakaoServiceTest {
             .setBody("{\"error\":\"invalid_grant\"}")
             .addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
 
-        String accessToken = kakaoService.getAccessToken(authorizationCode);
-        assertThat(accessToken).isNull();
+        KakaoServiceException exception = assertThrows(KakaoServiceException.class, () -> {
+            kakaoService.getAccessToken(authorizationCode);
+        });
+
+        assertThat(exception.getCause()).isInstanceOf(WebClientResponseException.class);
+        WebClientResponseException cause = (WebClientResponseException) exception.getCause();
+        assertThat(cause.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -111,7 +106,12 @@ public class KakaoServiceTest {
             .setBody("{\"error\":\"unauthorized\"}")
             .addHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE));
 
-        String email = kakaoService.getUserEmail(accessToken);
-        assertThat(email).isNull();
+        KakaoServiceException exception = assertThrows(KakaoServiceException.class, () -> {
+            kakaoService.getUserEmail(accessToken);
+        });
+
+        assertThat(exception.getCause()).isInstanceOf(WebClientResponseException.class);
+        WebClientResponseException cause = (WebClientResponseException) exception.getCause();
+        assertThat(cause.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     }
 }
