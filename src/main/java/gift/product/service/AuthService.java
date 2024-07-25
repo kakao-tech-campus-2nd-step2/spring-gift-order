@@ -2,9 +2,9 @@ package gift.product.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;
@@ -29,15 +29,11 @@ import org.springframework.web.client.RestClient;
 public class AuthService {
 
     private final AuthRepository authRepository;
-
+    private final KakaoProperties kakaoProperties;
+    private final RestClient restClient = RestClient.builder().build();
+    private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
     @Value("${jwt.secret}")
     private String SECRET_KEY;
-
-    private final KakaoProperties kakaoProperties;
-
-    private final RestClient restClient = RestClient.builder().build();
-
-    private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
 
     public AuthService(AuthRepository authRepository, KakaoProperties kakaoProperties) {
         this.authRepository = authRepository;
@@ -154,7 +150,7 @@ public class AuthService {
             .claim("id", member.getId())
             .claim("isOAuthMember", false)
             .claim("oAuthAccessToken", "")
-            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
     }
@@ -168,7 +164,7 @@ public class AuthService {
             .claim("id", member.getId())
             .claim("isOAuthMember", false)
             .claim("oAuthRefreshToken", "")
-            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
     }
@@ -182,7 +178,7 @@ public class AuthService {
             .claim("id", member.getId())
             .claim("isOAuthMember", true)
             .claim("oAuthAccessToken", oAuthAccessToken)
-            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
     }
@@ -196,7 +192,7 @@ public class AuthService {
             .claim("id", member.getId())
             .claim("isOAuthMember", true)
             .claim("oAuthRefreshToken", oAuthRefreshToken)
-            .expiration(new Date(System.currentTimeMillis() + 1000*60*60*24*30L))
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
     }

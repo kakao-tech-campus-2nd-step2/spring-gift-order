@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.KakaoMessage;
 import gift.product.dto.auth.Link;
-import gift.product.dto.auth.LoginMember;
-import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.OAuthLoginMember;
 import gift.product.dto.order.OrderDto;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Option;
 import gift.product.model.Order;
-import gift.product.model.Product;
 import gift.product.repository.AuthRepository;
 import gift.product.repository.OptionRepository;
 import gift.product.repository.OrderRepository;
@@ -28,6 +25,7 @@ import org.springframework.web.client.RestClient;
 
 @Transactional(readOnly = true)
 public class OrderService {
+
     private final OrderRepository orderRepository;
     private final WishRepository wishRepository;
     private final OptionRepository optionRepository;
@@ -35,7 +33,10 @@ public class OrderService {
     private final RestClient restClient = RestClient.builder().build();
     private final String LINK_URL = "http://localhost:8080";
 
-    public OrderService(OrderRepository orderRepository, WishRepository wishRepository, OptionRepository optionRepository, AuthRepository authRepository) {
+    public OrderService(OrderRepository orderRepository,
+        WishRepository wishRepository,
+        OptionRepository optionRepository,
+        AuthRepository authRepository) {
         this.orderRepository = orderRepository;
         this.wishRepository = wishRepository;
         this.optionRepository = optionRepository;
@@ -47,7 +48,8 @@ public class OrderService {
     }
 
     public Order getOrder(Long id, OAuthLoginMember loginMember) {
-        return orderRepository.findByIdAndMemberId(id, loginMember.id()).orElseThrow(() -> new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다."));
+        return orderRepository.findByIdAndMemberId(id, loginMember.id())
+            .orElseThrow(() -> new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다."));
     }
 
     @Transactional
@@ -78,7 +80,8 @@ public class OrderService {
     }
 
     private Option getValidatedOption(Long optionId) {
-        return optionRepository.findById(optionId).orElseThrow(() -> new NoSuchElementException("해당 ID의 옵션이 존재하지 않습니다."));
+        return optionRepository.findById(optionId)
+            .orElseThrow(() -> new NoSuchElementException("해당 ID의 옵션이 존재하지 않습니다."));
     }
 
     private void validateExistenceMember(Long memberId) {

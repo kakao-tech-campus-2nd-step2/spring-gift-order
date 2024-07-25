@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.then;
 
 import gift.product.dto.option.OptionDto;
 import gift.product.dto.option.OptionResponse;
-import gift.product.dto.option.OptionSubtractAmount;
 import gift.product.model.Category;
 import gift.product.model.Option;
 import gift.product.model.Product;

@@ -1,14 +1,11 @@
 package gift.product.controller.order;
 
-import gift.product.dto.auth.LoginMember;
 import gift.product.dto.auth.OAuthLoginMember;
 import gift.product.dto.order.OrderDto;
 import gift.product.model.Order;
 import gift.product.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import org.apache.juli.logging.Log;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
+
     private final OrderService orderService;
     private final String KAKAO_SEND_MESSAGE_ME_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
@@ -38,7 +36,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrder(@PathVariable(name = "id") Long id, HttpServletRequest request) {
+    public ResponseEntity<Order> getOrder(@PathVariable(name = "id") Long id,
+        HttpServletRequest request) {
         OAuthLoginMember loginMember = getOAuthLoginMember(request);
         Order order = orderService.getOrder(id, loginMember);
 
@@ -46,7 +45,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Order> doOrder(@RequestBody OrderDto orderDto, HttpServletRequest request) {
+    public ResponseEntity<Order> doOrder(@RequestBody OrderDto orderDto,
+        HttpServletRequest request) {
         OAuthLoginMember loginMember = getOAuthLoginMember(request);
         Order order = orderService.doOrder(orderDto, loginMember, KAKAO_SEND_MESSAGE_ME_URL);
 
@@ -54,7 +54,8 @@ public class OrderController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable(name = "id") Long id, HttpServletRequest request) {
+    public ResponseEntity<Void> deleteOrder(@PathVariable(name = "id") Long id,
+        HttpServletRequest request) {
         OAuthLoginMember loginMember = getOAuthLoginMember(request);
         orderService.deleteOrder(id, loginMember);
 
@@ -62,6 +63,7 @@ public class OrderController {
     }
 
     private OAuthLoginMember getOAuthLoginMember(HttpServletRequest request) {
-        return new OAuthLoginMember((Long) request.getAttribute("id"), (String) request.getAttribute("oAuthAccessToken"));
+        return new OAuthLoginMember((Long) request.getAttribute("id"),
+            (String) request.getAttribute("oAuthAccessToken"));
     }
 }

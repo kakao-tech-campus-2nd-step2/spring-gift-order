@@ -12,6 +12,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 @Table(name = "\"order\"")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;
@@ -44,7 +45,12 @@ public class Order {
         this(id, optionId, memberId, quantity, null, message);
     }
 
-    public Order(Long id, Long optionId, Long memberId, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Long id,
+        Long optionId,
+        Long memberId,
+        int quantity,
+        LocalDateTime orderDateTime,
+        String message) {
         this.id = id;
         this.optionId = optionId;
         this.memberId = memberId;

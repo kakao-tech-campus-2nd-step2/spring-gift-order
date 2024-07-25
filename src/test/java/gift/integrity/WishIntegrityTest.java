@@ -2,9 +2,9 @@ package gift.integrity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gift.product.dto.auth.MemberDto;
 import gift.product.dto.category.CategoryDto;
 import gift.product.dto.product.ClientProductDto;
-import gift.product.dto.auth.MemberDto;
 import gift.product.dto.product.ProductDto;
 import gift.product.dto.wish.WishDto;
 import gift.product.service.AuthService;

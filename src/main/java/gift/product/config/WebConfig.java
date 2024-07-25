@@ -15,7 +15,6 @@ import gift.product.service.OptionService;
 import gift.product.service.OrderService;
 import gift.product.service.ProductService;
 import gift.product.service.WishService;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,9 +32,13 @@ public class WebConfig implements WebMvcConfigurer {
     private final KakaoProperties kakaoProperties;
 
 
-    public WebConfig(ProductRepository productRepository, WishRepository wishRepository,
-        AuthRepository authRepository, CategoryRepository categoryRepository,
-        OptionRepository optionRepository, OrderRepository orderRepository, KakaoProperties kakaoProperties) {
+    public WebConfig(ProductRepository productRepository,
+        WishRepository wishRepository,
+        AuthRepository authRepository,
+        CategoryRepository categoryRepository,
+        OptionRepository optionRepository,
+        OrderRepository orderRepository,
+        KakaoProperties kakaoProperties) {
         this.productRepository = productRepository;
         this.wishRepository = wishRepository;
         this.authRepository = authRepository;

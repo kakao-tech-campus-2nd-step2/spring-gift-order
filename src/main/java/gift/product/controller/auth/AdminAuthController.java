@@ -44,7 +44,9 @@ public class AdminAuthController {
     }
 
     @GetMapping("/login/process")
-    public String loginProcess(@RequestParam("accessToken") String accessToken, @RequestParam("refreshToken") String refreshToken, Model model) {
+    public String loginProcess(@RequestParam("accessToken") String accessToken,
+        @RequestParam("refreshToken") String refreshToken,
+        Model model) {
         model.addAttribute("accessToken", accessToken);
         model.addAttribute("refreshToken", refreshToken);
 

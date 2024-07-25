@@ -2,16 +2,16 @@ package gift.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;
@@ -58,14 +58,17 @@ class AuthServiceTest {
     @BeforeEach
     void 카카오_프로퍼티_셋팅() throws IOException {
         Properties properties = new Properties();
-        properties.load(getClass().getClassLoader().getResourceAsStream("application-test.properties"));
+        properties.load(getClass().getClassLoader()
+            .getResourceAsStream("application-test.properties"));
 
         String grantType = properties.getProperty("kakao.grant-type");
         String clientId = properties.getProperty("kakao.client-id");
         String redirectUrl = properties.getProperty("kakao.redirect-url");
         String clientSecret = properties.getProperty("kakao.client-secret");
 
-        ReflectionTestUtils.setField(authService, "kakaoProperties", new KakaoProperties(grantType, clientId, redirectUrl, clientSecret));
+        ReflectionTestUtils.setField(authService,
+            "kakaoProperties",
+            new KakaoProperties(grantType, clientId, redirectUrl, clientSecret));
     }
 
     @BeforeEach
@@ -133,7 +136,8 @@ class AuthServiceTest {
         //given
         OAuthJwt responseBody = new OAuthJwt("test_oauth_access_token",
             "test_oauth_refresh_token");
-        mockWebServer.enqueue(new MockResponse().setBody(objectMapper.writeValueAsString(responseBody)));
+        mockWebServer.enqueue(new MockResponse().setBody(objectMapper.writeValueAsString(
+            responseBody)));
 
         //when
         String mockUrl = mockWebServer.url("/oauth/token").toString();
@@ -213,7 +217,8 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/oauth/token").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.getOAuthToken("test_authorization_code", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.getOAuthToken("test_authorization_code",
+            mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 
@@ -224,7 +229,8 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.registerKakaoMember("test_oauth_access_token", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.registerKakaoMember("test_oauth_access_token",
+            mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 
@@ -235,7 +241,8 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.unlinkKakaoAccount("test_oauth_access_token", mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> authService.unlinkKakaoAccount("test_oauth_access_token",
+            mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
 }

@@ -52,7 +52,8 @@ class WishServiceTest {
         Member member = new Member(1L, "test@test.com", "test");
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.of(member));
-        given(wishRepository.existsByProductIdAndMemberId(product.getId(), member.getId())).willReturn(false);
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            member.getId())).willReturn(false);
 
         //when
         WishDto wishDto = new WishDto(1L);
@@ -127,9 +128,11 @@ class WishServiceTest {
         LoginMember loginMember = new LoginMember(1L);
 
         given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
-        given(wishRepository.existsByProductIdAndMemberId(product.getId(), loginMember.id())).willReturn(true);
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            loginMember.id())).willReturn(true);
 
         //when, then
-        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(
+            IllegalArgumentException.class);
     }
 }
