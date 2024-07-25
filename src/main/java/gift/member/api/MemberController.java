@@ -76,4 +76,16 @@ public class MemberController {
         return "wishlist";
     }
 
+    @GetMapping("/order")
+    public String showOrderView(Model model,
+                                @PageableDefault(
+                                        sort = "id",
+                                        direction = Sort.Direction.DESC)
+                                Pageable pageable) {
+        Page<ProductResponse> products = productController.getPagedProducts(pageable);
+        model.addAttribute("productList", products.getContent());
+        model.addAttribute("pageInfo", new PageResponse(products));
+        return "order";
+    }
+
 }
