@@ -31,8 +31,11 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
                 } catch (ChangeSetPersister.NotFoundException e) {
                     throw new RuntimeException(e);
                 }
+
+            } else if (httpResponse.getStatusCode() == HttpStatus.FORBIDDEN) {
+                // 403 Forbidden 오류 처리
+                throw new ForbiddenException("카카오 메시지 전송 거부 " + httpResponse.getBody().toString());
             }
-            // 다른 4xx 오류에 대한 처리 추가 가능
             throw new HttpClientErrorException(httpResponse.getStatusCode());
         }
     }

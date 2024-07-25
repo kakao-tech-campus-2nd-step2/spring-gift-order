@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.exception.ForbiddenException;
 import gift.exception.RestTemplateResponseErrorHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,8 +42,10 @@ public class KakaoTokenService {
         try {
             ResponseEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, request, String.class);
             return response.getBody(); // Access Token 반환
+        } catch (ForbiddenException e) {
+            System.err.println("엑세스토큰 처리시, 접근이 거부되었습니다: " + e.getMessage());
+            return null;
         } catch (HttpClientErrorException e) {
-            // 사용자 정의 오류 처리
             System.err.println("엑세스토큰 처리시, 클라이언트 오류가 발생했습니다: " + e.getMessage());
             return null;
         } catch (Exception e) {
