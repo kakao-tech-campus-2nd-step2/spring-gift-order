@@ -1,13 +1,13 @@
-package gift.controller;
+package gift.controller.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.configuration.FilterConfiguration;
-import gift.controller.auth.AuthApiController;
 import gift.domain.AuthToken;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
 import gift.repository.token.TokenRepository;
 import gift.service.AuthService;
+import gift.service.KakaoService;
 import gift.service.TokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,10 +17,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,27 +45,21 @@ class AuthApiControllerTest {
     TokenService tokenService;
 
     @MockBean
+    KakaoService kakaoService;
+
+    @MockBean
     TokenRepository tokenRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @Test
-    @DisplayName("회원가입 테스트")
-    void 회원_가입_테스트() throws Exception {
+    @DisplayName("회원가입, 로그인 시 MemberDto Invalid 로 인해 BadRequest Error 테스트")
+    void 회원가입_로그인_DTO_INVALID_TEST() throws Exception{
         //given
-        MemberRequestDto memberRequestDto = new MemberRequestDto("test@pusan.ac.kr", "p");
         MemberRequestDto inValidMemberRequestDto = new MemberRequestDto("test", "p");
 
-        //when then
-        mvc.perform(post("/members/register")
-                        .content(objectMapper.writeValueAsString(memberRequestDto))
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andDo(print());
-
+        //expected
         mvc.perform(post("/members/register")
                         .content(objectMapper.writeValueAsString(inValidMemberRequestDto))
                         .contentType(APPLICATION_JSON))
@@ -68,20 +68,34 @@ class AuthApiControllerTest {
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
                 .andExpect(jsonPath("$.validation.email").value("이메일 형식을 맞춰 주세요"))
+                .andDo(print());
+
+    }
+    @Test
+    @DisplayName("회원가입 정상 성공 테스트")
+    void 회원_가입_테스트() throws Exception {
+        //given
+        MemberRequestDto memberRequestDto = new MemberRequestDto("test@pusan.ac.kr", "p");
+
+        //expected
+        mvc.perform(post("/members/register")
+                        .content(objectMapper.writeValueAsString(memberRequestDto))
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andDo(print());
     }
 
     @Test
-    @DisplayName("회원 처음 로그인 테스트")
+    @DisplayName("회원 처음 로그인 정상 성공 테스트")
     void 회원_처음_로그인_테스트() throws Exception{
         //given
         MemberRequestDto memberRequestDto = new MemberRequestDto("test@pusan.ac.kr", "password");
-        MemberRequestDto inValidMemberRequestDto = new MemberRequestDto("test", "password");
-
         MemberResponseDto memberResponseDto = new MemberResponseDto(1L, "test@pusan.ac.kr", "password");
+
         given(authService.findOneByEmailAndPassword(memberRequestDto)).willReturn(memberResponseDto);
 
-        //when then
+        //expected
         mvc.perform(post("/members/login")
                         .content(objectMapper.writeValueAsString(memberRequestDto))
                         .contentType(APPLICATION_JSON)
@@ -89,17 +103,38 @@ class AuthApiControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andDo(print());
+    }
 
-        mvc.perform(post("/members/login")
-                        .content(objectMapper.writeValueAsString(inValidMemberRequestDto))
-                        .contentType(APPLICATION_JSON)
+    @Test
+    @DisplayName("카카오 로그인 성공 테스트")
+    void 카카오_로그인_테스트() throws Exception{
+        //given
+        String code = "abcdefg";
+        String kakaoAccessToken = "a1b2c3d4";
+        String kakaoUserInformation = "3123";
+        Map<String, String> kakaoTokenInfo = new HashMap<>();
+        kakaoTokenInfo.put("token","myToken");
+        kakaoTokenInfo.put("tokenTime","300000");
+        kakaoTokenInfo.put("access_token",kakaoAccessToken);
+        kakaoTokenInfo.put("expires_in","300000");
+        kakaoTokenInfo.put("refresh_token","a2b3c4d5");
+        kakaoTokenInfo.put("refresh_token_expires_in","300000");
+
+        given(kakaoService.getKakaoOauthToken(code)).willReturn(kakaoTokenInfo);
+        given(kakaoService.getKakaoUserInformation(kakaoAccessToken)).willReturn(kakaoUserInformation);
+        given(authService.kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo)).willReturn("myToken");
+
+        //expected
+        mvc.perform(get("/members/login/oauth/kakao")
+                        .contentType(APPLICATION_FORM_URLENCODED)
+                        .param("code",code)
                 )
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.email").value("이메일 형식을 맞춰 주세요"))
+                .andExpect(jsonPath("$.token").value("myToken"))
                 .andDo(print());
+
+        verify(authService,times(1)).kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo);
     }
 
     @Test
@@ -107,10 +142,28 @@ class AuthApiControllerTest {
     void 로그인_중복_시도_필터_통과_실패_테스트() throws Exception{
         //given
         AuthToken authToken = new AuthToken("테스트 인증 정보", "test@pusan.ac.kr");
+
         given(tokenRepository.findAuthTokenByToken("테스트 인증 정보")).willReturn(Optional.of(authToken));
 
-        //when then
+        //expected
         mvc.perform(post("/members/login")
+                        .header("Authorization","Bearer 테스트 인증 정보")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("카카오 로그인 중복 시도 필터 통과 실패 테스트")
+    void 카카오_로그인_중복_시도_필터_통과_실패_테스트() throws Exception{
+        //given
+        AuthToken authToken = new AuthToken("테스트 인증 정보", "test@kakao.com");
+
+        given(tokenRepository.findAuthTokenByToken("테스트 인증 정보")).willReturn(Optional.of(authToken));
+
+        //expected
+        mvc.perform(get("/members/login/oauth/kakao")
                         .header("Authorization","Bearer 테스트 인증 정보")
                 )
                 .andExpect(status().is3xxRedirection())
