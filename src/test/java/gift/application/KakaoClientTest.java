@@ -1,6 +1,7 @@
 package gift.application;
 
 import gift.auth.application.KakaoClient;
+import gift.auth.dto.KakaoTokenResponse;
 import gift.auth.vo.KakaoProperties;
 import gift.global.config.RestTemplateConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,9 +55,9 @@ class KakaoClientTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andRespond(withSuccess(responseBody, MediaType.APPLICATION_JSON));
 
-        String token = kakaoClient.getAccessToken(code);
+        KakaoTokenResponse response = kakaoClient.getTokenResponse(code);
 
-        assertThat(token).isEqualTo(responseToken);
+        assertThat(response.accessToken()).isEqualTo(responseToken);
         server.verify();
     }
 

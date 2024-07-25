@@ -8,7 +8,9 @@ public record KakaoProperties(
         String grantType,
         String redirectUri,
         String clientId,
-        String authorizationPrefix
+        String authorizationPrefix,
+        String tokenDomainName,
+        String userInfoDomainName
 ) {
     public LinkedMultiValueMap<String, String> getRequestBody(String code) {
         LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();

@@ -19,8 +19,8 @@ public class KakaoClient {
     private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
 
-    private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String KAKAO_TOKEN_PATH = "/oauth/token";
+    private static final String KAKAO_USER_INFO_PATH = "/v2/user/me";
 
     public KakaoClient(RestTemplate restTemplate,
                        KakaoProperties kakaoProperties) {
@@ -28,13 +28,13 @@ public class KakaoClient {
         this.kakaoProperties = kakaoProperties;
     }
 
-    public String getAccessToken(String authCode) {
+    public KakaoTokenResponse getTokenResponse(String authCode) {
         RequestEntity<LinkedMultiValueMap<String, String>> request = RequestEntity.post(authCode)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(kakaoProperties.getRequestBody(authCode));
 
         KakaoTokenResponse response = restTemplate.postForObject(
-                KAKAO_TOKEN_URL,
+                kakaoProperties.tokenDomainName() + KAKAO_TOKEN_PATH,
                 request,
                 KakaoTokenResponse.class
         );
@@ -43,16 +43,16 @@ public class KakaoClient {
             throw new CustomException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
         }
 
-        return response.accessToken();
+        return response;
     }
 
     public Long getUserId(String token) {
-        RequestEntity<Void> request = RequestEntity.get(KAKAO_USER_INFO_URL)
+        RequestEntity<Void> request = RequestEntity.get(KAKAO_USER_INFO_PATH)
                 .header(HttpHeaders.AUTHORIZATION, kakaoProperties.authorizationPrefix() + token)
                 .build();
 
         KakaoUserInfoResponse response = restTemplate.exchange(
-                KAKAO_USER_INFO_URL,
+                kakaoProperties.userInfoDomainName() + KAKAO_USER_INFO_PATH,
                 HttpMethod.GET,
                 request,
                 KakaoUserInfoResponse.class
