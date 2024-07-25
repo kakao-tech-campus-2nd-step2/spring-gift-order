@@ -158,3 +158,40 @@ function moveWishlistPage(page) {
             alert(error);
         });
 }
+
+function orderProduct() {
+    if (selectedProductId) {
+        const optionId = document.getElementById('option' + selectedProductId).value;
+        const quantity = document.getElementById('quantity').value;
+        const message = document.getElementById('message').value;
+
+        const token = localStorage.getItem('token');
+
+        fetch(`/api/orders`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                optionId: optionId,
+                quantity: quantity,
+                message: message
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text)
+                    });
+                }
+                alert(`상품이 주문되었습니다.`);
+            })
+            .catch(error => {
+                alert(error);
+            });
+    } else {
+        alert("상품을 선택해주세요.");
+    }
+
+}
