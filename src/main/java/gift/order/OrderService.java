@@ -59,7 +59,6 @@ public class OrderService {
                 "        \"content\": {\n" +
                 "            \"title\": \"주문이 완료되었습니다.\",\n" +
                 "            \"description\": \"" + request.getMessage() + "\",\n" +
-                "            \"image_url\": \"https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg\",\n" +
                 "            \"link\": {\n" +
                 "                \"web_url\": \"http://www.daum.net\",\n" +
                 "                \"mobile_web_url\": \"http://m.daum.net\"\n" +

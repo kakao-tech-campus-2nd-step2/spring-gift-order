@@ -31,14 +31,14 @@ public class OrderController {
     }
 
     @PostMapping("/api/orders")
-    public OrderResponse OrderProduct(@LoginUser KakaoUser user, @RequestBody OrderRequest request){
+    public OrderResponse OrderProduct(@LoginUser KakaoUser kakaoUser, @RequestBody OrderRequest request){
 
         OptionResponse optionResponse = optionService.subtractOptionQuantity(request.getOptionId(), request.getQuantity());
-        Optional<WishList> wishList = wishListService.findByUserAndOptionID(request.getOptionId(), user.getUser());
+        Optional<WishList> wishList = wishListService.findByKakaoUserAndOptionID(request.getOptionId(), kakaoUser);
 
         wishList.ifPresent(list -> wishListService.deleteByID(list.getId()));
 
-        return orderService.sendMessage(user, request, optionResponse);
+        return orderService.sendMessage(kakaoUser, request, optionResponse);
 
     }
 
