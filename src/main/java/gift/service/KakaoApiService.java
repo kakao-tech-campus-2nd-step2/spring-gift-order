@@ -9,19 +9,22 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KakaoApiService {
 
     private final KakaoProperties kakaoProperties;
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     private static final String GRANT_TYPE = "authorization_code";
     private static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
 
-    public KakaoApiService(KakaoProperties kakaoProperties) {
+    public KakaoApiService(KakaoProperties kakaoProperties, RestTemplate restTemplate) {
         this.kakaoProperties = kakaoProperties;
+        this.restTemplate = restTemplate;
     }
 
     private static HttpHeaders makeHeaders() {
@@ -41,32 +44,32 @@ public class KakaoApiService {
 
     public String getAccessToken(String code) {
         HttpHeaders headers = makeHeaders();
-
         MultiValueMap<String, String> body = makeBody(code);
 
         // HttpHeader + HttpBody -> 하나의 Object
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
 
-        // Http 요청하여 response
-        ResponseEntity<String> response = restTemplate.exchange(
-                TOKEN_REQUEST_URI,
-                HttpMethod.POST,
-                kakaoTokenRequest,
-                String.class
-        );
-
-        // 응답 데이터인 response에 있는 데이터 담는다.
-        ObjectMapper objectMapper = new ObjectMapper();
-        OAuthToken oauthToken = null;
         try {
-            oauthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    TOKEN_REQUEST_URI,
+                    HttpMethod.POST,
+                    kakaoTokenRequest,
+                    String.class
+            );
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            OAuthToken oauthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+
+            return oauthToken.getAccess_token();
+        } catch (HttpClientErrorException | HttpServerErrorException ex) {
+            throw ex; // 예외를 던져 GlobalExceptionHandler에서 처리
         } catch (JsonMappingException e) {
             e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return oauthToken.getAccess_token();
+        return null;
     }
 
 }
