@@ -75,39 +75,30 @@ public class OrderControllerTest {
     @Test
     @Transactional
     public void createOrder_InsufficientProductQuantity() throws Exception {
-        // Set up user
         User user = new User(null, "test@example.com", PasswordEncoder.encode("password"));
         userRepository.save(user);
 
-        // Set up product
         Product product = new Product(null, new Name("Test Product"), 1000, "http://example.com/image.jpg", 1L, new ArrayList<>());
         productRepository.save(product);
 
-        // Set up option
         Option option = new Option(null, new OptionName("Test Option"), new OptionQuantity(10), product);
         optionRepository.save(option);
 
-        // Set up wishlist
         WishList wishList = new WishList(null, user, product);
         wishListRepository.save(wishList);
 
-        // Mock KakaoService to return expected email
         Mockito.when(kakaoService.getUserEmail(Mockito.anyString())).thenReturn("test@example.com");
 
-        // Mock OptionService to fail decreasing option quantity
         Mockito.when(optionService.decreaseOptionQuantity(Mockito.anyLong(), Mockito.anyInt())).thenReturn(false);
 
-        // Prepare order request
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setProductId(product.getId());
         orderRequest.setOptionId(option.getId());
-        orderRequest.setQuantity(11); // Requesting more than available quantity
+        orderRequest.setQuantity(11);
         orderRequest.setMessage("Order message");
 
-        // Mock access token
         String accessToken = "some-valid-token";
 
-        // Perform order request
         mockMvc.perform(post("/api/orders")
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -119,51 +110,38 @@ public class OrderControllerTest {
     @Test
     @Transactional
     public void createOrder_FailsToSendMessage() throws Exception {
-        // Set up user
         User user = new User(null, "test@example.com", PasswordEncoder.encode("password"));
         userRepository.save(user);
 
-        // Set up product
         Product product = new Product(null, new Name("Test Product"), 1000, "http://example.com/image.jpg", 1L, new ArrayList<>());
         productRepository.save(product);
 
-        // Set up option
         Option option = new Option(null, new OptionName("Test Option"), new OptionQuantity(10), product);
         optionRepository.save(option);
 
-        // Set up wishlist
         WishList wishList = new WishList(null, user, product);
         wishListRepository.save(wishList);
 
-        // Mock KakaoService to return expected email
         Mockito.when(kakaoService.getUserEmail(Mockito.anyString())).thenReturn("test@example.com");
 
-        // Mock OptionService to decrease option quantity
         Mockito.when(optionService.decreaseOptionQuantity(Mockito.anyLong(), Mockito.anyInt())).thenReturn(true);
 
-        // Mock ProductService to return product name
         Mockito.when(productService.getProductNameById(Mockito.anyLong())).thenReturn("Test Product");
 
-        // Mock OptionService to return option name
         Mockito.when(optionService.getOptionNameById(Mockito.anyLong())).thenReturn("Test Option");
 
-        // Mock OptionService to return remaining quantity
         Mockito.when(optionService.getRemainingQuantityById(Mockito.anyLong())).thenReturn(9);
 
-        // Mock sendKakaoMessage to fail
         Mockito.when(kakaoService.getUserEmail(Mockito.anyString())).thenReturn("test@example.com");
 
-        // Prepare order request
         OrderRequest orderRequest = new OrderRequest();
         orderRequest.setProductId(product.getId());
         orderRequest.setOptionId(option.getId());
         orderRequest.setQuantity(1);
         orderRequest.setMessage("Order message");
 
-        // Mock access token
         String accessToken = "some-valid-token";
 
-        // Perform order request
         mockMvc.perform(post("/api/orders")
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON)
