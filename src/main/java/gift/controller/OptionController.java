@@ -1,6 +1,9 @@
 package gift.controller;
 
+import gift.annotation.LoginUser;
 import gift.dto.OptionDTO;
+import gift.dto.OrderRequestDTO;
+import gift.dto.OrderResponseDTO;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.service.OptionFacadeService;
@@ -30,17 +33,29 @@ public class OptionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updateOption(@PathVariable("id") Long id, @RequestBody OptionDTO optionDTO) {
+    public ResponseEntity<String> updateOption(@PathVariable("id") Long id,
+        @RequestBody OptionDTO optionDTO) {
         Product product = optionService.findProductById(optionDTO.getProductId());
         Option option = optionDTO.toEntity(product);
 
-        optionService.updateOption(option,id);
+        optionService.updateOption(option, id);
         return new ResponseEntity<>("Option 수정 완료", HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteOption(@PathVariable("id") Long id) {
         optionService.deleteOption(id);
-        return new ResponseEntity<>("Option 삭제 완료",HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>("Option 삭제 완료", HttpStatus.NO_CONTENT);
     }
+
+
+    //상품 주문
+    @PostMapping("/orders")
+    public ResponseEntity<String> orderOption(@RequestBody OrderRequestDTO orderRequestDTO,
+        @LoginUser String email) {
+        OrderResponseDTO response = optionService.orderOption(orderRequestDTO, email);
+
+        return new ResponseEntity<>("옵션 주문 및 메시지 보내기 완료", HttpStatus.OK);
+    }
+
 }
