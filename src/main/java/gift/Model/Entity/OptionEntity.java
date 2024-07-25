@@ -30,6 +30,15 @@ public class OptionEntity {
         this.quantity = quantity;
     }
 
+    public boolean subtract(Long count){
+        if(this.quantity - count > 0) {
+            this.quantity = this.quantity - count;
+            return true;
+        }
+
+        throw new IllegalArgumentException("수량이 부족합니다.");
+    }
+
     public ProductEntity getProduct() {
         return product;
     }
