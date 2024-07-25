@@ -34,7 +34,7 @@ public class WebClientConfig {
     @Bean(name = "kakaoWebClient")
     public WebClient kakaoWebClient(KakaoProperties kakaoProperties) {
         return WebClient.builder()
-            .baseUrl("https://kauth.kakao.com")
+            .baseUrl(kakaoProperties.getBaseUrl())
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .clientConnector(new ReactorClientHttpConnector(
                 HttpClient.create()

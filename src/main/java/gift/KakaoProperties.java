@@ -12,14 +12,17 @@ public class KakaoProperties {
     private final String userInfoUrl;
     private final String sendMessageUrl;
 
+    private final String baseUrl;
+
     // Constructor
     @ConstructorBinding
-    public KakaoProperties(String clientId, String redirectUri, String tokenUrl, String userInfoUrl, String sendMessageUrl) {
+    public KakaoProperties(String clientId, String redirectUri, String tokenUrl, String userInfoUrl, String sendMessageUrl, String baseUrl) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.tokenUrl = tokenUrl;
         this.userInfoUrl = userInfoUrl;
         this.sendMessageUrl = sendMessageUrl;
+        this.baseUrl = baseUrl;
     }
 
     // Getters
@@ -41,5 +44,8 @@ public class KakaoProperties {
 
     public String getSendMessageUrl() {
         return sendMessageUrl;
+    }
+    public String getBaseUrl() {
+        return baseUrl;
     }
 }
