@@ -1,6 +1,5 @@
 package gift.Entity;
 
-import gift.Model.MemberDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +12,7 @@ public class Member {
     private String name;
     private String password;
     private boolean isAdmin;
+    private long kakaoId;
 
     protected Member() {
     }
@@ -64,5 +64,9 @@ public class Member {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public void setKakaoId(long kakaoId) {
+        this.kakaoId = kakaoId;
     }
 }
