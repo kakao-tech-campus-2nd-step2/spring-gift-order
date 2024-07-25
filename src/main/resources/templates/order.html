@@ -63,6 +63,14 @@
   </div>
 </div>
 <script th:inline="javascript">
+    /*<![CDATA[*/
+    const token = /*[[${tokenResponse != null ? tokenResponse.token : ''}]]*/ '';
+
+    if (token) {
+        localStorage.setItem('token', token);
+    }
+    /*]]>*/
+
     let selectedProductId = null;
 
     function selectRow(row, productId) {
@@ -76,15 +84,6 @@
         selectedProductId = productId;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const token = [[${tokenResponse.token}]];
-
-        if (token) {
-            localStorage.setItem('token', token);
-        } else {
-            alert("다시 로그인해주세요.")
-        }
-    });
 </script>
 </body>
 </html>

@@ -186,6 +186,7 @@ function orderProduct() {
                     });
                 }
                 alert(`상품이 주문되었습니다.`);
+                window.location.href = "order";
             })
             .catch(error => {
                 alert(error);
