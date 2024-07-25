@@ -43,7 +43,7 @@ public class Member extends BaseEntity {
     public Member(String email) {
         validEmail(email);
         this.email = email;
-        this.password = "";
+        this.password = "OAUTH2";
         this.role = Role.ROLE_USER;
     }
 
