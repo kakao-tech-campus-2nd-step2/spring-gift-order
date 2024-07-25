@@ -3,7 +3,7 @@ package gift.service;
 import gift.domain.Option;
 import gift.domain.Product;
 import gift.dto.request.AddOptionRequest;
-import gift.dto.request.SubtractOptionRequest;
+import gift.dto.request.OrderRequest;
 import gift.dto.response.MessageResponse;
 import gift.exception.CustomException;
 import gift.repository.OptionRepository;
@@ -33,8 +33,8 @@ public class OptionService {
         return new MessageResponse(ADD_OPTION_SUCCESS_MSG);
     }
 
-    public void subtractOptionQuantity(Product product, SubtractOptionRequest subtractOptionRequest) {
-        Option option = optionRepository.findAllByProductAndName(product, subtractOptionRequest.optionName()).orElseThrow(() -> new CustomException(DATA_NOT_FOUND));
-        option.subtract(subtractOptionRequest.amount());
+    public void order(OrderRequest orderRequest) {
+        Option option = optionRepository.findById(orderRequest.optionId()).orElseThrow(() -> new CustomException(DATA_NOT_FOUND));
+        option.subtract(orderRequest.quantity());
     }
 }
