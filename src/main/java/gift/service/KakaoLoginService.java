@@ -1,13 +1,10 @@
 package gift.service;
 
+import gift.dto.response.KakaoProfileResponse;
 import gift.dto.response.KakaoTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -56,6 +53,35 @@ public class KakaoLoginService {
             throw new RuntimeException("access token 얻기 실패: "  + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
             throw new RuntimeException("access token을 얻는 중 예상치 못한 오류가 발생했습니다", e);
+        }
+    }
+
+    public KakaoProfileResponse getUserProfile(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            ResponseEntity<KakaoProfileResponse> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    request,
+                    KakaoProfileResponse.class
+            );
+
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                throw new RuntimeException("사용자 정보 얻기 실패: HTTP 상태 " + response.getStatusCode());
+            }
+
+            return response.getBody();
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("사용자 정보 얻기 실패: " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("사용자 정보를 얻는 중 예상치 못한 오류가 발생했습니다", e);
         }
     }
 }
