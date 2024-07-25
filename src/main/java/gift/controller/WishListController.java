@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import gift.dto.product.ShowProductDTO;
 import gift.service.WishListService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
+@RequiredArgsConstructor
 public class WishListController {
-    @Autowired
-    WishListService wishListService;
+    private final WishListService wishListService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/wishlist/{product_id}")
     public String addWishList(@RequestHeader("Authorization") String token, @PathVariable int product_id) {
-        wishListService.add(token, product_id);
+        wishListService.saveWishList(token, product_id);
         return "redirect:/wishlist";
     }
 

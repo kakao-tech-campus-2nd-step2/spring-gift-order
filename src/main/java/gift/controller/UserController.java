@@ -9,17 +9,17 @@ import gift.dto.user.SignUpDTO;
 import gift.dto.user.Token;
 
 import gift.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    UserService userService;
-    @Autowired
-    ObjectMapper objectMapper;
+    private final UserService userService;
+    private final ObjectMapper objectMapper;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/signup")
@@ -49,15 +49,9 @@ public class UserController {
         return objectMapper.writeValueAsString(token);
     }
 
-//    @GetMapping("/api/kakao/token")
-//    @ResponseBody
-//    public String getToken(){
-//        return userService.getKakaoToken();
-//    }
-
     @PostMapping("/api/kakao/login")
     @ResponseBody
-    public Token kakakLogin(){
+    public Token kakakLogin() {
         return userService.kakaoLogin();
     }
 

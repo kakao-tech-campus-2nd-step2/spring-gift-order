@@ -13,6 +13,7 @@ import gift.exception.exception.NotFoundException;
 import gift.exception.exception.ServerInternalException;
 import gift.exception.exception.UnAuthException;
 import gift.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -29,24 +30,19 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class OptionService {
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    OptionRepository optionRepository;
-    @Autowired
-    OrderRepository orderRepository;
-    @Autowired
-    JWTUtil jwtUtil;
+    private final ProductRepository productRepository;
+    private final OptionRepository optionRepository;
+    private final OrderRepository orderRepository;
+    private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final WishListRepository wishListRepository;
     RestTemplate restTemplate = new RestTemplate();
     ObjectMapper objectMapper = new ObjectMapper();
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    WishListRepository wishListRepository;
 
     @Transactional
-    public void refill(OptionQuantityDTO optionQuantityDTO) {
+    public void refillQuantity(OptionQuantityDTO optionQuantityDTO) {
         Option option = optionRepository.findById(optionQuantityDTO.optionId()).orElseThrow(() -> new NotFoundException("해당 옵션이 없음"));
         option.addQuantity(optionQuantityDTO.quantity());
 
@@ -58,19 +54,19 @@ public class OptionService {
         if (option.getQuantity() < optionQuantityDTO.quantity())
             throw new BadRequestException("재고보다 많은 물건 주문 불가능");
         option.subQuantity(optionQuantityDTO.quantity());
-        User user = userRepository.findById(jwtUtil.getUserIdFromToken(token)).orElseThrow(()->new NotFoundException("유저 없음"));
+        User user = userRepository.findById(jwtUtil.getUserIdFromToken(token)).orElseThrow(() -> new NotFoundException("유저 없음"));
         String kakaoToken = jwtUtil.getKakaoTokenFromToken(token);
         Order order = new Order(optionQuantityDTO, option, user);
         user.addOrder(order);
 
-        if(kakaoToken!=null)
+        if (kakaoToken != null)
             sendMessage(order, kakaoToken);
         wishListRepository.findByUserAndProduct(user, option.getProduct()).ifPresent(wishList -> wishListRepository.deleteById(wishList.getId()));
         order = orderRepository.save(order);
         return order.toResponseDTO();
     }
 
-    private void sendMessage(Order order, String token)  {
+    private void sendMessage(Order order, String token) {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
@@ -104,7 +100,7 @@ public class OptionService {
             throw new BadRequestException("잘못된 요청");
     }
 
-    public void add(SaveOptionDTO saveOptionDTO) {
+    public void saveOption(SaveOptionDTO saveOptionDTO) {
         Product product = productRepository.findById(saveOptionDTO.product_id()).orElseThrow(() -> new NotFoundException("해당 물품이 없음"));
         optionRepository.findByOption(saveOptionDTO.option()).ifPresent(c -> {
             throw new BadRequestException("이미 존재하는 옵션");
@@ -113,7 +109,7 @@ public class OptionService {
         optionRepository.save(option);
     }
 
-    public void delete(int id) {
+    public void deleteOption(int id) {
         Option option = optionRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 옵션이 없음"));
         Product product = option.getProduct();
         product.deleteOption(option);
@@ -121,7 +117,7 @@ public class OptionService {
     }
 
     @Transactional
-    public void update(UpdateOptionDTO updateOptionDTO) {
+    public void updateOption(UpdateOptionDTO updateOptionDTO) {
         Option option = optionRepository.findById(updateOptionDTO.id()).orElseThrow(() -> new NotFoundException("해당 옵션이 없음"));
         optionRepository.findByOption(updateOptionDTO.option()).ifPresent(c -> {
             throw new BadRequestException("이미 존재하는 옵션");

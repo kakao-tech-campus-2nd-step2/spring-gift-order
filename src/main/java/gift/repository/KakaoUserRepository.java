@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface KakaoUserRepository extends JpaRepository<KakaoUser,Integer> {
+public interface KakaoUserRepository extends JpaRepository<KakaoUser, Integer> {
     @Query("select k.user from KakaoUser k where k.kakaoUserId=:kakaoUserId")
     Optional<User> findByKakaoUserId(Long kakaoUserId);
 }

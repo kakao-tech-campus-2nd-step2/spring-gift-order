@@ -15,6 +15,7 @@ import gift.repository.ProductRepository;
 
 import gift.repository.UserRepository;
 import gift.repository.WishListRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,18 +25,14 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class WishListService {
-    @Autowired
-    WishListRepository wishListRepository;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    JWTUtil jwtUtil;
+    private final WishListRepository wishListRepository;
+    private final ProductRepository productRepository;
+    private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    public void add(String token, int productId) {
+    public void saveWishList(String token, int productId) {
         User user = getUserFromToken(token);
         Product product = productRepository.findById(productId).orElseThrow(() -> new NotFoundException("해당 물건이없습니다."));
         if (wishListRepository.findByUserAndProduct(user, product).isPresent())

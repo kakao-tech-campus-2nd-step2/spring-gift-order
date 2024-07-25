@@ -19,8 +19,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     List<WishList> wishlist = new ArrayList<>();
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy = "user")
     List<Order> orders = new ArrayList<>();
+
     public User() {
     }
 
@@ -49,10 +50,11 @@ public class User {
         this.wishlist.remove(wishList);
     }
 
-    public void addOrder(Order order){
+    public void addOrder(Order order) {
         this.orders.add(order);
     }
-    public void deleteOrder(Order order){
+
+    public void deleteOrder(Order order) {
         this.orders.remove(order);
     }
 

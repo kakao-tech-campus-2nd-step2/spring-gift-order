@@ -17,6 +17,7 @@ import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,13 +34,11 @@ import static java.util.Arrays.stream;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class ProductService {
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    private OptionRepository optionRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
+    private final OptionRepository optionRepository;
+    private final CategoryRepository categoryRepository;
 
     public Page<ProductWithOptionDTO> getAllProductsWithOption(Pageable pageable) {
         return optionRepository.findAllWithOption(pageable);
@@ -107,7 +106,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void modifyProduct(ModifyProductDTO modifyProductDTO) {
+    public void updateProduct(ModifyProductDTO modifyProductDTO) {
         Product product = productRepository.findById(modifyProductDTO.id()).orElseThrow(() -> new NotFoundException("물건이 없습니다."));
         product.modifyProduct(modifyProductDTO);
     }

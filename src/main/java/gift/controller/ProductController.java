@@ -6,6 +6,7 @@ import gift.dto.product.SaveProductDTO;
 import gift.dto.product.ShowProductDTO;
 import gift.entity.Product;
 import gift.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,9 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
+@RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -48,8 +49,8 @@ public class ProductController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/products")
-    public String modifyProduct(@RequestBody ModifyProductDTO product) {
-        productService.modifyProduct(product);
+    public String updateProduct(@RequestBody ModifyProductDTO product) {
+        productService.updateProduct(product);
         return "redirect:api/products";
     }
 

@@ -18,6 +18,7 @@ import gift.exception.exception.ServerInternalException;
 import gift.exception.exception.UnAuthException;
 import gift.repository.KakaoUserRepository;
 import gift.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -33,18 +34,21 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    JWTUtil jwtUtil;
-    @Autowired
-    KakaoUserRepository kakaoUserRepository;
+    private final UserRepository userRepository;
+    private final JWTUtil jwtUtil;
+    private final KakaoUserRepository kakaoUserRepository;
 
     @Value("${kakao.client_id}")
     String client_id;
     @Value("${kakao.redirect_uri}")
     String redirect_uri;
+    @Value("${kakao.token_url}")
+    String token_url;
+    @Value("${kakao.info_url}")
+    String info_url;
+
     //https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id=
     String code = "";
     ObjectMapper objectMapper = new ObjectMapper();
@@ -61,18 +65,13 @@ public class UserService {
         if (!user.getPassword().equals(loginDTO.password()))
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
 
-        return new Token(jwtUtil.generateToken(user,null));
+        return new Token(jwtUtil.generateToken(user, null));
     }
 
-    private String getKakaoToken()  {
-        var url = "https://kauth.kakao.com/oauth/token";
-        var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", client_id);
-        body.add("redirect_uri", redirect_uri);
-        body.add("code", code);
+    private String getKakaoToken() {
+        var url = token_url;
+        var headers = makeTokenHeader();
+        var body = makeTokenBody();
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         ResponseEntity<String> response;
@@ -86,37 +85,62 @@ public class UserService {
         return kakaoToken.access_token();
     }
 
-    private Long getKakaoUserId(String token){
-        var url = "https://kapi.kakao.com/v2/user/me";
+    private HttpHeaders makeTokenHeader(){
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        return headers;
+    }
+
+    private LinkedMultiValueMap<String, String> makeTokenBody(){
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", client_id);
+        body.add("redirect_uri", redirect_uri);
+        body.add("code", code);
+        return body;
+    }
+
+    private Long getKakaoUserId(String token) {
+        var url = info_url;
+        var headers = makeIdHeader(token);
+        var body = makeIdBody();
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+
+        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        JsonObject jsonObject = JsonParser.parseString(response.getBody()).getAsJsonObject();
+        return jsonObject.get("id").getAsLong();
+    }
+
+    private LinkedMultiValueMap<String, String> makeIdBody() {
+        var body = new LinkedMultiValueMap<String, String>();
+        return body;
+    }
+
+    private HttpHeaders makeIdHeader(String token){
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-        var body = new LinkedMultiValueMap<String,String>();
-        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-
-        ResponseEntity<String> response;
-        response = restTemplate.postForEntity(url, request, String.class);
-        JsonObject jsonObject = JsonParser.parseString(response.getBody()).getAsJsonObject();
-
-        return jsonObject.get("id").getAsLong();
+        return headers;
     }
 
     public Token kakaoLogin() {
         String kakaoToken = getKakaoToken();
         Long kakaoUserId = getKakaoUserId(kakaoToken);
         User user = findUserByKakaoUserId(kakaoUserId);
-        String token = jwtUtil.generateToken(user,kakaoToken);
+        String token = jwtUtil.generateToken(user, kakaoToken);
         return new Token(token);
     }
 
     private User findUserByKakaoUserId(Long kakaoUserId) {
         Optional<User> optionalUser = kakaoUserRepository.findByKakaoUserId(kakaoUserId);
-        if(optionalUser.isPresent())
+        if (optionalUser.isPresent())
             return optionalUser.get();
-        User user = new User("ID"+ kakaoUserId.toString(),"password" + kakaoUserId.toString());
+        User user = new User("Kakao ID" + kakaoUserId.toString(), "password" + kakaoUserId.toString());
         user = userRepository.save(user);
-        KakaoUser kakaoUser = new KakaoUser(kakaoUserId,user);
+        KakaoUser kakaoUser = new KakaoUser(kakaoUserId, user);
         kakaoUserRepository.save(kakaoUser);
         return user;
     }
+
+
 }

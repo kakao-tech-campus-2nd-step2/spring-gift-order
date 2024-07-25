@@ -3,6 +3,8 @@ package gift.entity;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import gift.dto.product.ModifyProductDTO;
+import gift.exception.exception.BadRequestException;
+import gift.exception.exception.UnAuthException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

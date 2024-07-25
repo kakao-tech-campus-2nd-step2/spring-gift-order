@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-@Entity(name="order_tb")
+@Entity(name = "order_tb")
 @EntityListeners(AuditingEntityListener.class)
 public class Order {
     @Id
