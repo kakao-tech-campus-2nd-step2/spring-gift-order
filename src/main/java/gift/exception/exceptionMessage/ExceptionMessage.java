@@ -18,5 +18,12 @@ public class ExceptionMessage {
     public static final String DENY_OPTION_DELETE =  "상품의 옵션은 항상 1개 이상이어야 합니다.";
     public static final String OPTION_QUANTITY_NOT_MINUS =  "옵션 수량은 0보다 커야합니다.";
     public static final String JSON_PROCESSING_ERROR =  "처리할 수 없는 JSON 입니다.";
+    public static final String API_BAD_REQUEST =  "API 사용에 필요한 파라미터가 잘못 되었습니다.";
+    public static final String API_UNAUTHORIZED =  "API 사용 인증 자격 증명에 실패했습니다.";
+    public static final String API_FORBIDDEN =  "API 사용 권한이 없습니다.";
+    public static final String API_TOO_MANY_REQUESTS =  "API 사용에 정해진 사용량 또는 요청 한도를 초과했습니다.";
+    public static final String API_INTERNAL_SERVER_ERROR =  "API 서버 오류";
+    public static final String API_BAD_GATEWAY =  "API 게이트 웨이 오류";
+    public static final String API_SERVICE_UNAVAILABLE =  "API 서비스 점검 중";
 
 }
