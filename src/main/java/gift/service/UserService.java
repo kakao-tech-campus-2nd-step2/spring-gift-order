@@ -1,5 +1,7 @@
 package gift.service;
 
+import gift.auth.AuthService;
+import gift.auth.EmailAuthService;
 import gift.dto.UserLoginDto;
 import gift.dto.UserRegisterDto;
 import gift.dto.UserResponseDto;
@@ -16,12 +18,12 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final TokenService tokenService;
-    private final KakaoAuthService kakaoAuthService;
+    private final AuthService emailAuthService;
+    private final AuthService kakaoAuthService;
 
-    public UserService(UserRepository userRepository, TokenService tokenService, KakaoAuthService kakaoAuthService) {
+    public UserService(UserRepository userRepository, AuthService emailAuthService, AuthService kakaoAuthService) {
         this.userRepository = userRepository;
-        this.tokenService = tokenService;
+        this.emailAuthService = emailAuthService;
         this.kakaoAuthService = kakaoAuthService;
     }
 
@@ -36,14 +38,8 @@ public class UserService {
     }
 
     public String loginUser(UserLoginDto userLoginDto) {
-        User user = userRepository.findByEmail(userLoginDto.getEmail())
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS));
-
-        if (!user.isPasswordCorrect(userLoginDto.getPassword())) {
-            throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
-        }
-
-        return tokenService.generateToken(user.getEmail(), "email");
+        User user = ((EmailAuthService) emailAuthService).loginUser(userLoginDto);
+        return emailAuthService.generateToken(user);
     }
 
     public List<UserResponseDto> getAllUsers() {

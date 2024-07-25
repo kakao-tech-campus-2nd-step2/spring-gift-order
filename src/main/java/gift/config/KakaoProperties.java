@@ -11,14 +11,16 @@ public class KakaoProperties {
     private final String authUrl;
     private final String tokenUrl;
     private final String infoUrl;
+    private final String messageUrl; // 메시지 전송 API URL 추가
 
     @ConstructorBinding
-    public KakaoProperties(String clientId, String redirectUri, String authUrl, String tokenUrl, String infoUrl) {
+    public KakaoProperties(String clientId, String redirectUri, String authUrl, String tokenUrl, String infoUrl, String messageUrl) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.authUrl = authUrl;
         this.tokenUrl = tokenUrl;
         this.infoUrl = infoUrl;
+        this.messageUrl = messageUrl;
     }
 
     public String getClientId() {
@@ -39,5 +41,9 @@ public class KakaoProperties {
 
     public String getInfoUrl() {
         return infoUrl;
+    }
+
+    public String getMessageUrl() {
+        return messageUrl;
     }
 }

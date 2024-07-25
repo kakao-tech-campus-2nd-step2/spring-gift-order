@@ -27,6 +27,7 @@ class OptionTest {
 
         assertEquals("새 옵션 이름", option.getName().getValue());
     }
+
     @Test
     void 옵션_이름_성공() {
         OptionName optionName = new OptionName("옵션 이름");

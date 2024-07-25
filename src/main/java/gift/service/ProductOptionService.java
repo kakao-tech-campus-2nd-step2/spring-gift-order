@@ -11,7 +11,6 @@ import gift.mapper.ProductOptionMapper;
 import gift.repository.OptionRepository;
 import gift.repository.ProductOptionRepository;
 import gift.repository.ProductRepository;
-import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.logging.Logger;
 
 @Service
 public class ProductOptionService {
@@ -52,9 +50,7 @@ public class ProductOptionService {
     @Transactional(readOnly = true)
     public List<ProductOptionResponseDto> getProductOptions(Long productId) {
         Product product = getProductById(productId);
-        List<ProductOption> productOptions = productOptionRepository.findAll().stream()
-                .filter(po -> po.getProduct().equals(product))
-                .collect(Collectors.toList());
+        List<ProductOption> productOptions = productOptionRepository.findByProduct(product);
         return productOptions.stream()
                 .map(ProductOptionMapper::toProductOptionResponseDto)
                 .collect(Collectors.toList());
