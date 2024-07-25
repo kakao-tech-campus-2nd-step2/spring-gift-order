@@ -25,18 +25,19 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
-    public Member register(MemberRequest memberRequest) {
-        Optional<Member> oldMember = memberRepository.findByEmail(memberRequest.getEmail());
+    public Member register(MemberRequest memberRequest, String loginType) {
+        Optional<Member> oldMember = memberRepository.findByEmailAndLoginType(memberRequest.getEmail(), loginType);
+
         if (oldMember.isPresent()) {
             throw new DuplicateMemberEmailException(DUPLICATE_MEMBER_EMAIL);
         }
-        Member member = new Member(memberRequest.getEmail(), memberRequest.getPassword());
+        Member member = new Member(memberRequest.getEmail(), memberRequest.getPassword(), loginType);
         memberRepository.save(member);
         return member;
     }
 
-    public Member authenticate(MemberRequest memberRequest) {
-        Member member = memberRepository.findByEmail(memberRequest.getEmail())
+    public Member authenticate(MemberRequest memberRequest, String loginType) {
+        Member member = memberRepository.findByEmailAndLoginType(memberRequest.getEmail(), loginType)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
 
         if (!memberRequest.getPassword().equals(member.getPassword())) {
@@ -45,8 +46,8 @@ public class MemberService {
         return member;
     }
 
-    public Member findByEmail(String email) {
-        return memberRepository.findByEmail(email)
+    public Member findByEmailAndLoginType(String email, String loginType) {
+        return memberRepository.findByEmailAndLoginType(email, loginType)
                 .orElseThrow(() -> new MemberNotFoundException(MEMBER_NOT_FOUND));
     }
 
