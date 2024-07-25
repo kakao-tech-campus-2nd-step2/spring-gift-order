@@ -1,6 +1,6 @@
 package gift.util.validator.databaseValidator;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.entity.Member;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import gift.repository.MemberRepository;
