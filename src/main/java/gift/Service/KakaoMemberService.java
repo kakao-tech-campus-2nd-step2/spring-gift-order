@@ -17,13 +17,13 @@ public class KakaoMemberService {
   RestClient restClient = RestClient.builder().build();
   static Dotenv dotenv = Dotenv.configure().load();
   private static final String API_KEY = dotenv.get("API_KEY");
+  private static final String URL = "https://kauth.kakao.com/oauth/token";
 
   public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository){
     this.kakaoJwtTokenRepository=kakaoJwtTokenRepository;
   }
 
   public KakaoJwtToken getToken(String autuhorizationKey) {
-    var url = "https://kauth.kakao.com/oauth/token";
     var body = new LinkedMultiValueMap<String, String>();
     String clientId = API_KEY;
     String code = autuhorizationKey;
@@ -33,7 +33,7 @@ public class KakaoMemberService {
     body.add("redirect_url", "http://localhost:8080");
     body.add("code", code);
     var response = restClient.post()
-      .uri(url)
+      .uri(URL)
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
       .body(body)
       .retrieve()
