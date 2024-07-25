@@ -23,6 +23,10 @@ public class KakaoService {
     @Value( "${kakao.redirect_uri}" )
     String redirect_uri;
 
+    private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
+
+
     public String getClientId() {
         return client_id;
     }
@@ -32,7 +36,6 @@ public class KakaoService {
     }
 
     public String getToken(String code) {
-        var url = "https://kauth.kakao.com/oauth/token";
 
         // HTTP 헤더 설정
         var headers = new HttpHeaders();
@@ -46,7 +49,7 @@ public class KakaoService {
         body.add("code", code);
 
         // 요청 엔티티 생성
-        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(TOKEN_URL));
 
         // RestTemplate을 사용하여 POST 요청 전송
         RestTemplate restTemplate = new RestTemplate();
@@ -64,11 +67,10 @@ public class KakaoService {
     }
 
     public String getUserInfo(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
-        RequestEntity<Void> request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
+        RequestEntity<Void> request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(USER_INFO_URL));
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(request, String.class);
