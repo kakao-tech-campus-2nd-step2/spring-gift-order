@@ -5,13 +5,10 @@ import gift.user.dto.request.UserLoginRequest;
 import gift.user.dto.request.UserRegisterRequest;
 import gift.user.dto.response.UserResponse;
 import gift.user.repository.UserJpaRepository;
-import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KakaoUserService {
-
-    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final KakaoLoginClient kakaoLoginClient;
     private final UserService userService;
