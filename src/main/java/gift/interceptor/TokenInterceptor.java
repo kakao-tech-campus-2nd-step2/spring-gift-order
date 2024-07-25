@@ -23,7 +23,12 @@ public class TokenInterceptor implements HandlerInterceptor {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            if (kakaoMemberService.checkTokenExists(token) || jwtUtil.isTokenValid(token)) {
+
+            if (jwtUtil.isTokenValid(token)) {
+                return true;
+            }
+
+            if (kakaoMemberService.isKakaoTokenValid(token)) {
                 return true;
             }
         }
