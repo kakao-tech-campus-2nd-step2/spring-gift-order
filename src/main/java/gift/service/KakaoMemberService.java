@@ -20,7 +20,7 @@ public class KakaoMemberService {
 
     @Value("${kakao.client-id}")
     private String clientId;
-    @Value("${kakao.redirect-uri}")
+    @Value("${kakao.redirect-url}")
     private String redirectUri;
     private final RestTemplate restTemplate;
 
@@ -51,6 +51,7 @@ public class KakaoMemberService {
         ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request, KakaoTokenResponse.class);
         KakaoTokenResponse kakaoTokenResponse = Optional.ofNullable(response.getBody()).orElseThrow(() -> new ResponseBodyNullException(RESPONSE_BODY_NULL));
 
+        System.out.println("accessToken: "+kakaoTokenResponse.access_token());
         return kakaoTokenResponse.access_token();
     }
 
