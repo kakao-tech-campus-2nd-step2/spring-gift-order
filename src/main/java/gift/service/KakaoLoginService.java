@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.response.KakaoTokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +26,7 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public String getAccessToken(String authorizationCode) {
+    public KakaoTokenResponse getAccessToken(String authorizationCode) {
         String url = "https://kauth.kakao.com/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -41,18 +42,16 @@ public class KakaoLoginService {
 
         RestTemplate restTemplate = new RestTemplate();
         try {
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(request, new ParameterizedTypeReference<Map<String, Object>>() {});
+            ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(
+                    request,
+                    KakaoTokenResponse.class
+            );
 
             if (!response.getStatusCode().is2xxSuccessful()) {
                 throw new RuntimeException("access token 얻기 실패: HTTP 상태 " + response.getStatusCode());
             }
 
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody == null || !responseBody.containsKey("access_token")) {
-                throw new RuntimeException("응답이 올바르지 않습니다: 'access_token'이 없습니다");
-            }
-
-            return (String) responseBody.get("access_token");
+            return response.getBody();
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("access token 얻기 실패: "  + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
