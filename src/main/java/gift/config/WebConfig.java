@@ -1,5 +1,7 @@
 package gift.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.function.client.WebClient;
 import gift.security.LoginMemberArgumentResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -19,5 +21,12 @@ public class WebConfig implements WebMvcConfigurer {
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
     argumentResolvers.add(loginMemberArgumentResolver);
+  }
+
+
+  @Bean
+  public WebClient webClient() {
+    return WebClient.builder().build();
+
   }
 }

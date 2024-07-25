@@ -53,4 +53,9 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleQuantityException(QuantityException ex, WebRequest request) {
     return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
   }
+
+  @ExceptionHandler(InvalidUserInputException.class)
+  public ResponseEntity<String> handleInvalidUserInputException(InvalidUserInputException ex) {
+    return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+  }
 }
