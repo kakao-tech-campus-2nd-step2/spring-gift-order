@@ -24,9 +24,10 @@ public class MemberService {
 
     public void registerNewMember(MemberDto memberDto) {
         Member member = new Member(memberDto.email(),memberDto.password(), memberDto.role());
-        if(memberRepository.findByEmail(member.getEmail()).isPresent()){
+        memberRepository.findByEmail(member.getEmail()).ifPresent(existingMember -> {
             throw new ValueAlreadyExistsException("Email already exists in Database");
-        }
+        });
+
         memberRepository.save(member);
     }
 
@@ -40,9 +41,10 @@ public class MemberService {
         Member registeredMember = memberRepository.findByEmail(member.getEmail())
                 .orElseThrow(() -> new AuthenticationException("Member not exists in Database"));
 
-        if (!member.isPasswordEqual(registeredMember.getPassword())){
+        if (member.isPasswordNotEqual(registeredMember.getPassword())){
             throw new AuthenticationException("Incorrect password");
         }
+
         return jwtTokenProvider.generateToken(member);
     }
 
