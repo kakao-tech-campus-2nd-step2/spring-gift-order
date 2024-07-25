@@ -47,4 +47,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleOptionQuantityException(InvalidOptionException e){
     	return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(KakaoNotEnabledException.class)
+    public ResponseEntity<String> handleKakaoNotEnabledException(KakaoNotEnabledException e){
+    	return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+    }
 }
