@@ -45,10 +45,9 @@ public class KakaoLoginService {
         );
 
         KakaoTokenDTO responseBody = response.getBody();
-        if (responseBody != null) {
-            return responseBody.accessToken();
+        if (responseBody == null) {
+            return null;
         }
-
-        return null;
+        return responseBody.access_token();
     }
 }

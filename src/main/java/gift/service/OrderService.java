@@ -5,22 +5,31 @@ import gift.exception.RepositoryException;
 import gift.model.Option;
 import gift.model.Order;
 import gift.model.OrderDTO;
-import gift.repository.MemberRepository;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
+    private final RestTemplate restTemplate;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
+        RestTemplate restTemplate) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
+        this.restTemplate = restTemplate;
     }
 
     public OrderDTO createOrder(OrderDTO orderDTO) {
@@ -35,7 +44,22 @@ public class OrderService {
         return convertToDTO(orderRepository.save(order));
     }
 
-    public void sendOrderMessage(OrderDTO orderDTO) {
+    public void sendOrderMessage(OrderDTO orderDTO, String accessToken) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"object_type\":\"text\",\"text\":\"")
+            .append(orderDTO.message())
+            .append("\",\"link\":{\"web_url\":\"\"}}");
+
+        body.add("template_object", sb.toString());
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
     }
 

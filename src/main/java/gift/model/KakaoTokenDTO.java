@@ -1,11 +1,11 @@
 package gift.model;
 
 public record KakaoTokenDTO(
-    String tokenType,
-    String accessToken,
-    int expiresIn,
-    String refreshToken,
-    int refreshTokenExpiresIn
+    String token_type,
+    String access_token,
+    int expires_in,
+    String refresh_token,
+    int refresh_token_expires_in
 
 ) {
 

@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.model.KakaoAuthInfo;
 import gift.model.OrderDTO;
 import gift.service.OrderService;
 import org.springframework.http.HttpStatus;
@@ -20,9 +21,10 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<?> sendOrderMessage(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> sendOrderMessage(@RequestBody OrderDTO orderDTO,
+        KakaoAuthInfo kakaoAuthInfo) {
         OrderDTO response = orderService.createOrder(orderDTO);
-        orderService.sendOrderMessage(orderDTO);
+        orderService.sendOrderMessage(orderDTO, kakaoAuthInfo.token());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
