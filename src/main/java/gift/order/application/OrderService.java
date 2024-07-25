@@ -57,7 +57,7 @@ public class OrderService {
         );
     }
 
-    public void sendKakaoMessage(Member member, String message, Option option) {
+    private void sendKakaoMessage(Member member, String message, Option option) {
         kakaoClient.sendMessageToMe(
                 member.getKakaoAccessToken(),
                 message,
