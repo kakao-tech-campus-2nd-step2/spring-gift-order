@@ -69,12 +69,10 @@ public class OptionService {
     return ConverterToDto.convertToOptionDto(updatedOption);
   }
 
-  public void optionQuantitySubtract(OptionDto optionDto, int amount)
-    throws IllegalAccessException {
+  public void optionQuantitySubtract(OptionDto optionDto, int amount) {
     Long id = optionDto.getId();
     Option option = optionRepository.findById(id)
       .orElseThrow(() -> new EmptyResultDataAccessException("해당 데이터가 없습니다", 1));
-
     option.subtract(amount);
     optionRepository.save(option);
   }

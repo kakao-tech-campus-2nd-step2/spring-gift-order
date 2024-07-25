@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.io.IOException;
 
 @Entity
 @Table
@@ -66,10 +67,7 @@ public class Option {
     return this.product;
   }
 
-  public void subtract(int amount) throws IllegalAccessException {
-    if (amount > this.quantity) {
-      throw new IllegalAccessException("기존의 수량보다 빼는 수량이 더 많습니다.");
-    }
+  public void subtract(int amount)  {
     this.quantity -= amount;
   }
 }
