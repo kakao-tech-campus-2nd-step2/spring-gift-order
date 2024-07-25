@@ -1,7 +1,7 @@
 package gift.service;
 
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.entity.Member;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.EmailAlreadyHereException;
@@ -74,6 +74,37 @@ public class MemberService {
         } catch (Exception e) {
             throw new InternalServerException(e.getMessage());
 
+        }
+    }
+
+    @Transactional
+    public void setMemeberAccessToken(String email, String accessToken) throws RuntimeException {
+        try{
+            Member member = memberRepository.findByEmail(email).orElseThrow(()
+                    -> new BadRequestException(email + "을(를) 가지는 유저를 찾을 수 없습니다."));
+
+            member.setAccessToken(accessToken);
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public String getMemberAccessToken(String email) throws RuntimeException {
+        try{
+            Member member = memberRepository.findByEmail(email).orElseThrow(()
+                    -> new BadRequestException(email + "을(를) 가지는 유저를 찾을 수 없습니다."));
+            String accessToken = member.getAccessToken();
+            if (accessToken.isBlank())
+                throw new BadRequestException("해당 사용자의 토큰이 없습니다.");
+
+            return accessToken;
+        } catch (BadRequestException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
         }
     }
 }
