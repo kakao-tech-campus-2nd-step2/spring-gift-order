@@ -32,3 +32,5 @@ spring:
       client_id: ${kakao_client_id}
       redirect_uri: ${kakao_redirect_uri}
       grant_type: authorization_code
+      code-url: https://kauth.kakao.com/oauth/authorize
+      secret: ${kakao_secret}
