@@ -3,10 +3,10 @@ package gift.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
-import gift.dto.MemberDTO;
-import gift.dto.ProductPostRequestDTO;
-import gift.dto.ProductRequestDTO;
-import gift.dto.WishDTO;
+import gift.dto.betweenClient.member.MemberDTO;
+import gift.dto.betweenClient.product.ProductPostRequestDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
+import gift.dto.betweenClient.wish.WishDTO;
 import gift.repository.CategoryRepository;
 import gift.repository.WishRepository;
 import java.util.List;

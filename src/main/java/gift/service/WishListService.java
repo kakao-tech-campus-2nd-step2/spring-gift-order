@@ -1,8 +1,8 @@
 package gift.service;
 
-import gift.dto.MemberDTO;
-import gift.dto.ProductRequestDTO;
-import gift.dto.WishDTO;
+import gift.dto.betweenClient.member.MemberDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
+import gift.dto.betweenClient.wish.WishDTO;
 import gift.entity.Member;
 import gift.entity.Product;
 import gift.entity.Wish;

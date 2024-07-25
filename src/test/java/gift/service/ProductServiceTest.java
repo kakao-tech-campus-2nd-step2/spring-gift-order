@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
-import gift.dto.ProductPostRequestDTO;
-import gift.dto.ProductRequestDTO;
+import gift.dto.betweenClient.product.ProductPostRequestDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
 import gift.entity.Category;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;

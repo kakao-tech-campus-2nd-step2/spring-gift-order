@@ -3,10 +3,10 @@ package gift.controller;
 import static gift.util.ResponseEntityUtil.responseError;
 
 import gift.constants.ResponseMsgConstants;
-import gift.dto.ProductPostRequestDTO;
-import gift.dto.ProductResponseDTO;
-import gift.dto.ProductRequestDTO;
-import gift.dto.ResponseDTO;
+import gift.dto.betweenClient.product.ProductPostRequestDTO;
+import gift.dto.betweenClient.product.ProductResponseDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
+import gift.dto.betweenClient.ResponseDTO;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
