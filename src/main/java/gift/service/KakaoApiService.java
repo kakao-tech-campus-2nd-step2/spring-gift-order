@@ -1,7 +1,6 @@
 package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.KakaoProperties;
 import gift.OAuthToken;
@@ -18,13 +17,15 @@ public class KakaoApiService {
 
     private final KakaoProperties kakaoProperties;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     private static final String GRANT_TYPE = "authorization_code";
     private static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
 
-    public KakaoApiService(KakaoProperties kakaoProperties, RestTemplate restTemplate) {
+    public KakaoApiService(KakaoProperties kakaoProperties, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.kakaoProperties = kakaoProperties;
         this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
     }
 
     private static HttpHeaders makeHeaders() {
@@ -34,7 +35,7 @@ public class KakaoApiService {
     }
 
     private MultiValueMap<String, String> makeBody(String code) {
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", kakaoProperties.kakaoClientId());
         body.add("redirect_uri", kakaoProperties.kakaoRedirectUrl());
@@ -42,11 +43,14 @@ public class KakaoApiService {
         return body;
     }
 
+    private OAuthToken parseOAuthToken(String json) throws JsonProcessingException {
+        return objectMapper.readValue(json, OAuthToken.class);
+    }
+
     public String getAccessToken(String code) {
         HttpHeaders headers = makeHeaders();
         MultiValueMap<String, String> body = makeBody(code);
 
-        // HttpHeader + HttpBody -> 하나의 Object
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(body, headers);
 
@@ -58,18 +62,14 @@ public class KakaoApiService {
                     String.class
             );
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            OAuthToken oauthToken = objectMapper.readValue(response.getBody(), OAuthToken.class);
+            OAuthToken oauthToken = parseOAuthToken(response.getBody());
 
             return oauthToken.getAccess_token();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             throw ex; // 예외를 던져 GlobalExceptionHandler에서 처리
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error processing JSON response", e);
         }
-        return null;
     }
 
 }
