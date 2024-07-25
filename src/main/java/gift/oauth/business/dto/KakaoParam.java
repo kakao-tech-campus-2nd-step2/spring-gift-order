@@ -9,11 +9,13 @@ public class KakaoParam implements OAuthParam {
     private final String clientId;
     private final String redirectUri;
     private final String code;
+    private final String secret;
 
     public KakaoParam(KakaoConfig kakaoConfig, String code) {
-        this.grantType = kakaoConfig.getGrantType();
-        this.clientId = kakaoConfig.getClientId();
-        this.redirectUri = kakaoConfig.getRedirectUri();
+        this.grantType = kakaoConfig.grantType();
+        this.clientId = kakaoConfig.clientId();
+        this.redirectUri = kakaoConfig.redirectUri();
+        this.secret = kakaoConfig.secret();
         this.code = code;
     }
 
@@ -30,5 +32,17 @@ public class KakaoParam implements OAuthParam {
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
         return body;
+    }
+
+    @Override
+    public MultiValueMap<String, String> getEmailRequestBody() {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("property_keys", "[\"kakao_account.email\"]");
+        return body;
+    }
+
+    @Override
+    public String secretKey() {
+        return secret;
     }
 }
