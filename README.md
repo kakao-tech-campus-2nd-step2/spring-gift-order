@@ -141,3 +141,20 @@ step-3의 구현 사항
       => 기존 로그인은 그대로 두기
       => oauth를 통해 토큰 발행 -> 해당 토큰을 추가해 access token 발급
       => 숨겨야 할 데이터인 api key, client id, redirect uri는 별도의 proerties 파일 생성하여 .gitignore에 추가
+
+2. step-2의 구현사항
+   1. 카카오톡 메시지 API를 사용하여 주문하기 기능을 구현
+      => 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
+      => 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감된다.
+      => 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
+      => 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
+      => 메시지는 메시지 템플릿의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.\
+   2. 예상 개발 과정
+      1. OrderEntity 클래스 생성
+      2. OrderRequest, OrderResponse 클래스 생성
+      3. OrderRepository 인터페이스 생성
+      4. OrderService 클래스 생성
+      5. OrderRestController 클래스 생성(/api/order POST 추가)
+   3. 카카오톡 나에게 메시지 보내기
+      => text 타입으로 전송
+      => OrderResponse의 내용을 전달
