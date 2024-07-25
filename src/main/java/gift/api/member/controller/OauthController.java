@@ -1,6 +1,7 @@
 package gift.api.member.controller;
 
 import gift.api.member.config.KakaoProperties;
+import gift.api.member.enums.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ public class OauthController {
     public RedirectView requestAuthorizationCode() {
         return new RedirectView(
             String.format(kakaoProperties.url().requestFormat(),
-                kakaoProperties.url().redirect(), kakaoProperties.clientId()));
+                String.join(",", Scope.EMAIL.id(), Scope.MESSAGE.id()),
+                kakaoProperties.url().redirect(),
+                kakaoProperties.clientId()));
     }
 }

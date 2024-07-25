@@ -1,6 +1,6 @@
 package gift.global.utils;
 
-import gift.api.member.Role;
+import gift.api.member.enums.Role;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import javax.crypto.SecretKey;

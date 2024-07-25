@@ -1,4 +1,4 @@
-package gift.api.member;
+package gift.api.member.enums;
 
 public enum Role {
     USER,
