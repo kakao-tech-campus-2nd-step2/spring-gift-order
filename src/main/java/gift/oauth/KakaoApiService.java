@@ -9,16 +9,16 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class KakaoApiClient {
+public class KakaoApiService {
 
     private final KakaoApiSecurityProperties kakaoApiSecurityProps;
     private final RestClient client = RestClient.builder().build();
 
-    public KakaoApiClient(KakaoApiSecurityProperties kakaoApiSecurityProps) {
+    public KakaoApiService(KakaoApiSecurityProperties kakaoApiSecurityProps) {
         this.kakaoApiSecurityProps = kakaoApiSecurityProps;
     }
 
-    public URI requestLogin() {
+    public URI getKakaoLoginPage() {
         return kakaoApiSecurityProps.getLoginUri();
     }
 

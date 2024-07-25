@@ -7,7 +7,7 @@ import gift.exception.customException.CustomException;
 import gift.exception.customException.PassWordMissMatchException;
 import gift.model.user.UserDTO;
 import gift.model.user.UserForm;
-import gift.oauth.KakaoApiClient;
+import gift.oauth.KakaoApiService;
 import gift.service.JwtProvider;
 import gift.service.UserService;
 import jakarta.validation.Valid;
@@ -27,10 +27,10 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final KakaoApiClient kakaoApiClient;
+    private final KakaoApiService kakaoApiClient;
 
     public AuthController(UserService userService, JwtProvider jwtProvider,
-        KakaoApiClient kakaoApiClient) {
+        KakaoApiService kakaoApiClient) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
         this.kakaoApiClient = kakaoApiClient;
@@ -39,7 +39,7 @@ public class AuthController {
     @GetMapping("/login/kakao")
     public ResponseEntity<?> getKakaoLoginPage() {
         var header = new HttpHeaders();
-        var uri = kakaoApiClient.requestLogin();
+        var uri = kakaoApiClient.getKakaoLoginPage();
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
     }
 
