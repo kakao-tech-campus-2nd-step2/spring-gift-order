@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.common.annotation.RedissonLock;
 import gift.common.enums.SocialLoginType;
 import gift.common.exception.EntityNotFoundException;
 import gift.controller.dto.request.OrderRequest;
@@ -56,7 +55,7 @@ public class OrderService {
         }
     }
 
-    @RedissonLock(value = "#productId + ':' + #optionId")
+    @Transactional
     public void subtractQuantity(Long productId, Long optionId, int amount) {
         Product product = productRepository.findProductAndOptionByIdFetchJoin(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + productId + " not found"));
