@@ -26,7 +26,7 @@ public class ApiOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> orderProduct(@RequestHeader("Authorization") String authorization, @Valid @RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Object>> orderProduct(@RequestHeader("Authorization") String authorization, @Valid @RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
         System.out.println("[ApiOrderController] orderProduct()");
         if(bindingResult.hasErrors()) {
             throw new IllegalArgumentException();
