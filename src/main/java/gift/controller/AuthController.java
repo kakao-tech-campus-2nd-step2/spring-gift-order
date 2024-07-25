@@ -1,8 +1,7 @@
 package gift.controller;
 
-import gift.auth.dto.KakaoAccessToken;
-import gift.auth.dto.KakaoLoginAuthorizationCode;
 import gift.auth.dto.KakaoProperties;
+import gift.domain.Role;
 import gift.domain.User;
 import gift.dto.common.apiResponse.ApiResponseBody.SuccessBody;
 import gift.dto.common.apiResponse.ApiResponseGenerator;
@@ -12,14 +11,13 @@ import gift.dto.responsedto.UserResponseDTO;
 import gift.service.AuthService;
 import gift.service.UserService;
 import jakarta.validation.Valid;
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -53,20 +51,35 @@ public class AuthController {
         KakaoProperties properties = authService.getProperties();
         String clientId = properties.clientId();
         String redirectUri = properties.redirectUrl();
-        return "redirect:https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=" + redirectUri +  "&client_id=" + clientId;
+        return
+            "redirect:https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri="
+                + redirectUri + "&client_id=" + clientId;
     }
 
     @GetMapping("/")
     public ResponseEntity<SuccessBody<String>> getAuthorizationCode(
         @RequestParam("code") String code
-    ){
+    ) {
         return ApiResponseGenerator.success(HttpStatus.OK, "인가 코드 추출 성공", code);
     }
 
     @PostMapping("/api/oauth/kakao/login")
-    public ResponseEntity<SuccessBody<String>> login(
-        @RequestHeader KakaoLoginAuthorizationCode kakaoLoginAuthorizationCode) {
-        String accessToken = authService.getAccessToken(kakaoLoginAuthorizationCode.code());
-        return ApiResponseGenerator.success(HttpStatus.OK, "액세스 토큰 발급 성공", accessToken);
+    public ResponseEntity<SuccessBody<UserResponseDTO>> login(
+        @RequestParam("code") String code
+    ) {
+        String accessToken = authService.getAccessToken(code);
+        String userEmail = authService.getUserEmail(accessToken);
+        Optional<User> user = userService.findByEmail(userEmail);
+        final UserResponseDTO[] userResponseDTO = new UserResponseDTO[1];
+        user.ifPresentOrElse(
+            existUser -> userResponseDTO[0] = authService.login(existUser, new UserLoginRequestDTO(userEmail, "kakao")),
+            () -> {
+                User joinedUser = userService.join(
+                    new UserSignupRequestDTO(userEmail, "kakao", Role.USER.getRole()));
+                userResponseDTO[0] = authService.login(joinedUser, new UserLoginRequestDTO(userEmail, "kakao"));
+            }
+        );
+
+        return ApiResponseGenerator.success(HttpStatus.OK, "액세스 토큰 발급 성공", userResponseDTO[0]);
     }
 }
