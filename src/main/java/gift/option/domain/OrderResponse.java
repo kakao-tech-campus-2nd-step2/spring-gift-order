@@ -9,6 +9,18 @@ public class OrderResponse {
     LocalDateTime orderDateTime = LocalDateTime.now();
     String message;
 
+    // 활용 메서드들
+    @Override
+    public String toString() {
+        return "OrderResponse{" +
+                "id=" + id +
+                ", optionId=" + optionId +
+                ", quantity=" + quantity +
+                ", orderDateTime=" + orderDateTime +
+                ", message='" + message + '\'' +
+                '}';
+    }
+
     // Constructors
     public OrderResponse(Long id, Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
         this.id = id;
