@@ -1,27 +1,28 @@
 package gift.user;
 
 public class KakaoUserDTO {
-    UserDTO userDTO;
+    Long id;
     String accessToken;
+    String refreshToken;
 
-    public KakaoUserDTO(UserDTO userDTO, String accessToken) {
-        this.userDTO = userDTO;
+    public KakaoUserDTO() {
+    }
+
+    public KakaoUserDTO(Long id, String accessToken, String refreshToken) {
+        this.id = id;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
-    public UserDTO getUserDTO() {
-        return userDTO;
-    }
-
-    public void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
+    public Long getId() {
+        return id;
     }
 
     public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

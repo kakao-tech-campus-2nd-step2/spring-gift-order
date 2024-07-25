@@ -34,6 +34,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         String accessToken = request.getHeader("Authorization");
 
         if(accessToken == null) return null;
-        return new KakaoUser(jwtService.getAccessToken(accessToken), userService.getUserById(Long.parseLong(jwtService.getClaims(accessToken))));
+
+        return userService.getKakaoUserById(Long.valueOf(jwtService.getClaims(accessToken)));
+        //return new KakaoUser(jwtService.getAccessToken(accessToken), userService.getUserById(Long.parseLong(jwtService.getClaims(accessToken))));
     }
 }

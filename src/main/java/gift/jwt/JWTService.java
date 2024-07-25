@@ -1,5 +1,7 @@
 package gift.jwt;
 
+import gift.user.KakaoUser;
+import gift.user.KakaoUserDTO;
 import gift.user.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -30,15 +32,14 @@ public class JWTService {
                 .compact();
     }
 
-    public String generateAccessToken(User user, String accessToken){
+    public String generateAccessToken(KakaoUserDTO kakaoUser){
         Date now = new Date();
-        String encodeString = user.getEmail() + ":" + user.getPassword();
+        String encodeString = String.valueOf(kakaoUser.getId()).repeat(5);
         secretKey = Base64.getEncoder().encodeToString(encodeString.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
-                .subject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("nickName", user.getNickname())
-                .claim("accessToken", accessToken)
+                .subject(kakaoUser.getId().toString())
+                .claim("accessToken", kakaoUser.getAccessToken())
+                .claim("refreshToken", kakaoUser.getRefreshToken())
                 .issuedAt(now).expiration(createExpiredDate(now))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();

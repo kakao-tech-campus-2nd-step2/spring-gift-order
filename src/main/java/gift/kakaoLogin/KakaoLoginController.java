@@ -9,10 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @Controller
 public class KakaoLoginController {
@@ -25,13 +24,17 @@ public class KakaoLoginController {
 
     private final KakaoLoginService kakaoLoginService;
     private final ProductService productService;
+    private final UserService userService;
+    private final JWTService jwtService;
 
 
     private static final Logger log = LoggerFactory.getLogger(KakaoLoginController.class);
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService, ProductService productService) {
+    public KakaoLoginController(KakaoLoginService kakaoLoginService, ProductService productService, UserService userService, JWTService jwtService) {
         this.kakaoLoginService = kakaoLoginService;
         this.productService = productService;
+        this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/login")
@@ -42,13 +45,26 @@ public class KakaoLoginController {
         return "Login";
     }
 
+    @ResponseBody
     @GetMapping("/")
-    public String getCode(@RequestParam String code, Model model){
+    public Token getCode(@RequestParam String code){
         log.info("[code] : " + code);
-        String accessToken = kakaoLoginService.login(code);
+        KakaoResponse response = kakaoLoginService.login(code);
+        String accessToken = response.getAccess_token();
         log.info("[access toke] : " + accessToken);
-        model.addAttribute("products", productService.findAllProducts());
-        return "MainView";
+        Long socialID = kakaoLoginService.getUserInfo(accessToken);
+
+        Optional<KakaoUser> kakaoUser = userService.findByKakaoSocialID(kakaoLoginService.getUserInfo(accessToken));
+        KakaoUserDTO kakaoUserDTO = new KakaoUserDTO(socialID, accessToken, response.refresh_token);
+        Token token = new Token(jwtService.generateAccessToken(kakaoUserDTO));
+
+        if(kakaoUser.isEmpty()){
+            userService.registerKakaoUser(kakaoUserDTO);
+            return token;
+        }
+
+        userService.updateKakaoUserToken(kakaoUserDTO);
+        return token;
     }
 
 }
