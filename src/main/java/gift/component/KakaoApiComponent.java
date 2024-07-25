@@ -1,11 +1,11 @@
 package gift.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.KakaoProperties;
 import gift.exception.auth.UnauthorizedException;
 import org.apache.logging.log4j.util.InternalException;
+import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -13,6 +13,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class KakaoApiComponent {
@@ -31,8 +33,7 @@ public class KakaoApiComponent {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>() {
-        };
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUrl());
@@ -59,6 +60,29 @@ public class KakaoApiComponent {
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, String.class);
 
         return getJsonNode(response.getBody(), "id");
+    }
+
+    public void sendMessage(String accessToken, String message) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
+
+
+        JSONObject linkObj = new JSONObject();
+        linkObj.put("web_url", "https://developers.kakao.com/");
+        linkObj.put("mobile_web_url", "https://developers.kakao.com/");
+
+        JSONObject templateObj = new JSONObject();
+        templateObj.put("object_type", "text");
+        templateObj.put("text", message);
+        templateObj.put("link", linkObj);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObj.toString());
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        restTemplate.exchange(url, HttpMethod.POST, request, String.class);
     }
 
     private String getJsonNode(String response, String content) {
