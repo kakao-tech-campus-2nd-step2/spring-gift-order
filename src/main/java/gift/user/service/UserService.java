@@ -38,6 +38,7 @@ public class UserService {
       throw new InvalidUserInputException("이메일이나 비밀번호가 비어있습니다.");
     }
 
+
     User user = new User();
     user.setEmail(userDto.getEmail());
     user.setPassword(passwordEncoder.encode(userDto.getPassword()));
