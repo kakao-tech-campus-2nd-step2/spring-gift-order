@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 @ControllerAdvice
 public class ExceptionController {
@@ -92,7 +93,13 @@ public class ExceptionController {
     @ResponseBody
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<ErrorResult> httpClientHandler(HttpClientErrorException e){
-        ErrorResult errorResult = new ErrorResult(e.getStatusCode().toString(), "OAuth 로그인 중 오류가 발생 했습니다.");
+        ErrorResult errorResult = new ErrorResult(e.getStatusCode().toString(), e.getMessage());
+        return new ResponseEntity<>(errorResult, e.getStatusCode());
+    }
+    @ResponseBody
+    @ExceptionHandler(HttpServerErrorException.class)
+    public ResponseEntity<ErrorResult> httpServerHandler(HttpServerErrorException e){
+        ErrorResult errorResult = new ErrorResult(e.getStatusCode().toString(), e.getMessage());
         return new ResponseEntity<>(errorResult, e.getStatusCode());
     }
 
