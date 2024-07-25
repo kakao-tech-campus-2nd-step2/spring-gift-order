@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductOptionRepository extends JpaRepository<ProductOption, Long> {
     List<ProductOption> findByProductId(Long productId);
 
     List<ProductOption> findByOptionId(Long optionId);
+
+    Optional<ProductOption> findByProductIdAndOptionId(Long productId, Long optionId);
 
     @Modifying
     @Transactional
