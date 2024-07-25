@@ -65,10 +65,15 @@ public class ProductService {
     }
 
     private void addOptionToProduct(List<String> optionList, Product product) {
-        optionList.stream()
+        List<Option> validOptions = optionList.stream()
                 .map(str -> new Option(product, str))
                 .filter(this::isValidOption)
-                .forEach(option -> optionRepository.save(option));
+                .toList();
+
+        if(validOptions.isEmpty())
+            throw new BadRequestException("옵션은 하나 이상 추가 되어야 합니다.");
+
+        validOptions.forEach(option -> optionRepository.save(option));
     }
 
     private boolean isValidOption(@Validated Option option) {
