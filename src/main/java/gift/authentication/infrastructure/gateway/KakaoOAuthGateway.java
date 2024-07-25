@@ -10,10 +10,11 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
-public class KakaoGateway implements OAuthGateway {
+public class KakaoOAuthGateway implements OAuthGateway {
     @Value("${oauth2.client.kakao.client-id}")
     private String clientId;
 
@@ -28,7 +29,7 @@ public class KakaoGateway implements OAuthGateway {
 
     private final RestClient restClient;
 
-    public KakaoGateway(RestClient restClient) {
+    public KakaoOAuthGateway(RestClient restClient) {
         this.restClient = restClient;
     }
 
@@ -44,23 +45,26 @@ public class KakaoGateway implements OAuthGateway {
     }
 
     private KakaoTokenResponse requestToken(String code) {
+        return restClient
+                .post()
+                .uri(tokenUri)
+                .headers(headers -> headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .body(buildParams(code))
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new AuthenticationFailedException();
+                })
+                .body(KakaoTokenResponse.class);
+    }
+
+    private MultiValueMap<String, String> buildParams(String code) {
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", clientId);
         params.add("redirect_uri", redirectUri);
         params.add("code", code);
         params.add("client_secret", clientSecret);
-
-        return restClient
-                .post()
-                .uri(tokenUri)
-                .headers(headers -> headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .body(params)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (request, response) -> {
-                    throw new AuthenticationFailedException();
-                })
-                .body(KakaoTokenResponse.class);
+        return params;
     }
 
     private record KakaoTokenResponse(@JsonProperty("access_token") String accessToken) {}

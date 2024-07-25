@@ -88,15 +88,10 @@ public class ProductOptionServiceImpl implements ProductOptionService {
         ProductOption option = productOptionRepository
                 .findById(optionId)
                 .orElseThrow(OptionNotFoundException::new);
-        if (quantity < 0) {
-            throw new InvalidArgumentException(ErrorCode.NEGATIVE_QUANTITY);
-        }
-        if (option.quantity() < quantity) {
-            throw new InvalidArgumentException(ErrorCode.OPTION_NOT_ENOUGH_QUANTITY);
-        }
+        option.validateOrderable(quantity);
         productOptionRepository.save(
                 optionId,
-                new ProductOption(option.id(), option.name(), option.quantity() - quantity)
+                option.applyDecreaseQuantity(quantity)
         );
     }
 }
