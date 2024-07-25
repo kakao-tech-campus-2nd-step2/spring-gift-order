@@ -1,10 +1,12 @@
 package gift.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gift.domain.Product;
 import gift.domain.UserInfo;
 import gift.domain.Wish;
+import gift.utils.error.WishListNotFoundException;
 import java.util.Arrays;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +66,9 @@ public class WishRepositoryTest {
         wishRepository.save(savedWish);
 
         Wish updatedWish = wishRepository.findByUserInfoIdAndProductId(wish.getUserInfo().getId(),
-            wish.getProduct().getId());
+            wish.getProduct().getId()).orElseThrow(
+            () -> new WishListNotFoundException("Wish Not Found")
+        );
 
         assertThat(updatedWish)
             .extracting(Wish::getQuantity)
@@ -74,8 +78,11 @@ public class WishRepositoryTest {
     @Test
     @DisplayName("존재하지 않는 위시 아이템 조회")
     void findNonExistentWish() {
-        Wish wish = wishRepository.findByUserInfoIdAndProductId(999L, 999L);
-        assertThat(wish).isNull();
+        WishListNotFoundException exception = assertThrows(WishListNotFoundException.class, () -> {
+            wishRepository.findByUserInfoIdAndProductId(999L, 999L)
+                .orElseThrow(() -> new WishListNotFoundException("Wish Not Found"));
+        });
+
     }
 
     @Test
@@ -160,7 +167,9 @@ public class WishRepositoryTest {
         wishRepository.save(wish);
 
         Wish byUserIdAndProductId = wishRepository.findByUserInfoIdAndProductId(
-            wish.getUserInfo().getId(), wish.getProduct().getId());
+            wish.getUserInfo().getId(), wish.getProduct().getId()).orElseThrow(
+            () -> new WishListNotFoundException("Wish Not Found")
+        );
 
         assertThat(byUserIdAndProductId)
             .extracting(Wish::getProduct, Wish::getUserInfo, Wish::getQuantity)

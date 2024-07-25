@@ -28,6 +28,18 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    public String createToken(String email,int validityInMilliseconds) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
+
+        return Jwts.builder()
+            .setSubject(email)
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .compact();
+    }
+
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parser()
             .setSigningKey(secretKey)

@@ -24,4 +24,5 @@ public class KakaoProperties {
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
     }
+
 }

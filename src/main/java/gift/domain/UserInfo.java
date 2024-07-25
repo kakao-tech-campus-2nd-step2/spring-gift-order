@@ -26,6 +26,8 @@ public class UserInfo {
 
     @OneToMany(mappedBy = "userInfo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
+    @OneToMany(mappedBy = "userInfo",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
 
     public UserInfo() {
     }
@@ -87,5 +89,15 @@ public class UserInfo {
     public void removeWish(Wish wish) {
         wishes.remove(wish);
         wish.setUserInfo(null);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setUserInfo(this);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setUserInfo(null);
     }
 }

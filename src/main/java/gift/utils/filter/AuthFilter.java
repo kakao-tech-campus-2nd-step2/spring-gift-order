@@ -1,5 +1,6 @@
 package gift.utils.filter;
 
+import gift.repository.TokenRepository;
 import gift.utils.JwtTokenProvider;
 import gift.utils.error.TokenAuthException;
 import jakarta.servlet.Filter;
@@ -20,6 +21,7 @@ public class AuthFilter implements Filter {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
@@ -34,11 +36,15 @@ public class AuthFilter implements Filter {
         String path = httpRequest.getRequestURI();
 
         // Filter 를 통과하지 않아도 되는 url
-        if (path.equals("/user/login") || path.equals("/user/register") || path.startsWith("/user")
-            || path.startsWith("/h2-console") || path.startsWith("/api/oauth")) {
+        if (path.equals("/api/user/login") || path.equals("/api/user/register") || path.startsWith("/user")
+            || path.startsWith("/h2-console") || path.equals("/api/oauth/authorize")
+            || path.equals("/api/oauth/token")
+            || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
+            || path.startsWith("/swagger-resources") || path.equals("/swagger-ui.html")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         // Authorization header 존재하는지 확인
         String authHeader = httpRequest.getHeader("Authorization");
@@ -51,6 +57,7 @@ public class AuthFilter implements Filter {
         // JWT 토큰의 유효성 검사
         String token = authHeader.substring(7);
         if (!jwtTokenProvider.validateToken(token)) {
+            System.out.println(token);
             throw new TokenAuthException("Token not exist");
         }
 
@@ -61,4 +68,5 @@ public class AuthFilter implements Filter {
     public void destroy() {
         Filter.super.destroy();
     }
+
 }

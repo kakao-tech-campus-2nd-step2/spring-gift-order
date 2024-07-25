@@ -15,4 +15,5 @@ public class TokenResponseDTO {
     public void setToken(String token) {
         this.token = token;
     }
+
 }

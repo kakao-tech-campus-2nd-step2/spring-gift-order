@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.controller.dto.TokenResponseDTO;
 import gift.service.KakaoApiService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,12 +45,13 @@ class KakaoApiControllerTest {
         String expectedToken = "test_access_token";
 
         when(kakaoApiService.createKakaoToken(code, null, null, null))
-            .thenReturn(expectedToken);
+            .thenReturn(new TokenResponseDTO(expectedToken));
 
-        ResponseEntity<String> response = kakaoApiController.kakaoToken(code, null, null, null);
+        ResponseEntity<TokenResponseDTO> response = kakaoApiController.kakaoToken(code, null, null, null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedToken, response.getBody());
+        assertNotNull(response.getBody());
+        assertEquals(expectedToken, response.getBody().getToken());
     }
 
     @Test
