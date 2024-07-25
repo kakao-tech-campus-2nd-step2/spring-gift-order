@@ -51,7 +51,7 @@ public class KakaoService {
 
     public String getUserEmail(String accessToken) {
         try {
-            String url = "https://kapi.kakao.com/v2/user/me";
+            String url = kakaoProperties.getUserInfoUrl();
             String response = webClient.get()
                 .uri(url)
                 .headers(headers -> headers.setBearerAuth(accessToken))
