@@ -2,7 +2,6 @@ package gift.administrator.product;
 
 import gift.administrator.category.Category;
 import gift.administrator.option.Option;
-import gift.users.wishlist.WishList;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ public class Product {
     private String name;
     @Column(nullable = false)
     private String imageUrl;
-    @OneToMany(mappedBy = "product")
-    private List<WishList> wishes = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -70,10 +67,6 @@ public class Product {
         return imageUrl;
     }
 
-    public List<WishList> getWishes() {
-        return wishes;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -84,16 +77,6 @@ public class Product {
 
     public void setOption(List<Option> options){
         this.options = options;
-    }
-
-    public void addWishList(WishList wishList) {
-        wishes.add(wishList);
-        wishList.setProduct(this);
-    }
-
-    public void removeWishList(WishList wishList) {
-        wishes.remove(wishList);
-        wishList.setProduct(null);
     }
 
     public void addOption(Option option) {

@@ -9,8 +9,6 @@ import gift.administrator.product.ProductService;
 import gift.users.user.User;
 import gift.users.user.UserDTO;
 import gift.users.user.UserService;
-import gift.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,10 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WishListService {
@@ -30,19 +26,13 @@ public class WishListService {
     private final ProductService productService;
     private final UserService userService;
     private final OptionService optionService;
-    private final JwtUtil jwtUtil;
-
-    private static final String HEADER_NAME = "Authorization";
-    private static final String HEADER_VALUE = "Bearer ";
 
     public WishListService(WishListRepository wishListRepository, ProductService productService,
-        UserService userService, OptionService optionService,
-        JwtUtil jwtUtil) {
+        UserService userService, OptionService optionService) {
         this.wishListRepository = wishListRepository;
         this.productService = productService;
         this.userService = userService;
         this.optionService = optionService;
-        this.jwtUtil = jwtUtil;
     }
 
     public Page<WishListDTO> getWishListsByUserId(long id, int page, int size, Direction direction,
@@ -54,18 +44,6 @@ public class WishListService {
             .map(WishListDTO::fromWishList)
             .toList();
         return new PageImpl<>(wishLists, pageRequest, wishListPage.getTotalElements());
-    }
-
-    public void extractUserIdFromTokenAndValidate(HttpServletRequest request, Long userId) {
-        String authHeader = request.getHeader(HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(HEADER_VALUE)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        }
-        String token = authHeader.substring(7);
-        String tokenUserId = jwtUtil.extractUserId(token);
-        if (!userId.toString().equals(tokenUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "유저 아이디가 토큰과 일치하지 않습니다.");
-        }
     }
 
     public WishListDTO addWishList(WishListDTO wishListDTO, Long userId) {
@@ -80,8 +58,6 @@ public class WishListService {
         Option option = optionDTO.toOption(product);
 
         WishList wishList = new WishList(user, product, wishListDTO.getNum(), option);
-        user.addWishList(wishList);
-        product.addWishList(wishList);
         wishListRepository.save(wishList);
         return WishListDTO.fromWishList(wishList);
     }
@@ -107,7 +83,6 @@ public class WishListService {
 
         wishList.setOption(newOption);
         wishList.setNum(wishListDTO.getNum());
-        newOption.addWishList(wishList);
         wishListRepository.save(wishList);
         return WishListDTO.fromWishList(wishList);
     }
@@ -146,10 +121,6 @@ public class WishListService {
                     productId).getName()
                     + " 상품이 존재하지 않습니다.");
         }
-        WishList wishList = wishListRepository.findByUserIdAndProductId(userId, productId);
-        wishList.getOption().removeWishList(wishList);
-        wishList.getUser().removeWishList(wishList);
-        wishList.getProduct().removeWishList(wishList);
         wishListRepository.deleteByUserIdAndProductId(userId, productId);
     }
 }

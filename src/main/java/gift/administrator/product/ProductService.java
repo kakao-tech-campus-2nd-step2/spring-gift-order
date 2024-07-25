@@ -26,13 +26,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
-    private final OptionService optionService;
 
     public ProductService(ProductRepository productRepository,
-        CategoryService categoryService, OptionService optionService) {
+        CategoryService categoryService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
-        this.optionService = optionService;
     }
 
     public Page<ProductDTO> getAllProducts(int page, int size, String sortBy, Direction direction) {
@@ -86,12 +84,15 @@ public class ProductService {
         existsByNameAndIdNotThrowException(productDTO.getName(), productDTO.getId());
         Category newCategory = updateCategory(productDTO.getCategoryId(), existingProduct);
 
-        optionService.deleteAllWhenUpdatingProduct(existingProduct.getOptions(), existingProduct);
+        existingProduct.update(productDTO.getName(), productDTO.getPrice(),
+            productDTO.getImageUrl(), newCategory);
+
+        List<Option> oldOptions = new ArrayList<>(existingProduct.getOptions());
+        existingProduct.removeOptions(oldOptions);
+
         List<Option> options = optionDTOListToOptionList(productDTO.getOptions(), existingProduct);
         existingProduct.addOptions(options);
 
-        existingProduct.update(productDTO.getName(), productDTO.getPrice(),
-            productDTO.getImageUrl(), newCategory);
         Product savedProduct = productRepository.save(existingProduct);
         return ProductDTO.fromProduct(savedProduct);
     }
@@ -108,8 +109,6 @@ public class ProductService {
 
     private Category updateCategory(long categoryId, Product product) {
         Category newCategory = getCategoryById(categoryId);
-        Category oldCategory = product.getCategory();
-        oldCategory.removeProduct(product);
         product.setCategory(newCategory);
         return newCategory;
     }

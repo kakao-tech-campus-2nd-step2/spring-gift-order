@@ -16,11 +16,11 @@ public class JwtUtil {
     private String secretKey;
 
     @Value("${jwt.expiration}")
-    private Long expiration;
+    private long expiration;
 
-    public String generateToken(String emailOrId){
+    public String generateToken(String userId){
         return Jwts.builder()
-            .setSubject(emailOrId)
+            .setSubject(userId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + expiration))
             .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))

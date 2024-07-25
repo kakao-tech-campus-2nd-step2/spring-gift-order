@@ -67,7 +67,7 @@ public class KakaoAuthServiceTest {
             .andRespond(withSuccess(userResponse, MediaType.APPLICATION_JSON));
 
         when(userService.findByKakaoIdAndRegisterIfNotExists("1")).thenReturn(1L);
-        when(userService.loginGiveToken("1")).thenReturn("user_token");
+        when(userService.loginGiveJwt("1")).thenReturn("user_token");
 
         //when
         String result = kakaoAuthService.kakaoCallBack(code);

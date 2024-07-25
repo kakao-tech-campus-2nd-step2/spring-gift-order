@@ -42,7 +42,7 @@ public class KakaoAuthService {
     public String kakaoCallBack(String code) {
         String token = getKakaoToken(code);
         Long userId = getKakaoUser(token);
-        return userService.loginGiveToken(userId.toString());
+        return userService.loginGiveJwt(userId.toString());
     }
 
     private Long getKakaoUser(String token) {
@@ -56,7 +56,7 @@ public class KakaoAuthService {
                 .retrieve()
                 .toEntity(KakaoUserDTO.class);
         } catch(RestClientException e){
-            logger.info("Failed to receive kakao userInfo: {}", e.getMessage());
+            logger.error("Failed to receive kakao userInfo.");
             throw new KakaoAuthenticationException("카카오 사용자 값을 서버에서 가져오는 데에 실패했습니다.");
         }
 
@@ -89,7 +89,7 @@ public class KakaoAuthService {
                 .retrieve()
                 .toEntity(KakaoTokenDTO.class);
         } catch(RestClientException e){
-            logger.info("Failed to recieve kakao token: {}", e.getMessage());
+            logger.error("Failed to recieve kakao token");
             throw new KakaoAuthenticationException("카카오 토큰 값을 서버에서 가져오는 데에 실패했습니다.");
         }
 

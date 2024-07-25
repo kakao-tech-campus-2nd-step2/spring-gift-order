@@ -25,10 +25,10 @@ public class UserService {
         return user.getId();
     }
 
-    public String loginGiveToken(String userId) {
-        String token = jwtUtil.generateToken(userId);
-        if (token != null) {
-            return "access-token: " + token;
+    public String loginGiveJwt(String userId) {
+        String jwtToken = jwtUtil.generateToken(userId);
+        if (jwtToken != null) {
+            return "access-token: " + jwtToken;
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰 생성 실패");
     }
@@ -54,7 +54,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
         }
         UserDTO userDTO = findUserByEmail(email);
-        return loginGiveToken(userDTO.id().toString());
+        return loginGiveJwt(userDTO.id().toString());
     }
 
     public boolean registerUser(UserDTO userDTO) {

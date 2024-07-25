@@ -66,11 +66,6 @@ public class OptionService {
         return option;
     }
 
-    public void deleteAllWhenUpdatingProduct(List<Option> options, Product product) {
-        product.getOptions().removeAll(options);
-        optionRepository.deleteAll(options);
-    }
-
     public void deleteOptionByOptionId(long optionId) {
         if (!optionRepository.existsById(optionId)) {
             throw new IllegalArgumentException("없는 아이디입니다.");

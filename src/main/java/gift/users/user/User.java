@@ -1,9 +1,11 @@
 package gift.users.user;
 
-import gift.users.wishlist.WishList;
-import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Table(name = "users")
 @Entity
@@ -17,8 +19,6 @@ public class User {
     private String password;
     @Column(unique = true)
     private String kakaoId;
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<WishList> wishes = new ArrayList<>();
 
     public User() {
     }
@@ -48,23 +48,5 @@ public class User {
 
     public String getPassword() {
         return password;
-    }
-
-    public String getKakaoId() {
-        return kakaoId;
-    }
-
-    public List<WishList> getWishes() {
-        return wishes;
-    }
-
-    public void addWishList(WishList wishList) {
-        this.wishes.add(wishList);
-        wishList.setUser(this);
-    }
-
-    public void removeWishList(WishList wishList) {
-        wishes.remove(wishList);
-        wishList.setUser(null);
     }
 }

@@ -35,7 +35,6 @@ public class WishListApiController {
         @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
         @RequestParam(value = "sortDirection", required = false, defaultValue = "asc") String sortDirection) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         size = PageUtil.validateSize(size);
         sortBy = PageUtil.validateSortBy(sortBy, Arrays.asList("id", "productId", "num"));
         Direction direction = PageUtil.validateDirection(sortDirection);
@@ -49,7 +48,6 @@ public class WishListApiController {
     public ResponseEntity<WishListDTO> addWishList(@PathVariable("userId") long userId,
         HttpServletRequest request, @RequestBody WishListDTO wishListDTO) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         WishListDTO result = wishListService.addWishList(wishListDTO, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
@@ -59,7 +57,6 @@ public class WishListApiController {
         @PathVariable("productId") long productId, HttpServletRequest request,
         @RequestBody WishListDTO wishListDTO) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         WishListDTO result = wishListService.updateWishList(userId, productId,
             wishListDTO);
         return ResponseEntity.ok().body(result);
@@ -69,7 +66,6 @@ public class WishListApiController {
     public ResponseEntity<Void> deleteWishList(@PathVariable("userId") long userId,
         @PathVariable("productId") long productId, HttpServletRequest request) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         wishListService.deleteWishList(userId, productId);
         return ResponseEntity.ok().build();
     }
