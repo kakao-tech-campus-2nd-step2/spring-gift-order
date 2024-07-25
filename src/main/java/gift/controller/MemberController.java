@@ -8,6 +8,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,12 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
 
+    @Value("${kakao.javascript-id}")
+    private String kakaoJavaScriptKey;
+
+    @Value("${kakao.redirect-url}")
+    private String redirectUri;
+
     @Autowired
     public MemberController(MemberService memberService, JwtUtil jwtUtil) {
         this.memberService = memberService;
@@ -29,6 +36,8 @@ public class MemberController {
 
     @GetMapping("/login")
     public String loginForm(Model model) {
+        model.addAttribute("kakaoJavaScriptKey", kakaoJavaScriptKey);
+        model.addAttribute("redirectUri", redirectUri);
         model.addAttribute("memberRequest", new MemberRequest("", ""));
         return "login";
     }
@@ -82,5 +91,16 @@ public class MemberController {
     public ResponseEntity<MemberResponse> getMemberById(@PathVariable Long id) {
         MemberResponse memberResponse = memberService.findById(id);
         return ResponseEntity.ok(memberResponse);
+    }
+
+    @GetMapping("/oauth/kakao")
+    public String oauthKakao(@RequestParam("code") String code, HttpSession session, Model model) {
+        try {
+            String token = memberService.kakaoLogin(code);
+            session.setAttribute("token", token);
+            return "redirect:/wishes/items";
+        } catch (Exception e) {
+            return "redirect:/members/login?error";
+        }
     }
 }
