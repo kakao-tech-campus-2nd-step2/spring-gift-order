@@ -10,6 +10,7 @@ import gift.utility.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +21,8 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoLoginService {
-    private final RestClient client;
+    @Autowired
+    RestClient client;
 
     private final String clientId;
     private final String redirectUri;
@@ -33,7 +35,6 @@ public class KakaoLoginService {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.userRepository = userRepository;
-        client = RestClient.builder().build();
     }
 
     public String getAccessToken(String code){
