@@ -12,7 +12,7 @@ import java.net.URI;
 @Service
 public class KakaoLoginService {
 
-    private final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 
     private final RestClient client = RestClient.builder().build();
     private final KakaoProperties properties;
