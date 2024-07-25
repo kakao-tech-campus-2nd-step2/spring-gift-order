@@ -32,6 +32,6 @@ public class AuthController {
 
     @GetMapping()
     public void kakaoLogin(@RequestParam("code") String code) {
-        kaKaoLoginService.getAccessToken(code);
+        kaKaoLoginService.kakaoLogin(code);
     }
 }
