@@ -17,7 +17,9 @@ public class KakaoPageController {
 
     @GetMapping("/page")
     public String ShowLoginPage(Model model) {
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+clientId+"&redirect_uri="+redirectUri;
+        String url =
+            "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId
+                + "&redirect_uri=" + redirectUri;
         model.addAttribute("url", url);
         return "login";
     }

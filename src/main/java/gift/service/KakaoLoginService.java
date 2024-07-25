@@ -2,7 +2,6 @@ package gift.service;
 
 import gift.model.KakaoTokenDTO;
 import java.net.URI;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -47,7 +46,7 @@ public class KakaoLoginService {
 
         KakaoTokenDTO responseBody = response.getBody();
         if (responseBody != null) {
-            return responseBody.access_token();
+            return responseBody.accessToken();
         }
 
         return null;
