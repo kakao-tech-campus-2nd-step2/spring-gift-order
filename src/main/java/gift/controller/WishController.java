@@ -8,6 +8,10 @@ import gift.util.ParsingPram;
 import gift.util.page.PageMapper;
 import gift.util.page.PageResult;
 import gift.util.page.SingleResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "유저의 관심목록 관련 서비스")
 @RestController
 @RequestMapping("/api/wish")
 public class WishController {
@@ -32,23 +37,26 @@ public class WishController {
         this.parsingPram = parsingPram;
     }
 
-    //    Wish id로 상세정보 반환
-    //    wish id 검증
-    @GetMapping("/{id}")
-    public SingleResult<wishDetail> getWish(@PathVariable long id) {
-        return new SingleResult(wishListService.getWish(id));
-    }
-
     //    user id로 위시리스트 반환
     //    user id 검증
+    @Operation(summary = "유저 위시 리스트 조회")
     @GetMapping
     public PageResult<wishSimple> getWishList(HttpServletRequest req,
         @Valid Wish.getList pram) {
         return PageMapper.toPageResult(wishListService.getWishList(parsingPram.getId(req), pram));
     }
 
+    //    Wish id로 상세정보 반환
+    //    wish id 검증
+    @Operation(summary = "유저 위시 조회")
+    @GetMapping("/{id}")
+    public SingleResult<wishDetail> getWish(@PathVariable long id) {
+        return new SingleResult(wishListService.getWish(id));
+    }
+
     //  위시리스트 추가
     //  user id 검증, product id 검증,  위시 리스트내 중복여부 검증
+    @Operation(summary = "유저 위시 추가")
     @PostMapping
     public SingleResult<Long> createWish(HttpServletRequest req,
         @Valid @RequestBody Wish.createWish create) {
@@ -57,6 +65,7 @@ public class WishController {
 
     //    wish id로 위시리스트 삭제
     //    wish id 검증
+    @Operation(summary = "유저 위시 삭제")
     @DeleteMapping("/{id}")
     public SingleResult<Long> deleteWish(@PathVariable long id) {
         return new SingleResult(wishListService.deleteWish(id));
