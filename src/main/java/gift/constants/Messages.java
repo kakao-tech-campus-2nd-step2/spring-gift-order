@@ -15,4 +15,5 @@ public class Messages {
     public static final String MEMBER_EMAIL_ALREADY_EXISTS = "이미 사용된 이메일 입니다.";
     public static final String OPTION_ALREADY_IN_WISHLIST = "이미 위시리스트에 존재하는 옵션입니다.";
     public static final String MISSING_AUTHORIZATION_CODE = "인가 코드가 존재하지 않습니다.";
+    public static final String RESPONSE_BODY_NULL = "API의 응답값이 null 입니다.";
 }
