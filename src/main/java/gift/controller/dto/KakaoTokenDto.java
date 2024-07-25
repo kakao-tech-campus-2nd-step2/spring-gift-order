@@ -24,4 +24,16 @@ public class KakaoTokenDto {
     public String getAccessToken() {
         return accessToken;
     }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public Integer getExpiresIn() {
+        return expiresIn;
+    }
+
+    public Integer getRefreshTokenExpiresIn() {
+        return refreshTokenExpiresIn;
+    }
 }

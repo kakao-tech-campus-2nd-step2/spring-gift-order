@@ -7,7 +7,10 @@ import gift.controller.dto.KakaoApiDTO;
 import gift.controller.dto.KakaoApiDTO.KakaoOrderResponse;
 import gift.controller.dto.KakaoTokenDto;
 import gift.domain.Order;
+import gift.domain.Token;
+import gift.repository.TokenRepository;
 import gift.utils.config.KakaoProperties;
+import gift.utils.error.UserNotFoundException;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -39,12 +43,14 @@ public class ExternalApiService {
     private final String baseauthUrl = "https://kauth.kakao.com/oauth";
     private final String baseloginUrl = "https://kapi.kakao.com";
     private final ObjectMapper objectMapper;
+    private final TokenRepository tokenRepository;
 
     public ExternalApiService(RestTemplate restTemplate, KakaoProperties kakaoProperties,
-        ObjectMapper objectMapper) {
+        ObjectMapper objectMapper, TokenRepository tokenRepository) {
         this.restTemplate = restTemplate;
         this.kakaoProperties = kakaoProperties;
         this.objectMapper = objectMapper;
+        this.tokenRepository = tokenRepository;
     }
 
 
@@ -157,6 +163,8 @@ public class ExternalApiService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(fullUrl.toUriString(), requestEntity, String.class);
 
+
+
         // 응답 처리
         if (response.getStatusCode() == HttpStatus.OK) {
             return response.getBody();
@@ -167,6 +175,64 @@ public class ExternalApiService {
 
 
     }
+    public String refreshToken(String email,String refreshToken){
+        String endpoint = "/token";
+        UriComponentsBuilder fullUrl = UriComponentsBuilder.fromHttpUrl(baseauthUrl + endpoint);
+        KakaoProperties kakaoProperties1 = new KakaoProperties();
+        String restApiKey = kakaoProperties1.getRestApiKey();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", restApiKey);
+        body.add("refresh_token", refreshToken);
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+            fullUrl.toUriString(),
+            HttpMethod.POST,
+            requestEntity,
+            String.class
+        );
+        Token token = tokenRepository.findByEmail(email).orElseThrow(
+            () -> new UserNotFoundException("User not found")
+        );
+
+        try {
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+            if (jsonNode.has("access_token")) {
+                String accessToken = jsonNode.get("access_token").asText();
+                token.updateAccesstoken(accessToken);
+            } else {
+                throw new RuntimeException("카카오 id 찾기 실패");
+            }
+        }catch (HttpClientErrorException e) {
+            throw new RuntimeException("클라이언트 요청 에러: " + e.getStatusCode(), e);
+        } catch (HttpServerErrorException e) {
+            throw new RuntimeException("카카오 api 요청 서버 에러: " + e.getStatusCode(), e);
+        } catch (ResourceAccessException e) {
+            throw new RuntimeException("네트워크 에러", e);
+        } catch (RestClientException e) {
+            throw new RuntimeException("카카오 api 요청 에러", e);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("api response 파싱 실패", e);
+        }
+
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody(); // 새로운 액세스 토큰 정보가 포함된 JSON 문자열 반환
+        } else {
+            throw new RuntimeException("Failed to refresh token. Status code: " + response.getStatusCode());
+        }
+
+    }
+
+
+
     private String makeMessageBody(KakaoApiDTO.KakaoOrderResponse kakaoOrderResponse ) {
         StringBuilder sb = new StringBuilder();
 

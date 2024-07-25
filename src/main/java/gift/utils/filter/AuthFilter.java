@@ -16,11 +16,9 @@ import java.io.IOException;
 public class AuthFilter implements Filter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenRepository tokenRepository;
 
-    public AuthFilter(JwtTokenProvider jwtTokenProvider, TokenRepository tokenRepository) {
+    public AuthFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenRepository = tokenRepository;
     }
 
 
@@ -40,17 +38,9 @@ public class AuthFilter implements Filter {
         // Filter 를 통과하지 않아도 되는 url
         if (path.equals("/api/user/login") || path.equals("/api/user/register") || path.startsWith("/user")
             || path.startsWith("/h2-console") || path.equals("/api/oauth/authorize")
-            || path.equals("/api/oauth/token")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (path.startsWith("/api/oauth")) {
-            // DB 검증 로직
-            if (!validateOAuthToken(httpRequest)) {
-                httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Kakao OAuth token");
-                return;
-            }
+            || path.equals("/api/oauth/token")
+            || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
+            || path.startsWith("/swagger-resources") || path.equals("/swagger-ui.html")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -67,6 +57,7 @@ public class AuthFilter implements Filter {
         // JWT 토큰의 유효성 검사
         String token = authHeader.substring(7);
         if (!jwtTokenProvider.validateToken(token)) {
+            System.out.println(token);
             throw new TokenAuthException("Token not exist");
         }
 
@@ -78,23 +69,4 @@ public class AuthFilter implements Filter {
         Filter.super.destroy();
     }
 
-    private boolean validateOAuthToken(HttpServletRequest request) {
-
-        String oauthToken = extractOAuthToken(request);
-
-        if (oauthToken == null) {
-            return false;
-        }
-
-        return tokenRepository.existsByToken(oauthToken);
-    }
-
-    private String extractOAuthToken(HttpServletRequest request) {
-
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-        return null;
-    }
 }

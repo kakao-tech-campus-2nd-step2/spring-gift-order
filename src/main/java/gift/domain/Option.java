@@ -56,6 +56,10 @@ public class Option {
         return quantity;
     }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
     public Product getProduct() {
         return product;
     }
@@ -81,7 +85,4 @@ public class Option {
         order.setOption(null);
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }

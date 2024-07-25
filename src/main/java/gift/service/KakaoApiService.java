@@ -3,6 +3,7 @@ package gift.service;
 import gift.controller.dto.KakaoApiDTO;
 import gift.controller.dto.KakaoApiDTO.KakaoOrderResponse;
 import gift.controller.dto.KakaoTokenDto;
+import gift.controller.dto.TokenResponseDTO;
 import gift.domain.Option;
 import gift.domain.Order;
 import gift.domain.Token;
@@ -14,9 +15,11 @@ import gift.repository.TokenRepository;
 import gift.repository.UserInfoRepository;
 import gift.repository.WishRepository;
 import gift.utils.ExternalApiService;
+import gift.utils.JwtTokenProvider;
 import gift.utils.config.KakaoProperties;
 import gift.utils.error.KakaoLoginException;
 import gift.utils.error.OptionNotFoundException;
+import gift.utils.error.TokenAuthException;
 import gift.utils.error.UserNotFoundException;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -34,11 +37,13 @@ public class KakaoApiService {
     private final TokenRepository tokenRepository;
     private final OrderRepository orderRepository;
     private final WishRepository wishRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public KakaoApiService(ExternalApiService externalApiService, KakaoProperties kakaoProperties,
         OptionRepository optionRepository, UserInfoRepository userInfoRepository,
         TokenRepository tokenRepository, OrderRepository orderRepository,
-        WishRepository wishRepository) {
+        WishRepository wishRepository,
+        JwtTokenProvider jwtTokenProvider) {
         this.externalApiService = externalApiService;
         this.kakaoProperties = kakaoProperties;
         this.optionRepository = optionRepository;
@@ -46,6 +51,7 @@ public class KakaoApiService {
         this.tokenRepository = tokenRepository;
         this.orderRepository = orderRepository;
         this.wishRepository = wishRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
@@ -59,7 +65,7 @@ public class KakaoApiService {
             .toUriString();
     }
     @Transactional
-    public String createKakaoToken(String code,
+    public TokenResponseDTO createKakaoToken(String code,
         String error,
         String error_description,
         String state){
@@ -78,23 +84,28 @@ public class KakaoApiService {
             UserInfo userInfo = new UserInfo(email, email);
             userInfoRepository.save(userInfo);
         }
-        Token token = new Token(email, kakaoTokenDtoResponseEntity.getBody().getAccessToken());
+        Token token = new Token(email, kakaoTokenDtoResponseEntity.getBody().getAccessToken(),
+            kakaoTokenDtoResponseEntity.getBody().getRefreshToken(),kakaoTokenDtoResponseEntity.getBody().getExpiresIn()
+            ,kakaoTokenDtoResponseEntity.getBody().getRefreshTokenExpiresIn(),LocalDateTime.now());
         tokenRepository.save(token);
 
-        return kakaoTokenDtoResponseEntity.getBody().getAccessToken();
+        return new TokenResponseDTO(jwtTokenProvider.createToken(email,kakaoTokenDtoResponseEntity.getBody().getExpiresIn()));
 
     }
 
     @Transactional
-    public KakaoApiDTO.KakaoOrderResponse kakaoOrder(KakaoApiDTO.KakaoOrderRequest kakaoOrderRequest,String accessToken){
+    public KakaoApiDTO.KakaoOrderResponse kakaoOrder(KakaoApiDTO.KakaoOrderRequest kakaoOrderRequest,String jwttoken){
         Option option = optionRepository.findById(kakaoOrderRequest.optionId()).orElseThrow(
             () -> new OptionNotFoundException("Option Not Found")
         );
+        String emailFromToken = jwtTokenProvider.getEmailFromToken(jwttoken);
 
-        Token byToken = tokenRepository.findByToken(accessToken);
-        String email = byToken.getEmail();
+        Token byToken = tokenRepository.findByEmail(emailFromToken).orElseThrow(
+            () -> new TokenAuthException("Token not found user")
+        );
+        String accesstoken = byToken.getAccesstoken();
 
-        UserInfo userInfo = userInfoRepository.findByEmail(email).orElseThrow(
+        UserInfo userInfo = userInfoRepository.findByEmail(emailFromToken).orElseThrow(
             () -> new UserNotFoundException("User Not Found")
         );
 
@@ -118,7 +129,7 @@ public class KakaoApiService {
             option.getId(), order.getQuantity(), order.getOrderDateTime(),
             order.getMessage());
 
-        externalApiService.postSendMe(kakaoOrderResponse,accessToken);
+        externalApiService.postSendMe(kakaoOrderResponse,accesstoken);
 
         return kakaoOrderResponse;
 
