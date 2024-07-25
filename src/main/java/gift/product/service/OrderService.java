@@ -48,17 +48,18 @@ public class OrderService {
             () -> new InvalidIdException(NOT_EXIST_ID)
         );
         option.subtractQuantity(orderDTO.getQuantity());
-        sendToMe(member.getPassword(), option.getName(), orderDTO.getQuantity());
+        sendToMe(member.getPassword(), option.getName(), orderDTO);
         return createResponse(orderDTO);
     }
 
-    public void sendToMe(String accessToken, String optionName, int quantity) {
+    public void sendToMe(String accessToken, String optionName, OrderDTO orderDTO) {
         System.out.println("[OrderService] sendToMe()");
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         final var body = createBody(
             "[ 주문 내역 ]\n"
                 + "옵션 명: " + optionName + "\n"
-                + "수량: " + quantity
+                + "수량: " + orderDTO.getQuantity() + "\n"
+                + "메세지: " + orderDTO.getMessage()
             );
         client.post()
             .uri(URI.create(url))
