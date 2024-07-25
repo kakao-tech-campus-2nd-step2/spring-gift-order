@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import gift.config.KakaoProperties;
 import gift.model.*;
 import gift.repository.MemberRepository;
 import gift.repository.OptionRepository;
@@ -22,20 +23,18 @@ import java.util.Optional;
 
 @Service
 public class KakaoAuthService {
-    @Value("${kakao.client-id}")
-    private String clientId;
-    @Value("${kakao.redirect-url}")
-    private String redirectUrl;
-
     private final RestClient client = RestClient.builder().build();
 
+    private final KakaoProperties kakaoProperties;
     private final ProductService productService;
     private final OptionService optionService;
     private final OptionRepository optionRepository;
     private final MemberRepository memberRepository;
     private final WishRepository wishRepository;
 
-    public KakaoAuthService(ProductService productService, OptionService optionService, OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
+    public KakaoAuthService(KakaoProperties kakaoProperties, ProductService productService, OptionService optionService,
+                            OptionRepository optionRepository, MemberRepository memberRepository, WishRepository wishRepository) {
+        this.kakaoProperties = kakaoProperties;
         this.productService = productService;
         this.optionService = optionService;
         this.optionRepository = optionRepository;
@@ -137,8 +136,8 @@ public class KakaoAuthService {
     private @NotNull LinkedMultiValueMap<String, String> createBody(String code){
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUrl);
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUrl());
         body.add("code", code);
         return body;
     }

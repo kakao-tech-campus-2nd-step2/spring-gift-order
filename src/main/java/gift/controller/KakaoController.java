@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.config.KakaoProperties;
 import gift.model.BearerToken;
 import gift.service.KakaoAuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,25 +10,22 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class KakaoController {
-    @Value("${kakao.client-id}")
-    String clientId;
-    @Value("${kakao.redirect-url}")
-    String redirectUrl;
-
     private final KakaoAuthService kakaoAuthService;
+    private final KakaoProperties kakaoProperties;
 
-    public KakaoController(KakaoAuthService kakaoAuthService) {
+    public KakaoController(KakaoAuthService kakaoAuthService, KakaoProperties kakaoProperties) {
         this.kakaoAuthService = kakaoAuthService;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping(value="/kakao")
     public String kakaoConnect() {
-        System.out.println("redirect_uri=" + redirectUrl);
-        System.out.println("client_id=" + clientId);
+        System.out.println("redirect_uri=" + kakaoProperties.getRedirectUrl());
+        System.out.println("client_id=" + kakaoProperties.getClientId());
         StringBuffer url = new StringBuffer();
-        url.append("https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&");
-        url.append("redirect_uri=" + redirectUrl);
-        url.append("&client_id=" + clientId);
+        url.append(kakaoProperties.getLoginUrl());
+        url.append("redirect_uri=" + kakaoProperties.getRedirectUrl());
+        url.append("&client_id=" + kakaoProperties.getClientId());
         return "redirect:" + url.toString();
     }
 
