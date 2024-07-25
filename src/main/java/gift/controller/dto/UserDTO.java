@@ -9,7 +9,6 @@ public class UserDTO {
     @NotNull
     private String password;
     @NotNull
-    @Email
     private String email;
 
     public UserDTO(String password, String email) {
