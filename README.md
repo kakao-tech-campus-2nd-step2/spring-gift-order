@@ -35,3 +35,13 @@
   - 해당 상품이 위시 리스트에 있는경우 위시 리스트에서 삭제됨
   - 주문내역을 카카오톡 메시지로 전송한다.
     - 메세지 템플릿은 자유
+
+## step3 구현 기능
+
+- /api/social/code/kakao로 카카오 토큰을 받게금 수정함
+  - @RestController가 아닌 뷰를 반환해야 해서 @Controller로 구현
+  - 로그인폼 반환
+  - 로그인 및 동의시 /api/social/token/kakao로 리다이렉트
+- api 사양 문서화
+  - swagger3 사용
+  - http://localhost:8080/swagger-ui/index.html
