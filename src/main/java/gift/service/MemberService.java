@@ -9,6 +9,7 @@ import gift.entity.Member;
 import gift.repository.MemberRepository;
 import gift.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -29,6 +30,11 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RestClient restClient;
+
+    @Value("${kakao.client-id}")
+    private String clientId;
+    @Value("${kakao.redirect-url}")
+    private String redirectUri;
 
     @Autowired
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, RestClient restClient) {
@@ -68,9 +74,6 @@ public class MemberService {
     }
 
     public String kakaoLogin(String code) {
-        String clientId = "19376eed1b3349344fe573759afca0a4";
-        String redirectUri = "http://localhost:8080/members/oauth/kakao";
-
         // Request to get access token
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
