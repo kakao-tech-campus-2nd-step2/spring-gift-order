@@ -1,6 +1,6 @@
 package gift.domain.user.controller;
 
-import gift.auth.jwt.Token;
+import gift.auth.dto.Token;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;
 import gift.domain.user.service.UserService;

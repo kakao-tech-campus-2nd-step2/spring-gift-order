@@ -1,5 +1,6 @@
 package gift.auth.jwt;
 
+import gift.auth.dto.Token;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import gift.exception.InvalidAuthException;

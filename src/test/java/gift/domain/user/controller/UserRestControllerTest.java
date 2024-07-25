@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.jwt.Token;
+import gift.auth.dto.Token;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;
 import gift.domain.user.service.UserService;
