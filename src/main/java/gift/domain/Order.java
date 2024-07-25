@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static gift.constant.Message.POSITIVE_NUMBER_REQUIRED_MSG;
 
 @Entity
-@Table(name = "order")
+@Table(name = "order_details")
 public class Order {
 
     @Id
