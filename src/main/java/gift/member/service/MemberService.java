@@ -27,8 +27,8 @@ public class MemberService {
                     throw new MemberAlreadyExistsException();
                 });
 
-        Member newMember = new Member(memberInfoCommand.username(),
-                PasswordProvider.encode(memberInfoCommand.username(), memberInfoCommand.password()));
+        Member newMember = memberInfoCommand.toEntity();
+
         memberRepository.save(newMember);
 
         String token = jwtProvider.generateToken(newMember.getId(), newMember.getUsername(), newMember.getRole());

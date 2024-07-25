@@ -44,7 +44,7 @@ class WishServiceTest {
         WishCommand wishCommand = new WishCommand(1L, 1L, 10);
         Category category = new Category(1L, "카테고리", "카테고리 설명", "카테고리 이미지", "카테고리 썸네일 이미지");
         Product product = new Product("테스트 상품", 1000, "http://test.com", category);
-        Member memeber = new Member("test@test.com", "test");
+        Member memeber = new Member("test@test.com", "test", false);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
         given(memberRepository.getReferenceById(any())).willReturn(memeber);
 
