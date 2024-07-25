@@ -1,5 +1,6 @@
 package gift.config;
 
+import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -10,6 +11,8 @@ public record KakaoOauthConfig(
         String loginUrl,
         String tokenUrl,
         String userInfoUrl,
+        String userInfoQueryKey,
+        String userInfoQueryValue,
         String clientId,
         String redirection
 ) {
@@ -22,7 +25,10 @@ public record KakaoOauthConfig(
     }
 
     public RestClient createUserInfoClient() {
-        return RestClient.create(userInfoUrl);
+        return RestClient.builder()
+                .baseUrl(userInfoUrl)
+                .defaultUriVariables(Map.of(userInfoQueryKey, userInfoQueryValue))
+                .build();
     }
 
     public MultiValueMap<String, String> createBody(String code) {
