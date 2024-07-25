@@ -21,7 +21,7 @@ public class SnsMember {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = true,unique = true)
+    @Column(nullable = false,unique = true)
     private String OauthAccessToken;
 
     @ManyToOne
