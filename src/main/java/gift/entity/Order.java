@@ -69,6 +69,6 @@ public class Order {
     }
 
     public Integer getTotalPrice(Product product) {
-        return product.getPrice() * quantity;
+        return product.getPrice() * this.quantity;
     }
 }
