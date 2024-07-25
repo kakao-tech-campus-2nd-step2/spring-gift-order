@@ -1,6 +1,6 @@
 package gift.product.service;
 
-import static gift.product.exception.GlobalExceptionHandler.DID_NOT_GET_RESPONSE;
+import static gift.product.exception.GlobalExceptionHandler.DID_NOT_RECEIVE_RESPONSE;
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 
 import gift.product.exception.InvalidIdException;
@@ -57,7 +57,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new ResponseException(DID_NOT_GET_RESPONSE);
+            throw new ResponseException(DID_NOT_RECEIVE_RESPONSE);
         return response.get("access_token").toString();
     }
 
@@ -69,7 +69,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new ResponseException(DID_NOT_GET_RESPONSE);
+            throw new ResponseException(DID_NOT_RECEIVE_RESPONSE);
         return response.get("id").toString();
     }
 

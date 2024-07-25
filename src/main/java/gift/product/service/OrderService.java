@@ -8,7 +8,6 @@ import gift.product.dto.OrderDTO;
 import gift.product.exception.InvalidIdException;
 import gift.product.model.Member;
 import gift.product.model.Option;
-import gift.product.repository.MemberRepository;
 import gift.product.repository.OptionRepository;
 import gift.product.util.JwtUtil;
 import jakarta.validation.constraints.NotNull;
@@ -29,26 +28,22 @@ public class OrderService {
     private final RestClient client = RestClient.builder().build();
     private final OptionRepository optionRepository;
     private final ObjectMapper objectMapper;
-    private final MemberRepository memberRepository;
-    private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
     @Autowired
     public OrderService(
         OptionRepository optionRepository,
         ObjectMapper objectMapper,
-        MemberRepository memberRepository, KakaoService kakaoService,
-        JwtUtil jwtUtil) {
+        JwtUtil jwtUtil
+    ) {
         this.optionRepository = optionRepository;
         this.objectMapper = objectMapper;
-        this.memberRepository = memberRepository;
-        this.kakaoService = kakaoService;
         this.jwtUtil = jwtUtil;
     }
 
     public Map<String, String> orderProduct(String authorization, OrderDTO orderDTO) {
         System.out.println("[OrderService] orderProduct()");
-        Member member = jwtUtil.identification(authorization);
+        Member member = jwtUtil.parsingToken(authorization);
         Option option = optionRepository.findById(orderDTO.getOptionId()).orElseThrow(
             () -> new InvalidIdException(NOT_EXIST_ID)
         );
