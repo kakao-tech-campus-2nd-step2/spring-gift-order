@@ -44,7 +44,8 @@ public class KakaoOAuthService {
 
         ResponseEntity<KakaoTokenResponse> response = client.post()
                 .body(kakaoOauthConfig.createBody(code))
-                .retrieve().toEntity(KakaoTokenResponse.class);
+                .retrieve()
+                .toEntity(KakaoTokenResponse.class);
 
         return response.getBody();
     }
