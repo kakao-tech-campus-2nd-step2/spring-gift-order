@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoApiClient implements OAuthApiClient {
 
     private final RestClient restClient;
-    private Logger log = LoggerFactory.getLogger(KakaoApiClient.class);
+    private final Logger log = LoggerFactory.getLogger(KakaoApiClient.class);
 
     public KakaoApiClient() {
         this.restClient = RestClient.builder()
