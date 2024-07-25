@@ -2,6 +2,10 @@ package gift.util;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import gift.dto.KakaoUserInfoDTO;
 import gift.dto.OauthTokenDTO;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 @PropertySource("classpath:application-dev.properties")
 @Component
 public class KakaoApiUtil {
+
     private final RestClient restClient = RestClient.create();
 
     @Value("${kakao.api.key}")
@@ -47,8 +52,8 @@ public class KakaoApiUtil {
         return Mapper(response);
     }
 
-    //유저의 정보를 받아오는 메서드
-    private ResponseEntity<String> getUserInfo(String accessToken) {
+    //유저의 정보를 받아 DTO 형태로 반환.
+    public KakaoUserInfoDTO getUserInfo(String accessToken) {
         String url = "https://kapi.kakao.com/v2/user/me";
 
         var response = restClient.get()
@@ -57,8 +62,18 @@ public class KakaoApiUtil {
             .retrieve()
             .toEntity(String.class);
 
+        if (response.getBody() == null) {
+            throw new IllegalStateException("잘못된 요청입니다.");
+        }
 
-        return response;
+        JsonElement jsonElement = JsonParser.parseString(response.getBody());
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+        Long id = jsonObject.get("id").getAsLong();
+        String email = jsonObject.getAsJsonObject("kakao_account").get("email").getAsString();
+
+        return new KakaoUserInfoDTO(id, email, accessToken);
+
 
     }
 
