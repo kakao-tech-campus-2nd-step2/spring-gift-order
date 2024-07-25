@@ -2,7 +2,6 @@ package gift.controller;
 
 import gift.dto.ProductDto;
 import gift.service.ProductService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,18 +33,12 @@ public class AdminControllerTest {
     @MockBean
     private ProductService productService;
 
-    private ProductDto product1;
-    private ProductDto product2;
-
-    @BeforeEach
-    void setUp() {
-        product1 = new ProductDto(1L, "Product 1", 100, "img1.jpg", 1L);
-        product2 = new ProductDto(2L, "Product 2", 200, "img2.jpg", 2L);
-    }
-
     @Test
     @DisplayName("상품 전체 조회")
     void listProducts() throws Exception {
+        ProductDto product1 = new ProductDto(1L, "Product 1", 100, "img1.jpg", 1L);
+        ProductDto product2 = new ProductDto(2L, "Product 2", 200, "img2.jpg", 2L);
+
         given(productService.findAll()).willReturn(Arrays.asList(product1, product2));
 
         mockMvc.perform(get("/admin/products"))
@@ -58,6 +51,8 @@ public class AdminControllerTest {
     @Test
     @DisplayName("상품 상세정보 조회")
     void viewProduct() throws Exception {
+        ProductDto product1 = new ProductDto(1L, "Product 1", 100, "img1.jpg", 1L);
+
         given(productService.findById(1L)).willReturn(Optional.of(product1));
 
         mockMvc.perform(get("/admin/product/1"))
@@ -101,8 +96,10 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("상품 추가 폼 반환 테스트")
+    @DisplayName("상품 수정 폼 반환 테스트")
     void showEditProductForm() throws Exception {
+        ProductDto product1 = new ProductDto(1L, "Product 1", 100, "img1.jpg", 1L);
+
         given(productService.findById(1L)).willReturn(Optional.of(product1));
 
         mockMvc.perform(get("/admin/product/edit/1"))
@@ -113,7 +110,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("상품 추가 기능 테스트")
+    @DisplayName("상품 수정 기능 테스트")
     void editProduct() throws Exception {
         mockMvc.perform(post("/admin/product/edit/1")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
