@@ -52,7 +52,10 @@ public class OrderService {
         );
         option.subtractQuantity(orderDTO.getQuantity());
         Order order = orderRepository.save(orderDTO.convert(optionRepository));
-        sendToMe(member.getPassword(), order);
+        if(member.getSnsMember() != null) {
+            String kakaoAccessToken = member.getSnsMember().getAccessToken();
+            sendToMe(kakaoAccessToken, order);
+        }
         return createResponse(order);
     }
 
