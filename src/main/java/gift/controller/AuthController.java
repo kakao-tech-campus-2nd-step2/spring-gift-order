@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/api/oauth")
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
@@ -32,7 +32,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/api/oauth/register")
     public ResponseEntity<SuccessBody<UserResponseDTO>> signUp(
         @Valid @RequestBody UserSignupRequestDTO userSignupRequestDTO) {
         userService.join(userSignupRequestDTO);
@@ -40,7 +40,7 @@ public class AuthController {
         return ApiResponseGenerator.success(HttpStatus.CREATED, "회원가입에 성공했습니다.", userResponseDTO);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/oauth/login")
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         User user = userService.findByEmail(userLoginRequestDTO);
@@ -48,7 +48,7 @@ public class AuthController {
         return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "로그인에 성공했습니다.", userResponseDTO);
     }
 
-    @GetMapping("/redirect")
+    @GetMapping("/api/oauth/redirect")
     public String redirect() {
         KakaoProperties properties = authService.getProperties();
         String clientId = properties.clientId();
@@ -56,7 +56,14 @@ public class AuthController {
         return "redirect:https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=" + redirectUri +  "&client_id=" + clientId;
     }
 
-    @PostMapping("/kakao/login")
+    @GetMapping("/")
+    public ResponseEntity<SuccessBody<String>> getAuthorizationCode(
+        @RequestParam("code") String code
+    ){
+        return ApiResponseGenerator.success(HttpStatus.OK, "인가 코드 추출 성공", code);
+    }
+
+    @PostMapping("/api/oauth/kakao/login")
     public ResponseEntity<SuccessBody<String>> login(
         @RequestHeader KakaoLoginAuthorizationCode kakaoLoginAuthorizationCode) {
         String accessToken = authService.getAccessToken(kakaoLoginAuthorizationCode.code());
