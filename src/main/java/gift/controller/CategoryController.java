@@ -3,8 +3,8 @@ package gift.controller;
 import static gift.util.ResponseEntityUtil.responseError;
 
 import gift.constants.ResponseMsgConstants;
-import gift.dto.CategoryDTO;
-import gift.dto.ResponseDTO;
+import gift.dto.betweenClient.category.CategoryDTO;
+import gift.dto.betweenClient.ResponseDTO;
 import gift.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

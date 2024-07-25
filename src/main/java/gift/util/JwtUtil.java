@@ -1,6 +1,6 @@
 package gift.util;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 
-import gift.dto.CategoryDTO;
+import gift.dto.betweenClient.category.CategoryDTO;
 import gift.entity.Category;
 import gift.repository.CategoryRepository;
 import gift.repository.ProductRepository;

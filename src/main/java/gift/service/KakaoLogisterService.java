@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import gift.exception.InternalServerExceptions.InternalServerException;

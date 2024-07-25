@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

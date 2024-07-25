@@ -1,4 +1,4 @@
-package gift.dto;
+package gift.dto.betweenClient;
 
 public record JwtDTO(String token) {
 
