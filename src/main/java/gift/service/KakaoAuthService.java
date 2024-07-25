@@ -88,7 +88,7 @@ public class KakaoAuthService {
         OptionalWish.ifPresent(wish ->
                 wishRepository.deleteById(wish.getId()));
         //카카오톡 메세지 보내기
-        sendKakaoMessage(token, product.getName());
+        sendKakaoMessage(token, product.getName(), optionName, num);
     }
 
     public Member getDBMemberByToken(String token){
@@ -113,31 +113,14 @@ public class KakaoAuthService {
         return response.getBody().getId();
     }
 
-    public void sendKakaoMessage(String token, String productName){
+    public void sendKakaoMessage(String token, String productName, String optionName, int num){
         System.out.println("sendKakaoMessage");
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         var headers = new HttpHeaders();
         headers.setBearerAuth(token);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        String text = productName + " 상품 발송";
-        String webUrl = "https://developers.kakao.com";
-        String buttonTitle = "바로가기";
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode jsonObject = mapper.createObjectNode();
-        jsonObject.put("object_type", "text");
-        jsonObject.put("text", text);
-
-        ObjectNode linkObject = mapper.createObjectNode();
-        linkObject.put("web_url", webUrl);
-        jsonObject.set("link", linkObject);
-
-        jsonObject.put("button_title", buttonTitle);
-
-        String templateObject = jsonObject.toString();
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("template_object", templateObject);
+        var body = createTemplateObject(productName, optionName, num);
 
         var response = client.post()
                 .uri(url)
@@ -157,6 +140,30 @@ public class KakaoAuthService {
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUrl);
         body.add("code", code);
+        return body;
+    }
+
+    private @NotNull LinkedMultiValueMap<String, String> createTemplateObject(String productName, String optionName, int num){
+        String text = productName + "[" + optionName + "]" + " 상품이 "
+                        + Integer.toString(num) + "개 주문되었습니다.";
+        String webUrl = "http://localhost:8080/";
+        String buttonTitle = "바로가기";
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode jsonObject = mapper.createObjectNode();
+        jsonObject.put("object_type", "text");
+        jsonObject.put("text", text);
+
+        ObjectNode linkObject = mapper.createObjectNode();
+        linkObject.put("web_url", webUrl);
+        jsonObject.set("link", linkObject);
+
+        jsonObject.put("button_title", buttonTitle);
+
+        String templateObject = jsonObject.toString();
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObject);
+
         return body;
     }
 }
