@@ -83,7 +83,7 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return jsonNode.get("id").asText();
-        } catch (JsonProcessingException e) {
+        }catch (JsonProcessingException e) {
             throw new JsonException();
         }catch (Exception e) {
             throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
