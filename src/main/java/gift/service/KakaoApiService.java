@@ -43,48 +43,59 @@ public class KakaoApiService {
         var url = "https://kauth.kakao.com/oauth/token";
         var body = createBody(code);
 
-        ResponseEntity<String> response = client.post()
+        try {
+
+            ResponseEntity<String> response = client.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
                 .retrieve()
                 .toEntity(String.class);
-        
-        if(response.getStatusCode() != HttpStatusCode.valueOf(200)){
-            throw new CustomException(response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
-        }
+                
+            if(response.getStatusCode().is2xxSuccessful()){
 
-        String jsonBody = response.getBody();
+                String jsonBody = response.getBody();
+                return objectMapper.readValue(jsonBody, KakaoTokenResponse.class);
 
-        try {
-            return objectMapper.readValue(jsonBody, KakaoTokenResponse.class);
+            } else if(response.getStatusCode().is4xxClientError()){
+                throw new CustomException("Bad Request", HttpStatus.valueOf(response.getStatusCode().value()));
+            } else if(response.getStatusCode().is5xxServerError()){
+                throw new CustomException("System error", HttpStatus.valueOf(response.getStatusCode().value()));
+            } else {
+                throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
         } catch (Exception e) {
-            throw new CustomException("Error parsing kakao token response", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     public KakaoUserInfoResponse getUserInfo(String accessToken){
 
         var url = "https://kapi.kakao.com/v2/user/me";
-
-        ResponseEntity<String> response = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .toEntity(String.class);
-
-        if(response.getStatusCode() != HttpStatusCode.valueOf(200)){
-            throw new CustomException(response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
-        }
-
-        String jsonBody = response.getBody();
-
+        
         try {
-            KakaoUserInfoResponse kakaoUserInfoResponse = objectMapper.readValue(jsonBody, KakaoUserInfoResponse.class);
-            return kakaoUserInfoResponse;
-        }catch (Exception e) {
-            throw new CustomException("Error parsing kakao user info response", HttpStatus.INTERNAL_SERVER_ERROR);
+            ResponseEntity<String> response = client.post()
+                    .uri(URI.create(url))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .toEntity(String.class);
+
+            if(response.getStatusCode().is2xxSuccessful()){
+
+                String jsonBody = response.getBody();
+                return objectMapper.readValue(jsonBody, KakaoUserInfoResponse.class);
+
+            } else if(response.getStatusCode().is4xxClientError()){
+                throw new CustomException("Bad Request", HttpStatus.valueOf(response.getStatusCode().value()));
+            } else if(response.getStatusCode().is5xxServerError()){
+                throw new CustomException("System error", HttpStatus.valueOf(response.getStatusCode().value()));
+            } else {
+                throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            throw new CustomException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
