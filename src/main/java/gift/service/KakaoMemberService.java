@@ -1,6 +1,9 @@
 package gift.service;
 
+import gift.dto.response.KaKaoMemberInfoResponse;
+import gift.dto.response.KakaoTokenResponse;
 import gift.exception.MissingAuthorizationCodeException;
+import gift.exception.ResponseBodyNullException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -8,9 +11,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.Optional;
 
-import static gift.constants.Messages.MISSING_AUTHORIZATION_CODE;
+import static gift.constants.Messages.*;
 
 @Service
 public class KakaoMemberService {
@@ -45,12 +48,10 @@ public class KakaoMemberService {
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-        var response = restTemplate.exchange(request, Map.class);
+        ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(request, KakaoTokenResponse.class);
+        KakaoTokenResponse kakaoTokenResponse = Optional.ofNullable(response.getBody()).orElseThrow(() -> new ResponseBodyNullException(RESPONSE_BODY_NULL));
 
-        Map<String, Object> responseBody = response.getBody();
-        String accessToken = (String) responseBody.get("access_token");
-        System.out.println("Access Token: " + accessToken);
-        return accessToken;
+        return kakaoTokenResponse.access_token();
     }
 
     public String getKakaoUserEmail(String token) {
@@ -60,11 +61,11 @@ public class KakaoMemberService {
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
 
-        var response = restTemplate.exchange(request, Map.class);
-        Map<String, Object> responseBody = response.getBody();
-        String id = responseBody.get("id").toString();
-        String userEmail = id+"@kakao.com";
-        return userEmail;
+        var response = restTemplate.exchange(request, KaKaoMemberInfoResponse.class);
+        KaKaoMemberInfoResponse KaKaoMemberInfoResponse = Optional.ofNullable(response.getBody()).orElseThrow(() -> new ResponseBodyNullException(RESPONSE_BODY_NULL));
+
+        Long id = KaKaoMemberInfoResponse.id();
+        return id +"@kakao.com";
     }
 
     public boolean isKakaoTokenValid(String token){
@@ -76,7 +77,7 @@ public class KakaoMemberService {
         var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
 
         try {
-            var response = restTemplate.exchange(request, String.class);
+            restTemplate.exchange(request, String.class);
             return true;
         } catch (Exception e) {
             return false;
@@ -98,6 +99,6 @@ public class KakaoMemberService {
         body.add("template_object", sb.toString());
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-        var response = restTemplate.exchange(request, Map.class);
+        restTemplate.exchange(request,String.class);
     }
 }
