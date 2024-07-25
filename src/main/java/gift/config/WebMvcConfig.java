@@ -13,10 +13,10 @@ import java.util.List;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
 
-    public WebMvcConfig(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public WebMvcConfig(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
     }
 
 
@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     @Order(1)
     public JwtInterceptor jwtInterceptor() {
-        return new JwtInterceptor(tokenProvider);
+        return new JwtInterceptor(jwtProvider);
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     @Order(3)
     public AdminInterceptor adminInterceptor() {
-        return new AdminInterceptor(tokenProvider);}
+        return new AdminInterceptor(jwtProvider);}
 
     @Bean
     public LoginMemberArgumentResolver loginMemberArgumentResolver() {

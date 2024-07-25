@@ -12,10 +12,10 @@ import java.security.Key;
 import java.util.Date;
 
 @Component
-public class TokenProvider {
+public class JwtProvider {
     private final Key key;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKeyString) {
+    public JwtProvider(@Value("${jwt.secret}") String secretKeyString) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKeyString);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }

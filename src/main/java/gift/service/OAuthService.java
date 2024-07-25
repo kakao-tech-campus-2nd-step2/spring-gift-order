@@ -6,20 +6,20 @@ import gift.common.properties.KakaoProperties;
 import gift.controller.dto.response.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
-import gift.security.TokenProvider;
+import gift.security.JwtProvider;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OAuthService {
 
     private final MemberRepository memberRepository;
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
     private final KakaoProperties properties;
     private final KakaoApiCaller kakaoApiCaller;
 
-    public OAuthService(MemberRepository memberRepository, TokenProvider tokenProvider, KakaoProperties kakaoProperties, KakaoApiCaller kakaoApiCaller) {
+    public OAuthService(MemberRepository memberRepository, JwtProvider jwtProvider, KakaoProperties kakaoProperties, KakaoApiCaller kakaoApiCaller) {
         this.memberRepository = memberRepository;
-        this.tokenProvider = tokenProvider;
+        this.jwtProvider = jwtProvider;
         this.properties = kakaoProperties;
         this.kakaoApiCaller = kakaoApiCaller;
     }
@@ -34,7 +34,7 @@ public class OAuthService {
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER, SocialLoginType.KAKAO)));
         member.checkLoginType(SocialLoginType.KAKAO);
-        String token = tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        String token = jwtProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
         return TokenResponse.from(token);
     }
 }

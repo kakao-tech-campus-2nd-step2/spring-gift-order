@@ -10,10 +10,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class JwtInterceptor implements HandlerInterceptor {
     private static final String HEADER_AUTHORIZATION = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
 
-    public JwtInterceptor(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public JwtInterceptor(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         String token = authHeader.substring(TOKEN_PREFIX.length());
         try {
-            Claims claims = tokenProvider.parseToken(token);
+            Claims claims = jwtProvider.parseToken(token);
             request.setAttribute("SUB", Long.parseLong(claims.getSubject()));
             request.setAttribute("ROLE", claims.get("role"));
             return true;
