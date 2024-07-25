@@ -43,6 +43,7 @@ public class WishService {
     @Transactional
     public Wish insertWish(WishDto wishDto, LoginMember loginMember) {
         Product product = getValidatedProduct(wishDto.productId());
+        validateRedundancyWishByProductId(wishDto.productId());
 
         Member member = getMember(loginMember);
         Wish wish = new Wish(member, product);
@@ -68,5 +69,11 @@ public class WishService {
     private Product getValidatedProduct(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("해당 ID의 상품이 존재하지 않습니다."));
+    }
+
+    private void validateRedundancyWishByProductId(Long productId) {
+        if (wishRepository.existsByProductId(productId)) {
+            throw new IllegalArgumentException("해당 상품이 이미 위시 리스트에 존재합니다.");
+        }
     }
 }
