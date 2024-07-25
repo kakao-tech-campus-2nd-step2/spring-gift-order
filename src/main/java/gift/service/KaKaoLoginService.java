@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.LoginType;
 import gift.domain.Member;
 import gift.dto.KakaoTokenInfo;
 import gift.dto.KakaoUserInfo;
@@ -113,8 +114,8 @@ public class KaKaoLoginService {
             throw new CustomException(ALREADY_REGISTERED_ERROR);
         }
 
-        Member savedMember = memberRepository.save(new Member(email, generateRandomPassword(), true));
-        return jwtUtil.createJWT(savedMember.getId());
+        Member savedMember = memberRepository.save(new Member(email, generateRandomPassword(), LoginType.KAKAO));
+        return jwtUtil.createJWT(savedMember.getId(), savedMember.getLoginType());
     }
 
     private String generateRandomPassword() {

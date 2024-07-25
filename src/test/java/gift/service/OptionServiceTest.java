@@ -1,6 +1,8 @@
 package gift.service;
 
+import gift.LoginType;
 import gift.domain.Category;
+import gift.domain.Member;
 import gift.domain.Option;
 import gift.domain.Product;
 import gift.dto.request.OrderRequest;
@@ -37,11 +39,12 @@ class OptionServiceTest {
         product.setOption(option);
 
         OrderRequest orderRequest = new OrderRequest(1L, 9, "Please handle this order with care.");
+        Member member = new Member(1L, "MemberName", "password", LoginType.EMAIL);
 
         given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         // when
-        orderService.order(orderRequest);
+        orderService.order(member, orderRequest);
 
         // then
         Assertions.assertThat(option.getQuantity())
