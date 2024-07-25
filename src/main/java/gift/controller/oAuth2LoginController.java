@@ -1,6 +1,5 @@
 package gift.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.response.oAuth2TokenResponse;
 import gift.service.OAuth2LoginService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-public class oAUth2LoginController {
+public class oAuth2LoginController {
 
     private final OAuth2LoginService loginService;
 
-    public oAUth2LoginController(OAuth2LoginService loginService) {
+    public oAuth2LoginController(OAuth2LoginService loginService) {
         this.loginService = loginService;
     }
 
