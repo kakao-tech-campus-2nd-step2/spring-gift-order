@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.AuthToken;
 import gift.domain.Member;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
@@ -9,6 +10,7 @@ import gift.repository.member.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -16,9 +18,11 @@ import java.util.Optional;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final TokenService tokenService;
 
-    public AuthService(MemberRepository memberRepository) {
+    public AuthService(MemberRepository memberRepository, TokenService tokenService) {
         this.memberRepository = memberRepository;
+        this.tokenService = tokenService;
     }
 
     @Transactional
@@ -33,6 +37,29 @@ public class AuthService {
         if(memberByEmail.isPresent()){
             throw new EmailDuplicationException();
         }
+
+        Member savedMember = memberRepository.save(member);
+
+        return MemberResponseDto.from(savedMember);
+    }
+
+    @Transactional
+    public String kakaoMemberLogin(String kakaoId, Map<String, String> kakaoTokenInfo){
+        MemberResponseDto memberResponseDto = memberRepository.findMemberByKakaoId(kakaoId).map(MemberResponseDto::from)
+                .orElseGet(() -> memberKakaoJoin(kakaoId));
+
+        AuthToken authToken = tokenService.oauthTokenSave(kakaoTokenInfo, memberResponseDto.email());
+
+        return authToken.getToken();
+    }
+
+    @Transactional
+    public MemberResponseDto memberKakaoJoin(String kakaoId){
+        Member member = new Member.Builder()
+                .email(kakaoId+"@kakao.com")
+                .password(kakaoId+"@kakao.com")
+                .kakaoId(kakaoId)
+                .build();
 
         Member savedMember = memberRepository.save(member);
 

@@ -1,5 +1,6 @@
 package gift.filter;
 
+
 import gift.domain.AuthToken;
 import gift.repository.token.TokenRepository;
 import jakarta.servlet.*;
@@ -8,13 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-public class AuthFilter implements Filter {
+/**
+ * post /login/token 요청 시 Authorization 토큰 값을 이미 가지고 있다면 /home(누구나 접근할 수 있는 페이지) 으로 리다이렉션 하기 위한 필터
+ */
+public class MyTokenFilter implements Filter {
 
     private final TokenRepository tokenRepository;
 
-    public AuthFilter(TokenRepository tokenRepository) {
+    public MyTokenFilter(TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
 
@@ -34,32 +37,22 @@ public class AuthFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String path = httpRequest.getRequestURI();
-
-        // Filter 를 통과하지 않아도 되는 url
         if (path.equals("/home") || path.equals("/oauth/renew/kakao") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Authorization header 존재하는지 확인
-        // 없으면 누구나 접근할 수 있는 페이지로 리다이렉트
-        String authHeader = httpRequest.getHeader("Authorization");
+        AuthToken authToken = (AuthToken) httpRequest.getAttribute("AuthToken");
 
-        if (authHeader == null || authHeader.isEmpty()){
-            httpResponse.sendRedirect("/home");
-            return;
+        if(authToken.getAccessToken() == null){
+            if(authToken.getCreatedAt().plusSeconds(authToken.getTokenTime()).isBefore(LocalDateTime.now())){
+                tokenRepository.deleteById(authToken.getId());
+                httpResponse.sendRedirect("/home");
+                return;
+            }
         }
 
-        Optional<AuthToken> token = tokenRepository.findAuthTokenByToken(authHeader.substring(7));
-
-        if (token.isEmpty()){
-            httpResponse.sendRedirect("/home");
-            return;
-        }
-
-        httpRequest.setAttribute("AuthToken",token.get());
         filterChain.doFilter(request, response);
     }
-
 
 }

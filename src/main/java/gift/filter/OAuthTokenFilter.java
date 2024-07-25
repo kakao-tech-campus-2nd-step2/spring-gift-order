@@ -8,13 +8,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-public class AuthFilter implements Filter {
+public class OAuthTokenFilter implements Filter {
 
     private final TokenRepository tokenRepository;
-
-    public AuthFilter(TokenRepository tokenRepository) {
+    public OAuthTokenFilter(TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
 
@@ -34,32 +32,24 @@ public class AuthFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String path = httpRequest.getRequestURI();
-
-        // Filter 를 통과하지 않아도 되는 url
         if (path.equals("/home") || path.equals("/oauth/renew/kakao") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // Authorization header 존재하는지 확인
-        // 없으면 누구나 접근할 수 있는 페이지로 리다이렉트
-        String authHeader = httpRequest.getHeader("Authorization");
+        AuthToken authToken = (AuthToken) httpRequest.getAttribute("AuthToken");
 
-        if (authHeader == null || authHeader.isEmpty()){
+        if(authToken.getCreatedAt().plusSeconds(authToken.getAccessTokenTime()).isBefore(LocalDateTime.now())){
+            if(authToken.getCreatedAt().plusSeconds(authToken.getRefreshTokenTime()).isAfter(LocalDateTime.now())){
+                httpResponse.sendRedirect("/oauth/renew/kakao?token="+authToken.getId());
+                return;
+            }
+            tokenRepository.deleteById(authToken.getId());
             httpResponse.sendRedirect("/home");
             return;
         }
 
-        Optional<AuthToken> token = tokenRepository.findAuthTokenByToken(authHeader.substring(7));
-
-        if (token.isEmpty()){
-            httpResponse.sendRedirect("/home");
-            return;
-        }
-
-        httpRequest.setAttribute("AuthToken",token.get());
         filterChain.doFilter(request, response);
     }
-
 
 }

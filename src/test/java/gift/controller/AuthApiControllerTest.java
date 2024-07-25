@@ -2,6 +2,7 @@ package gift.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.configuration.FilterConfiguration;
+import gift.controller.auth.AuthApiController;
 import gift.domain.AuthToken;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
@@ -24,9 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
+@WebMvcTest(AuthApiController.class)
 @Import(FilterConfiguration.class)
-class AuthControllerTest {
+class AuthApiControllerTest {
 
     @Autowired
     MockMvc mvc;
