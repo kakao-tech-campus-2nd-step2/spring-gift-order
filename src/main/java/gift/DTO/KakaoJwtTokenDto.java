@@ -1,25 +1,17 @@
 package gift.DTO;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+public class KakaoJwtTokenDto {
 
-@Table
-@Entity
-public class KakaoJwtToken {
+  private final String accessToken;
 
-  @Id
-  private String accessToken;
+  private final String tokenType;
+  private final String refreshToken;
+  private final int expiresIn;
+  private final String scope;
+  private final int refreshTokenExpiresIn;
 
-  private String tokenType;
-  private String refreshToken;
-  private int expiresIn;
-  private String scope;
-  private int refreshTokenExpiresIn;
-
-  public KakaoJwtToken(String accessToken, String tokenType, String refreshToken, int expiresIn,
+  public KakaoJwtTokenDto(String accessToken, String tokenType, String refreshToken, int expiresIn,
     String scope, int refreshTokenExpiresIn) {
-
     this.accessToken = accessToken;
     this.tokenType = tokenType;
     this.refreshToken = refreshToken;
@@ -28,9 +20,6 @@ public class KakaoJwtToken {
     this.refreshTokenExpiresIn = refreshTokenExpiresIn;
   }
 
-  public KakaoJwtToken() {
-
-  }
 
   public String getAccessToken() {
     return accessToken;
