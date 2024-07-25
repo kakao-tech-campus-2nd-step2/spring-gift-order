@@ -28,7 +28,7 @@ public class JwtUtil {
             Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
-            throw e;
+            return false;
         }
     }
 
@@ -44,5 +44,9 @@ public class JwtUtil {
     // JWT에서 사용자 이메일 추출
     public String extractEmail(String token) {
         return extractClaims(token).getSubject();
+    }
+
+    public boolean isJwtToken(String token) {
+        return token.split("\\.").length == 3;
     }
 }
