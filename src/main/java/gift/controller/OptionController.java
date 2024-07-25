@@ -51,11 +51,11 @@ public class OptionController {
 
     //상품 주문
     @PostMapping("/orders")
-    public ResponseEntity<String> orderOption(@RequestBody OrderRequestDTO orderRequestDTO,
+    public ResponseEntity<OrderResponseDTO> orderOption(@RequestBody OrderRequestDTO orderRequestDTO,
         @LoginUser String email) {
         OrderResponseDTO response = optionService.orderOption(orderRequestDTO, email);
 
-        return new ResponseEntity<>("옵션 주문 및 메시지 보내기 완료", HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
