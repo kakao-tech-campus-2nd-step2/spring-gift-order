@@ -22,7 +22,7 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductOption> productOption = new ArrayList<>();
 
-    private Long categoryid;
+    private Long category_id;
 
     public Product() {
     }
@@ -31,21 +31,21 @@ public class Product {
         this.name = product.getName();
         this.price = product.getPrice();
         this.imageurl = product.getImageurl();
-        this.categoryid = product.getCategoryid();
+        this.category_id = product.getCategoryid();
     }
 
     public Product(String name, int price, String imageurl, Long categoryid) {
         this.name = name;
         this.price = price;
         this.imageurl = imageurl;
-        this.categoryid = categoryid;
+        this.category_id = categoryid;
     }
 
     public void setProductWithCategory(ProductDTO product) {
         this.name = product.getName();
         this.price = product.getPrice();
         this.imageurl = product.getImageurl();
-        this.categoryid = categoryid;
+        this.category_id = category_id;
     }
 
 
@@ -66,7 +66,7 @@ public class Product {
     }
 
     public Long getCategoryid() {
-        return categoryid;
+        return category_id;
     }
 
     public Long getId() {
@@ -86,6 +86,6 @@ public class Product {
     }
 
     public void setCategoryid(Long categoryid) {
-        this.categoryid = categoryid;
+        this.category_id = categoryid;
     }
 }
