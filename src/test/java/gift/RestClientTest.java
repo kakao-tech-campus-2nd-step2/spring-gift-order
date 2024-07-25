@@ -2,7 +2,7 @@
 //
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import gift.common.properties.KakaoProperties;
-//import gift.util.dto.KakaoTokenDto;
+//import gift.service.dto.KakaoTokenDto;
 //import jakarta.validation.constraints.NotNull;
 //import org.junit.jupiter.api.Test;
 //import org.redisson.api.RedissonClient;

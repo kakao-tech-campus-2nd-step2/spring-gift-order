@@ -1,4 +1,4 @@
-package gift.util.dto;
+package gift.service.dto;
 
 public record KakaoTokenDto(
         String access_token,

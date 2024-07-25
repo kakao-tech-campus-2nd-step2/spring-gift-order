@@ -7,7 +7,6 @@ import gift.controller.dto.response.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.security.TokenProvider;
-import gift.util.KakaoApiUtil;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,13 +15,13 @@ public class OAuthService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
     private final KakaoProperties properties;
-    private final KakaoApiUtil kakaoApiUtil;
+    private final KakaoApiCaller kakaoApiCaller;
 
-    public OAuthService(MemberRepository memberRepository, TokenProvider tokenProvider, KakaoProperties kakaoProperties, KakaoApiUtil kakaoApiUtil) {
+    public OAuthService(MemberRepository memberRepository, TokenProvider tokenProvider, KakaoProperties kakaoProperties, KakaoApiCaller kakaoApiCaller) {
         this.memberRepository = memberRepository;
         this.tokenProvider = tokenProvider;
         this.properties = kakaoProperties;
-        this.kakaoApiUtil = kakaoApiUtil;
+        this.kakaoApiCaller = kakaoApiCaller;
     }
 
     public TokenResponse signIn(String code) {
@@ -30,8 +29,8 @@ public class OAuthService {
     }
 
     public TokenResponse signIn(String code, String redirectUrl) {
-        String accessToken = kakaoApiUtil.getKakaoAccessToken(code, redirectUrl);
-        String email = kakaoApiUtil.getKakaoMemberInfo(accessToken);
+        String accessToken = kakaoApiCaller.getKakaoAccessToken(code, redirectUrl);
+        String email = kakaoApiCaller.getKakaoMemberInfo(accessToken);
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER, SocialLoginType.KAKAO)));
         member.checkLoginType(SocialLoginType.KAKAO);

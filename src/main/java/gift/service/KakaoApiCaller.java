@@ -1,10 +1,10 @@
-package gift.util;
+package gift.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.exception.AuthenticationException;
 import gift.common.properties.KakaoProperties;
-import gift.util.dto.KakaoInfoDto;
-import gift.util.dto.KakaoTokenDto;
+import gift.service.dto.KakaoInfoDto;
+import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,12 +15,12 @@ import org.springframework.web.client.RestClient;
 import java.net.URI;
 
 @Component
-public class KakaoApiUtil {
+public class KakaoApiCaller {
     private final ObjectMapper objectMapper;
     private final RestClient client;
     private final KakaoProperties properties;
 
-    public KakaoApiUtil(ObjectMapper objectMapper, KakaoProperties properties) {
+    public KakaoApiCaller(ObjectMapper objectMapper, KakaoProperties properties) {
         this.objectMapper = objectMapper;
         this.client = RestClient.builder().build();
         this.properties = properties;
