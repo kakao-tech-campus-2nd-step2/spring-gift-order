@@ -1,10 +1,13 @@
 package gift.product.service;
 
 import static gift.product.exception.GlobalExceptionHandler.DID_NOT_GET_RESPONSE;
+import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 
+import gift.product.exception.InvalidIdException;
 import gift.product.exception.ResponseException;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
+import gift.product.util.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Map;
@@ -19,10 +22,23 @@ public class KakaoService {
     private final RestClient client = RestClient.builder().build();
     private final KakaoProperties properties;
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
-    public KakaoService(KakaoProperties properties, MemberRepository memberRepository) {
+    public KakaoService(
+        KakaoProperties properties,
+        MemberRepository memberRepository,
+        JwtUtil jwtUtil
+    ) {
         this.properties = properties;
         this.memberRepository = memberRepository;
+        this.jwtUtil = jwtUtil;
+    }
+
+    public String login(String authCode) {
+        String accessToken = getAccessToken(authCode);
+        String kakaoMemberId = parsingAccessToken(accessToken);
+        Member member = signUpAndLogin(kakaoMemberId, accessToken);
+        return jwtUtil.generateToken(member.getEmail());
     }
 
     public String getAuthCode() {
@@ -31,7 +47,7 @@ public class KakaoService {
             + "&client_id=" + properties.clientId();
     }
 
-    public void getAccessToken(String code) {
+    public String getAccessToken(String code) {
         var url = "https://kauth.kakao.com/oauth/token";
         final var body = createBody(code);
         var response = client.post()
@@ -42,11 +58,10 @@ public class KakaoService {
             .body(Map.class);
         if (response == null)
             throw new ResponseException(DID_NOT_GET_RESPONSE);
-        String accessToken = response.get("access_token").toString();
-        signUpAndLogin(accessToken);
+        return response.get("access_token").toString();
     }
 
-    public void signUpAndLogin(String accessToken) {
+    public String parsingAccessToken(String accessToken) {
         var url = "https://kapi.kakao.com/v2/user/me";
         var response = client.get()
             .uri(URI.create(url))
@@ -55,9 +70,7 @@ public class KakaoService {
             .body(Map.class);
         if (response == null)
             throw new ResponseException(DID_NOT_GET_RESPONSE);
-        String memberId = response.get("id").toString();
-        if(!memberRepository.existsByEmail(memberId))
-            memberRepository.save(new Member(memberId, "kakao"));
+        return response.get("id").toString();
     }
 
     private @NotNull LinkedMultiValueMap<String, String> createBody(String code) {
@@ -67,5 +80,12 @@ public class KakaoService {
         body.add("redirect_uri", properties.redirectUrl());
         body.add("code", code);
         return body;
+    }
+
+    public Member signUpAndLogin(String kakaoMemberId, String accessToken) {
+        if(!memberRepository.existsByEmail(kakaoMemberId))
+            return memberRepository.save(new Member(kakaoMemberId, accessToken));
+        return memberRepository.findByEmail(kakaoMemberId)
+            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
     }
 }
