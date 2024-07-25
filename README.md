@@ -42,7 +42,9 @@
 - member_id (외래키만 참조)
 - option (다대일 연관관계 매핑)
 - quantity: 주문 수량
+  - 1개~1억개의 수량 입력 가능함
 - message: 주문 시 메시지
+  - 0자~100자 입력 가능함
 
 #### OrderService
 - 주문 생성
