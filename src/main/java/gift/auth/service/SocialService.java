@@ -33,6 +33,10 @@ public class SocialService {
         this.parsingPram = parsingPram;
     }
 
+    public String getKakoCode(){
+        return apiCall.getKakaoCode();
+    }
+
     public kakaoToken getKakaoToken(String code) {
         return apiCall.getKakaoToken(code);
     }

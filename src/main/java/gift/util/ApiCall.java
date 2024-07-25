@@ -39,6 +39,16 @@ public class ApiCall {
         this.restCall = restCall;
     }
 
+    public String getKakaoCode() {
+        String url = KakaoUrl.getCode
+            + "?response_type=code"
+            + "&redirect_uri=" + commonUrl + redirectUrl
+            + "&through_account=true"
+            + "&client_id=" + clientId;
+
+        return url;
+    }
+
     public kakaoToken getKakaoToken(String code) {
         headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -52,6 +62,7 @@ public class ApiCall {
 
         ResponseEntity<kakaoToken> responseEntity = restCall.apiCall(url, GET, requestEntity,
             kakaoToken.class);
+        System.out.println(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
