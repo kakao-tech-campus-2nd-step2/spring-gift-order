@@ -52,12 +52,9 @@ public class WishListService {
 
         wishListRepository.delete(wishList);
     }
-<<<<<<< HEAD
     public boolean isProductInWishList(String email, Long productId) {
         User user = userRepository.findByEmail(email);
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
         return wishListRepository.findByUserAndProduct(user, product).isPresent();
     }
-=======
->>>>>>> humpose
 }
