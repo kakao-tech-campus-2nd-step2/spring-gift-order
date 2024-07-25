@@ -1,6 +1,7 @@
-package gift.client;
+package gift.external.api.kakao.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.service.annotation.GetExchange;
@@ -11,5 +12,5 @@ public interface KakaoApiClient {
     JsonNode getAccessTokenInfo(@RequestHeader("Authorization") HttpHeaders headers);
 
     @GetExchange(value = "/v2/user/me")
-    JsonNode getUserInfo(@RequestHeader("Authorization") HttpHeaders headers);
+    KakaoUserInfo getUserInfo(@RequestHeader("Authorization") HttpHeaders headers);
 }

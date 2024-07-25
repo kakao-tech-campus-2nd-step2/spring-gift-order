@@ -1,8 +1,8 @@
 package gift.config;
 
-import gift.auth.oauth.kakao.KakaoProperties;
-import gift.client.KakaoApiClient;
-import gift.client.KakaoAuthClient;
+import gift.external.api.kakao.KakaoProperties;
+import gift.external.api.kakao.client.KakaoApiClient;
+import gift.external.api.kakao.client.KakaoAuthClient;
 import gift.exception.OauthLoginException;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;

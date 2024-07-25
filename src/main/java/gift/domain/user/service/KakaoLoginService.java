@@ -1,10 +1,10 @@
 package gift.domain.user.service;
 
 import gift.auth.dto.Token;
-import gift.auth.oauth.kakao.KakaoApiProvider;
+import gift.external.api.kakao.KakaoApiProvider;
+import gift.external.api.kakao.dto.KakaoUserInfo;
 import gift.domain.user.dto.UserDto;
 import gift.domain.user.dto.UserLoginDto;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -24,22 +24,23 @@ public class KakaoLoginService {
     }
 
     public Token login(String code) {
-        String accessToken = kakaoApiProvider.getAccessToken(code);
+        String accessToken = kakaoApiProvider.getToken(code).accessToken();
         kakaoApiProvider.validateAccessToken(accessToken);
-        Map<String, String> userInfo = kakaoApiProvider.getUserInfo(accessToken);
+        KakaoUserInfo userInfo = kakaoApiProvider.getUserInfo(accessToken);
 
-        String email = userInfo.get("email");
+        String email = userInfo.kakaoAccount().email();
+        String name = userInfo.kakaoAccount().profile().nickname();
+
         Optional<UserDto> userDto = userService.findByEmail(email);
-
         if (userDto.isEmpty()) {
-            return signUp(userInfo);
+            return signUp(name, email);
         }
 
         return userService.login(new UserLoginDto(email, userDto.get().password()));
     }
 
-    private Token signUp(Map<String, String> userInfo) {
-        UserDto userDto = new UserDto(null, userInfo.get("name"), userInfo.get("email"), "kakao", null);
+    private Token signUp(String name, String email) {
+        UserDto userDto = new UserDto(null, name, email, "kakao", null);
         return userService.signUp(userDto);
     }
 }

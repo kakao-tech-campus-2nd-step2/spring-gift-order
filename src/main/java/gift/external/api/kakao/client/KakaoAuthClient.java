@@ -1,6 +1,6 @@
-package gift.client;
+package gift.external.api.kakao.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import gift.external.api.kakao.dto.KakaoToken;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.PostExchange;
@@ -8,5 +8,5 @@ import org.springframework.web.service.annotation.PostExchange;
 public interface KakaoAuthClient {
 
     @PostExchange(value = "/oauth/token")
-    JsonNode getAccessToken(@RequestBody MultiValueMap<String, String> body);
+    KakaoToken getAccessToken(@RequestBody MultiValueMap<String, String> body);
 }

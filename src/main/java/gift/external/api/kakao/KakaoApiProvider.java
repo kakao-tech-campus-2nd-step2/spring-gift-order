@@ -1,10 +1,9 @@
-package gift.auth.oauth.kakao;
+package gift.external.api.kakao;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import gift.client.KakaoApiClient;
-import gift.client.KakaoAuthClient;
-import java.util.HashMap;
-import java.util.Map;
+import gift.external.api.kakao.client.KakaoApiClient;
+import gift.external.api.kakao.client.KakaoAuthClient;
+import gift.external.api.kakao.dto.KakaoToken;
+import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -38,16 +37,14 @@ public class KakaoApiProvider {
             + "&redirect_uri=" + kakaoProperties.redirectUri();
     }
 
-    public String getAccessToken(String code) {
+    public KakaoToken getToken(String code) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", GRANT_TYPE);
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
 
-        JsonNode response = kakaoAuthClient.getAccessToken(body);
-
-        return response.get("access_token").asText();
+        return kakaoAuthClient.getAccessToken(body);
     }
 
     public void validateAccessToken(String accessToken) {
@@ -57,16 +54,10 @@ public class KakaoApiProvider {
         kakaoApiClient.getAccessTokenInfo(headers);
     }
 
-    public Map<String, String> getUserInfo(String accessToken) {
+    public KakaoUserInfo getUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        JsonNode response = kakaoApiClient.getUserInfo(headers);
-
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("name", response.get("kakao_account").get("profile").get("nickname").asText());
-        userInfo.put("email", response.get("kakao_account").get("email").asText());
-
-        return userInfo;
+        return kakaoApiClient.getUserInfo(headers);
     }
 }

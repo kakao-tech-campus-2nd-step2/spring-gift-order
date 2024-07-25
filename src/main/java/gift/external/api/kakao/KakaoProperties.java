@@ -1,4 +1,4 @@
-package gift.auth.oauth.kakao;
+package gift.external.api.kakao;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
