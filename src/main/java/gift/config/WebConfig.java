@@ -1,5 +1,6 @@
 package gift.config;
 
+import java.time.Duration;
 import java.util.List;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder,
         RestTemplateResponseErrorHandler errorHandler) {
-        return builder.errorHandler(errorHandler).build();
+        return builder
+            .errorHandler(errorHandler)
+            .setConnectTimeout(Duration.ofSeconds(5))
+            .setReadTimeout(Duration.ofSeconds(5))
+            .build();
     }
 
     @Override
