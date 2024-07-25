@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.dto.request.OptionRequest;
+import gift.dto.request.OrderRequest;
 import gift.entity.Option;
 import gift.exception.OptionNotFoundException;
 import gift.repository.OptionRepository;
@@ -27,5 +28,11 @@ public class OptionService {
     public Option saveOption(OptionRequest optionRequest) {
         Option option = new Option(optionRequest.name(), optionRequest.quantity());
         return optionRepository.save(option);
+    }
+
+    public Long getProductIdByOptionId(OrderRequest orderRequest) {
+        return optionRepository.findById(orderRequest.optionId())
+                .map(Option::getId)
+                .orElseThrow(() -> new OptionNotFoundException(orderRequest.optionId()));
     }
 }
