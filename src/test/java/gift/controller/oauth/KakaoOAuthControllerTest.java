@@ -4,6 +4,7 @@ import static gift.util.constants.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
 import static gift.util.constants.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
 import static gift.util.constants.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
 import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,11 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import gift.config.KakaoProperties;
+import gift.dto.member.MemberResponse;
 import gift.dto.oauth.KakaoScopeResponse;
 import gift.dto.oauth.KakaoScopeResponse.Scope;
 import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
+import gift.model.RegisterType;
 import gift.service.oauth.KakaoOAuthService;
 import gift.util.TokenValidator;
 import java.util.List;
@@ -46,6 +49,7 @@ class KakaoOAuthControllerTest {
     private KakaoUnlinkResponse unlinkResponse;
     private KakaoScopeResponse scopeResponse;
     private KakaoUserResponse userResponse;
+    private MemberResponse memberResponse;
 
     @BeforeEach
     void setUp() {
@@ -56,6 +60,7 @@ class KakaoOAuthControllerTest {
             new Scope("email", "Email Information", false)
         ));
         userResponse = new KakaoUserResponse(12345L, "nickname", "test@example.com");
+        memberResponse = new MemberResponse(1L, "test@example.com", "token", RegisterType.DEFAULT);
     }
 
     @Test
@@ -69,11 +74,13 @@ class KakaoOAuthControllerTest {
     @DisplayName("카카오 콜백 성공")
     void testKakaoCallbackSuccess() throws Exception {
         when(kakaoOAuthService.getAccessToken(anyString())).thenReturn(tokenResponse);
+        when(kakaoOAuthService.getUserInfo(anyString())).thenReturn(userResponse);
+        when(kakaoOAuthService.registerOrLoginKakaoUser(any(KakaoUserResponse.class))).thenReturn(memberResponse);
 
         mockMvc.perform(get("/oauth/kakao/callback")
                 .param("code", "auth-code"))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.accessToken").value("access-token"));
+            .andExpect(jsonPath("$.token").value("token"));
     }
 
     @Test
