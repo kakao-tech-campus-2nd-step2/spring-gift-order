@@ -1,5 +1,6 @@
 package gift.service.OAuth;
 
+import gift.dto.OAuth.AuthTokenResponse;
 import gift.model.user.User;
 import gift.repository.user.UserRepository;
 import gift.util.AuthUtil;
@@ -25,14 +26,9 @@ public class KakaoAuthService {
         return authUtil.createGetCodeUrl();
     }
 
-    public String getAccessToken(String authCode) {
+    public AuthTokenResponse getAccessToken(String authCode) {
         return authUtil.getAccessToken(authCode);
     }
-
-    public String sendMemo(String accessToken, String text){
-        return authUtil.sendMessage(accessToken, text);
-    }
-
 
     public String register(String accessToken) {
         String email = authUtil.extractUserEmail(accessToken);

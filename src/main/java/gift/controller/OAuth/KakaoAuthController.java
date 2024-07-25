@@ -1,5 +1,6 @@
-package gift.controller.user;
+package gift.controller.OAuth;
 
+import gift.dto.OAuth.AuthTokenResponse;
 import gift.service.OAuth.KakaoAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<String> getAccessToken(@RequestParam String code) {
-        String accessTokenResponse = kakaoAuthService.getAccessToken(code);
+    public ResponseEntity<AuthTokenResponse> getAccessToken(@RequestParam String code) {
+        AuthTokenResponse accessTokenResponse = kakaoAuthService.getAccessToken(code);
         return ResponseEntity.ok(accessTokenResponse);
     }
 
@@ -36,12 +37,5 @@ public class KakaoAuthController {
     public ResponseEntity<Map<String, String>> register(@RequestParam String accessToken) {
         String token = kakaoAuthService.register(accessToken);
         return ResponseEntity.ok(Map.of("access_token", token));
-    }
-
-    @PostMapping("/send")
-    public ResponseEntity<String> sendMemo(@RequestParam String accessToken,@RequestParam
-                                            String text){
-        String resp = kakaoAuthService.sendMemo(accessToken,text);
-        return ResponseEntity.ok(resp);
     }
 }

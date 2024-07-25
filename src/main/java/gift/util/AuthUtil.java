@@ -27,19 +27,19 @@ public class AuthUtil {
     }
 
     public String createGetCodeUrl() {
-        String authUrl = kakaoProperties.getAuthUrl();
+        String authUrl = kakaoProperties.authUrl();
 
         String url = UriComponentsBuilder.fromHttpUrl(authUrl)
-                .queryParam("client_id", kakaoProperties.getRestAPiKey())
-                .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
+                .queryParam("client_id", kakaoProperties.restAPiKey())
+                .queryParam("redirect_uri", kakaoProperties.redirectUri())
                 .queryParam("response_type", "code")
                 .toUriString();
         return url;
     }
 
 
-    public String getAccessToken(String authCode) {
-        String url = kakaoProperties.getTokenUrl();
+    public AuthTokenResponse getAccessToken(String authCode) {
+        String url = kakaoProperties.tokenUrl();
         MultiValueMap<String, String> params = createParams(authCode);
         AuthTokenResponse resp = restClient.post()
                 .uri(URI.create(url))
@@ -48,11 +48,11 @@ public class AuthUtil {
                 .retrieve()
                 .body(AuthTokenResponse.class);
 
-        return resp.accessToken();
+        return resp;
     }
 
     public String extractUserEmail(String accessToken) {
-        String url = kakaoProperties.getUserInfoUrl();
+        String url = kakaoProperties.userInfoUrl();
         Map resp = restClient.get()
                 .uri(URI.create(url))
                 .header("Authorization", "Bearer " + accessToken)
@@ -63,7 +63,7 @@ public class AuthUtil {
     }
 
     public String sendMessage(String accessToken, String text){
-        String url = kakaoProperties.getSendMessageUrl();
+        String url = kakaoProperties.sendMessageUrl();
 
         String templateObject = String.format(
                 "{\"object_type\": \"text\", \"text\": \"%s\", \"link\": {\"web_url\": \"https://www.test.com\", \"mobile_web_url\": \"https://www.test.com\"}, \"button_title\": \"선물 확인\"}",
@@ -86,8 +86,8 @@ public class AuthUtil {
     private MultiValueMap<String, String> createParams(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", kakaoProperties.getRestAPiKey());
-        params.add("redirect_uri", kakaoProperties.getRedirectUri());
+        params.add("client_id", kakaoProperties.restAPiKey());
+        params.add("redirect_uri", kakaoProperties.redirectUri());
         params.add("code", authCode);
         return params;
     }
