@@ -1,6 +1,8 @@
 package gift.e2e;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.springframework.test.web.client.ExpectedCount.once;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
@@ -8,6 +10,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
+import gift.exception.KakaoNotFoundException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +28,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -112,5 +117,44 @@ class KakaoUserE2ETest {
 
         return restTemplate.exchange(url, HttpMethod.GET,
             requestEntity, String.class);
+    }
+
+    @Test
+    @DisplayName("404 Not Found 에러 테스트")
+    void KakaoNotFoundExceptionTest() {
+        mockServer.expect(once(), requestTo("https://kauth.kakao.com/oauth/token?code=" + testCode))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.NOT_FOUND).body("no resource"));
+
+        assertThatThrownBy(() -> {
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+        }).isInstanceOf(KakaoNotFoundException.class)
+            .hasMessage("리소스를 찾을 수 없습니다. - Response body: no resource");
+    }
+
+    @Test
+    @DisplayName("400 Bad Request 에러 테스트")
+    void HttpClientErrorExceptionTest() {
+        mockServer.expect(once(), requestTo("https://kauth.kakao.com/oauth/token?code=" + testCode))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.BAD_REQUEST));
+
+        assertThatThrownBy(() -> {
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+        }).isInstanceOf(HttpClientErrorException.class)
+            .hasMessage("400 Bad Request");
+    }
+
+    @Test
+    @DisplayName("500 Internal Server 에러 테스트")
+    void HttpServerErrorExceptionTest() {
+        mockServer.expect(once(), requestTo("https://kauth.kakao.com/oauth/token?code=" + testCode))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        assertThatThrownBy(() -> {
+            restTemplate.getForObject("https://kauth.kakao.com/oauth/token?code=" + testCode, String.class);
+        }).isInstanceOf(HttpServerErrorException.class)
+            .hasMessage("500 Internal Server Error");
     }
 }
