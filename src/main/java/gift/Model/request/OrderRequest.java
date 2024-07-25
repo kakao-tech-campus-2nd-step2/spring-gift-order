@@ -1,2 +1,4 @@
-package gift.Model.request;public class orderRequest {
+package gift.Model.request;
+
+public record OrderRequest(Long optionId, Long quantity, String message) {
 }
