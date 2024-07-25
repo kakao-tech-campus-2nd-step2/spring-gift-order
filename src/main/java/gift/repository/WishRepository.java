@@ -10,6 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface WishRepository extends JpaRepository<Wish, Long>, PagingAndSortingRepository<Wish, Long> {
     Page<Wish> findByUser(User user, Pageable pageable);
+
     void deleteByUserAndProduct(User user, Product product);
 
 }
