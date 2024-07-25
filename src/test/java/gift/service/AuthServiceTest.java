@@ -1,7 +1,10 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.AuthToken;
 import gift.domain.Member;
+import gift.domain.TokenInformation;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
 import gift.exception.customException.EmailDuplicationException;
@@ -14,8 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -121,11 +122,18 @@ class AuthServiceTest {
         //given
         String kakaoId = "123";
 
-        Map<String, String> kakaoTokenInfo = new HashMap<>();
-        kakaoTokenInfo.put("access_token","a1b2c3");
-        kakaoTokenInfo.put("expires_in","300000");
-        kakaoTokenInfo.put("refresh_token","a2b3c4d5");
-        kakaoTokenInfo.put("refresh_token_expires_in","300000");
+        String response = "{" +
+                "\"access_token\": \"Test Token\"," +
+                "\"expires_in\": 30000," +
+                "\"refresh_token\": \"Test Refresh Token\"," +
+                "\"refresh_token_expires_in\": 70000" +
+                "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JsonNode jsonNode = objectMapper.readTree(response);
+
+        TokenInformation tokenInfo = new TokenInformation(jsonNode);
 
         Member member = new Member.Builder()
                 .email(kakaoId+"@kakao.com")
@@ -148,10 +156,10 @@ class AuthServiceTest {
 
         given(memberRepository.findMemberByKakaoId(kakaoId)).willReturn(Optional.empty());
         given(memberRepository.save(any(Member.class))).willReturn(member);
-        given(tokenService.oauthTokenSave(kakaoTokenInfo, member.getEmail())).willReturn(authToken);
+        given(tokenService.oauthTokenSave(tokenInfo, member.getEmail())).willReturn(authToken);
 
         //when
-        String token = authService.kakaoMemberLogin(kakaoId, kakaoTokenInfo);
+        String token = authService.kakaoMemberLogin(kakaoId, tokenInfo);
 
         //then
         assertAll(
@@ -166,11 +174,18 @@ class AuthServiceTest {
         //given
         String kakaoId = "123";
 
-        Map<String, String> kakaoTokenInfo = new HashMap<>();
-        kakaoTokenInfo.put("access_token","a1b2c3");
-        kakaoTokenInfo.put("expires_in","300000");
-        kakaoTokenInfo.put("refresh_token","a2b3c4d5");
-        kakaoTokenInfo.put("refresh_token_expires_in","300000");
+        String response = "{" +
+                "\"access_token\": \"Test Token\"," +
+                "\"expires_in\": 30000," +
+                "\"refresh_token\": \"Test Refresh Token\"," +
+                "\"refresh_token_expires_in\": 70000" +
+                "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JsonNode jsonNode = objectMapper.readTree(response);
+
+        TokenInformation tokenInfo = new TokenInformation(jsonNode);
 
         Member member = new Member.Builder()
                 .email(kakaoId+"@kakao.com")
@@ -192,11 +207,11 @@ class AuthServiceTest {
                 .build();
 
         given(memberRepository.findMemberByKakaoId(kakaoId)).willReturn(Optional.of(member));
-        given(tokenService.oauthTokenSave(kakaoTokenInfo, member.getEmail())).willReturn(authToken);
+        given(tokenService.oauthTokenSave(tokenInfo, member.getEmail())).willReturn(authToken);
 
 
         //when
-        String token = authService.kakaoMemberLogin(kakaoId, kakaoTokenInfo);
+        String token = authService.kakaoMemberLogin(kakaoId, tokenInfo);
 
         //then
         assertAll(

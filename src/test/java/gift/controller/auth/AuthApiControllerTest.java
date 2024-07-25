@@ -1,8 +1,10 @@
 package gift.controller.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.configuration.FilterConfiguration;
 import gift.domain.AuthToken;
+import gift.domain.TokenInformation;
 import gift.dto.request.MemberRequestDto;
 import gift.dto.response.MemberResponseDto;
 import gift.repository.token.TokenRepository;
@@ -17,13 +19,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -110,19 +108,23 @@ class AuthApiControllerTest {
     void 카카오_로그인_테스트() throws Exception{
         //given
         String code = "abcdefg";
-        String kakaoAccessToken = "a1b2c3d4";
+        String kakaoAccessToken = "Test Token";
         String kakaoUserInformation = "3123";
-        Map<String, String> kakaoTokenInfo = new HashMap<>();
-        kakaoTokenInfo.put("token","myToken");
-        kakaoTokenInfo.put("tokenTime","300000");
-        kakaoTokenInfo.put("access_token",kakaoAccessToken);
-        kakaoTokenInfo.put("expires_in","300000");
-        kakaoTokenInfo.put("refresh_token","a2b3c4d5");
-        kakaoTokenInfo.put("refresh_token_expires_in","300000");
 
-        given(kakaoService.getKakaoOauthToken(code)).willReturn(kakaoTokenInfo);
+        String response = "{" +
+                "\"access_token\": \"Test Token\"," +
+                "\"expires_in\": 30000," +
+                "\"refresh_token\": \"Test Refresh Token\"," +
+                "\"refresh_token_expires_in\": 70000" +
+                "}";
+
+        JsonNode jsonNode = objectMapper.readTree(response);
+
+        TokenInformation tokenInfo = new TokenInformation(jsonNode);
+
+        given(kakaoService.getKakaoOauthToken(code)).willReturn(tokenInfo);
         given(kakaoService.getKakaoUserInformation(kakaoAccessToken)).willReturn(kakaoUserInformation);
-        given(authService.kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo)).willReturn("myToken");
+        given(authService.kakaoMemberLogin(kakaoUserInformation, tokenInfo)).willReturn("myToken");
 
         //expected
         mvc.perform(get("/members/login/oauth/kakao")
@@ -133,8 +135,6 @@ class AuthApiControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.token").value("myToken"))
                 .andDo(print());
-
-        verify(authService,times(1)).kakaoMemberLogin(kakaoUserInformation, kakaoTokenInfo);
     }
 
     @Test

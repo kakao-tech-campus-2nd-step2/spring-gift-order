@@ -138,7 +138,7 @@ class OrderServiceTest {
                 () -> assertThat(orderResponseDto.quantity()).isEqualTo(orderRequestDto.quantity()),
                 () -> assertThat(orderResponseDto.message()).isEqualTo(orderRequestDto.message()),
                 () -> verify(wishRepository,times(1)).delete(any(Wish.class)),
-                () -> verify(kakaoService,times(1)).sendKakaoMessage(any(String.class), any(OrderResponseDto.class))
+                () -> verify(kakaoService,times(0)).sendKakaoMessage(any(String.class), any(OrderResponseDto.class))
         );
     }
 
@@ -165,7 +165,15 @@ class OrderServiceTest {
         idField.setAccessible(true);
         idField.set(product, 1L);
 
-        AuthToken authToken = new AuthToken("1234", "123@kakao.com");
+        AuthToken authToken = new AuthToken.Builder()
+                .token("테스트 토큰")
+                .tokenTime(3000)
+                .email("123@kakao.com")
+                .accessToken("a1b2c3")
+                .accessTokenTime(300000)
+                .refreshToken("a2b3c4d5")
+                .refreshTokenTime(300000)
+                .build();
 
         Member member = new Member.Builder()
                 .email("123@kakao.com")

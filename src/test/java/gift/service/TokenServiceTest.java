@@ -1,7 +1,9 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.AuthToken;
-import gift.domain.Member;
+import gift.domain.TokenInformation;
 import gift.exception.customException.EmailDuplicationException;
 import gift.exception.customException.UnAuthorizationException;
 import gift.repository.token.TokenRepository;
@@ -13,11 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static gift.utils.TokenConstant.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -104,23 +105,31 @@ class TokenServiceTest {
 
     @Test
     @DisplayName("OAuth 토큰 저장 테스트")
-    void OAuth_토큰_저장_테스트(){
+    void OAuth_토큰_저장_테스트() throws Exception{
         //given
         String email = "123@kakao.com";
-        Map<String, String> tokenInfo = new HashMap<>();
-        tokenInfo.put("access_token","a1b2c3d4");
-        tokenInfo.put("expires_in","300000");
-        tokenInfo.put("refresh_token","a2b3c4d5");
-        tokenInfo.put("refresh_token_expires_in","300000");
+
+        String response = "{" +
+                "\"access_token\": \"Test Token\"," +
+                "\"expires_in\": 30000," +
+                "\"refresh_token\": \"Test Refresh Token\"," +
+                "\"refresh_token_expires_in\": 70000" +
+                "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JsonNode jsonNode = objectMapper.readTree(response);
+
+        TokenInformation tokenInfo = new TokenInformation(jsonNode);
 
         AuthToken authToken = new AuthToken.Builder()
                 .token("test token")
-                .tokenTime(Integer.parseInt(tokenInfo.get("expires_in")) - 1)
+                .tokenTime(tokenInfo.getAccessTokenTime() - EXPIRATION_OFFSET)
                 .email(email)
-                .accessToken(String.valueOf(tokenInfo.get("access_token")))
-                .accessTokenTime(Integer.parseInt(tokenInfo.get("expires_in")))
-                .refreshToken(String.valueOf(tokenInfo.get("refresh_token")))
-                .refreshTokenTime(Integer.valueOf(tokenInfo.get("refresh_token_expires_in")))
+                .accessToken(tokenInfo.getAccessToken())
+                .accessTokenTime(tokenInfo.getAccessTokenTime())
+                .refreshToken(tokenInfo.getRefreshToken())
+                .refreshTokenTime(tokenInfo.getRefreshTokenTime())
                 .build();
 
         given(tokenRepository.save(any(AuthToken.class))).willReturn(authToken);
@@ -130,8 +139,8 @@ class TokenServiceTest {
 
         //then
         assertAll(
-                () -> assertThat(savedToken.getAccessToken()).isEqualTo("a1b2c3d4"),
-                () -> assertThat(savedToken.getRefreshToken()).isEqualTo("a2b3c4d5")
+                () -> assertThat(savedToken.getAccessToken()).isEqualTo("Test Token"),
+                () -> assertThat(savedToken.getRefreshToken()).isEqualTo("Test Refresh Token")
         );
     }
 
@@ -140,20 +149,28 @@ class TokenServiceTest {
     void OAuth_토큰_수정_테스트() throws Exception{
         //given
         String email = "123@kakao.com";
-        Map<String, String> tokenInfo = new HashMap<>();
-        tokenInfo.put("access_token","a1b2c3d4");
-        tokenInfo.put("expires_in","300000");
-        tokenInfo.put("refresh_token","a2b3c4d5");
-        tokenInfo.put("refresh_token_expires_in","300000");
+
+        String response = "{" +
+                "\"access_token\": \"Test Token\"," +
+                "\"expires_in\": 30000," +
+                "\"refresh_token\": \"Test Refresh Token\"," +
+                "\"refresh_token_expires_in\": 70000" +
+                "}";
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JsonNode jsonNode = objectMapper.readTree(response);
+
+        TokenInformation tokenInfo = new TokenInformation(jsonNode);
 
         AuthToken authToken = new AuthToken.Builder()
                 .token("test token")
-                .tokenTime(Integer.parseInt(tokenInfo.get("expires_in")) - 1)
+                .tokenTime(tokenInfo.getAccessTokenTime() - EXPIRATION_OFFSET)
                 .email(email)
-                .accessToken("하하하하하")
-                .accessTokenTime(Integer.parseInt(tokenInfo.get("expires_in")))
-                .refreshToken("호호호호")
-                .refreshTokenTime(Integer.valueOf(tokenInfo.get("refresh_token_expires_in")))
+                .accessToken("하하하")
+                .accessTokenTime(tokenInfo.getAccessTokenTime())
+                .refreshToken("호호호")
+                .refreshTokenTime(tokenInfo.getRefreshTokenTime())
                 .build();
 
         Field idField = AuthToken.class.getDeclaredField("id");
@@ -167,8 +184,8 @@ class TokenServiceTest {
 
         //then
         assertAll(
-                () -> assertThat(updateToken.getAccessToken()).isEqualTo("a1b2c3d4"),
-                () -> assertThat(updateToken.getRefreshToken()).isEqualTo("a2b3c4d5")
+                () -> assertThat(updateToken.getAccessToken()).isEqualTo("Test Token"),
+                () -> assertThat(updateToken.getRefreshToken()).isEqualTo("Test Refresh Token")
         );
     }
 }
