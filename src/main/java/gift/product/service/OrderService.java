@@ -36,7 +36,8 @@ public class OrderService {
         OptionRepository optionRepository,
         ObjectMapper objectMapper,
         JwtUtil jwtUtil,
-        OrderRepository orderRepository) {
+        OrderRepository orderRepository
+    ) {
         this.optionRepository = optionRepository;
         this.objectMapper = objectMapper;
         this.jwtUtil = jwtUtil;

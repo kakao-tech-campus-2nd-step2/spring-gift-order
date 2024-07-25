@@ -5,6 +5,7 @@ import static gift.product.exception.GlobalExceptionHandler.INVALID_TOKEN;
 import gift.product.exception.InvalidIdException;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
+import gift.product.repository.SnsMemberRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -23,10 +24,15 @@ public class JwtUtil {
 
     private final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
     private final Key key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    private final SnsMemberRepository snsMemberRepository;
 
     @Autowired
-    public JwtUtil(MemberRepository memberRepository) {
+    public JwtUtil(
+        MemberRepository memberRepository,
+        SnsMemberRepository snsMemberRepository
+    ) {
         this.memberRepository = memberRepository;
+        this.snsMemberRepository = snsMemberRepository;
     }
 
     // 토큰 생성
@@ -80,6 +86,13 @@ public class JwtUtil {
     public Member parsingToken(String authorization) {
         String token = authorization.substring(7);
         String email = extractClaims(token).getSubject();
+        if(!email.contains("@")) {
+            Long snsMemberId = snsMemberRepository.findByKakaoId(Long.valueOf(email))
+                .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN))
+                .getId();
+            return memberRepository.findBySnsMemberId(snsMemberId)
+                .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
+        }
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
     }

@@ -47,24 +47,12 @@ public class Order {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Option getOption() {
         return option;
     }
 
-    public void setOption(Option option) {
-        this.option = option;
-    }
-
     public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public String getOrderDateTime() {
@@ -74,9 +62,5 @@ public class Order {
 
     public String getMessage() {
         return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 }
