@@ -10,7 +10,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(HttpServletRequest request, Model model) {
-        // 세션에서 액세스 토큰 가져오기s
+        // 세션에서 액세스 토큰 가져오기
         String accessToken = (String) request.getSession().getAttribute("accessToken");
 
         if (accessToken != null) {
