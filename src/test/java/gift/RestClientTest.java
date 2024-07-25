@@ -1,6 +1,6 @@
 package gift;
 
-import gift.config.KakaoProperties;
+import gift.common.properties.KakaoProperties;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

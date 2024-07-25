@@ -2,6 +2,7 @@ package gift.model.token;
 
 import gift.model.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class KakaoToken {
@@ -10,9 +11,11 @@ public class KakaoToken {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
+    @NotNull
     private String accessToken;
 
     protected KakaoToken() {

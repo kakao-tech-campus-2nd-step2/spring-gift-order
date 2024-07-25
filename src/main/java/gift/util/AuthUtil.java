@@ -1,6 +1,6 @@
 package gift.util;
 
-import gift.config.KakaoProperties;
+import gift.common.properties.KakaoProperties;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +21,7 @@ public class AuthUtil {
     private final RestClient restClient;
 
     @Autowired
-    public AuthUtil(KakaoProperties kakaoProperties,@Qualifier("customRestClient") RestClient restClient) {
+    public AuthUtil(KakaoProperties kakaoProperties, @Qualifier("customRestClient") RestClient restClient) {
         this.kakaoProperties = kakaoProperties;
         this.restClient = restClient;
     }
@@ -62,7 +62,7 @@ public class AuthUtil {
         return (String) accountMap.get("email");
     }
 
-    public String sendMessage(String accessToken, String text){
+    public String sendMessage(String accessToken, String text) {
         String url = kakaoProperties.sendMessageUrl();
 
         String templateObject = String.format(

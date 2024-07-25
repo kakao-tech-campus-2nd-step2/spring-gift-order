@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/kakao")
 public class KakaoAuthController {
 
-    private KakaoAuthService kakaoAuthService;
+    private final KakaoAuthService kakaoAuthService;
 
     @Autowired
     public KakaoAuthController(KakaoAuthService kakaoAuthService) {

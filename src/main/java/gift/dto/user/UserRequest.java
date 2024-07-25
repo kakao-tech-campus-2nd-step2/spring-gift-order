@@ -1,29 +1,23 @@
 package gift.dto.user;
 
+import gift.common.enums.LoginType;
+import gift.model.user.User;
+
 public class UserRequest {
 
-    private String email;
-
-    private String password;
-
-    public UserRequest(String email, String password) {
-        this.email = email;
-        this.password = password;
+    public record Create(
+            String email,
+            String password
+    ) {
+        public User toEntity() {
+            return new User(this.email, this.password, LoginType.DEFAULT);
+        }
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public record Check(
+            String email,
+            String password
+    ) {
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

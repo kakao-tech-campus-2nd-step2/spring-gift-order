@@ -19,8 +19,8 @@ import java.util.NoSuchElementException;
 @Service
 public class OptionService {
 
-    private OptionRepository optionRepository;
-    private GiftRepository giftRepository;
+    private final OptionRepository optionRepository;
+    private final GiftRepository giftRepository;
 
     @Autowired
     public OptionService(OptionRepository optionRepository, GiftRepository giftRepository) {

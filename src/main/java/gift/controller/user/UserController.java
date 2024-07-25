@@ -1,7 +1,6 @@
 package gift.controller.user;
 
 import gift.dto.user.UserRequest;
-import gift.model.user.User;
 import gift.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -22,20 +21,18 @@ public class UserController {
     }
 
 
-    // 로그인
     @PostMapping("/login")
     @ResponseBody
-    public ResponseEntity<Map<String, String>> login(@RequestBody UserRequest userRequest) {
-        String token = userService.login(userRequest.getEmail(), userRequest.getPassword());
+    public ResponseEntity<Map<String, String>> login(@RequestBody UserRequest.Check userRequest) {
+        String token = userService.login(userRequest);
         return ResponseEntity.ok(Map.of("accessToken", token));
     }
 
-    // 회원가입
+
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<String> register(@RequestBody UserRequest userRequest) {
-        User user = new User(userRequest.getEmail(), userRequest.getPassword());
-        userService.register(user);
+    public ResponseEntity<String> register(@RequestBody UserRequest.Create userRequest) {
+        userService.register(userRequest);
         return ResponseEntity.ok("회원가입을 성공하였습니다!");
     }
 }

@@ -3,7 +3,6 @@ package gift.controller.order;
 import gift.dto.order.OrderRequest;
 import gift.dto.order.OrderResponse;
 import gift.model.user.User;
-import gift.repository.order.OrderRepository;
 import gift.service.order.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class OrderController {
     @PostMapping("/{giftId}")
     public ResponseEntity<OrderResponse> order(@RequestAttribute("user") User user,
                                                @PathVariable Long giftId,
-                                               @Valid @RequestBody OrderRequest.Create orderRequest){
+                                               @Valid @RequestBody OrderRequest.Create orderRequest) {
         OrderResponse orderResponse = orderService.order(user.getId(), giftId, orderRequest);
         return ResponseEntity.ok(orderResponse);
     }

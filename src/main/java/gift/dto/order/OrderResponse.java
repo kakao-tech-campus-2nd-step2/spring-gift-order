@@ -6,15 +6,15 @@ import java.time.LocalDateTime;
 
 public class OrderResponse {
 
-    private Long id;
+    private final Long id;
 
-    private Long optionId;
+    private final Long optionId;
 
-    private int quantity;
+    private final int quantity;
 
-    private LocalDateTime orderDateTime;
+    private final LocalDateTime orderDateTime;
 
-    private String message;
+    private final String message;
 
     public OrderResponse(Long id, Long optionId, int quantity, LocalDateTime orderDateTime, String message) {
         this.id = id;
@@ -24,7 +24,7 @@ public class OrderResponse {
         this.message = message;
     }
 
-    public static OrderResponse fromEntity(Order order){
+    public static OrderResponse fromEntity(Order order) {
         return new OrderResponse(order.getId(), order.getOption().getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
 

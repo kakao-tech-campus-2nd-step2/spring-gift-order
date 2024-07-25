@@ -1,5 +1,6 @@
 package gift.service.OAuth;
 
+import gift.common.enums.LoginType;
 import gift.dto.OAuth.AuthTokenResponse;
 import gift.model.token.KakaoToken;
 import gift.model.user.User;
@@ -38,14 +39,20 @@ public class KakaoAuthService {
         String email = authUtil.extractUserEmail(accessToken);
 
         User user = userRepository.findByEmail(email).orElseGet(
-                () -> userRepository.save(new User(email, "1234"))
+                () -> userRepository.save(new User(email, "1234", LoginType.KAKAO))
         );
 
-        KakaoToken kakaoToken = new KakaoToken(user,accessToken);
-        kakaoTokenRepository.findByUser(user).orElseGet(
-                ()->  kakaoTokenRepository.save(kakaoToken)
-        );
+        user.checkLoginType(LoginType.KAKAO);
+
+        saveKakaoAccessToken(accessToken, user);
 
         return jwtUtil.generateJWT(user);
+    }
+
+    private void saveKakaoAccessToken(String accessToken, User user) {
+        KakaoToken kakaoToken = new KakaoToken(user, accessToken);
+        kakaoTokenRepository.findByUser(user).orElseGet(
+                () -> kakaoTokenRepository.save(kakaoToken)
+        );
     }
 }

@@ -33,7 +33,7 @@ public class Gift {
     private Category category;
 
     @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
-    private List<Wish> wishes = new ArrayList<>();
+    private final List<Wish> wishes = new ArrayList<>();
 
     @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();

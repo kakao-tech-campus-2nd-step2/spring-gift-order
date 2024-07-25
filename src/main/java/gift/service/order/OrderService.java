@@ -1,15 +1,12 @@
 package gift.service.order;
 
-import gift.dto.gift.GiftResponse;
 import gift.dto.order.OrderRequest;
 import gift.dto.order.OrderResponse;
-import gift.exception.WishItemNotFoundException;
 import gift.model.gift.Gift;
 import gift.model.option.Option;
 import gift.model.order.Order;
 import gift.model.token.KakaoToken;
 import gift.model.user.User;
-import gift.model.wish.Wish;
 import gift.repository.gift.GiftRepository;
 import gift.repository.option.OptionRepository;
 import gift.repository.order.OrderRepository;
@@ -57,7 +54,7 @@ public class OrderService {
     }
 
 
-    public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest){
+    public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
         Gift gift = giftRepository.findById(giftId)
@@ -69,7 +66,7 @@ public class OrderService {
         option.subtract(orderRequest.quantity());
         optionRepository.save(option);
 
-        wishRepository.findByUserAndGift(user,gift)
+        wishRepository.findByUserAndGift(user, gift)
                 .ifPresent(wish -> wishRepository.deleteById(wish.getId()));
 
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message());
@@ -80,7 +77,7 @@ public class OrderService {
     }
 
     private void sendMessage(OrderRequest.Create orderRequest, User user, Gift gift, Option option) {
-        KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(()->new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
+        KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
         authUtil.sendMessage(kakaoToken.getAccessToken(), message);
