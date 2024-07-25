@@ -40,16 +40,13 @@ public class KakaoApiComponent {
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-        try {
-            JsonNode responseBody = objectMapper.readTree(response.getBody());
-            String scope = responseBody.get("scope") != null ? responseBody.get("scope").asText() : "";
-            if (!scope.contains("talk_message")) {
-                throw new UnauthorizedException("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
-            }
-            return responseBody.get("access_token") != null ? responseBody.get("access_token").asText() : "";
-        } catch (JsonProcessingException e) {
-            throw new InternalException("서버 내부 오류: " + e.getMessage());
+
+        String scope = getJsonNode(response.getBody(), "scope");
+
+        if (!scope.contains("talk_message")) {
+            throw new UnauthorizedException("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
         }
+        return getJsonNode(response.getBody(), "access_token");
     }
 
     public String getMemberProfileId(String accessToken) {
@@ -61,10 +58,14 @@ public class KakaoApiComponent {
         HttpEntity<Object> kakaoProfileRequest = new HttpEntity<>(headers);
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, String.class);
 
+        return getJsonNode(response.getBody(), "id");
+    }
+
+    private String getJsonNode(String response, String content) {
         try {
-            JsonNode jsonNode = objectMapper.readTree(response.getBody());
-            JsonNode id = jsonNode.get("id");
-            return id != null ? id.asText() : null;
+            JsonNode responseBody = objectMapper.readTree(response);
+            JsonNode contentNode = responseBody.get(content);
+            return contentNode != null ? contentNode.asText() : null;
         } catch (Exception e) {
             throw new InternalException("서버 내부 오류: " + e.getMessage());
         }
