@@ -2,6 +2,7 @@ package gift.component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.dto.KakaoMessageRequest;
 import gift.dto.KakaoProperties;
 import gift.exception.auth.UnauthorizedException;
 import org.apache.logging.log4j.util.InternalException;
@@ -62,7 +63,7 @@ public class KakaoApiComponent {
         return getJsonNode(response.getBody(), "id");
     }
 
-    public void sendMessage(String accessToken, String message) {
+    public void sendMessage(String accessToken, KakaoMessageRequest kakaoMessageRequest) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
@@ -70,12 +71,12 @@ public class KakaoApiComponent {
 
 
         JSONObject linkObj = new JSONObject();
-        linkObj.put("web_url", "https://developers.kakao.com/");
-        linkObj.put("mobile_web_url", "https://developers.kakao.com/");
+        linkObj.put("web_url", kakaoMessageRequest.webUrl());
+        linkObj.put("mobile_web_url", kakaoMessageRequest.mobileUrl());
 
         JSONObject templateObj = new JSONObject();
-        templateObj.put("object_type", "text");
-        templateObj.put("text", message);
+        templateObj.put("object_type", kakaoMessageRequest.objType());
+        templateObj.put("text", kakaoMessageRequest.text());
         templateObj.put("link", linkObj);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

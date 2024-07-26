@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.component.KakaoApiComponent;
+import gift.dto.KakaoMessageRequest;
 import gift.dto.OrderRequest;
 import gift.exception.NotFoundException;
 import gift.model.Member;
@@ -34,6 +35,12 @@ public class OrderService {
     }
 
     public void sendOrderMessage(OrderRequest request, Member member) {
-        kakaoApiComponent.sendMessage(member.getAccessToken(), request.message());
+        KakaoMessageRequest kakaoMessageRequest = new KakaoMessageRequest(
+                "text",
+                request.message(),
+                "https://developers.kakao.com/",
+                "https://developers.kakao.com/"
+        );
+        kakaoApiComponent.sendMessage(member.getAccessToken(), kakaoMessageRequest);
     }
 }
