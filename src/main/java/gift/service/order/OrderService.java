@@ -1,5 +1,6 @@
 package gift.service.order;
 
+import gift.common.enums.LoginType;
 import gift.dto.order.OrderRequest;
 import gift.dto.order.OrderResponse;
 import gift.model.gift.Gift;
@@ -66,6 +67,8 @@ public class OrderService {
     public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
+        user.checkLoginType(LoginType.KAKAO);
+
         Gift gift = giftRepository.findById(giftId)
                 .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
         Option option = optionRepository.findById(orderRequest.optionId())
