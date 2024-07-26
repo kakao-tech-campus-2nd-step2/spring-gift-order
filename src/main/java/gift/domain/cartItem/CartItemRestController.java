@@ -2,7 +2,7 @@ package gift.domain.cartItem;
 
 import gift.domain.cartItem.dto.CartItemDTO;
 import gift.domain.user.dto.UserInfo;
-import gift.global.resolver.LoginInfo;
+import gift.global.resolver.Login;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
@@ -36,7 +36,7 @@ public class CartItemRestController {
      */
     @PostMapping("/{productId}")
     public ResponseEntity<ResultResponseDto<Integer>> addCartItem(
-        @PathVariable("productId") Long productId, @LoginInfo UserInfo userInfo) {
+        @PathVariable("productId") Long productId, @Login UserInfo userInfo) {
 
         int currentCount = cartItemService.addCartItem(userInfo.getId(), productId);
 
@@ -51,7 +51,7 @@ public class CartItemRestController {
     public ResponseEntity<ResultResponseDto<List<CartItemDTO>>> getProductsInCartByUserIdAndPageAndSort(
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
-        @LoginInfo UserInfo userInfo) {
+        @Login UserInfo userInfo) {
         int size = 10; // default
         Sort sortObj = getSortObject(sort);
 
@@ -70,7 +70,7 @@ public class CartItemRestController {
      */
     @DeleteMapping("/{cartItemId}")
     public ResponseEntity<SimpleResultResponseDto> deleteCartItem(
-        @PathVariable("cartItemId") Long cartItemId, @LoginInfo UserInfo userInfo) {
+        @PathVariable("cartItemId") Long cartItemId, @Login UserInfo userInfo) {
 
         cartItemService.deleteCartItem(cartItemId);
 
@@ -86,7 +86,7 @@ public class CartItemRestController {
     public ResponseEntity<SimpleResultResponseDto> updateCartItem(
         @PathVariable("cartItemId") Long cartItemId,
         @RequestParam("count") int count,
-        @LoginInfo UserInfo userInfo
+        @Login UserInfo userInfo
     ) {
         int modifiedCount = cartItemService.updateCartItem(cartItemId, count);
 

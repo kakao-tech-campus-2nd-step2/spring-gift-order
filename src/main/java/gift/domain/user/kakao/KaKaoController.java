@@ -21,22 +21,24 @@ public class KaKaoController {
         this.kaKaoService = kaKaoService;
     }
 
-    /**
-     * 카카오 로그인 페이지로 이동
-     */
-    @GetMapping("/kakao/login")
-    public RedirectView LoginPage(){
-        return new RedirectView(kaKaoService.buildLoginPageUrl());
-    }
+        /**
+         * 카카오 로그인 페이지로 이동
+         */
+        @GetMapping("/kakao/login")
+        public RedirectView LoginPage(){
+            return new RedirectView(kaKaoService.buildLoginPageUrl());
+        }
 
-    /**
-     * 카카오 로그인 인가코드로 JWT 발급
+        /**
+         * 카카오 로그인 인가코드로 JWT 발급
      */
     @GetMapping("/kakao")
     public ResponseEntity<SimpleResultResponseDto> JwtToken(
         @RequestParam(value = "code", required = false) String authorizedCode
     ) {
         KaKaoToken kaKaoToken = kaKaoService.getKaKaoToken(authorizedCode);
+        System.out.println("kaKaoToken = " + kaKaoToken);
+
         User findUser = kaKaoService.findUserByKaKaoAccessToken(kaKaoToken.accessToken());
 
         String jwt = JwtProvider.generateToken(findUser);

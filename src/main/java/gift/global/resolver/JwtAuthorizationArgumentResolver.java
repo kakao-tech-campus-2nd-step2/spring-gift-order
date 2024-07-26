@@ -21,7 +21,7 @@ public class JwtAuthorizationArgumentResolver implements HandlerMethodArgumentRe
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(LoginInfo.class);
+        return parameter.hasParameterAnnotation(Login.class);
     }
 
     @Override

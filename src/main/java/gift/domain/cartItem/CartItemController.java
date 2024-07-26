@@ -2,7 +2,7 @@ package gift.domain.cartItem;
 
 import gift.domain.cartItem.dto.CartItemDTO;
 import gift.domain.user.dto.UserInfo;
-import gift.global.resolver.LoginInfo;
+import gift.global.resolver.Login;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -28,7 +28,7 @@ public class CartItemController {
         @PageableDefault(page = 0, sort = "id_asc")
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
-        @LoginInfo UserInfo userInfo) {
+        @Login UserInfo userInfo) {
         int size = 10; // default
         Sort sortObj = getSortObject(sort);
 
