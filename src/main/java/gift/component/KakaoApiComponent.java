@@ -72,10 +72,10 @@ public class KakaoApiComponent {
 
         JSONObject linkObj = new JSONObject();
         linkObj.put("web_url", kakaoMessageRequest.webUrl());
-        linkObj.put("mobile_web_url", kakaoMessageRequest.mobileUrl());
+        linkObj.put("mobile_web_url", kakaoMessageRequest.mobileWebUrl());
 
         JSONObject templateObj = new JSONObject();
-        templateObj.put("object_type", kakaoMessageRequest.objType());
+        templateObj.put("object_type", kakaoMessageRequest.objectType());
         templateObj.put("text", kakaoMessageRequest.text());
         templateObj.put("link", linkObj);
 

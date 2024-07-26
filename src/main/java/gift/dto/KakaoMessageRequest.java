@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record KakaoMessageRequest(
-        String objType,
+        String objectType,
         String text,
         String webUrl,
-        String mobileUrl
+        String mobileWebUrl
 ) {
 }
