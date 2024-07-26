@@ -44,17 +44,17 @@ public class ProductController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest newProduct) {
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest newProduct) {
         Product product = productService.createProduct(newProduct.toEntity());
         Option option = optionService.addOption(newProduct.getOptionRequest(), product);
         productService.addOption(product.getId(), option);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductResponse(product));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductRequest changeProduct) {
-        return ResponseEntity.ok(productService.updateProduct(changeProduct.toEntity()));
+    public ResponseEntity<ProductResponse> updateProduct(@Valid @RequestBody ProductRequest changeProduct) {
+        return ResponseEntity.ok(new ProductResponse(productService.updateProduct(changeProduct.toEntity())));
     }
 
     @DeleteMapping("/delete/{id}")
