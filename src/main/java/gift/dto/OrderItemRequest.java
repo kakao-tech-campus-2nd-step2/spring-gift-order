@@ -8,6 +8,12 @@ public class OrderItemRequest {
     public OrderItemRequest() {
     }
 
+    public OrderItemRequest(Long productId, Long optionId, int quantity) {
+        this.productId = productId;
+        this.optionId = optionId;
+        this.quantity = quantity;
+    }
+
     public Long getProductId() {
         return productId;
     }
