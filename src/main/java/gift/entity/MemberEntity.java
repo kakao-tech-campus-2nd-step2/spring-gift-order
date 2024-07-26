@@ -54,6 +54,10 @@ public class MemberEntity {
         return wishListEntities;
     }
 
+    public void removeWishListHasProductEntity(ProductEntity productEntity) {
+        wishListEntities.removeIf(wishList -> wishList.getProductEntity().equals(productEntity));
+    }
+
     public static Member toDto(MemberEntity memberEntity) {
         return new Member(memberEntity.getId(), memberEntity.getEmail(),
             memberEntity.getPassword());
