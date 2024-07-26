@@ -1,6 +1,10 @@
 package gift.repository;
 
+<<<<<<< HEAD
 import static org.assertj.core.api.Assertions.assertThat;
+=======
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+>>>>>>> 524b151 (feat: 기본 코드 준비 (#98))
 import gift.user.entity.User;
 import gift.user.repository.UserRepository;
 import java.util.Optional;

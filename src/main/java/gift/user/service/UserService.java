@@ -12,8 +12,6 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
@@ -37,6 +35,7 @@ public class UserService {
     if (userDto.getEmail() == null || userDto.getPassword() == null) {
       throw new InvalidUserInputException("이메일이나 비밀번호가 비어있습니다.");
     }
+
 
     User user = new User();
     user.setEmail(userDto.getEmail());

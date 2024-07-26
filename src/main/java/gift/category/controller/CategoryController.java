@@ -24,8 +24,10 @@ public class CategoryController {
 
   @GetMapping
   @Operation(summary = "모든 카테고리 목록 조회", description = "시스템에 등록된 모든 카테고리의 목록을 조회합니다.")
+
   public ResponseEntity<List<CategoryDto>> getAllCategories() {
     List<CategoryDto> categories = categoryService.getAllCategories();
     return ResponseEntity.ok(categories);
   }
 }
+
