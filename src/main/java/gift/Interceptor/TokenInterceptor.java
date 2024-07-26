@@ -1,6 +1,6 @@
 package gift.Interceptor;
 
-import gift.service.TokenService;
+import gift.service.BasicTokenService;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,10 +9,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class TokenInterceptor implements HandlerInterceptor {
 
-    private final TokenService tokenService;
+    private final BasicTokenService basicTokenService;
 
-    public TokenInterceptor(TokenService tokenService) {
-        this.tokenService = tokenService;
+    public TokenInterceptor(BasicTokenService basicTokenService) {
+        this.basicTokenService = basicTokenService;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        response.setHeader("UserId", tokenService.getUserIdByDecodeTokenValue(token).toString());
+        response.setHeader("UserId", basicTokenService.getUserIdByDecodeTokenValue(token).toString());
 
         return true;
     }
@@ -49,7 +49,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             return;
         }
 
-        String newToken = tokenService.makeTokenFrom(userId);
+        String newToken = basicTokenService.makeTokenFrom(userId);
         response.setHeader("Token", newToken);
 
     }

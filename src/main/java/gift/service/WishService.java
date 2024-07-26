@@ -19,17 +19,17 @@ public class WishService {
     private final WishRepository wishRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
-    private final TokenService tokenService;
+    private final BasicTokenService basicTokenService;
 
     public WishService(WishRepository wishRepository,
                        ProductRepository productRepository,
                        MemberRepository memberRepository,
-                       TokenService tokenService) {
+                       BasicTokenService basicTokenService) {
 
         this.wishRepository = wishRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
-        this.tokenService = tokenService;
+        this.basicTokenService = basicTokenService;
 
     }
 
@@ -73,7 +73,7 @@ public class WishService {
     }
 
     private Long translateIdFrom(String tokenValue) {
-        return tokenService.getUserIdByDecodeTokenValue(tokenValue);
+        return basicTokenService.getUserIdByDecodeTokenValue(tokenValue);
     }
 
     public Page<WishResponseDto> getWishes(Pageable pageable) {

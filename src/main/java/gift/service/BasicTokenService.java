@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import java.util.Base64;
 
 @Service
-public class TokenService {
-    public TokenService() {
+public class BasicTokenService {
+    public BasicTokenService() {
     }
 
 
