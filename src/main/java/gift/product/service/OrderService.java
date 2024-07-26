@@ -1,11 +1,15 @@
 package gift.product.service;
 
+import static gift.product.exception.GlobalExceptionHandler.INVALID_HTTP_REQUEST;
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
+import static gift.product.exception.GlobalExceptionHandler.NOT_RECEIVE_RESPONSE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.OrderDTO;
 import gift.product.exception.InvalidIdException;
+import gift.product.exception.RequestException;
+import gift.product.exception.ResponseException;
 import gift.product.model.Member;
 import gift.product.model.Option;
 import gift.product.model.Order;
@@ -17,6 +21,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -25,11 +30,18 @@ import org.springframework.web.client.RestClient;
 @Service
 public class OrderService {
 
-    private final RestClient client = RestClient.builder().build();
     private final OptionRepository optionRepository;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
     private final OrderRepository orderRepository;
+    private final RestClient client = RestClient.builder()
+        .defaultStatusHandler(HttpStatusCode::is4xxClientError, (request, response) -> {
+            throw new RequestException(INVALID_HTTP_REQUEST);
+        })
+        .defaultStatusHandler(HttpStatusCode::is5xxServerError, (request, response) -> {
+            throw new ResponseException(NOT_RECEIVE_RESPONSE);
+        })
+        .build();
 
     @Autowired
     public OrderService(
@@ -82,17 +94,13 @@ public class OrderService {
     }
 
     private void postRequest(String url, String accessToken, LinkedMultiValueMap<String, Object> body) {
-        try {
-            client.post()
-                .uri(URI.create(url))
-                .header("Authorization", "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .toEntity(String.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        client.post()
+            .uri(URI.create(url))
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
     }
 
     private @NotNull LinkedMultiValueMap<String, Object> createBody(String message) {
