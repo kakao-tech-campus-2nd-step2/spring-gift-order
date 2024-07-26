@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KaKaoService {
+
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private final ObjectMapper objectMapper;
@@ -57,7 +58,8 @@ public class KaKaoService {
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(TOKEN_URL));
 
-        ResponseEntity<String> response = restTemplate.exchange(TOKEN_URL, HttpMethod.POST, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(TOKEN_URL, HttpMethod.POST, request,
+            String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return parseTokenResponse(response);
@@ -66,17 +68,31 @@ public class KaKaoService {
         }
     }
 
-    public User findUserByKaKaoAccessToken(String accessToken, String refreshToken) {
+    public User loginOrRegister(KaKaoToken kaKaoToken) {
+        String email = getEmailFromKaKaoServer(kaKaoToken.accessToken());
+        if (!userRepository.existsByEmail(email)) {
+            return createKaKaoUser(email, kaKaoToken);
+        }
+        return userRepository.findByEmail(email);
+    }
+
+    private String getEmailFromKaKaoServer(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(USER_INFO_URL, HttpMethod.GET, request, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(USER_INFO_URL, HttpMethod.GET,
+            request, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            return parseUserInfo(response, accessToken, refreshToken);
+            try {
+                JsonNode rootNode = objectMapper.readTree(response.getBody());
+                return rootNode.path("kakao_account").path("email").asText();
+            } catch (JsonProcessingException e) {
+                throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR,
+                    "json 데이터 형식이 올바르지 않습니다.");
+            }
         }
         throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "사용자 정보 조회 중 오류 발생");
     }
@@ -92,30 +108,13 @@ public class KaKaoService {
         }
     }
 
-    private User parseUserInfo(ResponseEntity<String> response, String accessToken, String refreshToken) {
-        try {
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
-            String id = rootNode.path("id").asText(); // unique
-            String nickname = rootNode.path("properties").path("nickname").asText();
-            String email = rootNode.path("kakao_account").path("email").asText();
-
-            User findUser = userRepository.findByEmail(email);
-            if (findUser == null) {
-                findUser = createKaKaoUser(email, accessToken, refreshToken);
-            }
-
-            return findUser;
-        } catch (JsonProcessingException e) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "json 데이터 형식이 올바르지 않습니다.");
-        }
-    }
-
-    private User createKaKaoUser(String email, String accessToken, String refreshToken) {
+    private User createKaKaoUser(String email, KaKaoToken kaKaoToken) {
         String salt = UUID.randomUUID().toString();
         String ori_password = salt + UUID.randomUUID().toString();
         String hashed_password = ori_password; // hash 과정 생략
 
-        User user = new User(email, hashed_password, accessToken, refreshToken);
+        User user = new User(email, hashed_password, kaKaoToken.accessToken(),
+            kaKaoToken.refreshToken());
         userRepository.save(user);
         return userRepository.findByEmail(email);
     }
