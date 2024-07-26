@@ -3,17 +3,19 @@ package gift.controller;
 import gift.argumentresolver.LoginMember;
 import gift.dto.MemberDTO;
 import gift.dto.MemberPasswordDTO;
+import gift.exception.NoSuchMemberException;
 import gift.service.MemberService;
 import jakarta.validation.Valid;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 @RequestMapping("/members")
 public class MemberController {
 
@@ -25,13 +27,19 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@Valid @RequestBody MemberDTO memberDTO) {
-        return ResponseEntity.ok().body(memberService.register(memberDTO));
+    public String register(@Valid @ModelAttribute MemberDTO memberDTO) {
+        memberService.register(memberDTO);
+        return "redirect:/login";
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody MemberDTO memberDTO) {
-        return ResponseEntity.ok().body(memberService.login(memberDTO));
+    public Object login(@Valid @RequestBody MemberDTO memberDTO) {
+        try {
+            return ResponseEntity.ok().body(memberService.login(memberDTO));
+        } catch (
+            NoSuchMemberException e) {
+            return "register";
+        }
     }
 
     @PostMapping("/password")
