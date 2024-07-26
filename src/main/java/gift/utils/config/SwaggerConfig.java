@@ -14,10 +14,10 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
             .info(new Info()
-                .title("Your API Title")
+                .title("카카오 선물하기 API - 부산대_BE 박정우")
                 .version("1.0")
-                .description("Your API Description")
-                .contact(new Contact().name("Your Name").email("your.email@example.com")))
+                .description("이 API는 카카오 선물하기를 위해 설계되었습니다. 주요기능으로는 내게 선물하기, 상품, 옵션, 카테고리 ,유저의 crud가 있습니다")
+                .contact(new Contact().name("박정우").email("rmrmrmrm12@pusan.ac.kr")))
             .addServersItem(new Server().url("/").description("Default Server URL"));
     }
 }
