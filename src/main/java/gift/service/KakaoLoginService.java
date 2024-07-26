@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.database.repository.JpaMemberRepository;
 import gift.dto.LoginMemberToken;
-import gift.dto.MemberRequest;
 import gift.exceptionAdvisor.exceptions.GiftUnauthorizedException;
 import gift.model.Member;
 import org.springframework.beans.factory.annotation.Value;
