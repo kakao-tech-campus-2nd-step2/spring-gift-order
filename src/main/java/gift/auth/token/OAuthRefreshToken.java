@@ -14,9 +14,9 @@ public class OAuthRefreshToken {
     private String issuer;
 
     @TimeToLive
-    private long expiresIn;
+    private Long expiresIn;
 
-    public OAuthRefreshToken(String username, String tokenType, String refreshToken, String issuer, long expiresIn) {
+    public OAuthRefreshToken(String username, String tokenType, String refreshToken, String issuer, Long expiresIn) {
         this.username = username;
         this.tokenType = tokenType;
         this.refreshToken = refreshToken;

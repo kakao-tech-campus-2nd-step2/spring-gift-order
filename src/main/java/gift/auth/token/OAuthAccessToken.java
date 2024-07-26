@@ -14,13 +14,17 @@ public class OAuthAccessToken {
     private String issuer;
 
     @TimeToLive
-    private long expiresIn;
+    private Long expiresIn;
 
-    public OAuthAccessToken(String username, String tokenType, String accessToken, String issuer, Integer expiresIn) {
+    public OAuthAccessToken(String username, String tokenType, String accessToken, String issuer, Long expiresIn) {
         this.username = username;
         this.tokenType = tokenType;
         this.accessToken = accessToken;
         this.issuer = issuer;
         this.expiresIn = expiresIn;
+    }
+
+    public String getToken() {
+        return tokenType.concat(" ").concat(accessToken);
     }
 }
