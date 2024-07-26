@@ -13,12 +13,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @Service
+@Transactional(readOnly = true)
 public class KakaoLoginService implements OAuth2LoginService {
 
     public static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
@@ -85,11 +87,12 @@ public class KakaoLoginService implements OAuth2LoginService {
         }
     }
 
+    @Transactional
     public void saveAccessToken(Long memberId, String accessToken) {
-        if (!accessTokenRepository.existsByMemberId(memberId)) {
-            OAuth2AccessToken token = new OAuth2AccessToken(memberId, accessToken);
-            accessTokenRepository.save(token);
-        }
+        accessTokenRepository.findByMemberId(memberId)
+            .ifPresentOrElse(token -> token.updateToken(accessToken),
+                () -> accessTokenRepository.save(new OAuth2AccessToken(memberId, accessToken))
+            );
     }
 
     public LinkedMultiValueMap<String, String> createTokenRequest(String clientId,

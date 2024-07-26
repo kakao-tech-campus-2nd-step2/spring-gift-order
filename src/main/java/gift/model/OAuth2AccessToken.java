@@ -26,6 +26,10 @@ public class OAuth2AccessToken extends BaseEntity {
         this.accessToken = accessToken;
     }
 
+    public void updateToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     public Long getId() {
         return id;
     }
