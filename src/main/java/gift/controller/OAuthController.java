@@ -14,7 +14,7 @@ public class OAuthController {
         this.oAuthService = oAuthService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/oauth/code")
     public LoginResponse oAuthLogin(@RequestParam("code") String code) {
         String accessToken = oAuthService.getAccessToken(code);
         String memberProfileId = oAuthService.getMemberProfileId(accessToken);
