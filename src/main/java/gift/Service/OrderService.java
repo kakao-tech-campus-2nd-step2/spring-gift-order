@@ -40,7 +40,7 @@ public class OrderService {
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;
   }
 
-  public void orderOption(OrderDto orderDto) throws IllegalAccessException {
+  public void orderOption(OrderDto orderDto) {
     restTemplate=new RestTemplate();
     OptionDto optionDto = orderDto.getOptionDto();
     optionService.optionQuantitySubtract(optionDto, orderDto.getQuantity());
@@ -56,22 +56,18 @@ public class OrderService {
     KakaoJwtToken kakaoJwtToken = kakaoJwtTokenRepository.findById(1L)
       .orElseThrow(() -> new EmptyResultDataAccessException("해당 데이터가 없습니다", 1));
 
-    System.out.println(kakaoJwtToken.getAccessToken());
 
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     headers.setBearerAuth(kakaoJwtToken.getAccessToken());
 
-    String body = "template_object="+createTemplateObject();
+    String body = "template_object="+createTemplateObject(orderDto);
     HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
     ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
 
-
-    System.out.println(response);
-
   }
 
-  private String createTemplateObject() {
+  private String createTemplateObject(OrderDto orderDto) {
     return """
       {
       "object_type" : "feed",
@@ -81,8 +77,13 @@ public class OrderService {
         "description" : "상세설명입니다.",
         "link" : {
           }
-        } 
-      }
-      """;
+        },
+      "item_content":{
+        "items":[
+            {"item":"%s","item_op":"%d개"}
+          ] 
+        }
+      } 
+      """.formatted(orderDto.getOptionDto().getName(),orderDto.getQuantity());
   }
 }
