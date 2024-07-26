@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.auth.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
@@ -20,7 +20,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         if (request == null) {
             throw new IllegalArgumentException("Request 정보가 존재하지 않습니다.");
         }
-        
+
         return Long.parseLong(String.valueOf(request.getAttribute("id")));
     }
 }

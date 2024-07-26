@@ -16,6 +16,6 @@ public record MemberSignUpRequest(
         String password
 ) {
     public MemberInfoCommand toServiceDto() {
-        return new MemberInfoCommand(username, password);
+        return new MemberInfoCommand(username, password, false);
     }
 }
