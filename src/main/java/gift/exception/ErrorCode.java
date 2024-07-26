@@ -31,7 +31,10 @@ public enum ErrorCode {
 
     /* Wish 관련 예외 */
     WISH_NOT_FOUND(HttpStatus.NOT_FOUND, "위시리스트를 찾을 수 없습니다."),
-    INVALID_WISH_QUANTITY(HttpStatus.BAD_REQUEST, "수량은 0보다 큰 수이어야 합니다.");
+    INVALID_WISH_QUANTITY(HttpStatus.BAD_REQUEST, "수량은 0보다 큰 수이어야 합니다."),
+
+    /* Kakao API 관련 예외 */
+    KAKAO_LOGIN_ERROR(HttpStatus.BAD_REQUEST, "로그인 할 수 없습니다");
 
 
     private final HttpStatusCode status;

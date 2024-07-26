@@ -1,8 +1,11 @@
 package gift.user.client;
 
+import gift.exception.CustomException;
+import gift.exception.ErrorCode;
 import gift.user.config.KakaoProperties;
 import gift.user.dto.response.KakaoTokenResponse;
 import gift.user.dto.response.KakaoUserInfoResponse;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -33,6 +36,9 @@ public class KakaoLoginClient {
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                throw new CustomException(ErrorCode.KAKAO_LOGIN_ERROR);
+            })
             .body(KakaoTokenResponse.class);
     }
 
@@ -42,6 +48,9 @@ public class KakaoLoginClient {
             .uri(url)
             .header("Authorization", "Bearer " + token)
             .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                throw new CustomException(ErrorCode.KAKAO_LOGIN_ERROR);
+            })
             .body(KakaoUserInfoResponse.class);
     }
 
