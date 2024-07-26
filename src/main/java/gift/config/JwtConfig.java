@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class JwtConfig {
 
     private String secret;
-    private long expirationTime;
+    private long expirationTime; // 만료 시간 (예: 86400000L - 1일)
 
     public String getSecret() {
         return secret;

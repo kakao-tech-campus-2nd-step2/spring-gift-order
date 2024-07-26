@@ -39,6 +39,10 @@ public class Member extends BaseEntity {
         return wishes;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public static class Builder {
         private Long id;
         private String email;
@@ -66,4 +70,3 @@ public class Member extends BaseEntity {
         }
     }
 }
-

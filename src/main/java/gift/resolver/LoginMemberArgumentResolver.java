@@ -42,7 +42,10 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         }
 
         Long userId = jwtUtil.getUserId(token);
+        if (userId == null) {
+            throw new IllegalArgumentException("Invalid JWT token");
+        }
+
         return memberRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 }
-
