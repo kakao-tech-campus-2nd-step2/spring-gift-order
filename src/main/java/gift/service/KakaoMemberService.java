@@ -93,11 +93,11 @@ public class KakaoMemberService {
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         var body = new LinkedMultiValueMap<String, String>();
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"object_type\":\"text\",\"text\":\"")
+        StringBuilder templateObjectBuilder = new StringBuilder();
+        templateObjectBuilder.append("{\"object_type\":\"text\",\"text\":\"")
                 .append(message)
                 .append("\",\"link\":{\"web_url\":\"\"}}");
-        body.add("template_object", sb.toString());
+        body.add("template_object", templateObjectBuilder.toString());
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         restTemplate.exchange(request,String.class);
