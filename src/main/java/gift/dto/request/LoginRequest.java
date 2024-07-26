@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.Length;
 public class LoginRequest {
 
     @NotBlank
-    @Pattern(regexp = "[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Pattern(regexp = "[a-zA-Z0-9_!#$%&’*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$", message = "올바른 이메일 형식을 입력해 주세요.")
     private String email;
 
     @NotBlank
