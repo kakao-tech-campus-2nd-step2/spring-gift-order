@@ -36,8 +36,8 @@ public class KakaoApiClient {
 
     private WebClient createWebClient(WebClient.Builder webClientBuilder) {
         HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000)
-                .responseTimeout(Duration.ofSeconds(5));
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, kakaoProperties.getConnectTimeoutMillis())
+                .responseTimeout(Duration.ofSeconds(kakaoProperties.getResponseTimeoutSeconds()));
 
         return webClientBuilder
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
