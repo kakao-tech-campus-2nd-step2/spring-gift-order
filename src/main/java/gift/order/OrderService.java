@@ -1,5 +1,7 @@
 package gift.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.option.Option;
 import gift.option.OptionRepository;
 import gift.option.OptionResponse;
@@ -18,8 +20,8 @@ import java.util.Date;
 public class OrderService {
 
     private final RestClient kakaoRestClient;
-
     private final OptionRepository optionRepository;
+    ObjectMapper mapper = new ObjectMapper();
 
     public OrderService(RestClient kakaoRestClient, OptionRepository optionRepository) {
         this.kakaoRestClient = kakaoRestClient;
@@ -45,34 +47,19 @@ public class OrderService {
 
     private LinkedMultiValueMap<String, Object> createBody(OrderRequest request, OptionResponse optionResponse) {
         LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        //Link link = new Link("http://localhost:8080","http://localhost:8080");
-        //Content content = new Content("주문이 완료되었습니다.", request.getMessage(), "imgurl", link);
+        Link link = new Link("http://localhost:8080","http://localhost:8080");
+        Content content = new Content("주문이 완료되었습니다.", request.getMessage(), "imgurl", link);
         Option option = optionRepository.findById(optionResponse.id()).orElseThrow();
         Product product = option.getProduct();
-        //ItemContent itemContent = new ItemContent(product.getName(), product.getImageUrl(), option.getName());
-        //TemplateObject template_object = new TemplateObject("feed", content, itemContent);
-        //TemplateObject template_object = new TemplateObject("text", request.getMessage(), link);
-        //body.add("template_object", template_object);
+        ItemContent itemContent = new ItemContent(product.getImageUrl(), product.getName(), option.getName());
+        TemplateObject template_object = new TemplateObject("feed", content, itemContent);
 
-        String send = "{\n" +
-                "        \"object_type\": \"feed\",\n" +
-                "        \"content\": {\n" +
-                "            \"title\": \"주문이 완료되었습니다.\",\n" +
-                "            \"description\": \"" + request.getMessage() + "\",\n" +
-                "            \"link\": {\n" +
-                "                \"web_url\": \"http://www.daum.net\",\n" +
-                "                \"mobile_web_url\": \"http://m.daum.net\"\n" +
-                "            }\n" +
-                "           }," +
-                "            \"item_content\" : {\n" +
-                "                \"title_image_url\" : \"" + product.getImageUrl() + "\",\n" +
-                "                \"title_image_text\" :\"" + product.getName() + "\",\n" +
-                "                \"title_image_category\" : \"" + option.getName() + "\"" +
-                "           }" +
-                "       }";
-
-
-        body.add("template_object", send);
+        try {
+            String s = mapper.writeValueAsString(template_object);
+            body.add("template_object", s);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         return body;
     }

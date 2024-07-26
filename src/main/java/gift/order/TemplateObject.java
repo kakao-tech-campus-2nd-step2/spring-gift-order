@@ -1,13 +1,18 @@
 package gift.order;
 
-public class TemplateObject {
-    String object_type;
-    String text;
-    Link link;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public TemplateObject(String object_type, String text, Link link) {
-        this.object_type = object_type;
-        this.text = text;
-        this.link = link;
+public class TemplateObject {
+    @JsonProperty("object_type")
+    String objectType;
+    @JsonProperty
+    Content content;
+    @JsonProperty("item_content")
+    ItemContent itemContent;
+
+    public TemplateObject(String objectType, Content content, ItemContent itemContent) {
+        this.objectType = objectType;
+        this.content = content;
+        this.itemContent = itemContent;
     }
 }

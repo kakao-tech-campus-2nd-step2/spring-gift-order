@@ -1,16 +1,22 @@
 package gift.order;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Content {
+    @JsonProperty
     String title;
+    @JsonProperty
     String description;
-    String image_url;
+    @JsonProperty("image_url")
+    String imageUrl;
+    @JsonProperty
     Link link;
 
 
-    public Content(String title, String description, String image_url, Link link) {
+    public Content(String title, String description, String imageUrl, Link link) {
         this.title = title;
         this.description = description;
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.link = link;
     }
 

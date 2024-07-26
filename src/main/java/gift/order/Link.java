@@ -1,12 +1,16 @@
 package gift.order;
 
-public class Link {
-    String web_url;
-    String mobile_web_url;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public Link(String web_url, String mobile_web_url) {
-        this.web_url = web_url;
-        this.mobile_web_url = mobile_web_url;
+public class Link {
+    @JsonProperty("web_url")
+    String webUrl;
+    @JsonProperty("mobile_web_url")
+    String mobileWebUrl;
+
+    public Link(String webUrl, String mobileWebUrl) {
+        this.webUrl = webUrl;
+        this.mobileWebUrl = mobileWebUrl;
     }
 
 }

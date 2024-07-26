@@ -1,12 +1,15 @@
 package gift.kakaoLogin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class KakaoUserInfoResponse {
     Long id;
-    String connected_at;
+    @JsonProperty("connected_at")
+    String connectedAt;
 
-    public KakaoUserInfoResponse(Long id, String connected_at) {
+    public KakaoUserInfoResponse(Long id, String connectedAt) {
         this.id = id;
-        this.connected_at = connected_at;
+        this.connectedAt = connectedAt;
     }
 
     public Long getId() {
@@ -17,11 +20,11 @@ public class KakaoUserInfoResponse {
         this.id = id;
     }
 
-    public String getConnected_at() {
-        return connected_at;
+    public String getConnectedAtt() {
+        return connectedAt;
     }
 
-    public void setConnected_at(String connected_at) {
-        this.connected_at = connected_at;
+    public void setConnected_at(String connectedAt) {
+        this.connectedAt = connectedAt;
     }
 }

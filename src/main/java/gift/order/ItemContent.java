@@ -1,14 +1,19 @@
 package gift.order;
 
-public class ItemContent {
-    String title_image_url;
-    String title_image_text;
-    String title_image_category;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public ItemContent(String title_image_text, String title_image_url, String title_image_category) {
-        this.title_image_text = title_image_text;
-        this.title_image_url = title_image_url;
-        this.title_image_category = title_image_category;
+public class ItemContent {
+    @JsonProperty("title_image_url")
+    String titleImageUrl;
+    @JsonProperty("title_image_text")
+    String titleImageText;
+    @JsonProperty("title_image_category")
+    String titleImageCategory;
+
+    public ItemContent(String titleImageUrl, String titleImageText, String titleImageCategory) {
+        this.titleImageUrl = titleImageUrl;
+        this.titleImageText = titleImageText;
+        this.titleImageCategory = titleImageCategory;
     }
 
 }
