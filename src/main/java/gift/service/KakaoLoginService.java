@@ -24,6 +24,8 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
     public String getAccessToken(String authorizationCode) throws Exception {
         String url = "https://kauth.kakao.com/oauth/token";
         HttpHeaders headers = new HttpHeaders();
@@ -37,7 +39,6 @@ public class KakaoLoginService {
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<Map> response = restTemplate.exchange(request, Map.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
