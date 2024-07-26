@@ -54,6 +54,7 @@
 
 #### OrderApiController
 - 주문 요청
+  - Order 생성 및 수량 차감 처리
   - 카카오 메시지 API로 메시지 전송
 
 #### 주문 시 동작
