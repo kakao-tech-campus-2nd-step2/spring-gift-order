@@ -42,7 +42,7 @@ public class WishController {
 
     @DeleteMapping("api/wishlist/{id}")
     public ResponseEntity<Void> deleteWishProduct(@MemberId Long memberId, @PathVariable("id") Long productId) {
-        wishService.deleteProductInWish(memberId, productId);
+        wishService.findAndDeleteProductInWish(memberId, productId);
         return ResponseEntity.ok().build();
     }
 }

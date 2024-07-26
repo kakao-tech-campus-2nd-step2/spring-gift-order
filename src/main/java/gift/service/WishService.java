@@ -58,7 +58,7 @@ public class WishService {
     }
 
     @Transactional
-    public void deleteProductInWish(Long memberId, Long productId) {
+    public void findAndDeleteProductInWish(Long memberId, Long productId) {
         Member member = memberService.getMember(memberId);
         Product product = productService.getProduct(productId);
 
