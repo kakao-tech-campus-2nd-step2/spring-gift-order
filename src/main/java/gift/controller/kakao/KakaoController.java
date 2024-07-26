@@ -2,10 +2,9 @@ package gift.controller.kakao;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.service.KakaoService;
 import java.io.IOException;
 import java.net.URI;
-import javax.json.Json;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +23,13 @@ public class KakaoController {
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private final KakaoService kakaoService;
 
-    public KakaoController(KakaoProperties kakaoProperties) {
+    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService) {
         this.kakaoProperties = kakaoProperties;
         this.restClient = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
+        this.kakaoService = kakaoService;
     }
 
     @GetMapping
@@ -38,7 +39,6 @@ public class KakaoController {
         MultiValueMap<String, String> body = createRequestBody(authCode);
         String tokenResponse = sendTokenRequest(tokenRequestUrl, body);
         String accessToken = extractAccessToken(tokenResponse);
-
         return ResponseEntity.status(HttpStatus.OK).body(accessToken);
     }
 
