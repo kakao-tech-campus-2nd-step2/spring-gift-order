@@ -1,5 +1,8 @@
 package gift.web.client.dto;
 
+import gift.domain.Member;
+import gift.domain.vo.Email;
+
 public class KakaoAccount {
 
     private KakaoProfile profile;
@@ -29,5 +32,12 @@ public class KakaoAccount {
 
     public Boolean getEmailVerified() {
         return isEmailVerified;
+    }
+
+    public Member toMember() {
+        return new Member.Builder()
+            .name(profile.getNickname())
+            .email(Email.from(email))
+            .build();
     }
 }
