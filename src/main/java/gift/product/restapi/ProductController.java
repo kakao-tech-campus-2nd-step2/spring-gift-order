@@ -1,5 +1,6 @@
 package gift.product.restapi;
 
+import gift.advice.ErrorResponse;
 import gift.core.PagedDto;
 import gift.core.domain.product.Product;
 import gift.core.domain.product.ProductCategory;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +62,19 @@ public class ProductController {
                     @Parameter(name = "id", description = "상품 ID")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "상품을 조회합니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductResponse.class))
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품을 조회합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품을 찾을 수 없습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public ProductResponse getProduct(@PathVariable Long id) {
         return ProductResponse.from(productService.get(id));
@@ -71,9 +82,18 @@ public class ProductController {
 
     @PostMapping("/api/products")
     @Operation(summary = "상품 등록", description = "상품을 등록합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "상품을 등록합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품을 등록합니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "상품 등록 실패 시 반환합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public void addProduct(
             @Valid @RequestBody ProductCreateRequest request
@@ -90,9 +110,23 @@ public class ProductController {
                     @Parameter(name = "id", description = "상품 ID")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "상품을 수정합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품을 수정합니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품을 찾을 수 없습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "상품 수정 실패 시 반환합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public void updateProduct(
             @PathVariable Long id,
@@ -119,9 +153,18 @@ public class ProductController {
                     @Parameter(name = "id", description = "상품 ID")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "상품을 삭제합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품을 삭제합니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품을 찾을 수 없습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public void deleteProduct(@PathVariable Long id) {
         productService.remove(id);

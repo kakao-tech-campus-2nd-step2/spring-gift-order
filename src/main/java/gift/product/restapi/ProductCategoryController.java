@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -35,10 +36,14 @@ public class ProductCategoryController {
                     @Parameter(name = "size", description = "페이지 크기 (기본 값 : 10)")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "카테고리 목록을 조회합니다.",
-            content = @Content(mediaType = "application/json", schema = @Schema(contentSchema = PagedCategoryResponse.class))
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "카테고리 목록을 조회합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(contentSchema = PagedCategoryResponse.class))
+                    )
+            }
     )
     public PagedCategoryResponse getCategories(
             @PageableDefault Pageable pageable

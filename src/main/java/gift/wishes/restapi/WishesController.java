@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.web.PageableDefault;
@@ -58,9 +59,21 @@ public class WishesController {
 
     @PostMapping("/api/wishes")
     @Operation(summary = "위시리스트 추가", description = "위시리스트에 상품을 추가합니다.")
-    @ApiResponse(
-            responseCode = "200",
-            description = "위시리스트에 상품을 추가합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "위시리스트에 상품을 추가합니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품을 찾을 수 없습니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "위시리스트에 상품 추가 실패"
+                    )
+            }
     )
     public void addWish(@LoggedInUser Long userId, @RequestBody AddWishRequest request) {
         Product product = productService.get(request.productId());
@@ -75,9 +88,17 @@ public class WishesController {
                     @Parameter(name = "productId", description = "상품 ID")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "위시리스트에서 상품을 삭제합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "위시리스트에서 상품을 삭제합니다."
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "위시리스트에서 상품을 찾을 수 없습니다."
+                    )
+            }
     )
     public void removeWish(@LoggedInUser Long userId, @PathVariable Long productId) {
         Product product = productService.get(productId);

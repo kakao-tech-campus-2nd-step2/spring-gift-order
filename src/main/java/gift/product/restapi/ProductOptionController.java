@@ -1,5 +1,6 @@
 package gift.product.restapi;
 
+import gift.advice.ErrorResponse;
 import gift.core.domain.product.ProductOptionService;
 import gift.product.restapi.dto.request.ProductOptionRegisterRequest;
 import gift.product.restapi.dto.response.ProductOptionResponse;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,9 +57,24 @@ public class ProductOptionController {
                     @Parameter(name = "productId", description = "상품 ID")
             }
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "상품에 옵션을 등록합니다."
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품에 옵션을 등록합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "상품에 옵션을 등록할 수 없습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품이 존재하지 않습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
     )
     public void registerOption(
             @PathVariable Long productId,
@@ -73,6 +90,31 @@ public class ProductOptionController {
             parameters = {
                     @Parameter(name = "productId", description = "상품 ID"),
                     @Parameter(name = "optionId", description = "옵션 ID")
+            }
+    )
+    @ApiResponses(
+            value = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "상품에서 옵션을 삭제합니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "상품에서 옵션을 삭제할 수 없습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "상품이 존재하지 않습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "옵션이 존재하지 않습니다.",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
+
+                    )
             }
     )
     @ApiResponse(
