@@ -27,7 +27,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, int price, String imageUrl, Category category, List<Option> options) {
+    public Product(Long id, String name, int price, String imageUrl, Category category,
+        List<Option> options) {
+        this.id = id;
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -35,8 +37,8 @@ public class Product {
         this.options = options;
     }
 
-    public Product(Long id, String name, int price, String imageUrl, Category category, List<Option> options) {
-        this.id = id;
+    public Product(String name, int price, String imageUrl, Category category,
+        List<Option> options) {
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -75,7 +77,7 @@ public class Product {
         this.category = category;
     }
 
-    public void setOption(List<Option> options){
+    public void setOption(List<Option> options) {
         this.options = options;
     }
 
@@ -85,7 +87,7 @@ public class Product {
     }
 
     public void addOptions(List<Option> options) {
-        for(Option option : options){
+        for (Option option : options) {
             addOption(option);
         }
     }
@@ -96,12 +98,12 @@ public class Product {
     }
 
     public void removeOptions(List<Option> options) {
-        for(Option option : options){
+        for (Option option : options) {
             removeOption(option);
         }
     }
 
-    public List<Option> getOptions(){
+    public List<Option> getOptions() {
         return options;
     }
 }

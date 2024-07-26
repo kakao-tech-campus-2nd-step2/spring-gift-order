@@ -37,7 +37,7 @@ public class OptionService {
     }
 
     public int countAllOptionsByProductIdFromOptionId(long optionId) {
-        long productId = findOptionById(optionId).getProductId();
+        Long productId = findOptionById(optionId).getProductId();
         return optionRepository.countAllByProductId(productId);
     }
 
@@ -71,9 +71,6 @@ public class OptionService {
     }
 
     public void deleteOptionByOptionId(long optionId) {
-        if (!optionRepository.existsById(optionId)) {
-            throw new IllegalArgumentException("옵션 없는 아이디입니다.");
-        }
         Option option = findByOptionId(optionId);
         option.getProduct().removeOption(option);
         optionRepository.deleteById(option.getId());

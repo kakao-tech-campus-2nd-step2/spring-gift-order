@@ -77,10 +77,10 @@ public class ProductService {
         return ProductDTO.fromProduct(savedProduct);
     }
 
-    public ProductDTO updateProduct(ProductDTO productDTO) {
+    public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
 
-        Product existingProduct = findByProductId(productDTO.getId());
-        existsByNameAndIdNotThrowException(productDTO.getName(), productDTO.getId());
+        Product existingProduct = findByProductId(productId);
+        existsByNameAndIdNotThrowException(productDTO.getName(), productId);
         Category newCategory = updateCategory(productDTO.getCategoryId(), existingProduct);
 
         existingProduct.update(productDTO.getName(), productDTO.getPrice(),

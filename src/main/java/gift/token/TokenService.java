@@ -12,11 +12,11 @@ public class TokenService {
         this.tokenRepository = tokenRepository;
     }
 
-    public void saveToken(Long userId, KakaoTokenDTO kakaoTokenDTO){
-        if(tokenRepository.existsByUserId(userId)){
+    public void saveToken(Long userId, KakaoTokenDTO kakaoTokenDTO, String sns){
+        if(tokenRepository.existsByUserIdAndSns(userId, sns)){
             return;
         }
-        Token token = new Token(userId, "kakao", kakaoTokenDTO.accessToken(),
+        Token token = new Token(userId, sns, kakaoTokenDTO.accessToken(),
             kakaoTokenDTO.expiresIn(), kakaoTokenDTO.refreshToken(), kakaoTokenDTO.refreshTokenExpiresIn());
         tokenRepository.save(token);
     }

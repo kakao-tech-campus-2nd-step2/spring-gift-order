@@ -8,13 +8,14 @@ public record UserDTO(Long id,
                       @NotBlank(message = "이메일을 입력하지 않았습니다.")
                       String email,
                       @NotBlank(message = "비밀번호를 입력하지 않았습니다.")
-                      String password) {
+                      String password,
+                      String sns) {
 
     public User toUser() {
-        return new User(id, email, password);
+        return new User(id, email, password, "local");
     }
 
     public static UserDTO fromUser(User user) {
-        return new UserDTO(user.getId(), user.getEmail(), user.getPassword());
+        return new UserDTO(user.getId(), user.getEmail(), user.getPassword(), "local");
     }
 }

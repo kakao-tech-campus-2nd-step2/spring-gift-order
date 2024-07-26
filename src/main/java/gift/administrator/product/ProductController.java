@@ -86,16 +86,15 @@ public class ProductController {
     @PostMapping("/update/{id}")
     public String putProduct(@PathVariable("id") Long id,
         @Valid @ModelAttribute("productDTO") ProductDTO product, BindingResult result,
-        Model model)
-        throws NotFoundException {
+        Model model) {
         ProductDTO product1 = new ProductDTO(id, product.getName(), product.getPrice(),
             product.getImageUrl(), product.getCategoryId(), product.getOptions());
-        productService.existsByNameAndIdPutResult(product1.getName(), product1.getId(), result);
+        productService.existsByNameAndIdPutResult(product1.getName(), id, result);
         if (result.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             return "update";
         }
-        productService.updateProduct(product1);
+        productService.updateProduct(product1, id);
         return "redirect:/products";
     }
 }

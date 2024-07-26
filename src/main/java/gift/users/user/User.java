@@ -18,28 +18,28 @@ public class User {
     private String email;
     private String password;
     @Column(unique = true)
-    private String kakaoId;
+    private String snsId;
     private String sns;
 
     public User() {
     }
 
-    public User(String kakaoId) {
-        this.kakaoId = kakaoId;
-        this.sns = "kakao";
+    public User(String snsId, String sns) {
+        this.snsId = snsId;
+        this.sns = sns;
     }
 
-    public User(String email, String password) {
-        this.email = email;
-        this.password = password;
-        this.sns = "local";
-    }
-
-    public User(Long id, String email, String password) {
+    public User(Long id, String email, String password, String sns) {
         this.id = id;
         this.email = email;
         this.password = password;
-        this.sns = "local";
+        this.sns = sns;
+    }
+
+    public User(String email, String password, String sns) {
+        this.email = email;
+        this.password = password;
+        this.sns = sns;
     }
 
     public Long getId() {
@@ -55,4 +55,6 @@ public class User {
     }
 
     public String getSns(){return sns;}
+
+    public String getSnsId(){return snsId;}
 }

@@ -17,11 +17,11 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public Long findByKakaoIdAndRegisterIfNotExists(String kakaoId) {
-        if (!userRepository.existsByKakaoId(kakaoId)) {
-            userRepository.save(new User(kakaoId));
+    public Long findBySnsIdAndSnsAndRegisterIfNotExists(String snsId, String sns) {
+        if (!userRepository.existsBySnsIdAndSns(snsId, sns)) {
+            userRepository.save(new User(snsId, sns));
         }
-        User user = userRepository.findByKakaoId(kakaoId);
+        User user = userRepository.findBySnsIdAndSns(snsId, sns);
         return user.getId();
     }
 

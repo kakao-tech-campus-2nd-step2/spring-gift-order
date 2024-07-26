@@ -44,10 +44,6 @@ public class WishList {
         this.option = option;
     }
 
-    public void update(int num) {
-        this.num = num;
-    }
-
     public Long getId() {
         return id;
     }

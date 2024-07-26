@@ -48,7 +48,7 @@ public class KakaoAuthService {
         String token = getKakaoToken(kakaoTokenDTO);
         Long userId = getKakaoUser(token);
 
-        tokenService.saveToken(userId, kakaoTokenDTO);
+        tokenService.saveToken(userId, kakaoTokenDTO, "kakao");
         return userService.loginGiveJwt(userId.toString());
     }
 
@@ -76,7 +76,7 @@ public class KakaoAuthService {
             throw new KakaoAuthenticationException("카카오 사용자 정보 값이 비어있습니다.");
         }
 
-        return userService.findByKakaoIdAndRegisterIfNotExists(kakaoUserDTO.id().toString());
+        return userService.findBySnsIdAndSnsAndRegisterIfNotExists(kakaoUserDTO.id().toString(), "kakao");
     }
 
     private KakaoTokenDTO getKakaoTokenDTO(String code){

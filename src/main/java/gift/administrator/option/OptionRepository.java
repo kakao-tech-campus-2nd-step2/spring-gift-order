@@ -11,5 +11,5 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
 
     boolean existsByNameAndProductIdAndIdNot(String name, long productId, long optionId);
 
-    int countAllByProductId(long productId);
+    int countAllByProductId(Long productId);
 }
