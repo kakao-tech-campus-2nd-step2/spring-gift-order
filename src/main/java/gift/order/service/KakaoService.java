@@ -110,17 +110,17 @@ public class KakaoService {
         TemplateObject templateObject = new TemplateObject(
                 "text",
                 orderResponse.toString(),
-                new Link("link")
+                new Link("https://developers.kakao.com")
         );
-        String templateObjectJson = objectMapper.writeValueAsString(templateObject);
-        MultiValueMap<Object, Object> map = new LinkedMultiValueMap<>();
-        map.set("template_object", templateObjectJson);
+        String templateObjectToJson = objectMapper.writeValueAsString(templateObject);
+        MultiValueMap<String, Object> body_map = new LinkedMultiValueMap<>();
+        body_map.set("template_object", templateObjectToJson);
 
         restClient.post()
                 .uri(kakaoProperties.getMessageToMeUri())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
-                .body(map)
+                .body(body_map)
                 .retrieve()
                 .body(String.class);
     }
