@@ -53,4 +53,10 @@ public class PageController {
         model.addAttribute("product_id", product_id);
         return "adminOption.html";
     }
+
+    @GetMapping("/orders")
+    public String orderProduct(@RequestParam Long product_id, Model model){
+        model.addAttribute("product_id", product_id);
+        return "orderProduct.html";
+    }
 }

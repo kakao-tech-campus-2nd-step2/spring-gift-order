@@ -13,6 +13,8 @@ public class User extends BaseEntity{
     private String password;
     @Column(nullable = false)
     private Boolean admin;
+    @Column
+    private String token;
 
     protected User(){
         super();
@@ -27,30 +29,29 @@ public class User extends BaseEntity{
     public Long getId() {
         return super.getId();
     }
+
     public String getUserId(){
         return userId;
     }
+
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getPassword() {
         return password;
-    }
-    public void setPassword(String password){
-        this.password = password;
     }
 
     public Boolean getAdmin() {
         return admin;
     }
 
-    public void setAdmin(Boolean admin) {
-        this.admin = admin;
+    public String getToken() {
+        return token;
+    }
+
+    public void insertToken(String token) {
+        this.token = token;
     }
 
     public void updateEntity(String email, String password){
