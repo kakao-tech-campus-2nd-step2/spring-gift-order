@@ -2,12 +2,15 @@ package gift.service;
 
 import static gift.util.constants.OptionConstants.OPTION_NOT_FOUND;
 
+import gift.dto.member.MemberResponse;
 import gift.dto.order.OrderRequest;
 import gift.dto.order.OrderResponse;
 import gift.exception.option.OptionNotFoundException;
+import gift.model.Member;
 import gift.model.Option;
 import gift.model.Order;
 import gift.model.Product;
+import gift.model.RegisterType;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.service.oauth.KakaoOAuthService;
@@ -24,17 +27,20 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final KakaoOAuthService kakaoOAuthService;
     private final WishService wishService;
+    private final MemberService memberService;
 
     public OrderService(
         OrderRepository orderRepository,
         OptionRepository optionRepository,
         KakaoOAuthService kakaoOAuthService,
-        WishService wishService
+        WishService wishService,
+        MemberService memberService
     ) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.kakaoOAuthService = kakaoOAuthService;
         this.wishService = wishService;
+        this.memberService = memberService;
     }
 
     @Transactional
@@ -48,7 +54,11 @@ public class OrderService {
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
-        sendKakaoMessage(savedOrder, memberId);
+        MemberResponse memberResponse = memberService.getMemberById(memberId);
+        if (memberResponse.registerType() == RegisterType.KAKAO) {
+            sendKakaoMessage(savedOrder, memberId);
+        }
+
         wishService.deleteWishByProductIdAndMemberId(option.getProduct().getId(), memberId);
 
         return new OrderResponse(
