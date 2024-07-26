@@ -14,11 +14,11 @@ public class JwtService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void createToken(Member member, HttpServletResponse response) {
-        response.setHeader("Authorization",jwtTokenProvider.generateToken(member));
+    public void addTokenInHeader(Member member, HttpServletResponse response) {
+        response.setHeader("Authorization", jwtTokenProvider.generateToken(member));
     }
 
-    public void createTokenMVC(Member member, HttpServletResponse response) {
-        response.addCookie(new Cookie("jwtToken", jwtTokenProvider.generateToken(member) ));
+    public void addTokenInCookie(Member member, HttpServletResponse response) {
+        response.addCookie(new Cookie("jwtToken", jwtTokenProvider.generateToken(member)));
     }
 }

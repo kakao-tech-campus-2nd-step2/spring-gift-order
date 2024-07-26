@@ -1,9 +1,9 @@
-package gift.response;
+package gift.response.oauth2;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record KakaoTokenResponse(
+public record OAuth2TokenResponse(
     @JsonProperty("access_token")
     String accessToken,
     @JsonProperty("token_type")
@@ -18,7 +18,7 @@ public record KakaoTokenResponse(
 ) {
 
     @JsonCreator
-    public KakaoTokenResponse(String accessToken,
+    public OAuth2TokenResponse(String accessToken,
         String tokenType,
         String refreshToken,
         Integer expiresIn,

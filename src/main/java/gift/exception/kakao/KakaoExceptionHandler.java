@@ -9,15 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class KakaoExceptionHandler {
 
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    @ExceptionHandler(KakaoAuthException.class)
-    public ErrorResult authExHandle(KakaoAuthException e) {
-        return new ErrorResult("인가코드 에러", e.getMessage());
-    }
-
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(KakaoTokenException.class)
-    public ErrorResult tokenExHandle(KakaoTokenException e) {
-        return new ErrorResult("토큰 에러", e.getMessage());
+    @ExceptionHandler(KakaoMessageException.class)
+    public ErrorResult kakaoMessageExHandle(KakaoMessageException e) {
+        return new ErrorResult("카카오톡 메시지 전송 에러", e.getMessage());
     }
 }

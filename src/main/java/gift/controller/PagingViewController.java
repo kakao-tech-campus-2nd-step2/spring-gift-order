@@ -64,7 +64,7 @@ public class PagingViewController {
         }
 
         Member joinedMember = memberService.join(joinRequest.email(), joinRequest.password());
-        jwtService.createToken(joinedMember, response);
+        jwtService.addTokenInHeader(joinedMember, response);
         return "redirect:/view/products";
     }
 
@@ -82,7 +82,7 @@ public class PagingViewController {
         }
 
         Member loginedMember = memberService.login(loginRequest.email(), loginRequest.password());
-        jwtService.createTokenMVC(loginedMember, response);
+        jwtService.addTokenInCookie(loginedMember, response);
         return "redirect:/view/products";
     }
 

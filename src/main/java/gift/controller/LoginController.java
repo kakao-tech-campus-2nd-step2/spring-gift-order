@@ -34,7 +34,7 @@ public class LoginController {
         }
 
         Member joinedMember = memberService.join(joinRequest.email(), joinRequest.password());
-        jwtService.createToken(joinedMember, response);
+        jwtService.addTokenInHeader(joinedMember, response);
 
         return ResponseEntity.ok(new JoinResponse(joinRequest.email(), "회원가입이 완료되었습니다."));
     }
@@ -48,7 +48,7 @@ public class LoginController {
         }
 
         Member loginedMember = memberService.login(loginRequest.email(), loginRequest.password());
-        jwtService.createToken(loginedMember, response);
+        jwtService.addTokenInHeader(loginedMember, response);
 
     }
 

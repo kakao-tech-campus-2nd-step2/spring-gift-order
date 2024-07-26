@@ -5,7 +5,7 @@ public class OptionsQuantityException extends RuntimeException {
     private static final String OPTIONS_QUANTITY_MESSAGE = "재고가 부족합니다.";
 
     public OptionsQuantityException() {
-        super();
+        super(OPTIONS_QUANTITY_MESSAGE);
     }
 
     public OptionsQuantityException(String message) {
