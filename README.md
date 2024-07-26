@@ -3,7 +3,6 @@
 ## Step2
 feat: KakaoService - 주문 생성 기능 추가 및 Kakao 메시지 전송 구현 [박한솔]
 - createOrder 메서드 구현: 주문을 생성하고, 카카오 메시지를 전송하여 주문 정보를 사용자에게 알림
-- OrderRequest 클래스의 Long 타입으로 수정: quantity 필드의 타입을 Long으로 변경
 
 feat: KakaoService - Kakao 메시지 전송 및 템플릿 객체 생성 메서드 구현 [박한솔]
 - sendKakaoMessage 메서드 추가: Kakao API를 통해 사용자에게 메시지 전송
