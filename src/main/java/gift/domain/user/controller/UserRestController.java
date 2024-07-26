@@ -1,8 +1,8 @@
 package gift.domain.user.controller;
 
 import gift.auth.dto.Token;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.service.UserService;
 import gift.exception.DuplicateEmailException;
 import jakarta.validation.Valid;
@@ -25,9 +25,9 @@ public class UserRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Token> create(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Token> create(@RequestBody @Valid UserRequest userRequest) {
         try {
-            Token token = userService.signUp(userDto);
+            Token token = userService.signUp(userRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(token);
         } catch (DuplicateKeyException e) {
             throw new DuplicateEmailException("error.duplicate.key.email");
@@ -35,8 +35,8 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody @Valid UserLoginDto userLoginDto) {
-        Token token = userService.login(userLoginDto);
+    public ResponseEntity<Token> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        Token token = userService.login(userLoginRequest);
         return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 }

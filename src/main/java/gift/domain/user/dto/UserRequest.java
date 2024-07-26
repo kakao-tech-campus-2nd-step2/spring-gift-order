@@ -7,9 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserDto(
-    Long id,
-
+public record UserRequest(
     String name,
 
     @NotBlank(message = "이메일은 필수 입력 필드입니다.")
@@ -18,21 +16,9 @@ public record UserDto(
 
     @Size(min = 4, max = 20, message = "4-20자 사이의 비밀번호를 입력해주세요.")
     @Pattern(regexp = "[a-zA-z0-9!@^&\\-_]+", message = "영어 대소문자와 숫자, !,@,^,&,-,_ 만 사용 가능합니다.")
-    String password,
-
-    String role)
+    String password)
 {
     public User toUser() {
-        return new User(id, name, email, password, Role.USER);
-    }
-
-    public static UserDto from(User user) {
-        return new UserDto(
-            user.getId(),
-            user.getName(),
-            user.getEmail(),
-            user.getPassword(),
-            user.getRole().toString()
-        );
+        return new User(null, name, email, password, Role.USER);
     }
 }

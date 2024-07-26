@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.auth.dto.Token;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.service.UserService;
 import gift.exception.InvalidUserInfoException;
 import org.junit.jupiter.api.DisplayName;
@@ -55,12 +55,12 @@ class UserRestControllerTest {
     @DisplayName("회원 가입에 성공하는 경우")
     void create_success() throws Exception {
         // given
-        UserDto userDto = new UserDto(null, "testUser", "test@test.com", "test123", null);
-        String jsonContent = objectMapper.writeValueAsString(userDto);
+        UserRequest userRequest = new UserRequest("testUser", "test@test.com", "test123");
+        String jsonContent = objectMapper.writeValueAsString(userRequest);
 
         Token expectedToken = new Token("token");
 
-        given(userService.signUp(any(UserDto.class))).willReturn(expectedToken);
+        given(userService.signUp(any(UserRequest.class))).willReturn(expectedToken);
 
         // when & then
         mockMvc.perform(postRequest(REGISTER_URL, jsonContent))
@@ -73,10 +73,10 @@ class UserRestControllerTest {
     @DisplayName("회원 가입에 실패하는 경우 - 이미 존재하는 이메일로 가입 시도")
     void create_fail() throws Exception {
         // given
-        UserDto userDto = new UserDto(null, "testUser", "test@test.com", "test123", null);
-        String jsonContent = objectMapper.writeValueAsString(userDto);
+        UserRequest userRequest = new UserRequest("testUser", "test@test.com", "test123");
+        String jsonContent = objectMapper.writeValueAsString(userRequest);
 
-        given(userService.signUp(any(UserDto.class))).willThrow(DuplicateKeyException.class);
+        given(userService.signUp(any(UserRequest.class))).willThrow(DuplicateKeyException.class);
 
         // when & then
         mockMvc.perform(postRequest(REGISTER_URL, jsonContent))
@@ -88,12 +88,12 @@ class UserRestControllerTest {
     @DisplayName("로그인에 성공하는 경우")
     void login_success() throws Exception {
         // given
-        UserLoginDto userLoginDto = new UserLoginDto("test@test.com", "test123");
-        String jsonContent = objectMapper.writeValueAsString(userLoginDto);
+        UserLoginRequest userLoginRequest = new UserLoginRequest("test@test.com", "test123");
+        String jsonContent = objectMapper.writeValueAsString(userLoginRequest);
 
         Token expectedToken = new Token("token");
 
-        given(userService.login(any(UserLoginDto.class))).willReturn(expectedToken);
+        given(userService.login(any(UserLoginRequest.class))).willReturn(expectedToken);
 
         // when & then
         mockMvc.perform(postRequest(LOGIN_URL, jsonContent))
@@ -106,10 +106,10 @@ class UserRestControllerTest {
     @DisplayName("로그인에 실패하는 경우 - 틀린 비밀번호로 로그인 시도")
     void login_fail() throws Exception {
         // given
-        UserLoginDto userLoginDto = new UserLoginDto("test@test.com", "test123");
-        String jsonContent = objectMapper.writeValueAsString(userLoginDto);
+        UserLoginRequest userLoginRequest = new UserLoginRequest("test@test.com", "test123");
+        String jsonContent = objectMapper.writeValueAsString(userLoginRequest);
 
-        given(userService.login(any(UserLoginDto.class)))
+        given(userService.login(any(UserLoginRequest.class)))
             .willThrow(new InvalidUserInfoException("error.invalid.userinfo.password"));
 
         // when & then

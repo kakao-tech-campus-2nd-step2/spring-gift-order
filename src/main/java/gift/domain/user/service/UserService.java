@@ -1,14 +1,14 @@
 package gift.domain.user.service;
 
 import gift.auth.dto.Token;
+import gift.domain.user.dto.UserResponse;
 import gift.domain.user.repository.UserJpaRepository;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import gift.auth.jwt.JwtProvider;
 import gift.exception.InvalidUserInfoException;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,18 +22,18 @@ public class UserService {
         this.jwtProvider = jwtProvider;
     }
 
-    public Token signUp(UserDto userDto) {
-        User user = userDto.toUser();
+    public Token signUp(UserRequest userRequest) {
+        User user = userRequest.toUser();
         User savedUser = userJpaRepository.save(user);
         
         return jwtProvider.generateToken(savedUser);
     }
 
-    public Token login(UserLoginDto userLoginDto) {
-        User user = userJpaRepository.findByEmail(userLoginDto.email())
+    public Token login(UserLoginRequest userLoginRequest) {
+        User user = userJpaRepository.findByEmail(userLoginRequest.email())
             .orElseThrow(() -> new InvalidUserInfoException("error.invalid.userinfo.email"));
 
-        if (!user.checkPassword(userLoginDto.password())) {
+        if (!user.checkPassword(userLoginRequest.password())) {
             throw new InvalidUserInfoException("error.invalid.userinfo.password");
         }
 
@@ -44,7 +44,9 @@ public class UserService {
         return jwtProvider.getAuthorization(token.token());
     }
 
-    public Optional<UserDto> findByEmail(String email) {
-        return userJpaRepository.findByEmail(email).map(UserDto::from);
+    public UserResponse readByEmail(String email) {
+        User user = userJpaRepository.findByEmail(email)
+            .orElseThrow(() -> new InvalidUserInfoException("error.invalid.userinfo.email"));
+        return UserResponse.from(user);
     }
 }

@@ -1,11 +1,12 @@
 package gift.domain.user.service;
 
 import gift.auth.dto.Token;
+import gift.domain.user.dto.UserResponse;
+import gift.exception.InvalidUserInfoException;
 import gift.external.api.kakao.KakaoApiProvider;
 import gift.external.api.kakao.dto.KakaoUserInfo;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
-import java.util.Optional;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.dto.UserLoginRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,16 +32,16 @@ public class KakaoLoginService {
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();
 
-        Optional<UserDto> userDto = userService.findByEmail(email);
-        if (userDto.isEmpty()) {
+        try {
+            UserResponse userResponse = userService.readByEmail(email);
+            return userService.login(new UserLoginRequest(email, userResponse.password()));
+        } catch (InvalidUserInfoException e) {
             return signUp(name, email);
         }
-
-        return userService.login(new UserLoginDto(email, userDto.get().password()));
     }
 
     private Token signUp(String name, String email) {
-        UserDto userDto = new UserDto(null, name, email, "kakao", null);
-        return userService.signUp(userDto);
+        UserRequest userRequest = new UserRequest(name, email, "kakao");
+        return userService.signUp(userRequest);
     }
 }
