@@ -14,7 +14,9 @@ import gift.repository.KakaoTokenRepository;
 import gift.repository.OptionRepository;
 import gift.repository.WishRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -23,6 +25,7 @@ import java.net.URI;
 import java.util.Optional;
 
 import static gift.exception.ErrorCode.DATA_NOT_FOUND;
+import static gift.exception.ErrorCode.SEND_MSG_FAILED_ERROR;
 
 @Service
 public class OrderService {
@@ -46,10 +49,12 @@ public class OrderService {
     public void order(LoginMember member, OrderRequest orderRequest) {
         Option option = optionRepository.findById(orderRequest.optionId()).orElseThrow(() -> new CustomException(DATA_NOT_FOUND));
         option.subtract(orderRequest.quantity());
+
         deleteFromWishList(member.getId(), option.getProduct());
+
         KakaoToken token = kakaoTokenRepository.findKakaoTokensByMember_Id(member.getId());
         sendMessage(orderRequest.message(), token.getAccessToken());
-    }
+      }
 
     private void deleteFromWishList(Long memberId, Product product) {
         Optional<Wish> wish = wishRepository.findWishByMember_IdAndProduct(memberId, product);
@@ -60,7 +65,7 @@ public class OrderService {
         RestClient client = RestClient.builder().build();
         LinkedMultiValueMap<String, String> body = createSendMsgBody(message);
 
-        var response = client.post()
+        ResponseEntity<String> response = client.post()
                 .uri(URI.create(sendMessageUrl))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
@@ -68,7 +73,9 @@ public class OrderService {
                 .retrieve()
                 .toEntity(String.class);
 
-        System.out.println(response);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new CustomException(SEND_MSG_FAILED_ERROR);
+        }
     }
 
     private LinkedMultiValueMap<String, String> createSendMsgBody(String message) {
