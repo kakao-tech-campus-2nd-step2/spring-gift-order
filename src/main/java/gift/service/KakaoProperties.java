@@ -8,6 +8,12 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "kakao")
 public class KakaoProperties {
 
+    @Value("${kakao.api-key}")
+    private String apiKey;
+
+    @Value("${kakao.api-url}")
+    private String apiUrl;
+
     @Value("${kakao.client-id}")
     private String clientId;
 
@@ -16,6 +22,14 @@ public class KakaoProperties {
 
     @Value("${kakao.authUrl}")
     private String authUrl;
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public String getApiUrl() {
+        return apiUrl;
+    }
 
     public String getClientId() {
         return clientId;
