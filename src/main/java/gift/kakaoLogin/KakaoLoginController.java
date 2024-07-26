@@ -57,7 +57,6 @@ public class KakaoLoginController {
         Optional<KakaoUser> kakaoUser = userService.findByKakaoSocialID(kakaoLoginService.getUserInfo(accessToken));
         KakaoUserDTO kakaoUserDTO = new KakaoUserDTO(socialID, accessToken, response.refresh_token);
         Token token = new Token(jwtService.generateAccessToken(kakaoUserDTO));
-
         if(kakaoUser.isEmpty()){
             userService.registerKakaoUser(kakaoUserDTO);
             return token;

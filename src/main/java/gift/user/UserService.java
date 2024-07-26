@@ -23,17 +23,20 @@ public class UserService {
                 new User(
                         userDTO.getEmail(),
                         userDTO.getPassword(),
-                        userDTO.getNickname()));
+                        userDTO.getNickname(),
+                        UserType.NORMAL_USER));
     }
 
     public KakaoUser registerKakaoUser(KakaoUserDTO kakaoUserDTO) {
-
-        return kakaoUserRepository.save(
-                new KakaoUser(
-                        kakaoUserDTO.getId(),
-                        kakaoUserDTO.getAccessToken(),
-                        kakaoUserDTO.getRefreshToken()
-                ));
+        User user = new User(null, null, null, UserType.KAKAO_USER);
+        userRepository.save(user);
+        KakaoUser kakaoUser = new KakaoUser(
+                kakaoUserDTO.getId(),
+                kakaoUserDTO.getAccessToken(),
+                kakaoUserDTO.getRefreshToken()
+        );
+        kakaoUser.setUser(user);
+        return kakaoUserRepository.save(kakaoUser);
     }
 
     public Optional<KakaoUser> findByKakaoSocialID(Long id){

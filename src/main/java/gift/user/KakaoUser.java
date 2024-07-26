@@ -2,14 +2,13 @@ package gift.user;
 
 import gift.wishList.WishList;
 import jakarta.persistence.*;
-import org.springframework.data.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "KAKAOUSERS")
-public class KakaoUser {
+public class KakaoUser implements IntegratedUser {
     @Id
     Long id;
     @Column
@@ -19,7 +18,9 @@ public class KakaoUser {
     @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "kakaouser", orphanRemoval = true)
     private List<WishList> wishLists = new ArrayList<>();
-
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public KakaoUser() {
     }
@@ -28,6 +29,26 @@ public class KakaoUser {
         this.id = id;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+    }
+
+    public void addWishList(WishList wishList) {
+        this.wishLists.add(wishList);
+        wishList.setKakaouser(this);
+    }
+
+    public void removeWishList(WishList wishList) {
+        wishList.setKakaouser(null);
+        this.wishLists.remove(wishList);
+    }
+
+    public void removeWishLists() {
+        for (WishList wishList : wishLists) {
+            removeWishList(wishList);
+        }
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Long getId() {
@@ -49,5 +70,9 @@ public class KakaoUser {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -59,15 +59,18 @@ public class JWTService {
             return null;
         }
     }
-    public String getAccessToken(String jwt){
+
+    public boolean isKakaoUser(String jwt){
         String tokenFromHeader = getTokenFromHeader(jwt);
         try{
-            return Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(tokenFromHeader).getPayload().get("accessToken").toString();
+            Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(tokenFromHeader).getPayload().get("accessToken").toString();
+            return true;
         }
         catch (SignatureException e){
-            return null;
+            return false;
         }
     }
+
     public String getTokenFromHeader(String header) {
         return header.split(" ")[1];
     }

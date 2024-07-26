@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "USERS")
-public class User {
+public class User implements IntegratedUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,6 +19,9 @@ public class User {
     private String password;
     @Column(name = "nickname")
     private String nickname;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_type", nullable = false)
+    private UserType userType;
     @OneToMany(cascade = CascadeType.ALL,
             mappedBy = "user", orphanRemoval = true)
     private List<WishList> wishLists = new ArrayList<>();
@@ -27,11 +30,11 @@ public class User {
     public User() {
     }
 
-
-    public User(String email, String password, String nickName) {
+    public User(String email, String password, String nickname, UserType userType) {
         this.email = email;
         this.password = password;
-        this.nickname = nickName;
+        this.nickname = nickname;
+        this.userType = userType;
     }
 
     public void addWishList(WishList wishList) {

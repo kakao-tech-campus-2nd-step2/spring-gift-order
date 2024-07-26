@@ -54,7 +54,6 @@ public class KakaoLoginService {
                 }))
                 .toEntity(KakaoResponse.class);
 
-
         return response.getBody();
     }
 
@@ -62,16 +61,12 @@ public class KakaoLoginService {
     public Long getUserInfo(String accessToken){
         var url = "https://kapi.kakao.com/v2/user/me";
 
-
         ResponseEntity<KakaoUserInfoResponse> response = kakaoRestClient.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .toEntity(KakaoUserInfoResponse.class);
-        System.out.println(response.getBody());
-
-
 
         return Objects.requireNonNull(response.getBody()).getId();
     }
