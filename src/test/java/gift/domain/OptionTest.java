@@ -83,7 +83,7 @@ public class OptionTest {
         int subtract = 100;
 
         Option option = createOption(1000);
-        option.subtract(subtract);
+        option.subtractQuantity(subtract);
 
         assertThat(option.getQuantity()).isEqualTo(900);
     }
