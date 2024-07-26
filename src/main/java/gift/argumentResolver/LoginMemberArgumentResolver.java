@@ -1,4 +1,4 @@
-package gift.ArgumentResolver;
+package gift.argumentResolver;
 
 import gift.exceptionAdvisor.exceptions.GiftUnauthorizedException;
 import gift.service.MemberService;

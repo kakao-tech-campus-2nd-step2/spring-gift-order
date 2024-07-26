@@ -3,6 +3,7 @@ package gift.service;
 import gift.database.repository.JpaCategoryRepository;
 import gift.dto.CategoryRequest;
 import gift.dto.CategoryResponse;
+import gift.exceptionAdvisor.exceptions.GiftNotFoundException;
 import gift.model.Category;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class CategoryService{
+public class CategoryService {
 
     private final JpaCategoryRepository jpaCategoryRepository;
 
@@ -19,10 +20,7 @@ public class CategoryService{
     }
 
     public List<CategoryResponse> readAll() {
-        return jpaCategoryRepository.findAll()
-            .stream()
-            .map(CategoryResponse::new)
-            .toList();
+        return jpaCategoryRepository.findAll().stream().map(CategoryResponse::new).toList();
 
     }
 
@@ -43,11 +41,14 @@ public class CategoryService{
     }
 
     private static Category getCategory(Long id, CategoryRequest categoryRequest) {
-        return new Category(id,
-            categoryRequest.getName(),
-            categoryRequest.getColor(),
-            categoryRequest.getDescription(),
-            categoryRequest.getImageUrl());
+        return new Category(id, categoryRequest.getName(), categoryRequest.getColor(),
+            categoryRequest.getDescription(), categoryRequest.getImageUrl());
     }
 
+    public CategoryResponse read(Long id) {
+        Category category = jpaCategoryRepository.findById(id)
+            .orElseThrow(() -> new GiftNotFoundException("카테고리가 존재하지 않습니다."));
+
+        return new CategoryResponse(category);
+    }
 }
