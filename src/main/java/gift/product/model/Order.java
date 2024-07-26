@@ -62,4 +62,20 @@ public class Order {
     public Long getId() {
         return id;
     }
+
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
