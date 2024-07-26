@@ -20,5 +20,6 @@ public class KakaoUserDTO {
     public static class KakaoAccount {
         @JsonProperty("email")
         private String email;
+
     }
 }
