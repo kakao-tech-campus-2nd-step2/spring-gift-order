@@ -41,6 +41,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    implementation 'com.auth0:java-jwt:3.19.0'
+    implementation 'com.auth0:jwks-rsa:0.21.1'
+
     // JPA 의존성 추가
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
