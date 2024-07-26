@@ -3,16 +3,25 @@ package gift.client.requestBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.KakaoMessageTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KakaoMessageTemplateBody {
+@Component
+public class KakaoMessageRequestBodyGenerator {
+
     private String message;
 
-    public KakaoMessageTemplateBody(String message) {
+    private final ObjectMapper objectMapper;
+
+    public KakaoMessageRequestBodyGenerator(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 
@@ -20,11 +29,10 @@ public class KakaoMessageTemplateBody {
         MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
         KakaoMessageTemplate template = new KakaoMessageTemplate(message);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             param.add("template_object", objectMapper.writeValueAsString(template));
         } catch (JsonProcessingException e) {
-            Logger.getLogger(KakaoMessageTemplateBody.class.getName()).log(Level.WARNING, "ObjectMapper가 JSON 파싱에 실패");
+            Logger.getLogger(KakaoMessageRequestBodyGenerator.class.getName()).log(Level.WARNING, "ObjectMapper가 JSON 파싱에 실패");
         }
 
         return param;
