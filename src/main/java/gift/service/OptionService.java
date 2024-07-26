@@ -123,6 +123,7 @@ public class OptionService {
     public void deleteOption(int id) {
         Option option = optionRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 옵션이 없음"));
         Product product = option.getProduct();
+        if(product.getOptions().size()==1)throw new BadRequestException("마지막 옵션 삭제 불가");
         product.deleteOption(option);
         optionRepository.deleteById(id);
     }

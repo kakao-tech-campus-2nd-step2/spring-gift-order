@@ -48,32 +48,26 @@ public class ProductService {
     }
 
     @Transactional
-    public void saveProduct(SaveProductDTO productDTO) {
+    public Product saveProduct(SaveProductDTO productDTO) {
         Category category = categoryRepository.findById(productDTO.categoryId()).orElseThrow(() -> new NotFoundException("해당 카테고리가 없음"));
         Optional<Product> optionalProduct = productRepository.findByNameAndCategory(productDTO.name(), category.getName());
         Product product;
-        if(optionalProduct.isPresent()){//이미 product 있음, 옵션만 추가 해야함
-            product = optionalProduct.get();
-        } else{ //product없음 product도 추가해야함
-            product = new Product(productDTO.name(), productDTO.price(), productDTO.imageUrl(), category);
-            product = productRepository.save(product);
-            category.addProduct(product);
-        }
-        List<String> optionList = stream(productDTO.option().split(",")).toList();
-        optionList = optionList.stream().distinct().collect(Collectors.toList());
-        addOptionToProduct(optionList,product);
-    }
+        if(optionalProduct.isPresent()){
+            throw new BadRequestException("해당 카테고리에 같은 이름의 물품이 존재");
+        }  //product없음 product도 추가해야함
+        product = new Product(productDTO.name(), productDTO.price(), productDTO.imageUrl(), category);
+        final Product saveProduct = productRepository.save(product);
+        category.addProduct(product);
 
-    private void addOptionToProduct(List<String> optionList, Product product) {
-        List<Option> validOptions = optionList.stream()
-                .map(str -> new Option(product, str))
+        if(productDTO.option().isBlank()) throw new BadRequestException("하나의 옵션은 존재해야함");
+        List<String> optionList = stream(productDTO.option().split(",")).toList();
+
+        optionList.stream()
+                .distinct()
+                .map(str -> new Option(saveProduct, str))
                 .filter(this::isValidOption)
                 .toList();
-
-        if(validOptions.isEmpty())
-            throw new BadRequestException("옵션은 하나 이상 추가 되어야 합니다.");
-
-        validOptions.forEach(option -> optionRepository.save(option));
+        return product;
     }
 
     private boolean isValidOption(@Validated Option option) {
@@ -83,22 +77,14 @@ public class ProductService {
     public void deleteProduct(int id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 id입니다."));
         product.getCategory().deleteProduct(product);
-        optionRepository.deleteAll();
+        optionRepository.deleteByProductId(id);
         productRepository.deleteById(id);
     }
 
 
-    public String getProductByID(int id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 물건이 없습니다."));
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonProduct = "";
+    public ShowProductDTO getProductByID(int id) {
+        return productRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 물건이 없습니다.")).toDTO();
 
-        try {
-            jsonProduct = objectMapper.writeValueAsString(product);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return jsonProduct;
     }
 
     @Transactional

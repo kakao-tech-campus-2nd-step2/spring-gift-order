@@ -9,6 +9,8 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import io.jsonwebtoken.security.SignatureException;
+
 
 @RestControllerAdvice
 public class MyExceptionHandler {
@@ -53,7 +55,7 @@ public class MyExceptionHandler {
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
     public String ConstaintViolation(ConstraintViolationException e) {
-        return "제약사항 요구 어긋남";
+        return "제약사항 어긋남";
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -62,5 +64,10 @@ public class MyExceptionHandler {
     public String ExpiredJwt(ExpiredJwtException e) {
         return "인증이 잘못됨";
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    @ExceptionHandler(SignatureException.class)
+    public String SignatureException(SignatureException e){return "토큰이 변조됨";}
 }
 

@@ -21,7 +21,6 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper objectMapper;
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/signup")
     public String signUp() {
         return "user/signup";
@@ -29,24 +28,22 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/signup")
+    @ResponseBody
     public String SignUp(@RequestBody SignUpDTO signUpDTO) {
         userService.signUp(signUpDTO);
-        return "redirect:/signin";
+        return "회원가입 성공";
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/signin")
     public String signIn() {
         return "user/signin";
     }
 
-
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/signin")
     @ResponseBody
-    public String signIn(@RequestBody LoginDTO loginDTO) throws JsonProcessingException {
-        Token token = userService.signIn(loginDTO);
-        return objectMapper.writeValueAsString(token);
+    public Token signIn(@RequestBody LoginDTO loginDTO) {
+        return userService.signIn(loginDTO);
     }
 
     @PostMapping("/api/kakao/login")

@@ -3,6 +3,7 @@ package gift.entity;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import gift.dto.product.ModifyProductDTO;
+import gift.dto.product.ShowProductDTO;
 import gift.exception.exception.BadRequestException;
 import gift.exception.exception.UnAuthException;
 import jakarta.persistence.*;
@@ -50,6 +51,10 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
+    }
+
+    public List<Option> getOptions() {
+        return this.options;
     }
 
     public String getCategoryName() {
@@ -100,5 +105,9 @@ public class Product {
         this.name = modifyProductDTO.name();
         this.price = modifyProductDTO.price();
         this.imageUrl = modifyProductDTO.imageUrl();
+    }
+
+    public ShowProductDTO toDTO() {
+        return new ShowProductDTO(id,name,price,imageUrl,getCategoryName());
     }
 }

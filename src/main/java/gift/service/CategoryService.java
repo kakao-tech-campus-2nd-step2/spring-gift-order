@@ -18,20 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public void saveCategory(Category category) {
+    public CategoryDTO saveCategory(Category category) {
         categoryRepository.findByName(category.getName()).ifPresent(c -> {
             throw new BadRequestException("이미 존재하는 카테고리");
         });
-        categoryRepository.save(category);
+        return categoryRepository.save(category).toDTO();
     }
 
     @Transactional
-    public void updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(categoryDTO.id()).orElseThrow(() -> new NotFoundException("존재하지 않는 카테고리입니다."));
         categoryRepository.findByName(categoryDTO.name()).ifPresent(c -> {
             throw new BadRequestException("이미 존재하는 카테고리");
         });
         category.updateCategoryName(categoryDTO.name());
+        return category.toDTO();
     }
 
     public void deleteCategory(int categoryId) {
