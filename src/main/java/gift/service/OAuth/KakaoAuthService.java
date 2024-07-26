@@ -31,11 +31,10 @@ public class KakaoAuthService {
         return authUtil.createGetCodeUrl();
     }
 
-
     public String register(String authCode) {
+
         AuthTokenResponse tokenResponse = authUtil.getAccessToken(authCode);
-        String accessToken = tokenResponse.accessToken();
-        String email = authUtil.extractUserEmail(accessToken);
+        String email = authUtil.extractUserEmail(tokenResponse.accessToken());
 
         User user = userRepository.findByEmail(email).orElseGet(
                 () -> userRepository.save(new User(email, "1234", LoginType.KAKAO))
@@ -43,13 +42,13 @@ public class KakaoAuthService {
 
         user.checkLoginType(LoginType.KAKAO);
 
-        saveKakaoAccessToken(accessToken, tokenResponse.refreshToken(), user);
+        saveKakaoAccessToken(tokenResponse.accessToken(), tokenResponse.refreshToken(), user);
 
         return jwtUtil.generateJWT(user);
     }
 
     private void saveKakaoAccessToken(String accessToken, String refreshToken, User user) {
-        KakaoToken kakaoToken = new KakaoToken(user, refreshToken, accessToken);
+        KakaoToken kakaoToken = new KakaoToken(user, accessToken, refreshToken);
         kakaoTokenRepository.findByUser(user).orElseGet(
                 () -> kakaoTokenRepository.save(kakaoToken)
         );

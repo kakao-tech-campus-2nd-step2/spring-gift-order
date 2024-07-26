@@ -31,6 +31,7 @@ public class UserService {
 
     public String login(UserRequest.Check userRequest) {
         User user = userRepository.findByEmailAndPassword(userRequest.email(), userRequest.password()).orElseThrow(() -> new InvalidUserException("이메일 혹은 패스워드가 유효하지 않습니다."));
+        user.isDefaultLogin();
         String token = jwtUtil.generateJWT(user);
         return token;
     }

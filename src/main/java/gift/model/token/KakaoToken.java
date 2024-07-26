@@ -21,7 +21,6 @@ public class KakaoToken {
     @NotNull
     private String refreshToken;
 
-
     protected KakaoToken() {
     }
 
@@ -43,7 +42,7 @@ public class KakaoToken {
         return accessToken;
     }
 
-    public @NotNull String getRefreshToken() {
+    public String getRefreshToken() {
         return refreshToken;
     }
 }

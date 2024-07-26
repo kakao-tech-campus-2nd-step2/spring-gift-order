@@ -1,6 +1,5 @@
 package gift.controller.OAuth;
 
-import gift.dto.OAuth.AuthTokenResponse;
 import gift.service.OAuth.KakaoAuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +27,9 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<Map<String, String>> register(@RequestParam String code) {
+    public ResponseEntity<Map<String, String>> getAccessToken(@RequestParam String code) {
         String token = kakaoAuthService.register(code);
         return ResponseEntity.ok(Map.of("access_token", token));
     }
+
 }

@@ -56,5 +56,11 @@ public class User {
         }
     }
 
+    public void isDefaultLogin(){
+        if(this.loginType != LoginType.DEFAULT){
+            throw new InvalidUserException("일반 로그인을 할 수 없습니다.(소셜 로그인 유저)");
+        }
+    }
+
 }
 
