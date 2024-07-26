@@ -6,6 +6,7 @@ public class MemberDto {
     private String name;
     private String password;
     private boolean isAdmin;
+    private long kakaoId;
 
     public MemberDto() {
 
@@ -57,5 +58,13 @@ public class MemberDto {
 
     public void setAdmin(boolean admin) {
         this.isAdmin = admin;
+    }
+
+    public void setKakaoId(long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public long getKakaoId() {
+        return kakaoId;
     }
 }

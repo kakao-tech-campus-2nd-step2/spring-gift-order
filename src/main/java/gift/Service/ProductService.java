@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("productService")
 public class ProductService {
 
     private final ProductJpaRepository productJpaRepository;

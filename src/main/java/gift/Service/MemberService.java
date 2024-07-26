@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@Qualifier("userService")
 public class MemberService {
 
     private final MemberJpaRepository memberJpaRepository;
@@ -25,6 +24,7 @@ public class MemberService {
 
     public void register(MemberDto memberDto) {
         Member member = mapper.memberDtoToEntity(memberDto);
+        member.setKakaoId(memberDto.getKakaoId());
         memberJpaRepository.save(member);
     }
 
@@ -33,9 +33,9 @@ public class MemberService {
                 .map(mapper::memberToDto);
     }
 
-    public MemberDto findByEmail(String email) {
+    public Optional<MemberDto> findByEmail(String email) {
         Optional<Member> member = memberJpaRepository.findByEmail(email);
-        return mapper.memberToDto(member.get());
+        return member.map(mapper::memberToDto);
     }
 
     public boolean isAdmin(String email) {
@@ -46,6 +46,11 @@ public class MemberService {
     public boolean authenticate(String email, String password) {
         Optional<Member> user = memberJpaRepository.findByEmailAndPassword(email, password);
         return user != null && user.get().getPassword().equals(password);
+    }
+
+    public Optional<MemberDto> findByKakaoId(long kakaoId) {
+        Optional<Member> member = memberJpaRepository.findByKakaoId(kakaoId);
+        return member.map(mapper::memberToDto);
     }
 
 }
