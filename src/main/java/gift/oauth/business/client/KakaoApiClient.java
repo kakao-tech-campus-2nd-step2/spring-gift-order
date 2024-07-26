@@ -16,11 +16,11 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class KakaoApiClient implements OAuthApiClient {
@@ -102,6 +102,7 @@ public class KakaoApiClient implements OAuthApiClient {
         return result.kakao_account().email();
     }
 
+    @Async
     public void sendOrderMessage(String accessToken, KakaoOrderMessage.TemplateObject message) {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
