@@ -8,9 +8,4 @@
 - KakaoClientService 카카오 메시지 전송 메서드 추가
 - OrderService 구현
 - OrderController 구현
-
-
-
-- 추가 예정?
-  - 주문 기록 -> 비즈 앱 등록 후 사용자 식별 가능해질 때
-  - 기존 회원가입 서비스 삭제 -> 비즈 앱 등록 이후
+- Order 엔티티 구현
