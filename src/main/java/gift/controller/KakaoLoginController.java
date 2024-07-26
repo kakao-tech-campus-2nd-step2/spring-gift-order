@@ -23,9 +23,9 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/token")
-    public ResponseEntity<KakaoToken> getTokenGET(@RequestParam("code") String code) {
+    public ResponseEntity<String> getTokenGET(@RequestParam("code") String code) {
         var token = KakaoLoginService.getToken(code);
-//        var ret = KakaoLoginService.getKakaoUserInfo(token.access_token());
-        return ResponseEntity.ok(token);
+        var ret = KakaoLoginService.getKakaoUserInfo(token.access_token());
+        return ResponseEntity.ok(ret);
     }
 }

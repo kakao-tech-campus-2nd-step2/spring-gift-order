@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KakaoLoginService {
@@ -41,11 +42,18 @@ public class KakaoLoginService {
     }
 
     public String getKakaoUserInfo(String accessToken) {
+        String uri = UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host("kapi.kakao.com")
+                .path("/v2/user/me")
+//                .queryParam("property_keys", "[\"kakao_account.name\"]")
+                .build()
+                .toUriString();
+
+        System.out.println("uri = " + uri);
+
         return restClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(KAKAO_API_URL + "/v2/user/me")
-                        .queryParam("property_keys", "[\"kakao_account.email\"]")
-                        .build())
+                .uri(uri)
                 .header("Authorization", "Bearer " + accessToken)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
