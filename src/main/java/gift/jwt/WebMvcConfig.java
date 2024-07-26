@@ -12,6 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMethodArgumentResolver(new JwtService()));//LoginMemberArgumentResolver 등록
+        resolvers.add(new OAuthMethodArgumentResolver(new JwtService()));
     }
 
     @Override
