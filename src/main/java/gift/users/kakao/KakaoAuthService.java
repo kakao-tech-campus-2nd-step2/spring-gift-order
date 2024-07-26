@@ -1,6 +1,7 @@
 package gift.users.kakao;
 
 import gift.error.KakaoAuthenticationException;
+import gift.token.TokenService;
 import gift.users.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

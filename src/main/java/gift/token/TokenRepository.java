@@ -1,4 +1,4 @@
-package gift.users.kakao;
+package gift.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

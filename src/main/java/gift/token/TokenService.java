@@ -1,5 +1,6 @@
-package gift.users.kakao;
+package gift.token;
 
+import gift.users.kakao.KakaoTokenDTO;
 import org.springframework.stereotype.Service;
 
 @Service

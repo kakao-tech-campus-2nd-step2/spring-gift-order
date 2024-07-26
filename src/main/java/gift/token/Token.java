@@ -1,4 +1,4 @@
-package gift.users.kakao;
+package gift.token;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
