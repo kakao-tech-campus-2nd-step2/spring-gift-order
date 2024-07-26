@@ -23,15 +23,18 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
     private final KakaoOAuthService kakaoOAuthService;
+    private final WishService wishService;
 
     public OrderService(
         OrderRepository orderRepository,
         OptionRepository optionRepository,
-        KakaoOAuthService kakaoOAuthService
+        KakaoOAuthService kakaoOAuthService,
+        WishService wishService
     ) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.kakaoOAuthService = kakaoOAuthService;
+        this.wishService = wishService;
     }
 
     @Transactional
@@ -46,6 +49,7 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         sendKakaoMessage(savedOrder, memberId);
+        wishService.deleteWishByProductIdAndMemberId(option.getProduct().getId(), memberId);
 
         return new OrderResponse(
             savedOrder.getId(),
