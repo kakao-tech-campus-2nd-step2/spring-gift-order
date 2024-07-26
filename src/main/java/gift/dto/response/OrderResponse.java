@@ -13,8 +13,6 @@ public class OrderResponse {
     private String message;
     private Long receiveMemberId;
 
-    public OrderResponse() { }
-
     public OrderResponse(Long id, Long optionId, Integer quantity, LocalDateTime orderDateTime, String message, Long receiveMemberId) {
         this.id = id;
         this.optionId = optionId;
@@ -31,8 +29,23 @@ public class OrderResponse {
                 order.getQuantity(),
                 order.getOrderDateTime(),
                 order.getMessage(),
-                order.getReceiveMemberId() // Assuming this field exists in the Order entity
+                order.getReceiveMemberId()
         );
     }
 
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Long getReceiveMemberId() {
+        return receiveMemberId;
+    }
 }
