@@ -2,7 +2,7 @@ package gift;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.TokenResponse;
-import gift.service.KakaoLoginService;
+import gift.service.KakaoService;
 import gift.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class KakaoControllerTest {
     private MemberService memberService;
 
     @MockBean
-    private KakaoLoginService kakaoLoginService;
+    private KakaoService kakaoLoginService;
 
     @Autowired
     private ObjectMapper objectMapper;

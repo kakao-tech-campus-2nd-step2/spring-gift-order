@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface WishRepository extends JpaRepository<Wish, Long> {
     Page<Wish> findByMemberId(Long memberId, Pageable pageable);
+
+    Wish findByProductIdAndMemberId(Long productId, Long memberId);
 }

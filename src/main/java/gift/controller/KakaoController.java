@@ -1,9 +1,9 @@
 package gift.controller;
 
-import gift.domain.KakaoAccount;
 import gift.domain.Member;
 import gift.dto.TokenResponse;
-import gift.service.KakaoLoginService;
+import gift.service.KakaoService;
+import gift.service.KakaoTokenService;
 import gift.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,13 @@ import java.util.Map;
 public class KakaoController {
 
     private final MemberService memberService;
-    private final KakaoLoginService kakaoLoginService;
+    private final KakaoService kakaoLoginService;
+    private final KakaoTokenService kakaoTokenService;
 
-    public KakaoController(MemberService memberService, KakaoLoginService kakaoLoginService) {
+    public KakaoController(MemberService memberService, KakaoService kakaoLoginService, KakaoTokenService kakaoTokenService) {
         this.memberService = memberService;
         this.kakaoLoginService = kakaoLoginService;
+        this.kakaoTokenService = kakaoTokenService;
     }
 
     @PostMapping("/kakao/login")
@@ -29,12 +31,7 @@ public class KakaoController {
             String accessToken = kakaoLoginService.getAccessToken(code);
             Map<String, Object> userInfo = kakaoLoginService.getUserInfo(accessToken);
 
-//            KakaoAccount kakaoAccount = new KakaoAccount((Map<String, Object>) userInfo.get("kakao_account"));
-
             String email = "kakao_" + userInfo.get("id") + "@kakao.com";;
-//            if (kakaoAccount != null) {
-//                email = "kakao_" + userInfo.get("id") + "@kakao.com";
-//            }
 
             Member member = memberService.findByEmail(email);
 
@@ -44,7 +41,10 @@ public class KakaoController {
                 memberService.register(member);
             }
 
+            kakaoTokenService.saveToken(member.getId(), email, accessToken);
+
             String token = memberService.generateToken(member);
+            System.out.println(token);
 
             return ResponseEntity.ok(new TokenResponse(token));
         } catch (Exception e) {
