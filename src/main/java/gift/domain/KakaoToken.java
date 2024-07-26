@@ -17,4 +17,15 @@ public class KakaoToken {
     @OneToOne
     @JoinColumn(name = "member_id", unique = true)
     private Member member;
+
+    public KakaoToken() {
+
+    }
+
+    public KakaoToken(Member member, String accessToken, String refreshToken) {
+        this.member = member;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
+
 }
