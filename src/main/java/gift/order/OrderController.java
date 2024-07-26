@@ -2,10 +2,12 @@ package gift.order;
 
 import gift.order.dto.CreateOrderRequestDTO;
 import gift.order.dto.CreateOrderResponseDTO;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -19,13 +21,11 @@ public class OrderController {
     }
 
     @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
     public CreateOrderResponseDTO createOrder(
         @RequestBody CreateOrderRequestDTO createOrderRequestDTO,
-        HttpServletRequest httpServletRequest
+        @RequestHeader("Authorization") String accessToken
     ) {
-        return orderService.createOrder(
-            createOrderRequestDTO,
-            httpServletRequest.getHeader("Authorization")
-        );
+        return orderService.createOrder(createOrderRequestDTO, accessToken);
     }
 }
