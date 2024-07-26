@@ -1,6 +1,8 @@
 package gift.controller;
 
+import gift.domain.KakaoTokenResponseDTO;
 import gift.service.KakaoLoginService;
+import gift.service.MemberService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,9 +18,11 @@ import java.net.URI;
 @RequestMapping("/api/kakao")
 public class KakaoLoginController {
     private final KakaoLoginService kakaoLoginService;
+    private final MemberService memberService;
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService) {
+    public KakaoLoginController(KakaoLoginService kakaoLoginService, MemberService memberService) {
         this.kakaoLoginService = kakaoLoginService;
+        this.memberService = memberService;
     }
 
     @Value("${kakao.client_id}")
@@ -39,7 +43,8 @@ public class KakaoLoginController {
 
     @GetMapping("/getauth")
     public ResponseEntity<?> getAuth(@RequestParam("code") String code) {
-        String accessToken = kakaoLoginService.getToken(code);
+        KakaoTokenResponseDTO response = kakaoLoginService.getToken(code);
+        memberService.kakaoLogin(response);
         return ResponseEntity.ok().build();
     }
 }
