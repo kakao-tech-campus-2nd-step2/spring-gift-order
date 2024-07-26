@@ -1,59 +1,33 @@
-package gift.controller.kakao;
+package gift.service.kakao;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.controller.kakao.KakaoProperties;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import gift.service.kakao.KakaoService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import java.util.Map;
 
-@RestController
-@RequestMapping("/api/kakao")
-public class KakaoController {
-
-    private final KakaoService kakaoService;
-
-    public KakaoController(KakaoService kakaoService) {
-        this.kakaoService = kakaoService;
-    }
-
-    @PostMapping("/login")
-    public Map<String, Object> kakaoLogin(@RequestParam("code") String authorizationCode) {
-        return kakaoService.kakaoLogin(authorizationCode);
-    }
-}
-
-/*
-@RestController
-@RequestMapping("/api/kakao")
-public class KakaoController {
+@Service
+public class KakaoService {
 
     private final RestClient client;
     private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
 
-    public KakaoController(KakaoProperties kakaoProperties) {
+    public KakaoService(KakaoProperties kakaoProperties) {
         this.client = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
         this.kakaoProperties = kakaoProperties;
     }
 
-    @PostMapping("/login")
-    public Map<String, Object> kakaoLogin(@RequestParam("code") String authorizationCode) {
+    public Map<String, Object> kakaoLogin(String authorizationCode) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
         String clientId = kakaoProperties.clientId();
         String redirectUri = kakaoProperties.redirectUri();
@@ -134,5 +108,3 @@ public class KakaoController {
         return userInfo;
     }
 }
-
- */
