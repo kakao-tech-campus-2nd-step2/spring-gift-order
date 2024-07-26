@@ -1,5 +1,7 @@
 package gift.controller;
 
+import static gift.util.JwtUtil.extractToken;
+
 import gift.domain.Product;
 import gift.domain.WishList;
 import gift.error.UnauthorizedException;
@@ -66,14 +68,6 @@ public class WishListController {
     public ResponseEntity<?> deleteWishListItem(@PathVariable("id") Long id) {
         wishListService.deleteWishListItem(id);
         return ResponseEntity.status(HttpStatus.OK).body("Product removed from wishlist");
-    }
-
-    private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-        throw new UnauthorizedException("Invalid token");
     }
 
 }
