@@ -1,10 +1,12 @@
 package gift.controller.api;
 
+import gift.client.KakaoApiClient;
+import gift.dto.body.KakaoMessageTemplateBody;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.exception.WishNotFoundException;
 import gift.interceptor.MemberId;
-import gift.service.KakaoMessageService;
+import gift.repository.KakaoAccessTokenRepository;
 import gift.service.OptionService;
 import gift.service.OrderService;
 import gift.service.WishService;
@@ -23,14 +25,16 @@ public class OrderController {
 
     private final OptionService optionService;
     private final WishService wishService;
-    private final KakaoMessageService messageService;
     private final OrderService orderService;
+    private final KakaoApiClient kakaoApiClient;
+    private final KakaoAccessTokenRepository kakaoAccessTokenRepository;
 
-    public OrderController(OptionService optionService, WishService wishService, KakaoMessageService messageService, OrderService orderService) {
+    public OrderController(OptionService optionService, WishService wishService, OrderService orderService, KakaoApiClient kakaoApiClient, KakaoAccessTokenRepository kakaoAccessTokenRepository) {
         this.optionService = optionService;
         this.wishService = wishService;
-        this.messageService = messageService;
         this.orderService = orderService;
+        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoAccessTokenRepository = kakaoAccessTokenRepository;
     }
 
     @PostMapping("/api/orders")
@@ -43,10 +47,11 @@ public class OrderController {
         try {
             wishService.findAndDeleteProductInWish(memberId, productId);
         } catch (WishNotFoundException e) {
-            Logger.getLogger(OrderController.class.getName()).log(Level.INFO,"위시리스트에 없는 상품입니다");
+            Logger.getLogger(OrderController.class.getName()).log(Level.INFO, "위시리스트에 없는 상품입니다");
         }
 
-        messageService.sendToMe(memberId, orderResponse);
+        String accessToken = kakaoAccessTokenRepository.getAccessToken(memberId);
+        kakaoApiClient.sendMessageToMe(accessToken, new KakaoMessageTemplateBody(orderRequest.message()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
