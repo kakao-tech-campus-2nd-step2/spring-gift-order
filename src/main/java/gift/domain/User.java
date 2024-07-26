@@ -52,6 +52,9 @@ public class User {
         return role;
     }
 
+    public void updateAccessToken(String accessToken){
+        this.accessToken = accessToken;
+    }
     public String getAccessToken() {
         return accessToken;
     }
