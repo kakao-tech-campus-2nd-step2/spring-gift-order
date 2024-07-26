@@ -28,4 +28,19 @@ public class KakaoToken {
         this.refreshToken = refreshToken;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public Member getMember() {
+        return member;
+    }
 }

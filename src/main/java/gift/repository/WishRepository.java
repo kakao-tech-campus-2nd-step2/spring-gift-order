@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface WishRepository extends JpaRepository<Wish, Long> {
     List<Wish> findWishByMemberId(Long memberId);
 
-    Optional<Wish> findWishByMemberAndProduct(Member member, Product product);
+    Optional<Wish> findWishByMember_IdAndProduct(Long memberId, Product product);
 }

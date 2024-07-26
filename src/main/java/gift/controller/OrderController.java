@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.Login;
-import gift.domain.Member;
+import gift.dto.LoginMember;
 import gift.dto.request.OrderRequest;
 import gift.service.OrderService;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public void order(@Login Member member, @Valid @RequestBody OrderRequest orderRequest) {
+    public void order(@Login LoginMember member, @Valid @RequestBody OrderRequest orderRequest) {
         orderService.order(member, orderRequest);
     }
 }
