@@ -1,7 +1,6 @@
 package gift.service;
 
 import gift.dto.OrderResponse;
-import gift.entity.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,9 +48,14 @@ public class KakaoService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = kakaoRestTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+        ResponseEntity<Map> response = null;
+        try {
+            response = kakaoRestTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.", e);
+        }
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response != null && response.getStatusCode() == HttpStatus.OK) {
             Map<String, Object> responseBody = response.getBody();
             if (responseBody != null) {
                 return (String) responseBody.get("access_token");
@@ -79,9 +82,16 @@ public class KakaoService {
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = kakaoRestTemplate.postForEntity(apiUrl, request, String.class);
+        ResponseEntity<String> response = null;
+        try {
+            response = kakaoRestTemplate.postForEntity(apiUrl, request, String.class);
+        } catch (Exception e) {
+            throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
+        }
 
-        if (response.getStatusCode() != HttpStatus.OK) {
+        if (response == null) {
+            throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: null response");
+        } else if (response.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
         }
     }

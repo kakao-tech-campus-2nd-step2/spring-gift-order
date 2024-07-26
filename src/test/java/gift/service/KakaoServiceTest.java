@@ -1,96 +1,97 @@
 package gift.service;
 
+import gift.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Value;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.util.HashMap;
+import java.time.LocalDateTime;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class KakaoServiceTest {
 
-    @Mock
+    @Mock(lenient = true)
     private RestTemplate kakaoRestTemplate;
+
+    @Mock(lenient = true)
+    private KakaoProperties kakaoProperties;
 
     @InjectMocks
     private KakaoService kakaoService;
 
-    @Value("${kakao.client-id}")
-    private String clientId = "test-client-id";
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri = "http://localhost:8080/callback";
-
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
+    void setUp() {
+        // These stubs are now lenient, so Mockito won't complain about them being unused
+        when(kakaoProperties.getClientId()).thenReturn("client-id");
+        when(kakaoProperties.getRedirectUri()).thenReturn("redirect-uri");
+        when(kakaoProperties.getApiKey()).thenReturn("api-key");
+        when(kakaoProperties.getApiUrl()).thenReturn("api-url");
     }
 
     @Test
-    public void testGetAccessToken_Success() {
+    void testSendKakaoMessage_nullResponse() {
+        // Given
+        OrderResponse orderResponse = new OrderResponse.Builder()
+                .id(1L)
+                .optionId(1L)
+                .quantity(2)
+                .orderDateTime(LocalDateTime.now())
+                .message("Test Message")
+                .build();
+
+        when(kakaoRestTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(null);
+
+        // When & Then
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            kakaoService.sendKakaoMessage(orderResponse);
+        });
+
+        assertThat(exception.getMessage()).contains("카카오 메시지 전송에 실패했습니다.: null response");
+    }
+
+    @Test
+    void testGetAccessToken() {
+        // Given
         String code = "test-code";
-        String url = "https://kauth.kakao.com/oauth/token";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        ResponseEntity<Map> responseEntity = new ResponseEntity<>(Map.of("access_token", "test-access-token"), HttpStatus.OK);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
+        when(kakaoRestTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
+                .thenReturn(responseEntity);
 
-        RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("access_token", "test-access-token");
-
-        ResponseEntity<Map> responseEntity = new ResponseEntity<>(responseBody, HttpStatus.OK);
-
-        when(kakaoRestTemplate.exchange(any(RequestEntity.class), eq(Map.class))).thenReturn(responseEntity);
-
+        // When
         String accessToken = kakaoService.getAccessToken(code);
 
-        assertNotNull(accessToken);
-        assertEquals("test-access-token", accessToken);
+        // Then
+        assertThat(accessToken).isEqualTo("test-access-token");
     }
 
     @Test
-    public void testGetAccessToken_Failure() {
+    void testGetAccessToken_nullResponse() {
+        // Given
         String code = "test-code";
-        String url = "https://kauth.kakao.com/oauth/token";
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        when(kakaoRestTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(Map.class)))
+                .thenReturn(null);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
-
-        RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-
-        ResponseEntity<Map> responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        when(kakaoRestTemplate.exchange(any(RequestEntity.class), eq(Map.class))).thenReturn(responseEntity);
-
+        // When & Then
         Exception exception = assertThrows(RuntimeException.class, () -> {
             kakaoService.getAccessToken(code);
         });
 
-        assertEquals("액세스 토큰 요청에 실패했습니다.: null", exception.getMessage());
+        assertThat(exception.getMessage()).contains("엑세스 토큰을 받을 수 없습니다.");
     }
 }

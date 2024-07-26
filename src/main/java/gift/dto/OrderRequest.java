@@ -1,26 +1,22 @@
 package gift.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class OrderRequest {
     private final Long optionId;
     private final int quantity;
     private final String message;
 
-    private OrderRequest(Builder builder) {
-        this.optionId = builder.optionId;
-        this.quantity = builder.quantity;
-        this.message = builder.message;
-    }
-
-    public Long getOptionId() {
-        return optionId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public String getMessage() {
-        return message;
+    @JsonCreator
+    public OrderRequest(
+            @JsonProperty("optionId") Long optionId,
+            @JsonProperty("quantity") int quantity,
+            @JsonProperty("message") String message
+    ) {
+        this.optionId = optionId;
+        this.quantity = quantity;
+        this.message = message;
     }
 
     public static class Builder {
@@ -44,7 +40,19 @@ public class OrderRequest {
         }
 
         public OrderRequest build() {
-            return new OrderRequest(this);
+            return new OrderRequest(optionId, quantity, message);
         }
+    }
+
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }
