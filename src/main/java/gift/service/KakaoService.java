@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoAuthProperties;
 import gift.domain.KakaoInfo;
+import gift.dto.KakaoMessageDto;
 import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -67,5 +68,22 @@ public class KakaoService {
         String password = String.valueOf(id);
 
         return new KakaoInfo(id, email, password);
+    }
+
+    public void sendKakaoMessageToMe(String accessToken, KakaoMessageDto kakaoMessageDto) throws JsonProcessingException {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        String objectJson = objectMapper.writeValueAsString(kakaoMessageDto);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", objectJson);
+
+        ResponseEntity<String> response = client.post()
+            .uri(URI.create(url))
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body) //request
+            .retrieve() //response
+            .toEntity(String.class);
+
     }
 }
