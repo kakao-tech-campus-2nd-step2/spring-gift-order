@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,6 +19,8 @@ public class Member {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "access_token", nullable = true)
+    private String accessToken;
 
     public Member() {
     }
@@ -32,6 +36,12 @@ public class Member {
         this.password = password;
     }
 
+    public Member(String email, String password, String accessToken) {
+        this.email = email;
+        this.password = password;
+        this.accessToken = accessToken;
+    }
+
     public Long getId() {
         return id;
     }
@@ -42,5 +52,13 @@ public class Member {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
