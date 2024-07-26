@@ -40,12 +40,12 @@ public class OrderService {
         Product product = productRepository.findProductByOptionId(orderRequest.optionId())
                         .orElseThrow(()->new EntityNotFoundException("Product with option_id " + orderRequest.optionId() + " not found"));
         Option option = product.findOptionByOptionId(orderRequest.optionId());
-        Member member = memberRepository.getReferenceById(memberId);
-        Orders orders = orderRepository.save(new Orders(product.getId(), option.getId(), memberId, product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
+        Orders orders = orderRepository.save(new Orders(product.getId(), option.getId(), memberId,
+                product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
         subtractQuantity(orders.getProductId(), orders.getOptionId(), orders.getQuantity());
         deleteWishIfExists(product.getId(), memberId);
-        sendKakaoMessage(memberId, member.getLoginType(), orders);
-        return new OrderResponse(orders.getId(), orders.getOptionId(), orders.getQuantity(), orders.getCreatedAt(), orders.getDescription());
+        return new OrderResponse(orders.getId(), orders.getOptionId(), orders.getProductName(), orders.getOptionName(),
+                orders.getPrice(), orders.getQuantity(), orders.getCreatedAt(), orders.getDescription());
     }
 
     @Transactional
@@ -62,11 +62,14 @@ public class OrderService {
         product.subtractOptionQuantity(optionId, amount);
     }
 
-    private void sendKakaoMessage(Long memberId, SocialLoginType type, Orders orders) {
-        if(type != SocialLoginType.KAKAO) {
+    public void sendKakaoMessage(Long memberId, OrderResponse order) {
+        Member member = memberRepository.getReferenceById(memberId);
+        if(member.getLoginType() != SocialLoginType.KAKAO) {
             return;
         }
         String accessToken = kakaoTokenService.refreshIfAccessTokenExpired(memberId);
+        Orders orders = new Orders(order.productId(), order.optionId(), memberId,
+                order.productName(), order.optionName(), order.price(), order.quantity(), order.message());
         kakaoApiCaller.sendKakaoMessage(accessToken, orders);
     }
 

@@ -1,6 +1,6 @@
 package gift.repository;
 
-import gift.config.RedisConfig;
+import gift.config.RedissonConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RMapCache;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@Import(RedisConfig.class)
+@Import(RedissonConfig.class)
 class KakaoTokenRepositoryTest {
 
     @Autowired

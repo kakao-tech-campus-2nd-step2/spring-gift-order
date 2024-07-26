@@ -33,6 +33,7 @@ public class OrderRestController {
             @Parameter(hidden = true) @NotNull @LoginMember Long memberId
     ) {
         OrderResponse order = orderService.createOrder(memberId, orderRequest);
+        orderService.sendKakaoMessage(memberId, order);
         return ResponseEntity.ok().body(order);
     }
 }

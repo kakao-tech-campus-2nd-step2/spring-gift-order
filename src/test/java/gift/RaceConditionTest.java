@@ -1,7 +1,7 @@
 package gift;
 
 import gift.common.enums.Role;
-import gift.config.RedisConfig;
+import gift.config.RedissonConfig;
 import gift.controller.dto.request.OrderRequest;
 import gift.controller.dto.response.OrderResponse;
 import gift.model.Category;
@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("dev")
-@Import(RedisConfig.class)
+@Import(RedissonConfig.class)
 public class RaceConditionTest {
     @Autowired
     private ProductRepository productRepository;
