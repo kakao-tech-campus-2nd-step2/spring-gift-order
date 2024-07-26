@@ -57,4 +57,8 @@ public class Member {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
 }
