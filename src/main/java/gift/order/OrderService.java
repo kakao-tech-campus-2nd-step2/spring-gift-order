@@ -1,5 +1,6 @@
 package gift.order;
 
+import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import gift.exception.InvalidAccessTokenException;
@@ -77,7 +78,7 @@ public class OrderService {
                         .getKakaoAccount()
                         .getEmail();
                 }
-                throw new InvalidAccessTokenException("Invalid access token");
+                throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
             });
     }
 
@@ -89,7 +90,7 @@ public class OrderService {
             .body(generateMessageBody(createOrderRequestDTO))
             .exchange((request, response) -> {
                 if (!response.getStatusCode().is2xxSuccessful()) {
-                    throw new IllegalArgumentException("Bad request");
+                    throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
                 }
                 return ResponseEntity.ok();
             });

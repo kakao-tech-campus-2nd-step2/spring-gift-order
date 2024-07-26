@@ -1,5 +1,7 @@
 package gift.order.dto;
 
+import static gift.exception.ErrorMessage.JSON_CONVERT_FAILED;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -31,7 +33,7 @@ public class defaultMessageTemplate {
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Unable to convert to JSON");
+            throw new IllegalArgumentException(JSON_CONVERT_FAILED);
         }
     }
 

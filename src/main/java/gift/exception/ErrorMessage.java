@@ -19,4 +19,5 @@ public class ErrorMessage {
     public static final String OPTION_QUANTITY_SIZE = "Option quantity size must be between 1 and 100,000,000";
     public static final String OPTION_SUBTRACT_NOT_ALLOWED_NEGATIVE_NUMBER = "Option subtract quantity not allowed negative numbers";
     public static final String KAKAO_AUTHENTICATION_FAILED = "Kakao authentication failed";
+    public static final String JSON_CONVERT_FAILED = "Unable to convert JSON";
 }
