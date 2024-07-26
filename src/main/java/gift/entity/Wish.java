@@ -18,12 +18,18 @@ public class Wish {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    private Long optionId;
+
     protected Wish() {
     }
 
     public Wish(Member member, Product product) {
         this.member = member;
         this.product = product;
+    }
+
+    public Wish(Long optionId) {
+        this.optionId = optionId;
     }
 
     public Long getId() {
