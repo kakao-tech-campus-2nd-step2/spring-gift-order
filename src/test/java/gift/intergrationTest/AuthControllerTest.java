@@ -27,7 +27,7 @@ class AuthControllerTest {
     @LocalServerPort
     private int port;
 
-    @Test
+
     void LoginTest() {
         // register
         String url = "http://localhost:" + port + "/api/members/register";

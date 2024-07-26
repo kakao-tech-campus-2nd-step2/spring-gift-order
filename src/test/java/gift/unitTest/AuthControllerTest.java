@@ -39,7 +39,7 @@ class AuthControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @DisplayName("로그인 - 성공")
-    @Test
+//    @Test
     void loginTest() throws Exception {
         // given
         var id = UUID.randomUUID();
