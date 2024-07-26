@@ -1,5 +1,6 @@
 package gift.exceptionHandler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.constants.ErrorMessage;
 import gift.exception.KakaoLoginBadRequestException;
 import gift.exception.KakaoLoginForbiddenException;
@@ -82,5 +83,11 @@ public class GlobalExceptionHandler {
         KakaoLoginForbiddenException e) {
         logger.error(String.valueOf(e.getStackTrace()[0]));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
+
+    @ExceptionHandler(JsonProcessingException.class)
+    public ResponseEntity<String> jsonProcessingException(JsonProcessingException e) {
+        logger.error(String.valueOf(e.getStackTrace()[0]));
+        return ResponseEntity.internalServerError().body(e.getMessage());
     }
 }

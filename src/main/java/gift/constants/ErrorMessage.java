@@ -44,4 +44,5 @@ public class ErrorMessage {
     public static final String KAKAO_BAD_REQUEST_MSG = "카카오 로그인 파라미터가 적절하지 않습니다.";
     public static final String KAKAO_UNAUTHORIZED_MSG = "카카오 로그인 인증 정보가 유효하지 않습니다.";
     public static final String KAKAO_FORBIDDEN_MSG = "허가되지 않은 접근입니다.";
+    public static final String KAKAO_NO_SUCH_TOKEN_MSG = "카카오 인증 정보가 없습니다. 다시 로그인해주세요.";
 }
