@@ -55,4 +55,8 @@ public class MemberService {
         return new Token(jwtUtil.generateToken(MemberEntity.toDto(memberEntity)));
     }
 
+    public Optional<MemberEntity> getMemberEntityById(Long id) {
+        return memberRepository.findById(id);
+    }
+
 }
