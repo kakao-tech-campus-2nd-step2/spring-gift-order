@@ -56,4 +56,32 @@ public class Order {
         this.quantity = quantity;
         this.message = message;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
 }
