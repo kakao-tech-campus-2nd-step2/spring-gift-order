@@ -12,6 +12,7 @@ import gift.repository.OrderRepository;
 import gift.repository.ProductOptionRepository;
 import gift.repository.UserRepository;
 import gift.repository.WishRepository;
+import gift.value.Token;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,10 +42,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto createOrder(String jwtToken, String kakaoAccessToken, OrderRequestDto requestDto) {
-        String jwt = jwtToken.replace("Bearer ", "");
-        String kakaoToken = kakaoAccessToken.replace("Bearer ", "");
+        Token jwt = new Token(jwtToken);
+        Token kakaoToken = new Token(kakaoAccessToken);
 
-        Map<String, String> userInfo = tokenService.extractUserInfo(jwt);
+        Map<String, String> userInfo = tokenService.extractUserInfo(jwt.getToken());
         String userId = userInfo.get("id");
 
         User user = findUserById(userId);
@@ -58,7 +59,7 @@ public class OrderService {
 
         removeWish(user, productOption);
 
-        sendOrderConfirmationMessage(kakaoToken, order);
+        sendOrderConfirmationMessage(kakaoToken.getToken(), order);
 
         return new OrderResponseDto(order.getId(), productOption.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
