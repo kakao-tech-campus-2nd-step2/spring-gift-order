@@ -2,8 +2,7 @@ package gift.oauth.business.service;
 
 import gift.global.util.EncryptionUtils;
 import gift.member.business.dto.JwtToken;
-import gift.member.business.dto.MemberLoginDto;
-import gift.member.business.dto.MemberRegisterDto;
+import gift.member.business.dto.MemberIn;
 import gift.member.business.service.MemberService;
 import gift.member.persistence.repository.MemberRepository;
 import gift.oauth.business.client.OAuthApiClient;
@@ -42,10 +41,10 @@ public class OAuthService {
             throw new RuntimeException("비밀번호 암호화 실패");
         }
         if(memberRepository.existsByEmail(email)) {
-            var memberLoginDto = new MemberLoginDto(email, password);
+            var memberLoginDto = new MemberIn.Login(email, password);
             return memberService.loginMember(memberLoginDto);
         }
-        var memberRegisterDto = new MemberRegisterDto(email, password);
+        var memberRegisterDto = new MemberIn.Register(email, password);
         return memberService.registerMember(memberRegisterDto);
     }
 }
