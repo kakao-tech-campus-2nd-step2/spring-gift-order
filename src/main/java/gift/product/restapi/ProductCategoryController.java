@@ -5,6 +5,7 @@ import gift.core.domain.product.ProductCategory;
 import gift.core.domain.product.ProductCategoryService;
 import gift.product.restapi.dto.response.PagedCategoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +27,14 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회합니다.")
+    @Operation(
+            summary = "카테고리 목록 조회",
+            description = "카테고리 목록을 조회합니다.",
+            parameters = {
+                    @Parameter(name = "page", description = "페이지 번호 (기본 값 : 0)"),
+                    @Parameter(name = "size", description = "페이지 크기 (기본 값 : 10)")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "카테고리 목록을 조회합니다.",

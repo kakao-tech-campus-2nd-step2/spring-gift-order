@@ -4,6 +4,7 @@ import gift.core.domain.product.ProductOptionService;
 import gift.product.restapi.dto.request.ProductOptionRegisterRequest;
 import gift.product.restapi.dto.response.ProductOptionResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +25,13 @@ public class ProductOptionController {
     }
 
     @GetMapping("/{productId}/options")
-    @Operation(summary = "상품 옵션 목록 조회", description = "상품 옵션 목록을 조회합니다.")
+    @Operation(
+            summary = "상품 옵션 목록 조회",
+            description = "상품 옵션 목록을 조회합니다.",
+            parameters = {
+                    @Parameter(name = "productId", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품 옵션 목록을 조회합니다.",
@@ -41,7 +48,13 @@ public class ProductOptionController {
     }
 
     @PostMapping("/{productId}/options")
-    @Operation(summary = "상품 옵션 등록", description = "상품에 옵션을 등록합니다.")
+    @Operation(
+            summary = "상품 옵션 등록",
+            description = "상품에 옵션을 등록합니다.",
+            parameters = {
+                    @Parameter(name = "productId", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품에 옵션을 등록합니다."
@@ -54,7 +67,14 @@ public class ProductOptionController {
     }
 
     @DeleteMapping("/{productId}/options/{optionId}")
-    @Operation(summary = "상품 옵션 삭제", description = "상품에서 옵션을 삭제합니다.")
+    @Operation(
+            summary = "상품 옵션 삭제",
+            description = "상품에서 옵션을 삭제합니다.",
+            parameters = {
+                    @Parameter(name = "productId", description = "상품 ID"),
+                    @Parameter(name = "optionId", description = "옵션 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품에서 옵션을 삭제합니다."

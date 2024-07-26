@@ -10,6 +10,7 @@ import gift.product.restapi.dto.request.ProductUpdateRequest;
 import gift.product.restapi.dto.response.PagedProductResponse;
 import gift.product.restapi.dto.response.ProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +32,14 @@ public class ProductController {
     }
 
     @GetMapping("/api/products")
-    @Operation(summary = "상품 목록 조회", description = "상품 목록을 조회합니다.")
+    @Operation(
+            summary = "상품 목록 조회",
+            description = "상품 목록을 조회합니다.",
+            parameters = {
+                    @Parameter(name = "page", description = "페이지 번호 (기본 값 : 0)"),
+                    @Parameter(name = "size", description = "페이지 크기 (기본 값 : 10)")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품 목록을 조회합니다.",
@@ -45,7 +53,13 @@ public class ProductController {
     }
 
     @GetMapping("/api/products/{id}")
-    @Operation(summary = "상품 조회", description = "상품을 조회합니다.")
+    @Operation(
+            summary = "상품 조회",
+            description = "상품을 조회합니다.",
+            parameters = {
+                    @Parameter(name = "id", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품을 조회합니다.",
@@ -69,7 +83,13 @@ public class ProductController {
     }
 
     @PutMapping("/api/products/{id}")
-    @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
+    @Operation(
+            summary = "상품 수정",
+            description = "상품을 수정합니다.",
+            parameters = {
+                    @Parameter(name = "id", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품을 수정합니다."
@@ -92,7 +112,13 @@ public class ProductController {
     }
 
     @DeleteMapping("/api/products/{id}")
-    @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
+    @Operation(
+            summary = "상품 삭제",
+            description = "상품을 삭제합니다.",
+            parameters = {
+                    @Parameter(name = "id", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "상품을 삭제합니다."
