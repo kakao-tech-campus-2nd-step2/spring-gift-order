@@ -1,8 +1,9 @@
 package gift.controller.api;
 
+import gift.client.KakaoApiClient;
+import gift.dto.body.KakaoTokenRequestBody;
 import gift.dto.response.KakaoTokenResponse;
-import gift.dto.response.TokenResponse;
-import gift.service.KakaoLoginService;
+import gift.dto.response.JwtTokenResponse;
 import gift.service.MemberService;
 import gift.service.TokenService;
 import org.springframework.http.ResponseEntity;
@@ -13,26 +14,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class KakaoLoginController {
 
-    private final KakaoLoginService kakaoLoginService;
+    private final KakaoApiClient kakaoApiClient;
     private final MemberService memberService;
     private final TokenService tokenService;
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService, MemberService memberService, TokenService tokenService) {
-        this.kakaoLoginService = kakaoLoginService;
+    public KakaoLoginController(KakaoApiClient kakaoApiClient, MemberService memberService, TokenService tokenService) {
+        this.kakaoApiClient = kakaoApiClient;
         this.memberService = memberService;
         this.tokenService = tokenService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<TokenResponse> getJwtToken(@RequestParam("code") String code) {
-        KakaoTokenResponse kakaoToken = kakaoLoginService.getToken(code);
+    public ResponseEntity<JwtTokenResponse> getJwtToken(@RequestParam("code") String code) {
+        KakaoTokenResponse kakaoToken = kakaoApiClient.getKakaoToken(new KakaoTokenRequestBody(code));
 
-        String email = kakaoLoginService.getMemberEmail(kakaoToken.accessToken());
+        String email = kakaoApiClient.getMemberEmail(kakaoToken.accessToken());
         Long memberId = memberService.findMemberIdByEmail(email);
 
-        TokenResponse tokenResponse = tokenService.generateJwtToken(memberId);
+        JwtTokenResponse JwtTokenResponse = tokenService.generateJwtToken(memberId);
         tokenService.saveKakaoAccessToken(memberId, kakaoToken);
 
-        return ResponseEntity.ok().body(tokenResponse);
+        return ResponseEntity.ok().body(JwtTokenResponse);
     }
 }
