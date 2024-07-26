@@ -1,10 +1,15 @@
 package gift.Service;
 
 import gift.DTO.ResponseKakaoTokenDTO;
+import gift.Exception.KaKaoBadRequestException;
+import gift.Exception.KaKaoServerErrorException;
 import gift.Util.KakaoProperties;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -48,21 +53,27 @@ public class KakaoLoginService {
     public String getToken(String oauthCode){
         String url = GENERATE_TOKEN_URL;
         LinkedMultiValueMap<String, String> body = generateBodyForKakaoToken(oauthCode);
-        String accessToken = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .toEntity(ResponseKakaoTokenDTO.class)
-                .getBody()
-                .getAccessToken();
+        try {
+            String accessToken = client.post()
+                    .uri(URI.create(url))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .toEntity(ResponseKakaoTokenDTO.class)
+                    .getBody()
+                    .getAccessToken();
 
-        return accessToken;
+            return accessToken;
+        } catch (HttpClientErrorException e){
+            throw new KaKaoBadRequestException(e.getStatusCode()+"에러 발생");
+        } catch (HttpServerErrorException e){
+            throw new KaKaoServerErrorException(e.getStatusCode()+"에러발생");
+        }
     }
 
     private LinkedMultiValueMap<String, String> generateBodyForKakaoToken(String oauthCode) {
-        LinkedMultiValueMap<String, String> body  = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code1");
         body.add("client_id", properties.clientId());
         body.add("redirect_url", properties.redirectUrl());
         body.add("code", oauthCode);
