@@ -16,7 +16,13 @@ public class KakaoTokenResponseDTO {
 
     private int refreshTokenExpiresIn;
 
+    private String idToken;
+
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getIdToken() {
+        return idToken;
     }
 }

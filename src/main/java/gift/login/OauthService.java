@@ -4,6 +4,7 @@ import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import gift.exception.FailedLoginException;
+import gift.member.MemberService;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.http.HttpStatusCode;
@@ -16,15 +17,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OauthService {
 
     private final RestClient restClient;
-
+    private final MemberService memberService;
     private final KakaoOauthConfigure kakaoOauthConfigure;
 
     public OauthService(
         KakaoOauthConfigure kakaoOauthConfigure,
-        RestClient restClient
+        RestClient restClient,
+        MemberService memberService
     ) {
         this.kakaoOauthConfigure = kakaoOauthConfigure;
         this.restClient = restClient;
+        this.memberService = memberService;
     }
 
     public URI getKakaoLoginURL() {
@@ -49,6 +52,8 @@ public class OauthService {
                 }
             ).toEntity(KakaoTokenResponseDTO.class)
             .getBody();
+
+        memberService.registerIfNotExistsByIdToken(Objects.requireNonNull(kakaoToken).getIdToken());
 
         return Objects.requireNonNull(kakaoToken).getAccessToken();
     }
