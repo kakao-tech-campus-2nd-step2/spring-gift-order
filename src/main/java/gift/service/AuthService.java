@@ -1,27 +1,31 @@
 package gift.service;
 
+import gift.common.enums.SocialLoginType;
 import gift.common.exception.AuthenticationException;
 import gift.controller.dto.request.SignInRequest;
+import gift.controller.dto.response.TokenResponse;
 import gift.model.Member;
 import gift.repository.MemberRepository;
-import gift.security.TokenProvider;
+import gift.security.JwtProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
     private final MemberRepository memberRepository;
 
-    public AuthService(TokenProvider tokenProvider, MemberRepository memberRepository) {
-        this.tokenProvider = tokenProvider;
+    public AuthService(JwtProvider jwtProvider, MemberRepository memberRepository) {
+        this.jwtProvider = jwtProvider;
         this.memberRepository = memberRepository;
     }
 
     @Transactional(readOnly = true)
-    public String signIn(SignInRequest request) {
+    public TokenResponse signIn(SignInRequest request) {
         Member member = findEmailAndPassword(request);
-        return tokenProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        member.checkLoginType(SocialLoginType.DEFAULT);
+        String token = jwtProvider.generateToken(member.getId(), member.getEmail(), member.getRole());
+        return TokenResponse.from(token);
     }
 
     private Member findEmailAndPassword(SignInRequest request) {

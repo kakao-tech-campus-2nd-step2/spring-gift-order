@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Auth", description = "로그인 API")
 @RestController
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/auth")
 public class AuthRestController {
     private final AuthService authService;
 
@@ -25,7 +25,7 @@ public class AuthRestController {
     @PostMapping("/login")
     @Operation(summary = "로그인", description = "로그인을 시도합니다.")
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody SignInRequest request) {
-        TokenResponse response = TokenResponse.from(authService.signIn(request));
+        TokenResponse response = authService.signIn(request);
         return ResponseEntity.ok().body(response);
     }
 }

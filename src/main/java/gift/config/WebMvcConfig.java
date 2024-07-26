@@ -13,10 +13,10 @@ import java.util.List;
 
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
 
-    public WebMvcConfig(TokenProvider tokenProvider) {
-        this.tokenProvider = tokenProvider;
+    public WebMvcConfig(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
     }
 
 
@@ -28,7 +28,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     @Order(1)
     public JwtInterceptor jwtInterceptor() {
-        return new JwtInterceptor(tokenProvider);
+        return new JwtInterceptor(jwtProvider);
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Bean
     @Order(3)
     public AdminInterceptor adminInterceptor() {
-        return new AdminInterceptor(tokenProvider);}
+        return new AdminInterceptor(jwtProvider);}
 
     @Bean
     public LoginMemberArgumentResolver loginMemberArgumentResolver() {
@@ -50,8 +50,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-                .excludePathPatterns("/api/v1/login/**",
-                                "/api/v1/sign-up/**");
+                .excludePathPatterns("/api/v1/auth/**",
+                        "/api/v1/oauth/**",
+                        "/api/v1/sign-up/**");
         registry.addInterceptor(authorizationInterceptor())
                 .addPathPatterns("/api/v1/admin/**");
         registry.addInterceptor(adminInterceptor())

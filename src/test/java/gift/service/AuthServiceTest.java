@@ -4,7 +4,7 @@ import gift.common.enums.Role;
 import gift.controller.dto.request.SignInRequest;
 import gift.model.Member;
 import gift.repository.MemberRepository;
-import gift.security.TokenProvider;
+import gift.security.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ class AuthServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private TokenProvider tokenProvider;
+    private JwtProvider jwtProvider;
 
     @Test
     @DisplayName("로그인 테스트[성공]")
@@ -46,11 +46,11 @@ class AuthServiceTest {
         Member member = new Member(id, email, password, Role.USER, null, null);
         given(memberRepository.findByEmailAndPassword(eq(email), eq(password)))
                 .willReturn(Optional.of(member));
-        given(tokenProvider.generateToken(eq(id), eq(member.getEmail()), eq(member.getRole())))
+        given(jwtProvider.generateToken(eq(id), eq(member.getEmail()), eq(member.getRole())))
                 .willReturn(token);
 
         // when
-        String actual = authService.signIn(request);
+        String actual = authService.signIn(request).accessToken();
 
         // then
         assertThat(actual).isEqualTo(token);
