@@ -2,18 +2,22 @@ package gift.service;
 
 import gift.common.config.KakaoProperties;
 import gift.kakaologin.KakaoResponse;
+import gift.model.order.Order;
+import gift.model.order.OrderRequest;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
-public class KakaoLoginService {
+public class KakaoService {
 
 //    @Value("${kakao.client-id}")
 //    private String restKey;
@@ -58,4 +62,6 @@ public class KakaoLoginService {
         body.add("code", code);
         return body;
     }
+
+
 }
