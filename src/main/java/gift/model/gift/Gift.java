@@ -32,8 +32,6 @@ public class Gift {
     @NotNull
     private Category category;
 
-    @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
-    private final List<Wish> wishes = new ArrayList<>();
 
     @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();

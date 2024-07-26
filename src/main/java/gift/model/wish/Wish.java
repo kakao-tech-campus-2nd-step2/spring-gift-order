@@ -4,6 +4,8 @@ import gift.model.gift.Gift;
 import gift.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "wish")
@@ -19,6 +21,7 @@ public class Wish {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action= OnDeleteAction.CASCADE)
     @JoinColumn(name = "gift_id")
     @NotNull
     private Gift gift;
