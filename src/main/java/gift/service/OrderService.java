@@ -32,8 +32,8 @@ public class OrderService {
                 new KakaoMessageDto(
                     "text",
                     orderRequestDto.message(),
-                    "https://developers.kakao.com/docs/latest/ko/message/rest-api#default-template-msg-me",
-                    "https://developers.kakao.com/docs/latest/ko/message/rest-api#default-template-msg-me"
+                    "https://gift.kakao.com",
+                    "https://gift.kakao.com"
                 )
             );
         }
