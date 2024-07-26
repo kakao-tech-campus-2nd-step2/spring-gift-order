@@ -2,8 +2,10 @@ package gift.controller;
 
 import static gift.util.JwtUtil.extractToken;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.domain.Member;
 import gift.domain.Order;
+import gift.service.KakaoService;
 import gift.service.OrderService;
 import gift.util.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -23,20 +25,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final KakaoService kakaoService;
     private final JwtUtil jwtUtil;
 
-    public OrderController(OrderService orderService, JwtUtil jwtUtil) {
+    public OrderController(OrderService orderService, KakaoService kakaoService, JwtUtil jwtUtil) {
         this.orderService = orderService;
+        this.kakaoService = kakaoService;
         this.jwtUtil = jwtUtil;
     }
 
     @PostMapping
-    public ResponseEntity<?> addOrder(HttpServletRequest request, @Valid @RequestBody Order order) {
+    public ResponseEntity<?> addOrder(HttpServletRequest request, @Valid @RequestBody Order order) throws JsonProcessingException {
         String token = extractToken(request);
         Claims claims = jwtUtil.extractAllClaims(token);
-        Number memberId = (Number) claims.get("id");
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(orderService.addOrder((Long) memberId, order));
+        Number id = (Number) claims.get("id");
+        Long memberId = id.longValue();
+        Order addedOrder = orderService.addOrder(memberId, order);
+        kakaoService.sendOrderMessage(memberId, order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(addedOrder);
     }
 
 }
