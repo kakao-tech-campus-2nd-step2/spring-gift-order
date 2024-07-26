@@ -1,8 +1,10 @@
 package gift.service;
 
+import gift.dto.WishRequest;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wish;
+import gift.repository.ProductRepository;
 import gift.repository.WishRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class WishService {
 
     private final WishRepository wishRepository;
+    private final ProductRepository productRepository;
 
-    public WishService(WishRepository wishRepository) {
+    public WishService(WishRepository wishRepository, ProductRepository productRepository) {
         this.wishRepository = wishRepository;
+        this.productRepository = productRepository;
     }
 
     public List<Wish> getWishesByMember(Member member) {
@@ -24,7 +28,10 @@ public class WishService {
         return wishRepository.findByProductId(product.getId());
     }
 
-    public Wish addWish(Wish wish) {
+    public Wish addWish(Long productId, Member member) {
+        var product = productRepository.findById(productId)
+            .orElseThrow(() -> new IllegalArgumentException("없는 상품입니다."));
+        var wish = new Wish(product, member);
         return wishRepository.save(wish);
     }
 

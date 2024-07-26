@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.annotation.LoginMember;
+import gift.dto.WishRequest;
 import gift.model.Member;
 import gift.model.Wish;
 import gift.service.WishService;
@@ -37,10 +38,9 @@ public class WishController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> addWish(@RequestBody Wish wish,
+    public ResponseEntity<Map<String, Object>> addWish(@RequestBody WishRequest wishRequest,
         @LoginMember Member member) {
-        wish.setMemberId(member.getId());
-        Wish savedWish = wishService.addWish(wish);
+        Wish savedWish = wishService.addWish(wishRequest.getProductId(),member);
         Map<String, Object> response = new HashMap<>();
         response.put("wish", savedWish);
         return new ResponseEntity<>(response, HttpStatus.OK);
