@@ -1,17 +1,13 @@
 package gift.service;
 
-import static gift.util.constants.OptionConstants.OPTION_NOT_FOUND;
-
 import gift.dto.member.MemberResponse;
+import gift.dto.option.OptionResponse;
 import gift.dto.order.OrderRequest;
 import gift.dto.order.OrderResponse;
-import gift.exception.option.OptionNotFoundException;
-import gift.model.Member;
 import gift.model.Option;
 import gift.model.Order;
 import gift.model.Product;
 import gift.model.RegisterType;
-import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.service.oauth.KakaoOAuthService;
 import java.text.NumberFormat;
@@ -24,20 +20,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OptionRepository optionRepository;
+    private final OptionService optionService;
     private final KakaoOAuthService kakaoOAuthService;
     private final WishService wishService;
     private final MemberService memberService;
 
     public OrderService(
         OrderRepository orderRepository,
-        OptionRepository optionRepository,
+        OptionService optionService,
         KakaoOAuthService kakaoOAuthService,
         WishService wishService,
         MemberService memberService
     ) {
         this.orderRepository = orderRepository;
-        this.optionRepository = optionRepository;
+        this.optionService = optionService;
         this.kakaoOAuthService = kakaoOAuthService;
         this.wishService = wishService;
         this.memberService = memberService;
@@ -45,11 +41,10 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest, Long memberId) {
-        Option option = optionRepository.findById(orderRequest.optionId())
-            .orElseThrow(() -> new OptionNotFoundException(OPTION_NOT_FOUND + orderRequest.optionId()));
+        OptionResponse optionResponse = optionService.getOptionById(orderRequest.optionId());
 
-        option.subtractQuantity(orderRequest.quantity());
-        optionRepository.save(option);
+        optionService.subtractOptionQuantity(optionResponse.productId(), optionResponse.id(), orderRequest.quantity());
+        Option option = optionService.convertToEntity(optionResponse);
 
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message(), LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);

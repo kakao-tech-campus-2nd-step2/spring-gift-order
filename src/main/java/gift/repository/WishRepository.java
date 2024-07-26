@@ -11,5 +11,6 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
     Page<Wish> findAllByMember_Id(Long memberId, Pageable pageable);
 
     boolean existsByMember_IdAndProduct_Id(Long memberId, Long productId);
+
     Optional<Wish> findByMember_IdAndProduct_Id(Long memberId, Long productId);
 }
