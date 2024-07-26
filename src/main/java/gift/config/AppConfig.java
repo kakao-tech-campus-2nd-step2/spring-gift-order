@@ -3,6 +3,7 @@ package gift.config;
 import gift.exception.ApiRequestException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -12,17 +13,8 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 
 import java.io.IOException;
 
-import static org.springframework.http.HttpStatus.*;
-
 @Configuration
 public class AppConfig {
-
-    @Bean
-    public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
-        restTemplate.setErrorHandler(errorHandler());
-        return restTemplate;
-    }
 
     @Bean
     public RestTemplate kakaoRestTemplate() {
@@ -42,16 +34,14 @@ public class AppConfig {
         return new DefaultResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse response) throws IOException {
-                // Custom error handling
-                switch (response.getStatusCode()) {
-                    case BAD_REQUEST:
-                        throw new ApiRequestException("Bad Request");
-                    case NOT_FOUND:
-                        throw new ApiRequestException("Not Found");
-                    case INTERNAL_SERVER_ERROR:
-                        throw new ApiRequestException("Internal Server Error");
-                    default:
-                        super.handleError(response);
+                if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                    throw new ApiRequestException("Bad Request");
+                } else if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    throw new ApiRequestException("Not Found");
+                } else if (response.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+                    throw new ApiRequestException("Internal Server Error");
+                } else {
+                    super.handleError(response);
                 }
             }
         };
