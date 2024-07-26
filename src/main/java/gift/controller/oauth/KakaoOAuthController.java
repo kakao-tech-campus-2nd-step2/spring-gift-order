@@ -9,6 +9,8 @@ import gift.dto.oauth.KakaoUserResponse;
 import gift.service.MemberService;
 import gift.service.oauth.KakaoOAuthService;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,7 @@ public class KakaoOAuthController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<String> kakaoCallback(@RequestParam("code") String code) {
+    public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam("code") String code) {
         KakaoTokenResponse tokenResponse = kakaoOAuthService.getAccessToken(code);
         KakaoUserResponse userResponse = kakaoOAuthService.getUserInfo(tokenResponse.accessToken());
         MemberResponse memberResponse = kakaoOAuthService.registerOrLoginKakaoUser(userResponse);
@@ -57,7 +59,10 @@ public class KakaoOAuthController {
 
         String jwt = kakaoOAuthService.generateJwt(memberResponse.id(), memberResponse.email());
 
-        return ResponseEntity.ok(jwt);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", jwt);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/scopes")
