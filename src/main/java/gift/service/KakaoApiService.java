@@ -113,9 +113,13 @@ public class KakaoApiService {
 
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
+        var templateObject = new LinkedMultiValueMap<String, Object>();
+        templateObject.add("object_type", "feed");
+        templateObject.add("content", createContent(messageRequest));
+
         var body = new LinkedMultiValueMap<String, Object>();
-        body.add("object_type", "feed");
-        body.add("content", createContent(messageRequest));
+        body.add("template_object" , templateObject);
+
 
         try {
             ResponseEntity<String> response = client.post()
