@@ -29,6 +29,11 @@ public class MemberService {
         this.kakaoJwkProvider = kakaoJwkProvider;
     }
 
+    public Member getMember(String email) {
+        return memberRepository.findById(email)
+            .orElseThrow(() -> new IllegalArgumentException(MEMBER_NOT_FOUND));
+    }
+
     public String register(MemberDTO memberDTO) {
         memberRepository.findById(memberDTO.getEmail())
             .ifPresentOrElse(
@@ -64,5 +69,4 @@ public class MemberService {
             throw new IllegalArgumentException(WRONG_PASSWORD);
         }
     }
-
 }
