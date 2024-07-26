@@ -45,7 +45,7 @@ import reactor.core.publisher.Mono;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ConfigurationPropertiesScan
-class oAuth2LoginControllerTest {
+class OAuth2LoginControllerTest {
 
     //private final RestClient client = RestClient.builder().build();
     @Autowired

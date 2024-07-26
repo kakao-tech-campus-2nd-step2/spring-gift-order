@@ -18,18 +18,14 @@ public class Order extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
-
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
-
     @ManyToOne
     @JoinColumn(name = "option_id", nullable = false,
     foreignKey = @ForeignKey(name = "fk_order_option_id_ref_option_id"))
     private Options options;
-
     @Column(nullable = false)
     private Integer quantity;
-
     private String message;
 
     protected Order() {

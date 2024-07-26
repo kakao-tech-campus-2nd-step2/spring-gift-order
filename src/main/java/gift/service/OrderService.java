@@ -29,19 +29,18 @@ public class OrderService {
         this.wishRepository = wishRepository;
     }
 
-
     @Transactional
-    public OrderResponse makeOrder(Long memberId, Long productId, Long optionId, Integer quantity, String message) {
+    public OrderResponse makeOrder(Long memberId, Long productId, Long optionId, Integer quantity,
+        String message) {
         Options option = optionsRepository.findById(optionId)
             .orElseThrow(NotFoundOptionsException::new);
-        Order order = new Order(memberId, option, quantity, message);
 
-        optionsService.subtractQuantity(optionId, quantity, productId);
         wishRepository.findByMemberIdAndProductId(memberId, productId)
             .ifPresent(wish -> wishService.deleteMyWish(memberId, productId));
+        Order savedOrder = orderRepository.save(new Order(memberId, option, quantity, message));
 
-        Order savedOrder = orderRepository.save(order);
-        return new OrderResponse(savedOrder.getId(), optionId, quantity,
+        optionsService.subtractQuantity(optionId, quantity, productId);
+        return OrderResponse.createOrderResponse(savedOrder.getId(), optionId, quantity,
             savedOrder.getCreatedAt(), savedOrder.getMessage());
     }
 

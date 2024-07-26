@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 
 import gift.exception.option.OptionsQuantityException;
 import gift.model.Category;
@@ -67,16 +69,18 @@ class OrderServiceTest {
         //given
         Integer orderQuantity = 1;
         String message = "message";
-        Order order = new Order(member.getId(), option,
-            orderQuantity, message);
+        Order order = mock(Order.class);
+        Order savedOrder = new Order(1L, 1L,
+            option, orderQuantity, message);
+
         given(optionsRepository.findById(any(Long.class)))
             .willReturn(Optional.ofNullable(option));
-        given(orderRepository.save(any(Order.class))).willReturn(order);
-
+        doNothing().when(optionsService).subtractQuantity(any(Long.class),
+            any(Integer.class), any(Long.class));
+        given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
         //when
         orderService.makeOrder(member.getId(), product.getId(),option.getId(),
             orderQuantity, message);
-
         //then
         then(optionsRepository).should().findById(any(Long.class));
         then(orderRepository).should().save(any(Order.class));
@@ -92,10 +96,12 @@ class OrderServiceTest {
             orderQuantity, message);
         given(optionsRepository.findById(any(Long.class)))
             .willReturn(Optional.ofNullable(option));
-        doThrow(OptionsQuantityException.class).when(optionsService).subtractQuantity(any(Long.class),
-            any(Integer.class), any(Long.class));
+        doThrow(OptionsQuantityException.class).when(optionsService)
+            .subtractQuantity(any(Long.class),
+                any(Integer.class), any(Long.class));
         //when //then
-        Assertions.assertThatThrownBy(() ->orderService.makeOrder(member.getId(), product.getId(),option.getId(),
-            orderQuantity, message)).isInstanceOf(OptionsQuantityException.class);
+        Assertions.assertThatThrownBy(
+            () -> orderService.makeOrder(member.getId(), product.getId(), option.getId(),
+                orderQuantity, message)).isInstanceOf(OptionsQuantityException.class);
     }
 }
