@@ -26,8 +26,8 @@ public class KakaoController {
     public void kakaoLogin(HttpServletResponse response) throws IOException {
         String clientId = new KakaoString(kakaoProperties.getClientId()).removeNewlines();
         String redirectUri = new KakaoString(kakaoProperties.getRedirectUri()).removeNewlines();
-        String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
-                + clientId + "&redirect_uri=" + redirectUri;
+        String authUrl = new KakaoString(kakaoProperties.getAuthUrl()).removeNewlines();
+        String url = authUrl + "?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri;
         response.sendRedirect(url);
     }
 

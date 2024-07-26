@@ -14,11 +14,18 @@ public class KakaoProperties {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${kakao.authUrl}")
+    private String authUrl;
+
     public String getClientId() {
         return clientId;
     }
 
     public String getRedirectUri() {
         return redirectUri;
+    }
+
+    public String getAuthUrl() {
+        return authUrl;
     }
 }
