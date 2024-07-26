@@ -3,12 +3,15 @@ package gift.product.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.LoginMember;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
+import gift.product.model.KakaoToken;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
+import gift.product.repository.KakaoTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
@@ -16,6 +19,7 @@ import io.jsonwebtoken.security.Keys;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -29,14 +33,16 @@ import org.springframework.web.client.RestClient;
 public class AuthService {
 
     private final AuthRepository authRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient = RestClient.builder().build();
     private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public AuthService(AuthRepository authRepository, KakaoProperties kakaoProperties) {
+    public AuthService(AuthRepository authRepository, KakaoTokenRepository kakaoTokenRepository, KakaoProperties kakaoProperties) {
         this.authRepository = authRepository;
+        this.kakaoTokenRepository = kakaoTokenRepository;
         this.kakaoProperties = kakaoProperties;
     }
 
@@ -89,11 +95,11 @@ public class AuthService {
         }
     }
 
-    public Member registerKakaoMember(String oAuthAccessToken, String externalApiUrl) {
+    public JwtResponse registerKakaoMember(OAuthJwt oAuthJwt, String externalApiUrl) {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .header("Authorization", "Bearer " + oAuthAccessToken)
+            .header("Authorization", "Bearer " + oAuthJwt.accessToken())
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
                 throw new LoginFailedException("카카오 유저 정보 조회 관련 에러가 발생하였습니다. 다시 시도해주세요.");
@@ -109,23 +115,16 @@ public class AuthService {
                 authRepository.save(new Member(memberEmail, "oauth"));
             }
 
-            return authRepository.findByEmail(memberEmail);
+            return getJwtResponse(oAuthJwt, memberEmail);
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
         }
     }
 
-    public JwtResponse getToken(Member member, OAuthJwt OAuthJwt) {
-        String accessToken = getAccessToken(member, OAuthJwt.accessToken());
-        String refreshToken = getRefreshToken(member, OAuthJwt.refreshToken());
-
-        return new JwtResponse(accessToken, refreshToken);
-    }
-
-    public long unlinkKakaoAccount(String oAuthAccessToken, String externalApiUrl) {
+    public long unlinkKakaoAccount(LoginMember loginMember, String externalApiUrl) {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
-            .header("Authorization", "Bearer " + oAuthAccessToken)
+            .header("Authorization", "Bearer " + getKakaoToken(loginMember).getAccessToken())
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
                 throw new LoginFailedException("카카오 유저 연결을 끊는 도중 에러가 발생하였습니다. 다시 시도해주세요.");
@@ -148,8 +147,6 @@ public class AuthService {
         SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.builder()
             .claim("id", member.getId())
-            .claim("isOAuthMember", false)
-            .claim("oAuthAccessToken", "")
             .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
@@ -162,36 +159,6 @@ public class AuthService {
         SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.builder()
             .claim("id", member.getId())
-            .claim("isOAuthMember", false)
-            .claim("oAuthRefreshToken", "")
-            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
-            .signWith(key)
-            .compact();
-    }
-
-    private String getAccessToken(Member member, String oAuthAccessToken) {
-        String EncodedSecretKey = Encoders.BASE64.encode(
-            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
-        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
-        return Jwts.builder()
-            .claim("id", member.getId())
-            .claim("isOAuthMember", true)
-            .claim("oAuthAccessToken", oAuthAccessToken)
-            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
-            .signWith(key)
-            .compact();
-    }
-
-    private String getRefreshToken(Member member, String oAuthRefreshToken) {
-        String EncodedSecretKey = Encoders.BASE64.encode(
-            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
-        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
-        return Jwts.builder()
-            .claim("id", member.getId())
-            .claim("isOAuthMember", true)
-            .claim("oAuthRefreshToken", oAuthRefreshToken)
             .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
@@ -227,5 +194,19 @@ public class AuthService {
         body.add("code", code);
         body.add("client_secret", kakaoProperties.clientSecret());
         return body;
+    }
+
+    private JwtResponse getJwtResponse(OAuthJwt oAuthJwt, String memberEmail) {
+        Member member = authRepository.findByEmail(memberEmail);
+
+        kakaoTokenRepository.save(new KakaoToken(member.getId(),
+            oAuthJwt.accessToken(),
+            oAuthJwt.refreshToken()));
+
+        return new JwtResponse(getAccessToken(member), getRefreshToken(member));
+    }
+
+    private KakaoToken getKakaoToken(LoginMember loginMember) {
+        return kakaoTokenRepository.findByMemberId(loginMember.id()).orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }

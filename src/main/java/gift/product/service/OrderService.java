@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.KakaoMessage;
 import gift.product.dto.auth.Link;
-import gift.product.dto.auth.OAuthLoginMember;
+import gift.product.dto.auth.LoginMember;
 import gift.product.dto.order.OrderDto;
 import gift.product.exception.LoginFailedException;
+import gift.product.model.KakaoToken;
 import gift.product.model.Option;
 import gift.product.model.Order;
 import gift.product.repository.AuthRepository;
+import gift.product.repository.KakaoTokenRepository;
 import gift.product.repository.OptionRepository;
 import gift.product.repository.OrderRepository;
 import gift.product.repository.WishRepository;
@@ -30,30 +32,33 @@ public class OrderService {
     private final WishRepository wishRepository;
     private final OptionRepository optionRepository;
     private final AuthRepository authRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
     private final RestClient restClient = RestClient.builder().build();
     private final String LINK_URL = "http://localhost:8080";
 
     public OrderService(OrderRepository orderRepository,
         WishRepository wishRepository,
         OptionRepository optionRepository,
-        AuthRepository authRepository) {
+        AuthRepository authRepository,
+        KakaoTokenRepository kakaoTokenRepository) {
         this.orderRepository = orderRepository;
         this.wishRepository = wishRepository;
         this.optionRepository = optionRepository;
         this.authRepository = authRepository;
+        this.kakaoTokenRepository = kakaoTokenRepository;
     }
 
-    public List<Order> getOrderAll(OAuthLoginMember loginMember) {
+    public List<Order> getOrderAll(LoginMember loginMember) {
         return orderRepository.findAllByMemberId(loginMember.id());
     }
 
-    public Order getOrder(Long id, OAuthLoginMember loginMember) {
+    public Order getOrder(Long id, LoginMember loginMember) {
         return orderRepository.findByIdAndMemberId(id, loginMember.id())
             .orElseThrow(() -> new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다."));
     }
 
     @Transactional
-    public Order doOrder(OrderDto orderDto, OAuthLoginMember loginMember, String externalApiUrl) {
+    public Order doOrder(OrderDto orderDto, LoginMember loginMember, String externalApiUrl) {
         Order order = processOrder(orderDto, loginMember);
         LinkedMultiValueMap<String, String> body = getRequestBody(
             orderDto);
@@ -61,7 +66,7 @@ public class OrderService {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .header("Authorization", "Bearer " + loginMember.accessToken())
+            .header("Authorization", "Bearer " + getKakaoToken(loginMember).getAccessToken())
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
@@ -74,7 +79,7 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteOrder(Long orderId, OAuthLoginMember loginMember) {
+    public void deleteOrder(Long orderId, LoginMember loginMember) {
         validateExistenceOrder(orderId);
         orderRepository.deleteByIdAndMemberId(orderId, loginMember.id());
     }
@@ -124,7 +129,7 @@ public class OrderService {
         }
     }
 
-    private Order processOrder(OrderDto orderDto, OAuthLoginMember loginMember) {
+    private Order processOrder(OrderDto orderDto, LoginMember loginMember) {
         Option option = getValidatedOption(orderDto.optionId());
         Long productId = option.getProduct().getId();
         validateExistenceMember(loginMember.id());
@@ -135,9 +140,12 @@ public class OrderService {
             wishRepository.deleteByProductIdAndMemberId(productId, loginMember.id());
         }
 
-        Order order = orderRepository.save(new Order(orderDto.optionId(), loginMember.id(),
+        return orderRepository.save(new Order(orderDto.optionId(), loginMember.id(),
             orderDto.quantity(), orderDto.message()));
-        return order;
+    }
+
+    private KakaoToken getKakaoToken(LoginMember loginMember) {
+        return kakaoTokenRepository.findByMemberId(loginMember.id()).orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }
 
