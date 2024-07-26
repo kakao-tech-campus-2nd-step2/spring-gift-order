@@ -45,10 +45,12 @@ public class WishService {
 
     @Transactional
     public WishResponse createWish(WishRequest wishRequest) {
-        Member member = memberRepository.findById(wishRequest.getMemberId()).orElseThrow(()-> new MemberNotFoundException("해당 유저가 존재하지 않습니다."));
-        Product product = productRepository.findById(wishRequest.getProductId()).orElseThrow(()-> new ProductNotFoundException("해당 상품이 존재하지 않습니다."));
+        Member member = memberRepository.findById(wishRequest.getMemberId())
+            .orElseThrow(() -> new MemberNotFoundException("해당 유저가 존재하지 않습니다."));
+        Product product = productRepository.findById(wishRequest.getProductId())
+            .orElseThrow(() -> new ProductNotFoundException("해당 상품이 존재하지 않습니다."));
 
-        if (wishRepository.findByProductAndMember(product, member).isPresent()){
+        if (wishRepository.findByProductAndMember(product, member).isPresent()) {
             throw new WishDuplicateException("중복된 위시리스트 입니다.");
         }
 

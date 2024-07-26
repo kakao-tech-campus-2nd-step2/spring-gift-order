@@ -1,6 +1,7 @@
 package gift.kakaoApi.exceptiion;
 
-public class KakaoLoginException extends RuntimeException{
+public class KakaoLoginException extends RuntimeException {
+
     private final String error_code;
 
     public KakaoLoginException(String error_code, String errorDescription) {

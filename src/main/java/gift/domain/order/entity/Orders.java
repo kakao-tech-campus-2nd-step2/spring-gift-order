@@ -17,10 +17,10 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name="option_id")
+    @JoinColumn(name = "option_id")
     private Option option;
     @ManyToOne
-    @JoinColumn(name="member_id")
+    @JoinColumn(name = "member_id")
     private Member member;
     @Column
     private int quantity;
@@ -29,12 +29,16 @@ public class Orders {
     @Column
     private String message;
 
-    protected Orders(){}
-
-    public Orders(Option option, Member member,int quantity, String orderDateTime, String message){
-        this(null, option, member, quantity,  orderDateTime, message);
+    protected Orders() {
     }
-    public Orders(Long id, Option option, Member member, int quantity, String orderDateTime, String message) {
+
+    public Orders(Option option, Member member, int quantity, String orderDateTime,
+        String message) {
+        this(null, option, member, quantity, orderDateTime, message);
+    }
+
+    public Orders(Long id, Option option, Member member, int quantity, String orderDateTime,
+        String message) {
         this.id = id;
         this.option = option;
         this.member = member;

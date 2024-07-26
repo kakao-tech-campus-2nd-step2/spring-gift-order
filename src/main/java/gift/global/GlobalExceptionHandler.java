@@ -45,13 +45,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(KakaoLoginException.class)
-    public ResponseEntity<String> handleKakaoOAuthException(KakaoLoginException e){
+    public ResponseEntity<String> handleKakaoOAuthException(KakaoLoginException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body("[" + e.getErrorCode() + "] " + e.getMessage());
     }
 
     @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<String> handleDuplicateException(DuplicateException e){
+    public ResponseEntity<String> handleDuplicateException(DuplicateException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(e.getMessage());
     }

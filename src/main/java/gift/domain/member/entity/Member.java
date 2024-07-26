@@ -75,7 +75,7 @@ public class Member {
         return kakaoAccessToken;
     }
 
-    public void updateKakaoAccessToken(String accessToken){
+    public void updateKakaoAccessToken(String accessToken) {
         this.kakaoAccessToken = accessToken;
     }
 

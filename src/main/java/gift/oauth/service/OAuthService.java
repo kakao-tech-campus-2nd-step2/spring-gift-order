@@ -25,13 +25,13 @@ public class OAuthService {
         this.kakaoApiService = kakaoApiService;
     }
 
-    public String getAccessToken(String code){
+    public String getAccessToken(String code) {
         String accessToken = kakaoApiService.getKakaoToken(code).accessToken();
         return jwtUtil.generateToken(registerOrLoginKakoMember(accessToken));
 
     }
 
-    private Member registerOrLoginKakoMember(String accessToken){
+    private Member registerOrLoginKakoMember(String accessToken) {
         KakaoAccount kakaoAccount = kakaoApiService.getKakaoAccount(accessToken).kakaoAccount();
         Optional<Member> member = memberRepository.findByEmail(kakaoAccount.email());
 

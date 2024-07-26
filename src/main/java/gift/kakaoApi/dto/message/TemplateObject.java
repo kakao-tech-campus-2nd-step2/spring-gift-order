@@ -15,10 +15,11 @@ public record TemplateObject(
     Link link
 
 ) {
+
     public MultiValueMap<String, String> toRequestBody() {
         ObjectMapper objectMapper = new ObjectMapper();
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        try{
+        try {
             map.add("template_object", objectMapper.writeValueAsString(this));
         } catch (JsonProcessingException e) {
             throw new KakaoMessageException("[메세지 전송 실패] Object 만들기 실패");

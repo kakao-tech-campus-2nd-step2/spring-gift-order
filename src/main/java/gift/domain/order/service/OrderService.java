@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class OrderService {
+
     private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final OrderRepository orderRepository;
@@ -39,19 +40,22 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse createOrder(Member member, OrderRequest request){
+    public OrderResponse createOrder(Member member, OrderRequest request) {
         Orders newOrder = dtoToEntity(member, request);
         orderProcess(newOrder);
         return entityToDto(orderRepository.save(newOrder));
     }
-    private void orderProcess(Orders order){
+
+    private void orderProcess(Orders order) {
 
         optionService.subtractQuantity(order.getOption().getId(), order.getQuantity());
         removeIfInWishlist(order.getMember(), order.getOption());
 
-        if(!(kakaoApiService.sendKakaoMessage(order.getMember().getKakaoAccessToken(),order).resultCode()).equals(0)){
+        if (!(kakaoApiService.sendKakaoMessage(order.getMember().getKakaoAccessToken(), order)
+            .resultCode()).equals(0)) {
             throw new KakaoMessageException("메세지 전송 실패");
-        };
+        }
+        ;
     }
 
     private void removeIfInWishlist(Member member, Option option) {
@@ -60,11 +64,13 @@ public class OrderService {
     }
 
     private Orders dtoToEntity(Member member, OrderRequest request) {
-        Option savedOption = optionRepository.findById(request.getOptionId()).orElseThrow(()->new OptionNotFoundException("해당하는 옵션이 존재하지 않습니다."));
+        Option savedOption = optionRepository.findById(request.getOptionId())
+            .orElseThrow(() -> new OptionNotFoundException("해당하는 옵션이 존재하지 않습니다."));
         return new Orders(savedOption, member, request.getQuantity(),
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
             request.getMessage());
     }
+
     private OrderResponse entityToDto(Orders order) {
         return new OrderResponse(order.getId(), order.getOption().getId(), order.getQuantity(),
             order.getOrderDateTime(),

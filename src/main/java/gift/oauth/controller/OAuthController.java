@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/oauth")
 public class OAuthController {
 
-    private final OAuthService  oauthService;
-    private  final KakaoApiService kakaoApiService;
+    private final OAuthService oauthService;
+    private final KakaoApiService kakaoApiService;
 
     public OAuthController(OAuthService oauthService, KakaoApiService kakaoApiService) {
         this.oauthService = oauthService;
@@ -34,8 +34,8 @@ public class OAuthController {
         @RequestParam(required = false) String code,
         @RequestParam(required = false) String error,
         @RequestParam(required = false) String error_description
-    ){
-        if (error != null || error_description != null){
+    ) {
+        if (error != null || error_description != null) {
             throw new KakaoLoginException(error, error_description);
         }
         return ResponseEntity.ok(new JwtResponse(oauthService.getAccessToken(code)));

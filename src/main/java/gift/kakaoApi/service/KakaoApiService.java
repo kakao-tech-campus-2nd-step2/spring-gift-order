@@ -20,24 +20,27 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KakaoApiService {
+
     public static final String BEARER_PREPIX = "Bearer ";
-    private static  final String KAKAO_AUTHORIZATION_CODE_URL = "https://kauth.kakao.com/oauth/authorize";
+    private static final String KAKAO_AUTHORIZATION_CODE_URL = "https://kauth.kakao.com/oauth/authorize";
     private static final String KAKAO_TOEKN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String KAKAO_ACCOUNT_URL = "https://kapi.kakao.com/v2/user/me";
     private static final String KAKAO_SEND_MESSAGE_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
     private final KakaoProperties properties;
     private final ObjectMapper objectMapper;
     private final RestClient client;
-    public KakaoApiService(KakaoProperties properties, ObjectMapper objectMapper, RestClient restClient) {
+
+    public KakaoApiService(KakaoProperties properties, ObjectMapper objectMapper,
+        RestClient restClient) {
         this.properties = properties;
         this.objectMapper = objectMapper;
         this.client = restClient;
     }
 
-    public String getKakaoLoginUri(){
+    public String getKakaoLoginUri() {
         return UriComponentsBuilder.newInstance()
             .path(KAKAO_AUTHORIZATION_CODE_URL)
-            .queryParam("response_type","code")
+            .queryParam("response_type", "code")
             .queryParam("client_id", properties.clientId())
             .queryParam("redirect_uri", properties.redirectUrl())
             .toUriString();
@@ -52,8 +55,10 @@ public class KakaoApiService {
             .body(body)
             .exchange((request, response) -> {
                 if (response.getStatusCode().is4xxClientError()) {
-                    KakaoTokenFailResponse failResponse = objectMapper.readValue(response.getBody(), KakaoTokenFailResponse.class);
-                    throw new KakaoLoginException(failResponse.errorCode(), failResponse.errorDescription());
+                    KakaoTokenFailResponse failResponse = objectMapper.readValue(response.getBody(),
+                        KakaoTokenFailResponse.class);
+                    throw new KakaoLoginException(failResponse.errorCode(),
+                        failResponse.errorDescription());
                 }
 
                 return objectMapper.readValue(response.getBody(), KakaoTokenResponse.class);
@@ -68,7 +73,7 @@ public class KakaoApiService {
             .body(KakaoUserInfoResponse.class);
     }
 
-    public MessageResponse sendKakaoMessage(String accessToken, Orders order){
+    public MessageResponse sendKakaoMessage(String accessToken, Orders order) {
         String orderMessage = createOrderMessage(order);
         Link link = new Link("http://localhost:8080", "http://localhost:8080");
         TemplateObject templateObject = new TemplateObject("text", orderMessage, link);
@@ -81,6 +86,7 @@ public class KakaoApiService {
             .retrieve()
             .body(MessageResponse.class);
     }
+
     public String createOrderMessage(Orders order) {
         String messageTemplate = "[상품 주문]\n"
             + "상품명: %s\n"

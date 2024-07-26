@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
+
     private final OrderService orderService;
 
     public OrderController(OrderService orderService) {
@@ -22,7 +23,8 @@ public class OrderController {
     }
 
     @PostMapping()
-    public ResponseEntity<OrderResponse> createOrder(@LoginMember Member member, @RequestBody OrderRequest orderRequest){
+    public ResponseEntity<OrderResponse> createOrder(@LoginMember Member member,
+        @RequestBody OrderRequest orderRequest) {
         OrderResponse response = orderService.createOrder(member, orderRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(response);

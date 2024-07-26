@@ -11,8 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WishRepository extends JpaRepository<Wish, Long> {
+
     Page<Wish> findAllByMember(Member member, Pageable pageable);
+
     Optional<Wish> findByProductAndMember(Product product, Member member);
+
     void deleteByProduct(Product product);
 }
 
