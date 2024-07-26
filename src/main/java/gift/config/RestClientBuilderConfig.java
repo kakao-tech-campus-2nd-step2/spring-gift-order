@@ -6,8 +6,10 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
+import java.time.Duration;
+
 @Configuration
-public class RestClientBuilderConfiguration {
+public class RestClientBuilderConfig {
 
     @Bean
     public RestClient.Builder restClientBuilder() {
@@ -16,9 +18,22 @@ public class RestClientBuilderConfiguration {
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
+        System.out.println("??");
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(1000);
-        factory.setReadTimeout(1000);
+        factory.setConnectTimeout(Duration.ofMillis(2000));
+        factory.setReadTimeout(Duration.ofMillis(2000));
+
         return factory;
     }
+
+//    @Bean
+//    public RestClient restClient(RestClient.Builder builder) {
+//        return builder.build();
+//    }
+//
+//    @Bean
+//    public RestClientCustomizer restClientCustomizer() {
+//        return (restClientBuilder) -> restClientBuilder
+//                .requestFactory(getClientHttpRequestFactory());
+//    }
 }
