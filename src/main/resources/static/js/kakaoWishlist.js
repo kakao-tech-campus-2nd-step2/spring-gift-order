@@ -7,7 +7,7 @@ document.getElementById('select-all').addEventListener('change', function(e) {
 });
 
 document.getElementById('add-wish-option').addEventListener('click', function(event) {
-    fetch(`/wishes/addWishProduct`, {
+    fetch(`/kakao/wishes/addWishOption`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
