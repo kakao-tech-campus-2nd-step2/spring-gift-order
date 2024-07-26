@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.config.KakaoProperties;
+import gift.domain.KakaoAccount;
 import gift.domain.Member;
 import gift.dto.TokenResponse;
 import gift.service.KakaoLoginService;
@@ -29,11 +29,12 @@ public class KakaoController {
             String accessToken = kakaoLoginService.getAccessToken(code);
             Map<String, Object> userInfo = kakaoLoginService.getUserInfo(accessToken);
 
-            Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
-            String email = null;
-            if (kakaoAccount != null) {
-                email = "kakao_" + userInfo.get("id") + "@kakao.com";
-            }
+//            KakaoAccount kakaoAccount = new KakaoAccount((Map<String, Object>) userInfo.get("kakao_account"));
+
+            String email = "kakao_" + userInfo.get("id") + "@kakao.com";;
+//            if (kakaoAccount != null) {
+//                email = "kakao_" + userInfo.get("id") + "@kakao.com";
+//            }
 
             Member member = memberService.findByEmail(email);
 

@@ -13,6 +13,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
+    private final SecureRandom random = new SecureRandom();
 
     public MemberService(MemberRepository memberRepository, JwtService jwtService) {
         this.memberRepository = memberRepository;
@@ -50,7 +51,6 @@ public class MemberService {
     }
 
     public String generateTemporaryPassword() {
-        SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[24];
         random.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
