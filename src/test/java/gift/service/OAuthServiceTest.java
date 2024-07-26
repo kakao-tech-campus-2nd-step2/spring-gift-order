@@ -1,10 +1,8 @@
 package gift.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.dto.KakaoProperties;
-import gift.dto.LoginResponse;
+import gift.dto.kakao.KakaoProperties;
 import gift.dto.OAuthLoginRequest;
-import gift.jwt.JwtUtil;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -45,7 +41,7 @@ public class OAuthServiceTest {
     @Test
     @DisplayName("카카오 로그인 회원 가입 성공")
     void oauth_회원가입_성공() {
-        OAuthLoginRequest request = new OAuthLoginRequest("kakao_test_id");
+        OAuthLoginRequest request = new OAuthLoginRequest("kakao_test_id", "access_token");
         Member member = new Member(request.id(), "password");
 
         when(memberRepository.save(any(Member.class))).thenReturn(member);
