@@ -1,19 +1,9 @@
 package gift.dto;
 
-public class CreateOrderDto {
-    private Long member_id;
-    private Long product_id;
+public class OrderRequest {
     private Long option_id;
-    private Integer quantity;
+    private int quantity;
     private String message;
-
-    public Long getMemberId() {
-        return member_id;
-    }
-
-    public Long getProductId() {
-        return product_id;
-    }
 
     public Long getOptionId() {
         return option_id;
