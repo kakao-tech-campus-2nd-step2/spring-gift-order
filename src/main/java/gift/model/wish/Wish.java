@@ -21,7 +21,7 @@ public class Wish {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action= OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "gift_id")
     @NotNull
     private Gift gift;

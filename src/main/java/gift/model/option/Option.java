@@ -2,9 +2,8 @@ package gift.model.option;
 
 import gift.model.gift.Gift;
 import jakarta.persistence.*;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "gift_option")

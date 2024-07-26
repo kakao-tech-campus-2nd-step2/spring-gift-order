@@ -16,6 +16,7 @@ public class UserRequest {
             return new User(this.email, this.password, LoginType.DEFAULT);
         }
     }
+
     @Schema(description = "유저 로그인 request")
     public record Check(
             @Schema(description = "이메일", example = "example@example.com")

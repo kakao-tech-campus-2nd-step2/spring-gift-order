@@ -2,7 +2,6 @@ package gift.model.gift;
 
 import gift.model.category.Category;
 import gift.model.option.Option;
-import gift.model.wish.Wish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
