@@ -1,6 +1,7 @@
 package gift.entity;
 
 import gift.domain.ProductDTO;
+import gift.service.ProductService;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +44,16 @@ public class ProductEntity {
     private List<OptionEntity> options;
 
     public ProductEntity() {}
+
+    public ProductEntity(Long id, String name, int price, String imageUrl,
+        CategoryEntity categoryEntity, List<OptionEntity> options) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = categoryEntity;
+        this.options = options;
+    }
 
     public ProductEntity(Long id, String name, int price, String imageUrl, CategoryEntity category) {
         this.id = id;
