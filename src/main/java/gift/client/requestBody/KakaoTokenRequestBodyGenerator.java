@@ -15,8 +15,6 @@ public class KakaoTokenRequestBodyGenerator {
 
     private String code;
 
-
-
     public void setCode(String code) {
         this.code = code;
     }
@@ -26,7 +24,7 @@ public class KakaoTokenRequestBodyGenerator {
         params.add("grant_type", GRANT_TYPE);
         params.add("redirect_uri", REDIRECT_URI);
         params.add("code", code);
-        params.add("client_id",clientId);
+        params.add("client_id", clientId);
 
         return params;
     }

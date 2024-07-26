@@ -17,17 +17,16 @@ import static org.mockito.Mockito.when;
 
 @MockitoSettings
 class OrderControllerTest {
+    @InjectMocks
+    OrderController orderController;
     @Mock
     private OptionService optionService;
     @Mock
-    private   WishService wishService;
+    private WishService wishService;
     @Mock
     private KakaoApiService kakaoApiService;
     @Mock
-    private   OrderService orderService;
-
-    @InjectMocks
-    OrderController orderController;
+    private OrderService orderService;
 
     @Test
     void order() {

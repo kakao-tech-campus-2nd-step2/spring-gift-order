@@ -13,9 +13,8 @@ import java.util.logging.Logger;
 @Component
 public class KakaoMessageRequestBodyGenerator {
 
-    private String message;
-
     private final ObjectMapper objectMapper;
+    private String message;
 
     public KakaoMessageRequestBodyGenerator(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

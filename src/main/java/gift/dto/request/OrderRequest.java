@@ -8,7 +8,7 @@ public record OrderRequest(
         Long optionId,
         @NotNull(message = "주문할 수량을 입력해주세요.")
         Integer quantity,
-        @Size(max = 200,message = "최대 200자까지 메세지에 입력가능합니다.")
+        @Size(max = 200, message = "최대 200자까지 메세지에 입력가능합니다.")
         String message
 ) {
 }
