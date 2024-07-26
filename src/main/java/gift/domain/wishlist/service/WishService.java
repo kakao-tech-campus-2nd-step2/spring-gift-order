@@ -9,6 +9,7 @@ import gift.domain.product.repository.ProductRepository;
 import gift.domain.wishlist.dto.WishRequest;
 import gift.domain.wishlist.dto.WishResponse;
 import gift.domain.wishlist.entity.Wish;
+import gift.domain.wishlist.exception.WishDuplicateException;
 import gift.domain.wishlist.exception.WishNotFoundException;
 import gift.domain.wishlist.repository.WishRepository;
 
@@ -44,7 +45,14 @@ public class WishService {
 
     @Transactional
     public WishResponse createWish(WishRequest wishRequest) {
-        Wish wish = DtoToEntity(wishRequest);
+        Member member = memberRepository.findById(wishRequest.getMemberId()).orElseThrow(()-> new MemberNotFoundException("해당 유저가 존재하지 않습니다."));
+        Product product = productRepository.findById(wishRequest.getProductId()).orElseThrow(()-> new ProductNotFoundException("해당 상품이 존재하지 않습니다."));
+
+        if (wishRepository.findByProductAndMember(product, member).isPresent()){
+            throw new WishDuplicateException("중복된 위시리스트 입니다.");
+        }
+
+        Wish wish = new Wish(member, product);
         wish.getMember().addWish(wish);
         return entityToDto(wishRepository.save(wish));
     }
@@ -53,7 +61,7 @@ public class WishService {
     public void deleteWish(Long id, Member member) {
         Wish wish = wishRepository
             .findById(id)
-            .orElseThrow(() -> new WishNotFoundException("not found entity"));
+            .orElseThrow(() -> new WishNotFoundException("해당 위시리스트가 존재하지 않습니다."));
 
         if (wish.getMember().getId().equals(member.getId())) {
             wish.getMember().removeWish(wish);
@@ -64,17 +72,5 @@ public class WishService {
     private WishResponse entityToDto(Wish wish) {
         return new WishResponse(wish.getId(), wish.getMember().getId(),
             wish.getProduct().getId());
-    }
-
-    private Wish DtoToEntity(WishRequest wishRequest) {
-        Member member = memberRepository
-            .findById(wishRequest.getMemberId())
-            .orElseThrow(() -> new MemberNotFoundException("해당하는 멤버가 존재하지 않습니다."));
-
-        Product product = productRepository
-            .findById(wishRequest.getProductId())
-            .orElseThrow(() -> new ProductNotFoundException("해당하는 상품이 존재하지 않습니다."));
-
-        return new Wish(member, product);
     }
 }
