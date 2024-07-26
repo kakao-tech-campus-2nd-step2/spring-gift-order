@@ -43,5 +43,6 @@ public class KakaoController {
     public ResponseEntity<?> token(@RequestParam("code") String code) {
         Map<String, Object> responseBody = new HashMap<>();
         KakaoTokenResponseDto kakaoTokenResponseDto = kakaoService.getAccessTokenFromKakao(code);
+        KakaoMember kakaoMember = kakaoService.getKakaoProfile(kakaoTokenResponseDto);
     }
 }

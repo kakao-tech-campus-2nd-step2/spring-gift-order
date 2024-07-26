@@ -43,6 +43,21 @@ public class KakaoService {
             .retrieve() //요청을 보내고 응답을 가져오는 메서드, 실질적은 요청은 여기에서 일어남
             .toEntity(KakaoTokenResponseDto.class) // 요청을 어떤 엔티티로 바꿀지 등록하는 부분
             .getBody();
-        
+
     }
 
+    public KakaoMember getKakaoProfile(KakaoTokenResponseDto tokenResponse) {
+        KakaoProfile kakaoProfile = restClient.post()
+            .uri("https://kapi.kakao.com/v2/user/me")
+            .contentType(CONTENT_TYPE)
+            .header(AUTHORIZATION, BEARER + tokenResponse.accessToken)
+            .retrieve()
+            .toEntity(KakaoProfile.class)
+            .getBody();
+
+        System.out.println("kakaoProfile = " + kakaoProfile);
+        return new KakaoMember(kakaoProfile, "password");
+
+    }
+
+}
