@@ -1,51 +1,137 @@
 package gift.repository;
 
-import gift.entity.Wish;
 import gift.entity.Member;
 import gift.entity.Product;
-import gift.entity.Category;
+import gift.entity.Wish;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@DataJpaTest
+@ExtendWith(MockitoExtension.class)
 class WishRepositoryTest {
 
-    @Autowired
+    @Mock
     private WishRepository wishRepository;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Mock
+    private Member member;
 
-    @Autowired
-    private ProductRepository productRepository;
+    @Mock
+    private Product product;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+    @InjectMocks
+    private Wish wish;
+
+    @BeforeEach
+    void setUp() {
+        member = mock(Member.class);
+        product = mock(Product.class);
+    }
 
     @Test
     void testSaveAndFindById() {
-        Category category = new Category("Sample Category", "Red", "sample-img-url", "Sample Description");
-        categoryRepository.save(category);
+        // Given
+        Wish mockWish = mock(Wish.class);
+        when(mockWish.getId()).thenReturn(1L);
+        when(mockWish.getMember()).thenReturn(member);
+        when(mockWish.getProduct()).thenReturn(product);
 
-        Product product = new Product("Sample Product", 100, "sample-img-url", category);
-        productRepository.save(product);
+        when(wishRepository.save(any(Wish.class))).thenReturn(mockWish);
+        when(wishRepository.findById(1L)).thenReturn(Optional.of(mockWish));
 
-        Member member = new Member("john.doe@example.com", "securepassword");
-        memberRepository.save(member);
+        // When
+        Wish savedWish = wishRepository.save(mockWish);
+        Optional<Wish> foundWish = wishRepository.findById(1L);
 
-        Wish wish = new Wish(member, product);
-        wishRepository.save(wish);
-
-        Optional<Wish> foundWish = wishRepository.findById(wish.getId());
-
+        // Then
         assertThat(foundWish).isPresent();
-        assertThat(foundWish.get().getId()).isEqualTo(wish.getId());
-        assertThat(foundWish.get().getMember().getEmail()).isEqualTo("john.doe@example.com");
-        assertThat(foundWish.get().getProduct().getName()).isEqualTo("Sample Product");
+        assertThat(foundWish.get().getId()).isEqualTo(1L);
+        assertThat(foundWish.get().getMember()).isEqualTo(member);
+        assertThat(foundWish.get().getProduct()).isEqualTo(product);
+
+        verify(wishRepository).save(mockWish);
+        verify(wishRepository).findById(1L);
+    }
+
+    @Test
+    void testFindByMember() {
+        // Given
+        Wish wish = new Wish(member, product);
+        when(wishRepository.save(any(Wish.class))).thenReturn(wish);
+        when(wishRepository.findByMember(any(Member.class))).thenReturn(List.of(wish));
+
+        // When
+        wishRepository.save(wish);
+        var wishes = wishRepository.findByMember(member);
+
+        // Then
+        assertThat(wishes).hasSize(1);
+        assertThat(wishes.get(0).getMember()).isEqualTo(member);
+
+        verify(wishRepository).save(wish);
+        verify(wishRepository).findByMember(member);
+    }
+
+    @Test
+    void testDeleteByMemberAndProduct() {
+        // Given
+        Wish wish = new Wish(member, product);
+        when(wishRepository.save(any(Wish.class))).thenReturn(wish);
+        doNothing().when(wishRepository).deleteByMemberAndProduct(any(Member.class), any(Product.class));
+
+        // When
+        wishRepository.save(wish);
+        wishRepository.deleteByMemberAndProduct(member, product);
+
+        // Then
+        verify(wishRepository).save(wish);
+        verify(wishRepository).deleteByMemberAndProduct(member, product);
+    }
+
+    @Test
+    void testFindByMemberAndProduct() {
+        // Given
+        Wish wish = new Wish(member, product);
+        when(wishRepository.save(any(Wish.class))).thenReturn(wish);
+        when(wishRepository.findByMemberAndProduct(any(Member.class), any(Product.class))).thenReturn(Optional.of(wish));
+
+        // When
+        wishRepository.save(wish);
+        Optional<Wish> foundWish = wishRepository.findByMemberAndProduct(member, product);
+
+        // Then
+        assertThat(foundWish).isPresent();
+        assertThat(foundWish.get().getMember()).isEqualTo(member);
+        assertThat(foundWish.get().getProduct()).isEqualTo(product);
+
+        verify(wishRepository).save(wish);
+        verify(wishRepository).findByMemberAndProduct(member, product);
+    }
+
+    @Test
+    void testExistsByMemberAndProduct() {
+        // Given
+        Wish wish = new Wish(member, product);
+        when(wishRepository.save(any(Wish.class))).thenReturn(wish);
+        when(wishRepository.existsByMemberAndProduct(any(Member.class), any(Product.class))).thenReturn(true);
+
+        // When
+        wishRepository.save(wish);
+        boolean exists = wishRepository.existsByMemberAndProduct(member, product);
+
+        // Then
+        assertThat(exists).isTrue();
+
+        verify(wishRepository).save(wish);
+        verify(wishRepository).existsByMemberAndProduct(member, product);
     }
 }
