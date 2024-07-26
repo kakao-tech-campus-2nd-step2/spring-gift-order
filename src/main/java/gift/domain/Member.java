@@ -30,7 +30,6 @@ public class Member {
         this.name = name;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -63,4 +62,5 @@ public class Member {
     public void setWishList(List<WishList> wishLists) {
         this.wishList = wishLists;
     }
+
 }

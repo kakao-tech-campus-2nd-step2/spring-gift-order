@@ -43,6 +43,7 @@ menu와 연관관계 매핑하기
 -> [X] CategoryServiceTest
 -> [O] JPAServiceTest
 
+
 -> [X] MenuControllerTest
 -> [X] MemberControllerTest
 -> [X] OptionControllerTest

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
 public class RestTemplateTest {
     private final RestTemplate client = new RestTemplateBuilder().build();
     @Value("${my.client_id}")
@@ -26,14 +25,11 @@ public class RestTemplateTest {
     private String code;
     @Test
     void test1() throws JsonProcessingException {
-        // 요청 URL
         var url = "https://kauth.kakao.com/oauth/token";
 
-        // 요청 헤더 설정
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
-        // 요청 바디 설정
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", client_id);
@@ -41,16 +37,11 @@ public class RestTemplateTest {
         body.add("code", code); // authorizationCode 값을 여기 넣으세요
         System.out.println(client_id);
 
-        // RequestEntity 객체 생성
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
-        // RestTemplate 인스턴스 생성
         RestTemplate restTemplate = new RestTemplate();
 
-        // 요청 보내기
         ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
-
-        // 응답 결과 출력
         System.out.println("Response: " + response.getBody());
         System.out.println(response.getBody().access_token());
         message(response.getBody().access_token());
@@ -75,19 +66,15 @@ public class RestTemplateTest {
         templateObject.put("link", link);
         templateObject.put("button_title", "바로 확인");
 
-        // 데이터 URL 인코딩
         String templateObjectJson = new ObjectMapper().writeValueAsString(templateObject);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("template_object", templateObjectJson);
-
-        // 요청 엔티티 생성
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
 
-        // RestTemplate을 통해 요청 보내기
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
-        // 응답 출력
         System.out.println("Response: " + response.getBody());
     }
+
 }
