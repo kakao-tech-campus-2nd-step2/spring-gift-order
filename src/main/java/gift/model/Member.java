@@ -112,4 +112,8 @@ public class Member {
     public void setKakaoId(String kakaoId) {
         this.kakaoId = kakaoId;
     }
+
+    public List<Wish> getWishList() {
+        return wishList;
+    }
 }
