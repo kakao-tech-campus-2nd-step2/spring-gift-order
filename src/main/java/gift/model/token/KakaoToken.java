@@ -18,6 +18,7 @@ public class KakaoToken {
     @NotNull
     private String accessToken;
 
+
     protected KakaoToken() {
     }
 
@@ -37,4 +38,5 @@ public class KakaoToken {
     public String getAccessToken() {
         return accessToken;
     }
+
 }

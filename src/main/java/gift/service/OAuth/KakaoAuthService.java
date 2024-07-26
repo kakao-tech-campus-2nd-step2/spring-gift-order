@@ -31,11 +31,10 @@ public class KakaoAuthService {
         return authUtil.createGetCodeUrl();
     }
 
-    public AuthTokenResponse getAccessToken(String authCode) {
-        return authUtil.getAccessToken(authCode);
-    }
 
-    public String register(String accessToken) {
+    public String register(String authCode) {
+        AuthTokenResponse tokenResponse = authUtil.getAccessToken(authCode);
+        String accessToken = tokenResponse.accessToken();
         String email = authUtil.extractUserEmail(accessToken);
 
         User user = userRepository.findByEmail(email).orElseGet(

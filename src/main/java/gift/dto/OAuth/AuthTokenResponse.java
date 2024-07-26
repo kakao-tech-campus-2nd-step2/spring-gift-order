@@ -1,19 +1,22 @@
 package gift.dto.OAuth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public record AuthTokenResponse(
 
-        @JsonProperty("access_token") String accessToken,
+        String accessToken,
 
-        @JsonProperty("token_type") String tokenType,
+        String tokenType,
 
-        @JsonProperty("refresh_token") String refreshToken,
+        String refreshToken,
 
-        @JsonProperty("expires_in") int expiresIn,
+        int expiresIn,
 
-        @JsonProperty("scope") String scope,
+        String scope,
 
-        @JsonProperty("refresh_token_expires_in") int refreshTokenExpiresIn
+        int refreshTokenExpiresIn
 ) {
 }

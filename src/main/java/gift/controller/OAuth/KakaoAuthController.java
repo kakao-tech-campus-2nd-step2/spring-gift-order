@@ -28,14 +28,8 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/auth")
-    public ResponseEntity<AuthTokenResponse> getAccessToken(@RequestParam String code) {
-        AuthTokenResponse accessTokenResponse = kakaoAuthService.getAccessToken(code);
-        return ResponseEntity.ok(accessTokenResponse);
-    }
-
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> register(@RequestParam String accessToken) {
-        String token = kakaoAuthService.register(accessToken);
+    public ResponseEntity<Map<String, String>> register(@RequestParam String code) {
+        String token = kakaoAuthService.register(code);
         return ResponseEntity.ok(Map.of("access_token", token));
     }
 }
