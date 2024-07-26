@@ -12,14 +12,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(unique = true, nullable = false)
 
+    @Column(unique = true)
     private String email;
-    @Column(nullable = false)
     private String password;
 
     @OneToMany(mappedBy = "user")
     List<WishList> wishlist = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    List<Order> orders = new ArrayList<>();
 
     public User() {
     }
@@ -33,6 +34,10 @@ public class User {
         return id;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -43,6 +48,14 @@ public class User {
 
     public void deleteWishlist(WishList wishList) {
         this.wishlist.remove(wishList);
+    }
+  
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
+
+    public void deleteOrder(Order order) {
+        this.orders.remove(order);
     }
 
 }
