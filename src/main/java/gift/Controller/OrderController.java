@@ -2,6 +2,7 @@ package gift.Controller;
 
 import gift.DTO.OrderDto;
 import gift.Service.OrderService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +20,9 @@ public class OrderController {
 
   //kakaoLoginUser 하기
   @PostMapping
-  public void orderOption(@RequestBody OrderDto orderDto) throws IllegalAccessException {
-    orderService.orderOption(orderDto);
+  public ResponseEntity<String> orderOption(@RequestBody OrderDto orderDto) throws IllegalAccessException {
+    String response = orderService.orderOption(orderDto);
+    return ResponseEntity.ok(response);
   }
 
 }

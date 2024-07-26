@@ -6,18 +6,12 @@ import gift.DTO.OrderDto;
 import gift.DTO.Product;
 import gift.DTO.ProductDto;
 import gift.DTO.WishList;
+import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import gift.Repository.ProductRepository;
 import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class OrderService {
@@ -26,22 +20,21 @@ public class OrderService {
   private ProductRepository productRepository;
   private WishListService wishListService;
   private KakaoJwtTokenRepository kakaoJwtTokenRepository;
-  private RestClient restClient = RestClient.builder().build();
-
-  private RestTemplate restTemplate;
+  private KakaoApi kakaoApi;
 
   private final String URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
   public OrderService(OptionService optionService, ProductRepository productRepository,
-    WishListService wishListService, KakaoJwtTokenRepository kakaoJwtTokenRepository) {
+    WishListService wishListService, KakaoJwtTokenRepository kakaoJwtTokenRepository,
+    KakaoApi kakaoApi) {
     this.optionService = optionService;
     this.productRepository = productRepository;
     this.wishListService = wishListService;
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;
+    this.kakaoApi = kakaoApi;
   }
 
-  public void orderOption(OrderDto orderDto) {
-    restTemplate=new RestTemplate();
+  public String orderOption(OrderDto orderDto) {
     OptionDto optionDto = orderDto.getOptionDto();
     optionService.optionQuantitySubtract(optionDto, orderDto.getQuantity());
 
@@ -56,34 +49,8 @@ public class OrderService {
     KakaoJwtToken kakaoJwtToken = kakaoJwtTokenRepository.findById(1L)
       .orElseThrow(() -> new EmptyResultDataAccessException("해당 데이터가 없습니다", 1));
 
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-    headers.setBearerAuth(kakaoJwtToken.getAccessToken());
-
-    String body = "template_object="+createTemplateObject(orderDto);
-    HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-    ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, requestEntity, String.class);
-
+    return kakaoApi.kakaoSendMe(orderDto,kakaoJwtToken,URL);
   }
 
-  private String createTemplateObject(OrderDto orderDto) {
-    return """
-      {
-      "object_type" : "feed",
-      "content" : {
-        "title" : "주문이 완료되었습니다.",
-        "image_url" : "imageUrl",
-        "description" : "상세설명입니다.",
-        "link" : {
-          }
-        },
-      "item_content":{
-        "items":[
-            {"item":"%s","item_op":"%d개"}
-          ] 
-        }
-      } 
-      """.formatted(orderDto.getOptionDto().getName(),orderDto.getQuantity());
-  }
+
 }

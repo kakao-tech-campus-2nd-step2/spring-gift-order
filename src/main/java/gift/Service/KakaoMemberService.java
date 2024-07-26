@@ -1,29 +1,25 @@
 package gift.Service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
-import gift.Exception.UnauthorizedException;
-import gift.KakaoLoginApi;
+import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.http.MediaType;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoMemberService {
 
   private KakaoJwtTokenRepository kakaoJwtTokenRepository;
-  private KakaoLoginApi kakaoLoginApi;
+  private KakaoApi kakaoApi;
   static Dotenv dotenv = Dotenv.configure().load();
   private static final String API_KEY = dotenv.get("API_KEY");
   private static final String URL = "https://kauth.kakao.com/oauth/token";
 
-  public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoLoginApi kakaoLoginApi) {
+  public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoApi kakaoApi) {
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;
-    this.kakaoLoginApi=kakaoLoginApi;
+    this.kakaoApi = kakaoApi;
   }
 
   public KakaoJwtToken getToken(String autuhorizationKey) {
@@ -34,7 +30,8 @@ public class KakaoMemberService {
     body.add("redirect_url", "http://localhost:8080");
     body.add("code", autuhorizationKey);
 
-    KakaoJwtToken kakaoJwtToken = kakaoLoginApi.kakaoLoginApiPost(URL, body);
+    KakaoJwtToken kakaoJwtToken = kakaoApi.kakaoLoginApiPost(URL, body);
+    kakaoJwtTokenRepository.save(kakaoJwtToken);
     return kakaoJwtToken;
 
   }

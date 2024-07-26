@@ -3,17 +3,24 @@ package gift;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
+import gift.DTO.OrderDto;
 import gift.Exception.UnauthorizedException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 @Component
-public class KakaoLoginApi {
-  RestClient restClient = RestClient.builder().build();
+public class KakaoApi {
 
-  public KakaoJwtToken kakaoLoginApiPost(String url, LinkedMultiValueMap<String,String> body){
+  RestClient restClient = RestClient.builder().build();
+  private RestTemplate restTemplate;
+
+  public KakaoJwtToken kakaoLoginApiPost(String url, LinkedMultiValueMap<String, String> body) {
     String response = restClient.post()
       .uri(url)
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -41,5 +48,38 @@ public class KakaoLoginApi {
       throw new UnauthorizedException(
         "KOE320 : 동일한 인가 코드를 두 번 이상 사용하거나, 이미 만료된 인가 코드를 사용한 경우, 혹은 인가 코드를 찾을 수 없는 경우입니다.");
     }
+  }
+
+  public String kakaoSendMe(OrderDto orderDto,KakaoJwtToken kakaoJwtToken, String url){
+    restTemplate=new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+    headers.setBearerAuth(kakaoJwtToken.getAccessToken());
+
+    String body = "template_object="+createTemplateObject(orderDto);
+    HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
+    String response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
+
+    return response;
+  }
+
+  public String createTemplateObject(OrderDto orderDto) {
+    return """
+      {
+      "object_type" : "feed",
+      "content" : {
+        "title" : "주문이 완료되었습니다.",
+        "image_url" : "imageUrl",
+        "description" : "상세설명입니다.",
+        "link" : {
+          }
+        },
+      "item_content":{
+        "items":[
+            {"item":"%s","item_op":"%d개"}
+          ] 
+        }
+      } 
+      """.formatted(orderDto.getOptionDto().getName(),orderDto.getQuantity());
   }
 }
