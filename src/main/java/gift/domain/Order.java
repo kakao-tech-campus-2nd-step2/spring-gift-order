@@ -19,6 +19,10 @@ public class Order {
 
     private LocalDateTime orderDateTime;
 
+    public Order() {
+
+    }
+
     public Order(Long optionId, Long quantity, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
