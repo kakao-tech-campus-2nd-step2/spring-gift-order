@@ -1,11 +1,17 @@
 package gift.oauth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.oauth.response.KakaoInfoResponse;
 import gift.oauth.response.KakaoTokenResponse;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
@@ -13,6 +19,7 @@ public class KakaoApiService {
 
     private final KakaoApiSecurityProperties kakaoApiSecurityProps;
     private final RestClient client;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public KakaoApiService(KakaoApiSecurityProperties kakaoApiSecurityProps,
         RestClient restClient) {
@@ -33,7 +40,6 @@ public class KakaoApiService {
         return response.getBody();
     }
 
-
     public Long getKakaoId(String token) {
         var uri = kakaoApiSecurityProps.getUserInfoUri();
         var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -42,6 +48,16 @@ public class KakaoApiService {
         return response.getBody().id();
     }
 
+    public void sendMessageToMe(String token, String text)
+        throws JsonProcessingException, UnsupportedEncodingException {
+        var uri = kakaoApiSecurityProps.getMemoSend();
+        var body = getSelfMessageRequestBody(text);
+        System.out.println(body);
+        var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
+            .retrieve().toEntity(String.class);
+    }
 
     public LinkedMultiValueMap<String, String> getTokenRequestBody(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
@@ -51,5 +67,20 @@ public class KakaoApiService {
         body.add("code", code);
         return body;
     }
+
+    public MultiValueMap<String, String> getSelfMessageRequestBody(String text)
+        throws JsonProcessingException{
+        Map<String, String> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", text);
+        templateObject.put("link",null);
+        templateObject.put("button_title","버튼");
+        var jsonTemplateObject = objectMapper.writeValueAsString(templateObject);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", jsonTemplateObject);
+        return body;
+    }
+
 
 }
