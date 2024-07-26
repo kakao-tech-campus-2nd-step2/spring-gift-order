@@ -52,7 +52,7 @@ public class OptionService {
     public OptionResponse subtractQuantity(Long id, int quantity) {
         Option option = optionRepository.findById(id)
             .orElseThrow(() -> new OptionNotFoundException("해당 옵션이 존재하지 않습니다."));
-        option.subtract(quantity);
+        option.subtractQuantity(quantity);
 
         return entityToDto(option);
     }
