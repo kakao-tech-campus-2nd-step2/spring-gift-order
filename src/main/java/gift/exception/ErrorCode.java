@@ -36,7 +36,20 @@ public enum ErrorCode {
     /* ProductService */
     DUPLICATE_OPTION("중복된 옵션입니다.", HttpStatus.CONFLICT),
     OPTION_NOT_FOUND("존재하지 않는 옵션입니다.", HttpStatus.NOT_FOUND),
-    AT_LEAST_ONE_OPTION_REQUIRED("상품에는 반드시 하나 이상의 옵션이 있어야 합니다.", HttpStatus.BAD_REQUEST);
+    AT_LEAST_ONE_OPTION_REQUIRED("상품에는 반드시 하나 이상의 옵션이 있어야 합니다.", HttpStatus.BAD_REQUEST),
+
+    /* KakaoLoginService */
+    KAKAO_TOKEN_ISSUANCE_FAILED("카카오 토큰 발급에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    KAKAO_USER_RETRIEVAL_FAILED("카카오 유저 정보 조회에 실패했습니다.", HttpStatus.BAD_REQUEST),
+    JSON_PARSING_FAILED("JSON 파싱에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    /* OrderService */
+    SEND_KAKAO_MESSAGE_FAILED("카카오톡 메시지 전송에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    JSON_PROCESSING_FAILED("JSON 처리에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    KAKAO_USER_ONLY("카카오 사용자만 주문할 수 있습니다.", HttpStatus.FORBIDDEN),
+
+    /* Outh2TokenService */
+    REFRESH_TOKEN_FAILED("토큰 갱신에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String message;
     private final HttpStatus status;

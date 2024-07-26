@@ -11,8 +11,9 @@ public class KakaoTokenInfoResponse {
     private String scope;
     private Integer refreshTokenExpiresIn;
 
-    public KakaoTokenInfoResponse(String accessToken) {
+    public KakaoTokenInfoResponse(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public KakaoTokenInfoResponse(@JsonProperty("access_token") String accessToken,
@@ -31,6 +32,10 @@ public class KakaoTokenInfoResponse {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
 }

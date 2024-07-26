@@ -16,13 +16,15 @@ public class Member {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
     private MemberRole role;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private SocialAccount socialAccount;
 
     @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
@@ -42,16 +44,22 @@ public class Member {
         return role;
     }
 
-    public List<Wish> getWishes() {
-        return wishes;
+    public SocialAccount getSocialAccount() {
+        return socialAccount;
     }
 
-    public Member(Long id, String name, String email, String password, MemberRole role) {
+    public Member(Long id, String name, String email, String password, MemberRole role, SocialAccount socialAccount) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.socialAccount = socialAccount;
+    }
+
+    public void setSocialAccount(SocialAccount socialAccount) {
+        socialAccount.setMember(this);
+        this.socialAccount = socialAccount;
     }
 
     public static class MemberBuilder {
@@ -60,6 +68,7 @@ public class Member {
         private String email;
         private String password;
         private MemberRole role;
+        private SocialAccount socialAccount;
 
         public MemberBuilder id(Long id) {
             this.id = id;
@@ -86,8 +95,13 @@ public class Member {
             return this;
         }
 
+        public MemberBuilder socialAccount(SocialAccount socialAccount) {
+            this.socialAccount = socialAccount;
+            return this;
+        }
+
         public Member build() {
-            return new Member(id, name, email, password, role);
+            return new Member(id, name, email, password, role, socialAccount);
         }
     }
 

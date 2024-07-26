@@ -30,7 +30,7 @@ public class Option {
     @Version
     private Long version;
 
-    protected Option() {
+    public Option() {
     }
 
     public Long getId() {
@@ -43,6 +43,10 @@ public class Option {
 
     public Long getQuantity() {
         return quantity;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public void setProduct(Product product) {
@@ -70,6 +74,10 @@ public class Option {
             throw new GiftException(ErrorCode.QUANTITY_CANNOT_BE_LESS_THAN_ZERO);
         }
         this.quantity -= quantity;
+    }
+
+    public void setQuantity(long quantity) {
+        this.quantity = quantity;
     }
 
 }

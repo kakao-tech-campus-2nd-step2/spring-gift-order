@@ -1,8 +1,8 @@
 package gift.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import gift.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,10 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @RestControllerAdvice
 public class ExceptionControllerAdvice {
 
@@ -23,7 +19,6 @@ public class ExceptionControllerAdvice {
 
     public ExceptionControllerAdvice(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -55,24 +50,37 @@ public class ExceptionControllerAdvice {
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    public ResponseEntity<KakaoErrorResponse> kakaoLoginException(HttpClientErrorException e) throws JsonProcessingException {
-        String json = extractJsonFromMessage(e.getMessage());
+    public ResponseEntity<KakaoErrorResponse> kakaoLoginException(HttpClientErrorException e) {
         HttpStatusCode statusCode = e.getStatusCode();
 
-        KakaoErrorResponse kakaoErrorResponse = objectMapper.readValue(json, KakaoErrorResponse.class);
+        String responseBody = extractResponseBody(e.getMessage());
+        JsonNode jsonNode = extractJsonFromMessage(responseBody);
+
+        String error = jsonNode.get("error").asText();
+        String errorDescription = jsonNode.get("error_description").asText();
+        String errorCode = jsonNode.get("error_code").asText();
+
+        KakaoErrorResponse kakaoErrorResponse = new KakaoErrorResponse(error, errorDescription, errorCode);
 
         return ResponseEntity.status(statusCode)
                 .body(kakaoErrorResponse);
     }
 
-    private String extractJsonFromMessage(String message) {
-        Pattern pattern = Pattern.compile("\\{.*?\\}");
-        Matcher matcher = pattern.matcher(message);
+    private String extractResponseBody(String message) {
+        int startIndex = message.indexOf('{');
+        int endIndex = message.lastIndexOf('}') + 1;
+        if (startIndex == -1 || endIndex == -1) {
+            throw new GiftException(ErrorCode.JSON_PARSING_FAILED);
+        }
+        return message.substring(startIndex, endIndex);
+    }
 
-        String jsonString = matcher.results()
-                .map(MatchResult::group)
-                .findFirst().orElse("{}");
-        return jsonString;
+    private JsonNode extractJsonFromMessage(String message) {
+        try {
+            return objectMapper.readTree(message);
+        } catch (JsonProcessingException e) {
+            throw new GiftException(ErrorCode.JSON_PARSING_FAILED);
+        }
     }
 
 }

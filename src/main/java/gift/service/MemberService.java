@@ -1,13 +1,16 @@
 package gift.service;
 
 import gift.config.JwtProvider;
+import gift.domain.member.SocialType;
 import gift.exception.ErrorCode;
 import gift.domain.member.Member;
 import gift.dto.MemberDto;
 import gift.exception.GiftException;
 import gift.repository.MemberRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class MemberService {
 
@@ -34,8 +37,15 @@ public class MemberService {
         return jwtProvider.create(member);
     }
 
+    @Transactional(readOnly = true)
     public Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
+                .orElseThrow(() -> new GiftException(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Member getMemberBySocialIdAndSocialType(Long socialId, SocialType socialType) {
+        return memberRepository.findBySocialAccount_SocialIdAndSocialAccount_SocialType(socialId, socialType)
                 .orElseThrow(() -> new GiftException(ErrorCode.MEMBER_NOT_FOUND));
     }
 

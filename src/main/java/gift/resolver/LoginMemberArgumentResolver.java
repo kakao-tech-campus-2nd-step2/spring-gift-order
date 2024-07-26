@@ -2,9 +2,12 @@ package gift.resolver;
 
 import gift.config.JwtProvider;
 import gift.config.LoginMember;
+import gift.domain.member.Member;
+import gift.domain.member.SocialType;
 import gift.exception.ErrorCode;
 import gift.exception.GiftException;
 import gift.service.MemberService;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -30,18 +33,35 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    public Object resolveArgument(MethodParameter parameter,
+                                  ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest,
+                                  WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        String token = authHeaderManager.extractToken(request);
+        String token = extractAndVerifyToken(request);
+        Claims claims = jwtProvider.getClaims(token);
 
+        Long memberId = Long.parseLong(claims.getSubject());
+        String socialType = claims.get("socialType", String.class);
+        Long socialId = claims.get("socialId", Long.class);
+
+        return resolveMember(memberId, socialType, socialId);
+    }
+
+    private String extractAndVerifyToken(HttpServletRequest request) {
+        String token = authHeaderManager.extractToken(request);
         if (!jwtProvider.isVerified(token)) {
             throw new GiftException(ErrorCode.INVALID_TOKEN);
         }
+        return token;
+    }
 
-        Long memberId = Long.parseLong(jwtProvider.getClaims(token).getSubject());
-
-        return memberService.getMember(memberId);
+    private Member resolveMember(Long memberId, String socialType, Long socialId) {
+        if (socialType == null || socialId == null) {
+            return memberService.getMember(memberId);
+        } else {
+            return memberService.getMemberBySocialIdAndSocialType(socialId, SocialType.valueOf(socialType));
+        }
     }
 
 }
