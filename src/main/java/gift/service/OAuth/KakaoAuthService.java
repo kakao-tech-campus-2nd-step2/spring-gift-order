@@ -48,9 +48,15 @@ public class KakaoAuthService {
     }
 
     private void saveKakaoAccessToken(String accessToken, String refreshToken, User user) {
-        KakaoToken kakaoToken = new KakaoToken(user, accessToken, refreshToken);
-        kakaoTokenRepository.findByUser(user).orElseGet(
-                () -> kakaoTokenRepository.save(kakaoToken)
+        kakaoTokenRepository.findByUser(user).ifPresentOrElse(
+                existingToken -> {
+                    existingToken.updateTokens(refreshToken, accessToken);
+                    kakaoTokenRepository.save(existingToken);
+                },
+                () -> {
+                    KakaoToken newToken = new KakaoToken(user, refreshToken, accessToken);
+                    kakaoTokenRepository.save(newToken);
+                }
         );
     }
 }

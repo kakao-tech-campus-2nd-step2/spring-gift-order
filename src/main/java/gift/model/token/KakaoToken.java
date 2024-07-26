@@ -45,4 +45,9 @@ public class KakaoToken {
     public String getRefreshToken() {
         return refreshToken;
     }
+
+    public void updateTokens(String refreshToken, String accessToken) {
+        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
+    }
 }
