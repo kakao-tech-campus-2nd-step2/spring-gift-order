@@ -1,6 +1,6 @@
 package gift;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
 import org.junit.jupiter.api.Test;
@@ -8,13 +8,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
+
 public class RestTemplateTest {
     private final RestTemplate client = new RestTemplateBuilder().build();
     @Value("${my.client_id}")
@@ -23,7 +25,7 @@ public class RestTemplateTest {
     @Value("${my.code}")
     private String code;
     @Test
-    void test1(){
+    void test1() throws JsonProcessingException {
         // 요청 URL
         var url = "https://kauth.kakao.com/oauth/token";
 
@@ -51,13 +53,41 @@ public class RestTemplateTest {
         // 응답 결과 출력
         System.out.println("Response: " + response.getBody());
         System.out.println(response.getBody().access_token());
+        message(response.getBody().access_token());
 
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        JsonNode rootNode = objectMapper.readTree(response.getBody());
-//
-//        // 특정 값 추출 (예: access_token)
-//        String accessToken = rootNode.path("access_token").asText();
-//        System.out.println("Access Token: " + accessToken);
 
+    }
+
+    void message(String token) throws JsonProcessingException {
+        var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        var headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.add("Authorization","Bearer " + token);
+
+        Map<String, Object> link = new HashMap<>();
+        link.put("web_url", "https://developers.kakao.com");
+        link.put("mobile_web_url", "https://developers.kakao.com");
+
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", "텍스트 영역입니다. 최대 200자 표시 가능합니다.");
+        templateObject.put("link", link);
+        templateObject.put("button_title", "바로 확인");
+
+        // 데이터 URL 인코딩
+        String templateObjectJson = new ObjectMapper().writeValueAsString(templateObject);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObjectJson);
+
+        // 요청 엔티티 생성
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        // RestTemplate을 통해 요청 보내기
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+
+        // 응답 출력
+        System.out.println("Response: " + response.getBody());
     }
 }

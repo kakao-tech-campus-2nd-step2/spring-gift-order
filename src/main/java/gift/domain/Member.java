@@ -61,4 +61,7 @@ public class Member {
         return Objects.hash(id);
     }
 
+    public void setWishList(List<WishList> wishLists) {
+        this.wishList = wishLists;
+    }
 }

@@ -101,7 +101,4 @@ public class KakaoService {
         return memberRepository.save(member);
     }
 
-//    public MemberResponse mapMemberToMemberResponse(Member member){
-//        return new MemberResponse(member.g)
-//    }
 }
