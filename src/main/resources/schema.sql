@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS categories
+CREATE TABLE categories
 (
     id            BIGINT AUTO_INCREMENT NOT NULL,
     name          VARCHAR(255)          NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS categories
     CONSTRAINT pk_categories PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS members
+CREATE TABLE members
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     member_type VARCHAR(255)          NULL,
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS members
     CONSTRAINT pk_members PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS options
+CREATE TABLE options
 (
     id         BIGINT AUTO_INCREMENT NOT NULL,
     product_id BIGINT                NULL,
@@ -27,7 +27,16 @@ CREATE TABLE IF NOT EXISTS options
     CONSTRAINT pk_options PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS products
+CREATE TABLE orders
+(
+    id         BIGINT AUTO_INCREMENT NOT NULL,
+    product_id BIGINT                NULL,
+    name       VARCHAR(255)          NULL,
+    count      BIGINT                NULL,
+    CONSTRAINT pk_orders PRIMARY KEY (id)
+);
+
+CREATE TABLE products
 (
     id          BIGINT AUTO_INCREMENT NOT NULL,
     category_id BIGINT                NULL,
@@ -37,7 +46,7 @@ CREATE TABLE IF NOT EXISTS products
     CONSTRAINT pk_products PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS wishes
+CREATE TABLE wishes
 (
     id            BIGINT AUTO_INCREMENT NOT NULL,
     member_id     BIGINT                NULL,
@@ -55,8 +64,14 @@ ALTER TABLE members
 ALTER TABLE options
     ADD CONSTRAINT uc_options_name UNIQUE (name);
 
+ALTER TABLE orders
+    ADD CONSTRAINT uc_orders_name UNIQUE (name);
+
 ALTER TABLE options
     ADD CONSTRAINT FK_OPTIONS_ON_PRODUCT FOREIGN KEY (product_id) REFERENCES products (id);
+
+ALTER TABLE orders
+    ADD CONSTRAINT FK_ORDERS_ON_PRODUCT FOREIGN KEY (product_id) REFERENCES products (id);
 
 ALTER TABLE products
     ADD CONSTRAINT FK_PRODUCTS_ON_CATEGORY FOREIGN KEY (category_id) REFERENCES categories (id);
