@@ -1,6 +1,6 @@
 package gift.dto.response;
 
-public record TokenResponse(
+public record JwtTokenResponse(
         String token
 ) {
 }
