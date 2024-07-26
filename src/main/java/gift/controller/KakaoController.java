@@ -5,6 +5,8 @@ import gift.PasswordEncoder;
 import gift.model.User;
 import gift.service.KakaoService;
 import gift.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,8 +16,8 @@ import org.springframework.web.servlet.view.RedirectView;
 
 
 @Controller
+@Tag(name = "Kakao Integration", description = "APIs for Kakao integration")
 public class KakaoController {
-
 
     private final KakaoProperties kakaoProperties;
     private final KakaoService kakaoService;
@@ -28,12 +30,14 @@ public class KakaoController {
     }
 
     @GetMapping("/kakao/login")
+    @Operation(summary = "Kakao Login", description = "This API redirects the user to the Kakao login page.")
     public RedirectView kakaoLogin() {
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + kakaoProperties.getClientId() + "&redirect_uri=" + kakaoProperties.getRedirectUri() + "&scope=account_email";
         return new RedirectView(url);
     }
 
     @GetMapping("/kakao/callback")
+    @Operation(summary = "Kakao Callback", description = "This API handles the Kakao login callback and retrieves the access token and user email.")
     public ResponseEntity<String> kakaoCallback(@RequestParam("code") String authorizationCode, HttpSession session) {
         String accessToken = kakaoService.getAccessToken(authorizationCode);
         String email = kakaoService.getUserEmail(accessToken);
@@ -41,13 +45,12 @@ public class KakaoController {
         session.setAttribute("accessToken", accessToken);
         session.setAttribute("email", email);
 
-
         User user = userService.findByEmail(email);
         if (user == null) {
             user = new User(null, email, PasswordEncoder.encode("1234"));
             userService.save(user);
         }
 
-        return ResponseEntity.ok("Login successful: "+accessToken);
+        return ResponseEntity.ok("Login successful: " + accessToken);
     }
 }

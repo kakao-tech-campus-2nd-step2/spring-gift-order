@@ -6,12 +6,14 @@ import gift.dto.ProductDTO;
 import gift.service.CategoryService;
 import gift.service.OptionService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/products")
 @Validated
+@Tag(name = "Product Management", description = "APIs for managing products")
 public class ProductController {
 
     private final ProductService productService;
@@ -42,6 +45,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "Get all products", description = "This API retrieves all products with pagination.")
     public String allProducts(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") @Min(1) @Max(30) int size,
@@ -62,6 +66,7 @@ public class ProductController {
     }
 
     @GetMapping("/add")
+    @Operation(summary = "Get add product form", description = "This API returns the form to add a new product.")
     public String addProductForm(Model model) {
         model.addAttribute("product", new ProductDTO());
         model.addAttribute("categories", categoryService.findAllCategories());
@@ -69,6 +74,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "Add a new product", description = "This API adds a new product.")
     public String addProduct(@Valid @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAllCategories());
@@ -79,6 +85,7 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
+    @Operation(summary = "Get edit product form", description = "This API returns the form to edit an existing product.")
     public String editProductForm(@PathVariable Long id, Model model) {
         Optional<ProductDTO> productDTO = productService.findProductById(id);
         if (productDTO.isEmpty()) {
@@ -90,6 +97,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing product", description = "This API updates an existing product.")
     public String updateProduct(@Valid @ModelAttribute("product") ProductDTO productDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAllCategories());
@@ -100,12 +108,14 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product", description = "This API deletes an existing product.")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/admin/products";
     }
 
     @GetMapping("/{id}/options")
+    @Operation(summary = "Manage product options", description = "This API returns the form to manage options for a product.")
     public String manageProductOptions(@PathVariable Long id, Model model) {
         ProductDTO productDTO = productService.findProductById(id)
             .orElseThrow(() -> new IllegalArgumentException("Product not found"));
@@ -122,6 +132,7 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/options")
+    @Operation(summary = "Update product options", description = "This API updates the options for a product.")
     public String updateProductOptions(@PathVariable Long id, @RequestParam List<Long> optionIds) {
         productService.updateProductOptions(id, optionIds);
         return "redirect:/admin/products";
