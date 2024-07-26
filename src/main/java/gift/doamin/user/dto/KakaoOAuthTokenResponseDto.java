@@ -17,23 +17,23 @@ public class KakaoOAuthTokenResponseDto {
         this.refresh_token_expires_in = refresh_token_expires_in;
     }
 
-    public String getToken_type() {
+    public String getTokenType() {
         return token_type;
     }
 
-    public String getAccess_token() {
+    public String getAccessToken() {
         return access_token;
     }
 
-    public String getExpires_in() {
+    public String getExpiresIn() {
         return expires_in;
     }
 
-    public String getRefresh_token() {
+    public String getRefreshToken() {
         return refresh_token;
     }
 
-    public String getRefresh_token_expires_in() {
+    public String getRefreshTokenExpiresIn() {
         return refresh_token_expires_in;
     }
 }

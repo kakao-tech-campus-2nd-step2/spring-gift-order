@@ -27,6 +27,11 @@ public class JwtProvider {
             .compact();
     }
 
+    public String generateRefreshToken() {
+
+        return null;
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser()

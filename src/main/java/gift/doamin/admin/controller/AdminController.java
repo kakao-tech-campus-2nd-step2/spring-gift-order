@@ -18,7 +18,8 @@ public class AdminController {
     }
 
     @GetMapping("/admin")
-    public ModelAndView showAdminPage(@RequestParam(defaultValue = "1", name = "page") int pageNum) {
+    public ModelAndView showAdminPage(
+        @RequestParam(defaultValue = "1", name = "page") int pageNum) {
         Page<ProductParam> page = productService.getPage(pageNum - 1);
         int lastPage = Math.max(1, page.getTotalPages());
 

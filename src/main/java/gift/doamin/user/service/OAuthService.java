@@ -3,9 +3,14 @@ package gift.doamin.user.service;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import gift.doamin.user.dto.KakaoOAuthTokenResponseDto;
+import gift.doamin.user.dto.KakaoOAuthUserInfoResponseDto;
+import gift.doamin.user.entity.User;
+import gift.doamin.user.entity.UserRole;
 import gift.doamin.user.properties.KakaoClientProperties;
 import gift.doamin.user.properties.KakaoProviderProperties;
+import gift.doamin.user.repository.JpaUserRepository;
 import gift.doamin.user.util.AuthorizationOAuthUriBuilder;
+import gift.global.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,11 +22,16 @@ public class OAuthService {
 
     private final KakaoClientProperties clientProperties;
     private final KakaoProviderProperties providerProperties;
+    private final JpaUserRepository userRepository;
+    private final JwtProvider jwtProvider;
 
     public OAuthService(KakaoClientProperties clientProperties,
-        KakaoProviderProperties providerProperties) {
+        KakaoProviderProperties providerProperties, JpaUserRepository userRepository,
+        JwtProvider jwtProvider) {
         this.clientProperties = clientProperties;
         this.providerProperties = providerProperties;
+        this.userRepository = userRepository;
+        this.jwtProvider = jwtProvider;
     }
 
     public String getAuthUrl() {
@@ -50,6 +60,27 @@ public class OAuthService {
             .retrieve()
             .toEntity(KakaoOAuthTokenResponseDto.class);
 
-        return entity.getBody().getAccess_token();
+        return entity.getBody().getAccessToken();
+    }
+
+    public String authenticate(String access_token) {
+        RestClient restClient = RestClient.builder().build();
+
+        ResponseEntity<KakaoOAuthUserInfoResponseDto> entity = restClient.get()
+            .uri(providerProperties.userInfoUri())
+            .header("Authorization", "Bearer " + access_token)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .retrieve()
+            .toEntity(KakaoOAuthUserInfoResponseDto.class);
+
+        Long id = entity.getBody().getId();
+        String nickname = entity.getBody().getProperties().get("nickname");
+        String email = id + "@kakao.oauth";
+
+        if (!userRepository.existsByEmail(email)) {
+            userRepository.save(new User(email, id.toString(), nickname, UserRole.USER));
+        }
+
+        return jwtProvider.generateRefreshToken();
     }
 }

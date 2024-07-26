@@ -1,9 +1,6 @@
 package gift.doamin.user.controller;
 
-import gift.doamin.user.properties.KakaoClientProperties;
-import gift.doamin.user.properties.KakaoProviderProperties;
 import gift.doamin.user.service.OAuthService;
-import gift.doamin.user.util.AuthorizationOAuthUriBuilder;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +26,9 @@ public class OAuthController {
 
     @GetMapping("login/oauth2/code/kakao")
     public ResponseEntity<Void> kakaoLogin(@RequestParam(name = "code") String authorizeCode) {
-        String access_token = oAuthService.getAccessToken(authorizeCode);
+        String kakaoAccessToken = oAuthService.getAccessToken(authorizeCode);
+        String myRefreshToken = oAuthService.authenticate(kakaoAccessToken);
+        System.out.println("myRefreshToken = " + myRefreshToken);
         return null;
     }
 
