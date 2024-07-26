@@ -65,6 +65,10 @@ public class WishList {
         return count;
     }
 
+    public KakaoUser getKakaouser() {
+        return kakaouser;
+    }
+
     public void setUser(User user) {
         this.user = user;
     }
@@ -79,5 +83,9 @@ public class WishList {
 
     public void setCount(long count) {
         this.count = count;
+    }
+
+    public void setKakaouser(KakaoUser kakaouser) {
+        this.kakaouser = kakaouser;
     }
 }
