@@ -2,6 +2,8 @@ package gift.service;
 
 import gift.model.KakaoTokenDTO;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +16,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class KakaoLoginService {
+public class KakaoApiService {
+
     private final RestTemplate restTemplate;
     @Value("${kakao.client-id}")
     private String clientId;
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
-    public KakaoLoginService(RestTemplate restTemplate) {
+
+    public KakaoApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -49,5 +53,30 @@ public class KakaoLoginService {
             return null;
         }
         return responseBody.access_token();
+    }
+
+    public String getKakaoProfileNickname(String accessToken) {
+        String url = "https://kapi.kakao.com/v2/user/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        HttpEntity<?> request = new HttpEntity<>(headers);
+
+        ResponseEntity<HashMap> response = restTemplate.exchange(
+            URI.create(url),
+            HttpMethod.GET,
+            request,
+            HashMap.class
+        );
+
+        if (response != null && response.getBody() != null) {
+            Map<String, Object> responseBody = response.getBody();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) responseBody.get(
+                "kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            return (String) profile.get("nickname");
+        }
+        return null;
     }
 }

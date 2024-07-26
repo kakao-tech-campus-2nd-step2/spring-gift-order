@@ -1,9 +1,8 @@
 package gift.argumentresolver;
 
 import gift.exception.UnauthorizedException;
-import gift.model.AuthInfo;
 import gift.model.KakaoAuthInfo;
-import gift.service.KakaoLoginService;
+import gift.service.KakaoApiService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -12,9 +11,9 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class KakaoAuthArgumentResolver implements HandlerMethodArgumentResolver {
-    private final KakaoLoginService kakaoLoginService;
-    public KakaoAuthArgumentResolver(KakaoLoginService kakaoLoginService) {
-        this.kakaoLoginService = kakaoLoginService;
+    private final KakaoApiService kakaoApiService;
+    public KakaoAuthArgumentResolver(KakaoApiService kakaoApiService) {
+        this.kakaoApiService = kakaoApiService;
     }
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
