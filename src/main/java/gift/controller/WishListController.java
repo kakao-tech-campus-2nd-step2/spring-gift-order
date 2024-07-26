@@ -27,8 +27,8 @@ public class WishListController {
 
     @GetMapping
     public String getWishlist(@LoginUser User user, Model model, @PageableDefault(size = 3) Pageable pageable) {
-        WishPageResponseDTO wishProducts = wishService.getWishlist(user.getId(), pageable);
-        model.addAttribute("wishProducts", wishProducts);
+        WishPageResponseDTO wishOptions = wishService.getWishlist(user.getId(), pageable);
+        model.addAttribute("wishOptions", wishOptions);
         return "wishlist";
     }
 
@@ -36,6 +36,7 @@ public class WishListController {
     public String addWishProductPage(@LoginUser User user, Model model, @PageableDefault(size = 3) Pageable pageable) {
         ProductsPageResponseDTO products = productService.getAllProducts(pageable);
         model.addAttribute("products", products);
+
         return "addWishProduct"; // addWishProduct.html로 이동
     }
 
@@ -49,10 +50,10 @@ public class WishListController {
 
     @DeleteMapping
     public String deleteWishProduct(@LoginUser User user, @RequestBody WishRequestDTO wishRequestDTO, Model model, @PageableDefault(size = 3) Pageable pageable) {
-        wishService.deleteWishProduct(user.getId(), wishRequestDTO.productId());
+        wishService.deleteWishProduct(user.getId(), wishRequestDTO.optionId());
 
-        WishPageResponseDTO wishProducts = wishService.getWishlist(user.getId(), pageable);
-        model.addAttribute("wishProducts", wishProducts);
+        WishPageResponseDTO wishOptions = wishService.getWishlist(user.getId(), pageable);
+        model.addAttribute("wishOptions", wishOptions);
 
         return "wishlist";
     }
