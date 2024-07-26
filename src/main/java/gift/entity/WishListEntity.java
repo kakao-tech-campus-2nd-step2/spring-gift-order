@@ -24,11 +24,21 @@ public class WishListEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private MemberEntity userEntity;
 
+    @ManyToOne
+    @JoinColumn(name = "option_id", nullable = true)  // 옵션 엔티티와의 관계 추가
+    private OptionEntity optionEntity;
+
     public WishListEntity() {}
 
     public WishListEntity(ProductEntity productEntity, MemberEntity userEntity) {
         this.productEntity = productEntity;
         this.userEntity = userEntity;
+    }
+
+    public WishListEntity(ProductEntity productEntity, MemberEntity userEntity, OptionEntity optionEntity) {
+        this.productEntity = productEntity;
+        this.userEntity = userEntity;
+        this.optionEntity = optionEntity;
     }
 
     public ProductEntity getProductEntity() {
@@ -37,6 +47,10 @@ public class WishListEntity {
 
     public MemberEntity getUserEntity() {
         return userEntity;
+    }
+
+    public OptionEntity getOptionEntity() {
+        return optionEntity;
     }
 
     public static WishListDTO toDTO(WishListEntity wishListEntity) {
