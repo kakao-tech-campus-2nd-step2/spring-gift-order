@@ -24,14 +24,16 @@ import java.io.IOException;
 import java.time.Duration;
 
 @Component
-public class KakaoApiClient {
+public class KakaoApiClient implements KakaoApi {
 
     private final KakaoProperties kakaoProperties;
     private final WebClient webClient;
+    private final ObjectMapper objectMapper;
 
     public KakaoApiClient(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder) {
         this.kakaoProperties = kakaoProperties;
         this.webClient = createWebClient(webClientBuilder);
+        this.objectMapper = new ObjectMapper();
     }
 
     private WebClient createWebClient(WebClient.Builder webClientBuilder) {
@@ -45,6 +47,7 @@ public class KakaoApiClient {
                 .build();
     }
 
+    @Override
     public String getAccessToken(String authorizationCode) {
         String body = UriComponentsBuilder.newInstance()
                 .queryParam("grant_type", "authorization_code")
@@ -74,6 +77,7 @@ public class KakaoApiClient {
                 .block();
     }
 
+    @Override
     public KakaoUserResponse getUserInfo(String accessToken) {
         return webClient.get()
                 .uri(kakaoProperties.getInfoUrl())
@@ -95,6 +99,7 @@ public class KakaoApiClient {
                 .block();
     }
 
+    @Override
     public void sendMessageToMe(String kakaoAccessToken, Order order) {
         String templateObject = buildTemplateObject(order);
 
@@ -123,7 +128,6 @@ public class KakaoApiClient {
 
     private JsonNode parseJson(String body) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readTree(body);
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.KAKAO_AUTH_FAILED, "JSON 파싱 오류: " + e.getMessage());

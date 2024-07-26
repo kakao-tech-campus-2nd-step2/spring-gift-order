@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.client.KakaoApiClient;
+import gift.client.KakaoApi;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.entity.Order;
@@ -26,17 +26,17 @@ public class OrderService {
     private final ProductOptionRepository productOptionRepository;
     private final UserRepository userRepository;
     private final WishRepository wishRepository;
-    private final KakaoApiClient kakaoApiClient;
+    private final KakaoApi kakaoApi;
     private final TokenService tokenService;
 
     public OrderService(OrderRepository orderRepository, ProductOptionRepository productOptionRepository,
                         UserRepository userRepository, WishRepository wishRepository,
-                        KakaoApiClient kakaoApiClient, TokenService tokenService) {
+                        KakaoApi kakaoApi, TokenService tokenService) {
         this.orderRepository = orderRepository;
         this.productOptionRepository = productOptionRepository;
         this.userRepository = userRepository;
         this.wishRepository = wishRepository;
-        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoApi = kakaoApi;
         this.tokenService = tokenService;
     }
 
@@ -96,6 +96,6 @@ public class OrderService {
     }
 
     private void sendOrderConfirmationMessage(String kakaoAccessToken, Order order) {
-        kakaoApiClient.sendMessageToMe(kakaoAccessToken, order);
+        kakaoApi.sendMessageToMe(kakaoAccessToken, order);
     }
 }
