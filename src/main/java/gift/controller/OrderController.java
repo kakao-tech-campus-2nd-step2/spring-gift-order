@@ -35,6 +35,7 @@ public class OrderController {
 
         OrderResponse orderResponse = orderService.orderOption(orderRequest);
         orderService.deleteWishListByOrder(jwtUtil.extractToken(authorizationHeader), orderRequest.getOptionId());
+        orderService.sendKakaoMessage(jwtUtil.extractToken(authorizationHeader), orderResponse);
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
