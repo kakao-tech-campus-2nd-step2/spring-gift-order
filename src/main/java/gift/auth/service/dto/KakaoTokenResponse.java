@@ -12,13 +12,13 @@ public record KakaoTokenResponse(
         String tokenType,
 
         @JsonProperty("expires_in")
-        Integer expiresIn,
+        Long expiresIn,
 
         @JsonProperty("refresh_token")
         String refreshToken,
 
         @JsonProperty("refresh_token_expires_in")
-        Integer refreshTokenExpiresIn,
+        Long refreshTokenExpiresIn,
 
         @JsonProperty("scope")
         String scope
