@@ -15,7 +15,11 @@ import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
 import gift.util.AuthUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
@@ -53,7 +57,12 @@ public class OrderService {
         this.authUtil = authUtil;
     }
 
-
+    @Transactional
+    @Retryable(
+            value = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = 50,
+            backoff = @Backoff(delay = 200)
+    )
     public OrderResponse order(Long userId, Long giftId, OrderRequest.Create orderRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
