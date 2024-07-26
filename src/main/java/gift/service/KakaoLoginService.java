@@ -26,7 +26,7 @@ public class KakaoLoginService {
         this.clientSecret = clientSecret;
     }
 
-    public LinkedMultiValueMap<String, String> getBody(String code) {
+    public LinkedMultiValueMap<String, String> getLoginBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
@@ -36,12 +36,18 @@ public class KakaoLoginService {
         return body;
     }
 
-    public String getToken(String code) {
+    public LinkedMultiValueMap<String, String> getMessageBody(String message) {
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("object_type", "text");
+        body.add("text", message);
+        return body;
+    }
+    public KakaoTokenResponseDTO getToken(String code) {
         KakaoTokenResponseDTO kakaoTokenResponseDTO = client.post()
                 .uri(URI.create("https://kauth.kakao.com/oauth/token"))
                 .header("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(getBody(code))
+                .body(getLoginBody(code))
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     throw new RuntimeException("잘못된 토큰 요청입니다.");
@@ -51,6 +57,21 @@ public class KakaoLoginService {
                 })
                 .body(KakaoTokenResponseDTO.class);
 
-        return kakaoTokenResponseDTO.getAccessToken();
+        return kakaoTokenResponseDTO;
+    }
+
+    public void sendMessage(String token, String message) {
+        client.post()
+                .uri(URI.create("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(getMessageBody(message))
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new RuntimeException("잘못된 토큰 요청입니다.");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new RuntimeException("카카오 서버 오류입니다.");
+                });
     }
 }

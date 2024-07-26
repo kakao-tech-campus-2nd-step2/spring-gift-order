@@ -12,7 +12,7 @@ public class Member {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "token", nullable = false)
@@ -30,6 +30,11 @@ public class Member {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.token = token;
+    }
+
+    public Member(String email, String token){
+        this.email = email;
         this.token = token;
     }
 
