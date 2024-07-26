@@ -16,16 +16,8 @@ public class OrderItemRequest {
         return optionId;
     }
 
-    public void setOptionId(Long optionId) {
-        this.optionId = optionId;
-    }
-
     public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
 }

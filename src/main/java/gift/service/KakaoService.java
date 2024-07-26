@@ -1,5 +1,7 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoToken;
 import gift.domain.Order;
 import gift.domain.OrderItem;
@@ -17,6 +19,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -29,8 +32,9 @@ public class KakaoService {
     private String redirectUri;
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private KakaoTokenRepository kakaoTokenRepository;
+    private final KakaoTokenRepository kakaoTokenRepository;
 
     public KakaoService(KakaoTokenRepository kakaoTokenRepository) {
         this.kakaoTokenRepository = kakaoTokenRepository;
@@ -87,29 +91,37 @@ public class KakaoService {
             throw new Exception("Kakao token not found for member ID " + memberId);
         }
 
-        String message = createOrderMessage(order);
-        sendMessage(kakaoToken.getAccessToken(), message);
+        String messageTemplate = createOrderMessage(order);
+        sendMessage(kakaoToken.getAccessToken(), messageTemplate);
     }
 
-    private String createOrderMessage(Order order) {
-        // 사용자 정의 템플릿을 사용하여 메시지 작성
+    private String createOrderMessage(Order order) throws JsonProcessingException {
         StringBuilder message = new StringBuilder();
         message.append("주문 내역:\n");
         for (OrderItem item : order.getOrderItems()) {
-            message.append(item.getOption().getName()).append(" - ").append(item.getQuantity()).append("\n");
+            message.append(item.getProduct().getName()).append(" - ").append(item.getOption().getName()).append(" - ").append(item.getQuantity()).append("\n");
         }
-        message.append("수령인 메시지: ").append(order.getRecipientMessage());
-        return message.toString();
+        message.append("메시지: ").append(order.getRecipientMessage());
+
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", message.toString());
+        Map<String, String> link = new HashMap<>();
+        link.put("web_url", "http://localhost:8080");
+        templateObject.put("link", link);
+        templateObject.put("button_title", "자세히 보기");
+
+        return objectMapper.writeValueAsString(templateObject);
     }
 
-    private void sendMessage(String accessToken, String message) throws Exception {
+    private void sendMessage(String accessToken, String messageTemplate) throws Exception {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("template_object", "{\"object_type\":\"text\",\"text\":\"" + message + "\",\"link\":{\"web_url\":\"http://localhost:8080\"}}");
+        body.add("template_object", messageTemplate);
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 

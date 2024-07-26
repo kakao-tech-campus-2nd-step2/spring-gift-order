@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KakaoTokenRepository extends JpaRepository<KakaoToken, Long> {
     KakaoToken findByMemberId(Long memberId);
-    KakaoToken findByEmail(String email);
 }

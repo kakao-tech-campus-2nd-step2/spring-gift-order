@@ -44,7 +44,6 @@ public class KakaoController {
             kakaoTokenService.saveToken(member.getId(), email, accessToken);
 
             String token = memberService.generateToken(member);
-            System.out.println(token);
 
             return ResponseEntity.ok(new TokenResponse(token));
         } catch (Exception e) {
