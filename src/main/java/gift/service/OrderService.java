@@ -13,14 +13,12 @@ import org.springframework.stereotype.Service;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final MemberService memberService;
-    private final ProductService productService;
     private final OptionService optionService;
     private final WishService wishService;
 
-    public OrderService(OrderRepository orderRepository, MemberService memberService, ProductService productService, OptionService optionService, WishService wishService) {
+    public OrderService(OrderRepository orderRepository, MemberService memberService, OptionService optionService, WishService wishService) {
         this.orderRepository = orderRepository;
         this.memberService = memberService;
-        this.productService = productService;
         this.optionService = optionService;
         this.wishService = wishService;
     }
