@@ -27,6 +27,17 @@ public class KakaoTokenResponseDto {
     public KakaoTokenResponseDto() {
     }
 
+    public KakaoTokenResponseDto(String tokenType, String accessToken, String idToken,
+        Integer expiresIn, String refreshToken, Integer refreshTokenExpiresIn, String scope) {
+        this.tokenType = tokenType;
+        this.accessToken = accessToken;
+        this.idToken = idToken;
+        this.expiresIn = expiresIn;
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpiresIn = refreshTokenExpiresIn;
+        this.scope = scope;
+    }
+
     public String getAccessToken() {
         return accessToken;
     }
