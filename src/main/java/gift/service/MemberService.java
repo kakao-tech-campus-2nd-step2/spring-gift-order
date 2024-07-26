@@ -40,7 +40,7 @@ public class MemberService {
     public Member findOrCreateMember(KakaoAccount kakaoAccount) {
         String email = kakaoAccount.getEmail();
         return memberRepository.findByEmail(Email.from(email))
-            .orElseGet(() -> memberRepository.save(Member.from(kakaoAccount)));
+            .orElseGet(() -> memberRepository.save(kakaoAccount.toMember()));
     }
 
     public void deleteMember(Long id) {
