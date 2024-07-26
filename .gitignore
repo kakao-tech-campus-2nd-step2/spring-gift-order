@@ -40,4 +40,4 @@ out/
 .DS_Store
 
 # 환경 변수 설정 파일
-application-secreat.properties
+application-secret.properties
