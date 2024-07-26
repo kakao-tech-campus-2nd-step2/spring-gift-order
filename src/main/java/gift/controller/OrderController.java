@@ -45,36 +45,27 @@
 
 package gift.controller;
 
-import gift.dto.ApiResponse;
 import gift.service.KakaoMessageService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import gift.service.KakaoMessageServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
 
     private final KakaoMessageService kakaoMessageService;
-    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
-    public OrderController(KakaoMessageService kakaoMessageService) {
-        this.kakaoMessageService = kakaoMessageService;
+    public OrderController() {
+        this.kakaoMessageService = new KakaoMessageServiceImpl();
     }
 
     @PostMapping("/sendMessage")
-    public ResponseEntity<ApiResponse<String>> sendMessage(@RequestHeader("Authorization") String kakaoToken) {
-        try {
-            // 토큰을 로그에 출력하여 확인
-            logger.info("Received kakaoToken: {}", kakaoToken);
-
-            String message = "This is a test message.";
-            kakaoMessageService.sendMessage(kakaoToken, message);
-            return ResponseEntity.status(201).body(new ApiResponse<>(true, "Message sent successfully", message, null));
-        } catch (Exception e) {
-            e.printStackTrace(); // 예외를 로그에 출력
-            return ResponseEntity.status(500).body(new ApiResponse<>(false, "Failed to send message", null, e.getMessage()));
-        }
+    public Mono<ResponseEntity<String>> sendMessage(@RequestHeader("Authorization") String kakaoToken, @RequestBody Map<String, String> requestBody) {
+        String message = requestBody.get("message");
+        return kakaoMessageService.sendMessage(kakaoToken, message);
     }
 }
