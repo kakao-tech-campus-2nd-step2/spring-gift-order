@@ -17,10 +17,13 @@ public class KakaoTokenResponseDTO {
     public Integer refreshTokenExpiresIn;
     @JsonProperty("scope")
     public String scope;
+    @JsonProperty("email")
+    public String email;
 
     public KakaoTokenResponseDTO() {}
 
     public String getAccessToken() {
         return accessToken;
     }
+    public String getEmail() { return email; }
 }
