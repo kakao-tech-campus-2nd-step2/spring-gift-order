@@ -1,7 +1,6 @@
 package gift.exceptionhandler;
 
 import gift.exception.FailedLoginException;
-import javax.security.sasl.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,9 +21,4 @@ public class GlobalExceptionHandler {
         return exception.getMessage();
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(AuthenticationException.class)
-    public String handleAuthenticationException(AuthenticationException exception) {
-        return exception.getMessage();
-    }
 }
