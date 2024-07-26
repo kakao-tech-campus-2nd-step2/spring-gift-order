@@ -1,5 +1,6 @@
 package gift.model.user;
 
+import gift.model.order.Order;
 import gift.model.wishList.WishItem;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -28,10 +29,17 @@ public class User {
     @Column
     private String password;
     @BatchSize(size = 100)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<WishItem> wishItemList = new ArrayList<>();
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<Order> orders = new ArrayList<>();
     @Column
     private Long kakaoId;
+    @Column
+    private String accessToken;
+    @Column
+    private String refreshToken;
 
     protected User() {
     }
@@ -46,6 +54,15 @@ public class User {
         this.email = email;
         this.password = password;
         this.kakaoId = kakaoId;
+    }
+
+    public User(String email, String password, Long kakaoId, String accessToken,
+        String refreshToken) {
+        this.email = email;
+        this.password = password;
+        this.kakaoId = kakaoId;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public Long getKakaoId() {
@@ -71,4 +88,18 @@ public class User {
     public List<WishItem> getWishItemList() {
         return wishItemList;
     }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public Order addOrder(Order order) {
+        this.orders.add(order);
+        return order;
+    }
+
 }

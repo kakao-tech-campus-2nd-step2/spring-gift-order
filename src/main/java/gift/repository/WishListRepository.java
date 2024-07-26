@@ -13,4 +13,8 @@ public interface WishListRepository extends JpaRepository<WishItem, Long> {
 
     @Query("select w from WishItem w join fetch w.item where w.user.id =:userId")
     Page<WishItem> findAllByUserIdFetchJoin(@Param("userId") Long userId, Pageable pageable);
+
+    Boolean existsByUserIdAndItemId(Long userId, Long itemId);
+
+    void deleteByUserIdAndItemId(Long userId, Long itemId);
 }
