@@ -43,13 +43,13 @@ public class KakaoAuthService {
 
         user.checkLoginType(LoginType.KAKAO);
 
-        saveKakaoAccessToken(accessToken, user);
+        saveKakaoAccessToken(accessToken, tokenResponse.refreshToken(), user);
 
         return jwtUtil.generateJWT(user);
     }
 
-    private void saveKakaoAccessToken(String accessToken, User user) {
-        KakaoToken kakaoToken = new KakaoToken(user, accessToken);
+    private void saveKakaoAccessToken(String accessToken, String refreshToken, User user) {
+        KakaoToken kakaoToken = new KakaoToken(user, refreshToken, accessToken);
         kakaoTokenRepository.findByUser(user).orElseGet(
                 () -> kakaoTokenRepository.save(kakaoToken)
         );

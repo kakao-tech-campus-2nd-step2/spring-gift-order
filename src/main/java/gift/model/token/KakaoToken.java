@@ -18,13 +18,17 @@ public class KakaoToken {
     @NotNull
     private String accessToken;
 
+    @NotNull
+    private String refreshToken;
+
 
     protected KakaoToken() {
     }
 
-    public KakaoToken(User user, String accessToken) {
+    public KakaoToken(User user, String accessToken, String refreshToken) {
         this.user = user;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public Long getId() {
@@ -39,4 +43,7 @@ public class KakaoToken {
         return accessToken;
     }
 
+    public @NotNull String getRefreshToken() {
+        return refreshToken;
+    }
 }
