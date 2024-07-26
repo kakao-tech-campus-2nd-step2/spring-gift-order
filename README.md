@@ -70,3 +70,44 @@
         ...
     }
     ```
+
+<br/>
+<br/>
+
+# 2단계 - 주문하기
+
+## 요구 사항 정의
+
+카카오톡 메시지 API를 사용하여 주문하기 기능 구현
+
+- 주문할 때 수령인에게 보낼 메시지를 작성할 수 있음
+- 상품의 옵션과 수량을 선택하여 주문하면 해당 상품 옵션의 수량 차감
+- 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제
+- 주문 내역을 카카오톡 메시지(나에게 보내기)로 전송
+  - 기본 템플릿이나 사용자 정의 템플릿을 사용
+
+### 주문하기
+- Request
+    ```
+    POST /api/orders HTTP/1.1
+    Authorization: Bearer {token}
+    Content-Type: application/json
+    
+    {
+        "optionId": 1,
+        "quantity": 2,
+        "message": "Please handle this order with care."
+    }
+    ```
+- Response
+    ```
+    HTTP/1.1 201 Created
+    Content-Type: application/json
+    
+    {
+        "id": 1,
+        "optionId": 1,
+        "quantity": 2,
+        "orderDateTime": "2024-07-21T10:00:00",
+        "message": "Please handle this order with care."
+    }
