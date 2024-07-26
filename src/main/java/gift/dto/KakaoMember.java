@@ -1,5 +1,7 @@
 package gift.dto;
 
+import gift.model.Member;
+
 public record KakaoMember(KakaoProfile kakaoProfile, String password) {
     public String name() {
         return kakaoProfile.properties().nickname();
@@ -11,6 +13,10 @@ public record KakaoMember(KakaoProfile kakaoProfile, String password) {
 
     public String password() {
         return password;
+    }
+
+    public Member toMember() {
+        return new Member(email(), password());
     }
 
 }

@@ -25,6 +25,9 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = true)
+    private String accessToken;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishList> wishlists = new ArrayList<>();
 
@@ -61,4 +64,11 @@ public class Member {
         this.password = password;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 }

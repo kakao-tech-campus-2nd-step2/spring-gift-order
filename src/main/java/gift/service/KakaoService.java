@@ -6,6 +6,8 @@ import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import gift.dto.KakaoMember;
 import gift.dto.KakaoProfile;
 import gift.dto.KakaoTokenResponseDto;
+import gift.model.Member;
+import gift.repository.MemberRepository;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,12 +22,12 @@ public class KakaoService {
     private static final String BEARER = "Bearer ";
 
     private final RestClient restClient;
+    private final MemberRepository memberRepository;
 
 
-
-
-    public KakaoService() {
+    public KakaoService(MemberRepository memberRepository) {
         restClient = RestClient.create();
+        this.memberRepository = memberRepository;
     }
 
     public KakaoTokenResponseDto getAccessTokenFromKakao(String code) {
@@ -56,8 +58,17 @@ public class KakaoService {
             .getBody();
 
         System.out.println("kakaoProfile = " + kakaoProfile);
-        return new KakaoMember(kakaoProfile, "password");
+        KakaoMember kakaoMember = new KakaoMember(kakaoProfile, "password");
+        Member member = memberRepository.findByEmail(kakaoMember.email())
+            .orElseGet(() -> memberRepository.save(kakaoMember.toMember()));
+
+
+        return kakaoMember;
 
     }
+
+    /*public String saveKakaoAccessToken(KakaoTokenResponseDto tokenResponse) {
+
+    }*/
 
 }
