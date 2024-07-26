@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.common.exception.InvalidTokenException;
 import gift.dto.KakaoProperties;
 import gift.service.KakaoService;
 import jakarta.servlet.http.HttpSession;
@@ -36,12 +37,12 @@ public class KakaoController {
     public String kakaoCallback(@RequestParam(required = false) String code, Model model,
         HttpSession session) {
         if (code == null) {
-            throw new IllegalArgumentException("Authorization code가 없습니다.");
+            throw new InvalidTokenException("Authorization code가 없습니다.");
         }
 
         Map<String, Object> tokenResponse = kakaoService.getAccessToken(code);
         if (tokenResponse == null || !tokenResponse.containsKey("access_token")) {
-            throw new RuntimeException("잘못된 access token");
+            throw new InvalidTokenException("잘못된 access token");
         }
         String accessToken = (String) tokenResponse.get("access_token");
 
