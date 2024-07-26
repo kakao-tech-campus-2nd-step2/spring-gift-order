@@ -1,9 +1,10 @@
 package gift.utilForTest;
 
 import gift.domain.controller.apiResponse.MemberRegisterApiResponse;
-import gift.domain.dto.request.MemberRequest;
+import gift.domain.dto.request.member.LocalMemberRequest;
+import gift.domain.dto.request.member.MemberRequest;
 import gift.domain.entity.Member;
-import gift.domain.service.MemberService;
+import gift.domain.service.member.MemberService;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,13 +19,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class TestUtil {
 
     private final MemberService memberService;
-    private final MemberRequest memberRequest;
+    private final LocalMemberRequest memberRequest;
     private HttpHeaders headers = null;
     private Member authorizedMember = null;
 
     public TestUtil(MemberService memberService) {
         this.memberService = memberService;
-        this.memberRequest = new MemberRequest("test@example.com", "test");
+        this.memberRequest = new LocalMemberRequest("test@example.com", "test");
     }
 
     public URI getUri(Integer port, String path, Object... pathVariables) {
@@ -62,7 +63,7 @@ public class TestUtil {
                 return authorizedMember;
             }
 
-            authorizedMember = memberService.findByEmail(memberRequest.email());
+            authorizedMember = memberService.findByEmail(memberRequest.getEmail());
             return authorizedMember;
         }
 

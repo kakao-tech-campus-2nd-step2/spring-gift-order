@@ -17,7 +17,7 @@ import gift.domain.dto.response.ProductResponse;
 import gift.domain.entity.Category;
 import gift.domain.entity.Option;
 import gift.domain.exception.ErrorCode;
-import gift.domain.service.MemberService;
+import gift.domain.service.member.MemberService;
 import gift.domain.service.ProductService;
 import gift.global.WebConfig.Constants.Constraints;
 import gift.global.WebConfig.Constants.Domain;
