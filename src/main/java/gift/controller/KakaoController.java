@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.dto.KakaoProperties;
 import gift.service.KakaoService;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,19 +33,37 @@ public class KakaoController {
     }
 
     @GetMapping("/")
-    public String kakaoCallback(@RequestParam(required = false) String code, Model model) {
+    public String kakaoCallback(@RequestParam(required = false) String code, Model model,
+        HttpSession session) {
         if (code == null) {
-            return "redirect:/login?error";
+            throw new IllegalArgumentException("Authorization code가 없습니다.");
         }
 
-        String accessToken = kakaoService.getAccessToken(code);
-        if (accessToken == null) {
-            return "redirect:/login?error";
+        Map<String, Object> tokenResponse = kakaoService.getAccessToken(code);
+        if (tokenResponse == null || !tokenResponse.containsKey("access_token")) {
+            throw new RuntimeException("잘못된 access token");
         }
+        String accessToken = (String) tokenResponse.get("access_token");
 
         Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
-        model.addAttribute("userInfo", userInfo);
 
+        session.setAttribute("userInfo", userInfo);
+        session.setAttribute("accessToken", accessToken);
+
+        System.out.println("Access Token: " + accessToken);
+
+        return "redirect:/user";
+    }
+
+    @GetMapping("/user")
+    public String user(Model model, HttpSession session) {
+        Map<String, Object> userInfo = (Map<String, Object>) session.getAttribute("userInfo");
+
+        if (userInfo == null) {
+            throw new RuntimeException("사용자 정보를 찾을 수 없습니다.");
+        }
+
+        model.addAttribute("userInfo", userInfo);
         return "user";
     }
 

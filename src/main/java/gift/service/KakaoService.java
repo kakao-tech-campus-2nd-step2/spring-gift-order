@@ -37,7 +37,7 @@ public class KakaoService {
     // https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code
     // &redirect_uri={kakaoRedirectUrl}&client_id={kakaoClientId}
 
-    public String getAccessToken(String code) {
+    public Map<String, Object> getAccessToken(String code) {
         String url = KAKAO_AUTH_URI + "/oauth/token";
         HttpHeaders headers = createHeaders();
         MultiValueMap<String, String> body = createBody(code);
@@ -69,7 +69,7 @@ public class KakaoService {
         return body;
     }
 
-    private String extractAccessToken(ResponseEntity<Map> response) {
+    private Map<String, Object> extractAccessToken(ResponseEntity<Map> response) {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "access token 발급 실패 : HTTP status " + response.getStatusCode());
@@ -78,10 +78,10 @@ public class KakaoService {
         Map<String, Object> responseBody = response.getBody();
         if (responseBody == null || responseBody.get("access_token") == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "응답에 access token이 발견 되지 않습니다.");
+                "No access token was found in the response.");
         }
 
-        return (String) responseBody.get("access_token");
+        return responseBody;
     }
 
     public Map<String, Object> getUserInfo(String accessToken) {
