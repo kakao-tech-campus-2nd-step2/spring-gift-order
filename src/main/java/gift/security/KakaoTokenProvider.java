@@ -2,6 +2,7 @@ package gift.security;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,14 +14,20 @@ import java.net.URI;
 @Component
 public class KakaoTokenProvider {
 
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
+
     private final RestClient client = RestClient.builder().build();
 
     public String getToken(String code) throws Exception {
         var url = "https://kauth.kakao.com/oauth/token";
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "e8737f91343ed26716bff4973870e1b9");  // 하드코딩된 클라이언트 아이디
-        body.add("redirect_uri", "http://localhost:8080");  // 하드코딩된 리디렉트 URI
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
         ResponseEntity<String> entity = client.post()

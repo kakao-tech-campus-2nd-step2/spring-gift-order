@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.service.KakaoService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,12 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class KakaoLoginController {
+
+    @Value("${kakao.client-id}")
+    private String clientId;
+
+    @Value("${kakao.redirect-uri}")
+    private String redirectUri;
 
     private final KakaoService kakaoService;
 
@@ -22,8 +29,8 @@ public class KakaoLoginController {
         String url = "https://kauth.kakao.com/oauth/authorize?";
         url += "scope=talk_message&";
         url += "response_type=code&";
-        url += "redirect_uri=http://localhost:8080&";
-        url += "client_id=e8737f91343ed26716bff4973870e1b9";
+        url += "redirect_uri=" + redirectUri + "&";
+        url += "client_id=" + clientId;
         return "redirect:" + url;
     }
 
