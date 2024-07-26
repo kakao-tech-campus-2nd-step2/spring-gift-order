@@ -47,7 +47,6 @@ import reactor.core.publisher.Mono;
 @ConfigurationPropertiesScan
 class OAuth2LoginControllerTest {
 
-    //private final RestClient client = RestClient.builder().build();
     @Autowired
     private WebClient client;
     @Autowired
