@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final KakaoConfig kakaoConfig;
 
-    public AuthService(MemberRepository memberRepository) {
+    public AuthService(MemberRepository memberRepository, KakaoConfig kakaoConfig) {
         this.memberRepository = memberRepository;
+        this.kakaoConfig = kakaoConfig;
     }
 
     public Token login(LoginRequest member) {
@@ -34,4 +36,11 @@ public class AuthService {
         }
         return new Token(JwtUtil.generateToken(m.getId(), m.getEmail()));
     }
+
+    public String getAuthorizationUrl() {
+        return String.format(
+            "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s",
+            kakaoConfig.getKakaoAppKey(), kakaoConfig.getRedirectUri());
+    }
+
 }
