@@ -2,7 +2,7 @@ package gift.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gift.oauth.properties.KakaoProperties;
+import gift.kakaoApi.properties.KakaoProperties;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest
-public class OAuthControllerTest {
+class OAuthControllerTest {
 
     @Autowired
     private  KakaoProperties properties;
