@@ -1,5 +1,6 @@
 package gift.product.business.service;
 
+import gift.global.domain.OAuthProvider;
 import gift.global.exception.custrom.NotFoundException;
 import gift.member.business.service.WishlistService;
 import gift.member.persistence.repository.MemberRepository;
@@ -51,13 +52,15 @@ public class OrderService {
         var order = orderInCreate.toOrder(product, member);
         var orderId = orderRepository.saveOrder(order);
 
-        var accessToken = member.getAccessToken();
-        var kakaoOrderMessage = KakaoOrderMessage.TemplateObject.of(
-            product.getName() + " 주문 완료",
-            "localhost",
-            product.getPrice()
-        );
-        kakaoApiClient.sendOrderMessage(accessToken, kakaoOrderMessage);
+        if(member.getOAuthProvider() == OAuthProvider.KAKAO) {
+            var accessToken = member.getAccessToken();
+            var kakaoOrderMessage = KakaoOrderMessage.TemplateObject.of(
+                product.getName() + " 주문 완료",
+                "localhost",
+                product.getPrice()
+            );
+            kakaoApiClient.sendOrderMessage(accessToken, kakaoOrderMessage);
+        }
 
         return orderId;
     }
