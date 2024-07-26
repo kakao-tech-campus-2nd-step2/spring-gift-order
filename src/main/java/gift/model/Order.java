@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -32,6 +33,7 @@ public class Order extends BaseEntity {
     }
 
     public Order(Long id, Long memberId, Options options, Integer quantity, String message) {
+        super();
         validateQuantity(quantity);
         validateMessage(message);
         this.id = id;
@@ -42,8 +44,21 @@ public class Order extends BaseEntity {
     }
 
     public Order(Long memberId, Options options, Integer quantity, String message) {
+        super();
         validateQuantity(quantity);
         validateMessage(message);
+        this.memberId = memberId;
+        this.options = options;
+        this.quantity = quantity;
+        this.message = message;
+    }
+
+    public Order(Long id, Long memberId, Options options, Integer quantity, String message,
+        LocalDateTime createdAt, LocalDateTime updatedAt) {
+        super(createdAt, updatedAt);
+        validateQuantity(quantity);
+        validateMessage(message);
+        this.id = id;
         this.memberId = memberId;
         this.options = options;
         this.quantity = quantity;

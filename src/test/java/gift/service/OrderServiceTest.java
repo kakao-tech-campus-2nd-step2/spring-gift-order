@@ -9,6 +9,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import gift.exception.option.OptionsQuantityException;
+import gift.model.BaseEntity;
 import gift.model.Category;
 import gift.model.Member;
 import gift.model.Options;
@@ -18,6 +19,7 @@ import gift.model.Role;
 import gift.repository.OptionsRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +73,7 @@ class OrderServiceTest {
         String message = "message";
         Order order = mock(Order.class);
         Order savedOrder = new Order(1L, 1L,
-            option, orderQuantity, message);
+            option, orderQuantity, message, LocalDateTime.now(), LocalDateTime.now());
 
         given(optionsRepository.findById(any(Long.class)))
             .willReturn(Optional.ofNullable(option));
