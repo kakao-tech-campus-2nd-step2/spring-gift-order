@@ -21,7 +21,9 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
     DUPLICATE_NAME(HttpStatus.BAD_REQUEST, "이미 존재하는 이름입니다."),
 
-    QUANTITY_EXCEEDS_AVAILABLE_STOCK(HttpStatus.BAD_REQUEST,"재고가 부족합니다.");
+    KAKAO_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 서비스를 이용하시려면 kakao 로그인이 필요합니다."),
+
+    QUANTITY_EXCEEDS_AVAILABLE_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다.");
 
     private final HttpStatus status;
     private final String message;
