@@ -30,8 +30,8 @@ public class KakaoOAuthService {
         var kakaoTokenResponse = getKakaoTokenResponse(code);
         var userInfo = getKakaoUserInfoResponse(kakaoTokenResponse.getAccessTokenWithTokenType());
 
-        var accessToken = kakaoTokenResponse.toAccessTokenFrom(userInfo.id());
-        var refreshToken = kakaoTokenResponse.toRefreshTokenFrom(userInfo.id());
+        var accessToken = kakaoTokenResponse.toAccessTokenFrom(userInfo.kakaoAccount().email());
+        var refreshToken = kakaoTokenResponse.toRefreshTokenFrom(userInfo.kakaoAccount().email());
 
         OAuthAccessTokenRepository.save(accessToken);
         OAuthRefreshTokenRepository.save(refreshToken);

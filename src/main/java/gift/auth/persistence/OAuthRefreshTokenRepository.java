@@ -3,5 +3,5 @@ package gift.auth.persistence;
 import gift.auth.token.OAuthRefreshToken;
 import org.springframework.data.repository.CrudRepository;
 
-public interface OAuthRefreshTokenRepository extends CrudRepository<OAuthRefreshToken, Long> {
+public interface OAuthRefreshTokenRepository extends CrudRepository<OAuthRefreshToken, String> {
 }
