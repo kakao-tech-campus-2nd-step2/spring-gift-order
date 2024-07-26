@@ -38,8 +38,8 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -86,8 +86,8 @@ class ProductControllerTest {
 
         Page<ProductResponse> response = new PageImpl<>(products);
         String responseJson = objectMapper.writeValueAsString(response);
-        when(productService.getPagedProducts(any()))
-                .thenReturn(response);
+        given(productService.getPagedProducts(any()))
+                .willReturn(response);
 
         mockMvc.perform(get("/api/products")
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
@@ -105,8 +105,8 @@ class ProductControllerTest {
         );
         Long responseId = 1L;
         String responseJson = objectMapper.writeValueAsString(response);
-        when(productService.getProductByIdOrThrow(any()))
-                .thenReturn(response);
+        given(productService.getProductByIdOrThrow(any()))
+                .willReturn(response);
 
         mockMvc.perform(get("/api/products/{id}", responseId)
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
@@ -121,8 +121,8 @@ class ProductControllerTest {
     void getProductFailed() throws Exception {
         Long productId = 1L;
         Throwable exception = new CustomException(ErrorCode.PRODUCT_NOT_FOUND);
-        when(productService.getProductByIdOrThrow(productId))
-                .thenThrow(exception);
+        given(productService.getProductByIdOrThrow(productId))
+                .willThrow(exception);
 
         mockMvc.perform(get("/api/products/{id}", productId)
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
@@ -146,8 +146,8 @@ class ProductControllerTest {
         );
         String requestJson = objectMapper.writeValueAsString(request);
         String responseJson = objectMapper.writeValueAsString(response);
-        when(productService.createProduct(any(ProductRequest.class)))
-                .thenReturn(response);
+        given(productService.createProduct(any(ProductRequest.class)))
+                .willReturn(response);
 
         mockMvc.perform(post("/api/products")
                         .header(HttpHeaders.AUTHORIZATION, bearerToken)
@@ -210,8 +210,8 @@ class ProductControllerTest {
         options.add(new OptionResponse(1L, "옵션1", 10));
         options.add(new OptionResponse(2L, "옵션2", 20));
         String responseJson = objectMapper.writeValueAsString(options);
-        when(optionService.getProductOptionsByIdOrThrow(anyLong()))
-                .thenReturn(options);
+        given(optionService.getProductOptionsByIdOrThrow(anyLong()))
+                .willReturn(options);
 
         mockMvc.perform(get("/api/products/{id}/options", productId)
                         .header(HttpHeaders.AUTHORIZATION, bearerToken))
@@ -228,8 +228,8 @@ class ProductControllerTest {
         OptionResponse response = new OptionResponse(1L, optionRequest.name(), optionRequest.quantity());
         String requestJson = objectMapper.writeValueAsString(optionRequest);
         String responseJson = objectMapper.writeValueAsString(response);
-        when(optionService.addOptionToProduct(anyLong(), any()))
-                .thenReturn(response);
+        given(optionService.addOptionToProduct(anyLong(), any()))
+                .willReturn(response);
 
         mockMvc.perform(post("/api/products/{id}/options", productId)
                         .header(HttpHeaders.AUTHORIZATION, bearerToken)
