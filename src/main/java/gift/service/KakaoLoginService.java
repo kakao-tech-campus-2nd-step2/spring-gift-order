@@ -21,8 +21,11 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${kakao.api.url}")
+    private String kakaoApiUrl;
+
     public KakaoTokenResponse getKakaoToken(String authorizationCode) {
-        String url = "https://kauth.kakao.com/oauth/token";
+        String url = kakaoApiUrl + "/oauth/token";
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
@@ -60,7 +63,7 @@ public class KakaoLoginService {
     }
 
     public KakaoProfileResponse getUserProfile(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
+        String url = kakaoApiUrl + "/v2/user/me";
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);

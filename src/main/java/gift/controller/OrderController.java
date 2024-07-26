@@ -19,6 +19,11 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @GetMapping("api/orders")
+    public String createOrderForm(){
+        return "kakao-order-form";
+    }
+
     @PostMapping("api/orders")
     public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String authorization, @RequestBody OrderRequest orderRequest) {
         String token = authorization.replace("Bearer ", "");

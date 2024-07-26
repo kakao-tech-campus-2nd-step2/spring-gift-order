@@ -21,10 +21,10 @@ public class OrderService {
     private final KakaoMessageService kakaoMessageService;
 
     @Autowired
-    public OrderService(OrderSpringDataJpaRepository orderRepository, OptionService optionService, WishlistSpringDataJpaRepository wishlistRepository, KakaoMessageService kakaoMessageService) {
+    public OrderService(OrderSpringDataJpaRepository orderRepository, WishlistSpringDataJpaRepository wishlistRepository, OptionService optionService, KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
-        this.optionService = optionService;
         this.wishlistRepository = wishlistRepository;
+        this.optionService = optionService;
         this.kakaoMessageService = kakaoMessageService;
     }
 
