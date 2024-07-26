@@ -6,6 +6,11 @@ public class MemberRequestDto {
     private String password;
     private String email;
 
+    public MemberRequestDto(String password, String email) {
+        this.password = password;
+        this.email = email;
+    }
+
     public Member toEntity(){
         return new Member(this.getEmail(),this.getPassword());
     }

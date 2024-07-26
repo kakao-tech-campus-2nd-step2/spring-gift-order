@@ -12,6 +12,7 @@ import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +42,8 @@ public class WishService {
     // 모든 wish 반환
     public List<WishResponseDto> findByEmail(String memberEmail) {
         Member member = memberRepository.findByEmail(memberEmail)
-            .orElseThrow(() -> new MemberNotFoundException(Messages.NOT_FOUND_MEMBER_BY_EMAIL_MESSAGE));
+            .orElseThrow(
+                () -> new MemberNotFoundException(Messages.NOT_FOUND_MEMBER_BY_EMAIL_MESSAGE));
 
         List<Wish> wishes = wishRepository.findByMemberId(member.getId())
             .orElseThrow(() -> new WishNotFoundException(Messages.NOT_FOUND_WISH_MESSAGE));
@@ -52,20 +54,24 @@ public class WishService {
     }
 
     // 페이지네이션을 이용하여 wish 반환
-    public  Page<WishResponseDto> findByEmailPage(String memberEmail, Pageable pageable){
+    public Page<WishResponseDto> findByEmailPage(String memberEmail, Pageable pageable) {
         Member member = memberRepository.findByEmail(memberEmail)
-            .orElseThrow(() -> new MemberNotFoundException(Messages.NOT_FOUND_MEMBER_BY_EMAIL_MESSAGE));
-        return wishRepository.findAllByMemberIdOrderByCreatedAt(member.getId(), pageable).map(this::convertToWishDto);
+            .orElseThrow(
+                () -> new MemberNotFoundException(Messages.NOT_FOUND_MEMBER_BY_EMAIL_MESSAGE));
+        return wishRepository.findAllByMemberIdOrderByCreatedAt(member.getId(), pageable)
+            .map(this::convertToWishDto);
     }
+
     @Transactional
-    public void deleteWish(String memberEmail) {
+    public void deleteByUser(String memberEmail) {
         Member member = memberRepository.findByEmail(memberEmail).get();
         wishRepository.deleteById(member.getId());
     }
 
     public void updateWish(String memberEmail, Long productId, int quantity) {
         Member member = memberRepository.findByEmail(memberEmail).get();
-        Wish updateWish = wishRepository.findByMemberIdAndProductId(member.getId(),productId).get();
+        Wish updateWish = wishRepository.findByMemberIdAndProductId(member.getId(), productId)
+            .get();
         updateWish.setQuantity(quantity);
         wishRepository.save(updateWish);
     }
@@ -77,5 +83,19 @@ public class WishService {
             wish.getProduct().getId(),
             wish.getQuantity()
         );
+    }
+
+    public Wish findByEmailAndProductId(String memberEmail, Long productId) {
+        Member member = memberRepository.findByEmail(memberEmail)
+            .orElseThrow(
+                () -> new MemberNotFoundException(Messages.NOT_FOUND_MEMBER_BY_EMAIL_MESSAGE));
+
+        return wishRepository.findByMemberIdAndProductId(member.getId(), productId)
+            .orElseThrow(() -> new WishNotFoundException(Messages.NOT_FOUND_WISH_MESSAGE));
+
+    }
+
+    public void deleteById(Long id) {
+        wishRepository.deleteById(id);
     }
 }

@@ -9,4 +9,5 @@ public class Messages {
     public static final String QUANTITY_OUT_OF_RANGE_MESSAGE ="허용된 수량 범위를 벗어났습니다.";
     public static final String NOT_FOUND_OPTION_MESSAGE = "해당 option이 존재하지 않습니다";
     public static final String OPTION_BELOW_MINIMUM_MESSAGE = "product에는 1개 이상의 option이 필요합니다.";
+    public static final String NOT_FOUND_ORDER_MESSAGE = "order이 존재하지 않습니다";
 }

@@ -68,10 +68,25 @@ public class OptionService {
         optionRepository.save(option);
     }
 
-    private void validateNumberOfOptions(Long productId){
-        Product product = productRepository.findById(productId).orElseThrow(()-> new ProductNotFoundException(Messages.NOT_FOUND_PRODUCT_MESSAGE));
-        if(product.getOptions().size() < 2){
+    private void validateNumberOfOptions(Long productId) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(Messages.NOT_FOUND_PRODUCT_MESSAGE));
+        if (product.getOptions().size() < 2) {
             throw new IllegalArgumentException(Messages.OPTION_BELOW_MINIMUM_MESSAGE);
         }
+    }
+
+    public void subtractQuantity(Long optionId, int quantity) {
+        Option option = findById(optionId);
+        int newQuantity = option.getQuantity() - quantity;
+        if(newQuantity < 0){
+            throw new IllegalArgumentException("수량이 부족합니다.");
+        }
+        option.setQuantity(newQuantity);
+    }
+
+    public Option findById(Long optionId) {
+        return optionRepository.findById(optionId)
+            .orElseThrow(() -> new OptionNotFoundException(Messages.NOT_FOUND_OPTION_MESSAGE));
     }
 }
