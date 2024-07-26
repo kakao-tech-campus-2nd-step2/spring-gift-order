@@ -24,4 +24,8 @@ public class OptionService {
         option.subtract(amount);
         optionRepository.save(option); // 수량 감소 후 업데이트
     }
+
+    public Option getOption(Long optionId) {
+        return optionRepository.findById(optionId).orElseThrow();
+    }
 }

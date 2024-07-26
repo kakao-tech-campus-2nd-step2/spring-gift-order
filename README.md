@@ -22,10 +22,11 @@
 # step2
 
 ## 구현할 기능 목록
-- [ ] 상품 옵션과 해당 수량을 선택하여 주문한다
+- [x] 상품 옵션과 해당 수량을 선택하여 주문한다
   - [x] Order Entity 생성
     - [x] id(PK), user_id(FK), product_id(FK), Option_id, ordered_at, message, count
   - [ ] Order Controller에서 주문하기 만들기
+    - [x] 주문을 받아올 DTO 생성
     - [ ] 해당 상품 옵션의 수량이 차감된다
     - [ ] 해당 상품이 위시 리스트에 있는 경우 위시에서 삭제한다.
     - [ ] 위의 두 기능은 미리 구현되어 있으니, 주문하는 api 구현 할 때 사용한다.

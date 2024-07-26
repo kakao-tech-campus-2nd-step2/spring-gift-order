@@ -51,4 +51,7 @@ public class MemberService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 토큰을 가진 회원이 없습니다."));
     }
 
+    public Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow();
+    }
 }
