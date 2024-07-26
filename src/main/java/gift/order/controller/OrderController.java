@@ -35,7 +35,7 @@ public class OrderController {
 
         // validate accesstoken
         if (!kakaoService.validateToken(accessToken)) {
-            kakaoService.renewToken(accessToken);
+            accessToken = kakaoService.renewToken(accessToken);
         }
 
         // 1. 주문 요청 및 주문 내역 저장

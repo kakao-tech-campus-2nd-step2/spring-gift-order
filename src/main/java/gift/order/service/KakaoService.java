@@ -151,7 +151,7 @@ public class KakaoService {
 
     // 토큰값 갱신하기
     @Transactional
-    public void renewToken(String accessToken) {
+    public String renewToken(String accessToken) {
         String refreshToken = tokenJPARepository.findByAccessToken(accessToken).getRefreshToken();
         String url = "https://kauth.kakao.com/oauth/token";
 
@@ -171,15 +171,13 @@ public class KakaoService {
         if (tokenResponse == null) {
             throw new IllegalArgumentException("[ERROR] 유효하지 않은 액세스 토큰입니다.");
         }
-        System.out.println("tokenResponse = " + tokenResponse);
 
         // 토큰값 update
         Token token = tokenJPARepository.findByAccessToken(accessToken);
         token.setAccessToken(tokenResponse.accessToken());
         token.setRefreshToken(refreshToken);
         tokenJPARepository.save(token);
-        System.out.println("token = " + token);
-        System.out.println("token.getAccessToken() = " + token.getAccessToken());
-        System.out.println("token.getRefreshToken() = " + token.getRefreshToken());
+
+        return tokenResponse.accessToken();
     }
 }
