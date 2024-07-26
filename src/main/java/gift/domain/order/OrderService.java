@@ -83,6 +83,7 @@ public class OrderService {
         System.out.println("Response: " + response.getBody());
     }
 
+    // 나에게 메시지 보내기 DOCS 에 나와 있는 데이터 형식
     private MultiValueMap<String, String> createTemplateObject(
         OrderRequestDTO orderRequestDTO) {
         TemplateObject templateObject = new TemplateObject(orderRequestDTO.message());

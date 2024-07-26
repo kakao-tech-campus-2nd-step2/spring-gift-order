@@ -15,7 +15,9 @@ public interface JpaProductRepository extends JpaRepository<Product, Long> {
 
     @Modifying
     @Query(value = "DELETE FROM cart_item WHERE product_id = :productId; " +
-                   "DELETE FROM product WHERE id = :productId", nativeQuery = true)
+                   "DELETE FROM option WHERE product_id = :productId;" +
+                   "DELETE FROM product WHERE id = :productId; "
+        , nativeQuery = true)
     void deleteById(Long productId);
 
     boolean existsByName(String name);
