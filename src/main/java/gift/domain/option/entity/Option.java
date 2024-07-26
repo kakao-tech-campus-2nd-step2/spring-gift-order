@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class Option {
 
-    private final static String regex = "[\\w\\s\\(\\)\\[\\]\\+\\-\\&\\/가-힣]*";
+    private static final String regex = "[\\w\\s\\(\\)\\[\\]\\+\\-\\&\\/가-힣]*";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,11 +99,10 @@ public class Option {
         this.product = product;
     }
 
-    public void subtract(int quantity) {
+    public void subtractQuantity(int quantity) {
         if (this.quantity < quantity) {
             throw new OptionQuantityValidException("수량이 부족합니다.");
         }
         this.quantity -= quantity;
     }
-
 }
