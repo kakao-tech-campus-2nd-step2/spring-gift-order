@@ -10,12 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-
 @Component
 public class JwtUtil {
 
     private final JwtConfig jwtConfig;
-
 
     @Autowired
     public JwtUtil(JwtConfig jwtConfig) {
@@ -43,13 +41,28 @@ public class JwtUtil {
         try {
             Jwts.parser().setSigningKey(jwtConfig.getSecret().getBytes()).parseClaimsJws(token);
             return true;
+        } catch (io.jsonwebtoken.SignatureException e) {
+            System.out.println("Invalid JWT signature");
+            return false;
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.out.println("Expired JWT token");
+            return false;
+        } catch (io.jsonwebtoken.MalformedJwtException e) {
+            System.out.println("Invalid JWT token");
+            return false;
         } catch (Exception e) {
+            System.out.println("JWT validation failed");
             return false;
         }
     }
 
     public Long getUserId(String token) {
-        return Long.parseLong(extractClaims(token).getSubject());
+        try {
+            Claims claims = extractClaims(token);
+            return Long.parseLong(claims.getSubject());
+        } catch (Exception e) {
+            System.out.println("Failed to extract user ID from JWT token");
+            return null;
+        }
     }
 }
-
