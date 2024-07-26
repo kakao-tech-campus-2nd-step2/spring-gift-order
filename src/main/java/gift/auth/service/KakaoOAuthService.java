@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoOAuthService {
     private final KakaoOauthConfig kakaoOauthConfig;
-    private final OAuthAccessTokenRepository OAuthAccessTokenRepository;
-    private final OAuthRefreshTokenRepository OAuthRefreshTokenRepository;
+    private final OAuthAccessTokenRepository oAuthAccessTokenRepository;
+    private final OAuthRefreshTokenRepository oAuthRefreshTokenRepository;
 
-    public KakaoOAuthService(KakaoOauthConfig kakaoOauthConfig, OAuthAccessTokenRepository OAuthAccessTokenRepository,
+    public KakaoOAuthService(KakaoOauthConfig kakaoOauthConfig, OAuthAccessTokenRepository oAuthAccessTokenRepository,
                              OAuthRefreshTokenRepository OAuthRefreshTokenRepository) {
         this.kakaoOauthConfig = kakaoOauthConfig;
-        this.OAuthAccessTokenRepository = OAuthAccessTokenRepository;
-        this.OAuthRefreshTokenRepository = OAuthRefreshTokenRepository;
+        this.oAuthAccessTokenRepository = oAuthAccessTokenRepository;
+        this.oAuthRefreshTokenRepository = OAuthRefreshTokenRepository;
     }
 
     public String getKakaoLoginUrl() {
@@ -33,10 +33,16 @@ public class KakaoOAuthService {
         var accessToken = kakaoTokenResponse.toAccessTokenFrom(userInfo.kakaoAccount().email());
         var refreshToken = kakaoTokenResponse.toRefreshTokenFrom(userInfo.kakaoAccount().email());
 
-        OAuthAccessTokenRepository.save(accessToken);
-        OAuthRefreshTokenRepository.save(refreshToken);
+        oAuthAccessTokenRepository.save(accessToken);
+        oAuthRefreshTokenRepository.save(refreshToken);
 
         return KakaoCallbackInfo.of(userInfo.kakaoAccount().email());
+    }
+
+    public String getAccessToken(final String username) {
+        var token = oAuthAccessTokenRepository.findById(username).orElseThrow();
+
+        return token.getToken();
     }
 
     private KakaoTokenResponse getKakaoTokenResponse(final String code) {
