@@ -1,12 +1,10 @@
 package gift.service;
 
 import gift.LoginType;
-import gift.domain.Category;
-import gift.domain.Member;
-import gift.domain.Option;
-import gift.domain.Product;
+import gift.domain.*;
 import gift.dto.request.OrderRequest;
 import gift.repository.OptionRepository;
+import gift.repository.WishRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,15 +15,17 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-class OptionServiceTest {
+class OrderServiceTest {
 
     private OptionRepository optionRepository;
+    private WishRepository wishRepository;
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
         optionRepository = mock(OptionRepository.class);
-        orderService = new OrderService(optionRepository);
+        wishRepository = mock(WishRepository.class);
+        orderService = new OrderService(optionRepository, wishRepository);
     }
 
     @Test
