@@ -64,7 +64,8 @@ public class KakaoService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
         Long id = jsonNode.get("id").asLong();
         String email = id + "@email.com";
+        String password = String.valueOf(id);
 
-        return new KakaoInfo(id, email);
+        return new KakaoInfo(id, email, password);
     }
 }
