@@ -4,6 +4,7 @@ import gift.dto.LoginMemberToken;
 import gift.dto.MemberRequest;
 import gift.service.KakaoLoginService;
 import gift.service.MemberService;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,7 @@ public class KakaoController {
     }
 
     @GetMapping("/login/callback")
-    public ResponseEntity<LoginMemberToken> kakaoLogin(@RequestParam String code) {
+    public ResponseEntity<LoginMemberToken> kakaoLogin(@RequestParam @NotNull String code) {
 
         String token = kakaoLoginService.getToken(code);
 

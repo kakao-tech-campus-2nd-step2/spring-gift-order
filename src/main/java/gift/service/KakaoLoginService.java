@@ -1,14 +1,24 @@
 package gift.service;
 
+import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gift.database.repository.JpaMemberRepository;
 import gift.dto.LoginMemberToken;
 import gift.exceptionAdvisor.exceptions.GiftUnauthorizedException;
 import gift.model.Member;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
@@ -39,26 +49,34 @@ public class KakaoLoginService {
 
     public String getToken(String code) {
         WebClient webClient = WebClient.create();
+
+        MultiValueMap<String,String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
+        body.add("code", code);
+
         return webClient.post()
-            .uri("https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&code=" + code)
+            .uri("https://kauth.kakao.com/oauth")
             .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+            .body(BodyInserters.fromValue(body))
             .retrieve()
             .bodyToMono(String.class)
             .block();
     }
 
     public LoginMemberToken getKakaoUser(String token) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = null;
         try{
-            jsonNode = objectMapper.readTree(token);
-            Long id = jsonNode.get("id").asLong();
-            String email = jsonNode.get("kakao_account").get("email").asText();
-            Member member = jpaMemberRepository.findByEmail(email).orElseThrow(() -> new GiftUnauthorizedException("등록되지 않은 회원입니다."));
-
-            return new LoginMemberToken(authenticationTool.makeToken(member));
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(token);
+            String accessToken = jsonNode.get("access_token").asText();
+            return null;
+            //Member member = jpaMemberRepository.findByEmail(email).orElseThrow(() -> new GiftUnauthorizedException("등록되지 않은 회원입니다."));
+            //return new LoginMemberToken(authenticationTool.makeToken(member));
 
         } catch (Exception e) {
+            Arrays.stream(e.getStackTrace()).forEach(System.out::println);
+            System.out.println(e.getMessage());
             throw new GiftUnauthorizedException("카카오 로그인에 실패하였습니다.");
         }
 
