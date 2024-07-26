@@ -18,4 +18,24 @@ public class OrderResponse {
         this.message = message;
         this.orderTime = orderTime;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getOrderTime() {
+        return orderTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

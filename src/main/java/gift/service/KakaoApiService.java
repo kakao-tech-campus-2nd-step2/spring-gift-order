@@ -13,9 +13,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gift.dto.KakaoProperties;
+import gift.dto.request.MessageRequest;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
+import gift.dto.response.MessageResponse;
+import gift.dto.response.OrderResponse;
 import gift.exception.CustomException;
+
 
 @Service
 public class KakaoApiService {
@@ -86,10 +90,8 @@ public class KakaoApiService {
                     .toEntity(String.class);
 
             if(response.getStatusCode().is2xxSuccessful()){
-
                 String jsonBody = response.getBody();
                 return objectMapper.readValue(jsonBody, KakaoUserInfoResponse.class);
-
             } else if(response.getStatusCode().is4xxClientError()){
                 throw new CustomException("Bad Request " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
             } else if(response.getStatusCode().is5xxServerError()){
@@ -105,6 +107,53 @@ public class KakaoApiService {
             throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    public MessageResponse sendMessage(MessageRequest messageRequest){
+
+        var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        var body = new LinkedMultiValueMap<String, Object>();
+        body.add("object_type", "feed");
+        body.add("content", createContent(messageRequest));
+
+        try {
+            ResponseEntity<String> response = client.post()
+                    .uri(URI.create(url))
+                    .header("Authorization", "Bearer " + messageRequest.getAccessToken())
+                    .body(body)
+                    .retrieve()
+                    .toEntity(String.class);
+
+            if(response.getStatusCode().is2xxSuccessful()){
+                String jsonBody = response.getBody();
+                return objectMapper.readValue(jsonBody, MessageResponse.class);
+            } else if(response.getStatusCode().is4xxClientError()){
+                throw new CustomException("Bad Request " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
+            } else if(response.getStatusCode().is5xxServerError()){
+                throw new CustomException("System error " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
+            } else {
+                throw new CustomException("Unexpected response error " + response.getBody(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getMessage(), e.getHttpStatus());
+        } catch (JsonProcessingException e){
+            throw new CustomException("Error parsing token response", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private LinkedMultiValueMap<String, String> createContent(MessageRequest messageRequest){
+        
+        OrderResponse orderResponse = messageRequest.getOrderResponse();
+        
+        var content = new LinkedMultiValueMap<String, String>();
+        content.add("title", "Order complete");
+        content.add("description", orderResponse.getMessage());
+        content.add("image_url", messageRequest.getProduct().getImageUrl());
+        content.add("link", "http://localhost:8080");
+        return content;
     }
 
     private LinkedMultiValueMap<String, String> createBody(String code) {
