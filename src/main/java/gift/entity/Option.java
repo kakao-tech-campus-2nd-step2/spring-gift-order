@@ -29,6 +29,8 @@ public class Option {
 	@JoinColumn(name = "product_id", nullable = false)
 	private Product product;
 
+	public Option() {}
+	
 	public Option(String name, int quantity, Product product) {
 		this.name = name;
 		this.setQuantity(quantity);
@@ -49,6 +51,10 @@ public class Option {
 
 	public int getQuantity() {
 		return quantity;
+	}
+	
+	public Product getProduct() {
+		return product;
 	}
 
 	public void setQuantity(int quantity) {
