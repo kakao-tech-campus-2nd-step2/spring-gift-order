@@ -10,7 +10,7 @@ import gift.option.entity.Option;
 import gift.order.dto.CreateOrderRequestDTO;
 import gift.order.dto.CreateOrderResponseDTO;
 import gift.order.dto.KakaoUserInfoDTO;
-import gift.order.dto.defaultMessageTemplate;
+import gift.order.dto.DefaultMessageTemplate;
 import gift.wishlist.WishlistService;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -99,7 +99,7 @@ public class OrderService {
     private LinkedMultiValueMap<String, String> generateMessageBody(
         CreateOrderRequestDTO createOrderRequestDTO
     ) {
-        defaultMessageTemplate defaultMessageTemplate = new defaultMessageTemplate(
+        DefaultMessageTemplate defaultMessageTemplate = new DefaultMessageTemplate(
             "text", createOrderRequestDTO.getMessage(), Map.of(), "버튼"
         );
 

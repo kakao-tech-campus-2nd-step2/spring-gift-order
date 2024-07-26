@@ -9,14 +9,14 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.Map;
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class defaultMessageTemplate {
+public class DefaultMessageTemplate {
 
     private String objectType;
     private String text;
     private Map<String, String> link;
     private String buttonTitle;
 
-    public defaultMessageTemplate(
+    public DefaultMessageTemplate(
         String objectType,
         String text,
         Map<String, String> link,
