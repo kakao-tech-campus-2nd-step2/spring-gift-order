@@ -1,7 +1,5 @@
 package gift.service;
 
-import static org.springframework.web.servlet.function.RequestPredicates.contentType;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.auth.KakaoProperties;
@@ -14,15 +12,10 @@ import gift.entity.OptionEntity;
 import gift.entity.ProductEntity;
 import gift.error.NotFoundException;
 import gift.repository.OptionRepository;
-import gift.repository.ProductRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import jdk.jfr.ContentType;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

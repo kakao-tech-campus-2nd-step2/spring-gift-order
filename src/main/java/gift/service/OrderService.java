@@ -1,7 +1,6 @@
 package gift.service;
 
 import gift.domain.Order;
-import gift.domain.WishList;
 import gift.entity.MemberEntity;
 import gift.entity.OptionEntity;
 import gift.entity.OrderEntity;
@@ -13,7 +12,6 @@ import gift.repository.OrderRepository;
 import gift.repository.WishListRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

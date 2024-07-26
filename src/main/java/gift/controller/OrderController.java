@@ -3,7 +3,6 @@ package gift.controller;
 import static gift.util.JwtUtil.extractToken;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gift.domain.Member;
 import gift.domain.Order;
 import gift.service.KakaoService;
 import gift.service.OrderService;
@@ -11,12 +10,10 @@ import gift.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
