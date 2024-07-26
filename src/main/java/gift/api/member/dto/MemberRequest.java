@@ -1,5 +1,7 @@
-package gift.api.member;
+package gift.api.member.dto;
 
+import gift.api.member.Member;
+import gift.api.member.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

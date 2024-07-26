@@ -1,4 +1,4 @@
-package gift.api.member;
+package gift.api.member.exception;
 
 import gift.global.exception.GlobalException;
 import org.springframework.http.HttpStatus;

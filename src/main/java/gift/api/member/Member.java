@@ -1,5 +1,6 @@
 package gift.api.member;
 
+import gift.api.member.enums.Role;
 import gift.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
