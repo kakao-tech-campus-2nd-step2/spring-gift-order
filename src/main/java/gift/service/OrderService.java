@@ -1,10 +1,13 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.KakaoProperties;
 import gift.api.OrderRequest;
 import gift.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,8 +28,9 @@ public class OrderService {
     private final UserService userService;
     private final WishListService wishListService;
     private final KakaoService kakaoService;
+    private final ObjectMapper objectMapper;
 
-    public OrderService(OptionService optionService, ProductService productService, KakaoProperties kakaoProperties, WebClient webClient, UserService userService, WishListService wishListService, KakaoService kakaoService) {
+    public OrderService(OptionService optionService, ProductService productService, KakaoProperties kakaoProperties, WebClient webClient, UserService userService, WishListService wishListService, KakaoService kakaoService, ObjectMapper objectMapper) {
         this.optionService = optionService;
         this.productService = productService;
         this.kakaoProperties = kakaoProperties;
@@ -34,6 +38,7 @@ public class OrderService {
         this.userService = userService;
         this.wishListService = wishListService;
         this.kakaoService = kakaoService;
+        this.objectMapper = objectMapper;
     }
 
     public String createOrder(String token, OrderRequest orderRequest) {
@@ -81,33 +86,37 @@ public class OrderService {
             productName, optionName, orderRequest.getQuantity(), orderRequest.getMessage(), formattedDateTime
         );
 
-        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("template_object", createMessagePayload(messageContent));
+        try {
+            MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+            parameters.add("template_object", objectMapper.writeValueAsString(createMessagePayload(messageContent)));
 
-        return webClient.post()
-            .uri(kakaoProperties.getSendMessageUrl())
-            .headers(httpHeaders -> httpHeaders.addAll(headers))
-            .body(BodyInserters.fromFormData(parameters))
-            .retrieve()
-            .onStatus(status -> status.isError(), response -> {
-                // 로그 추가 또는 처리
-                return Mono.error(new RuntimeException("Error while sending Kakao message"));
-            })
-            .bodyToMono(String.class)
-            .map(response -> true)
-            .onErrorReturn(false)
-            .block();
+
+            return webClient.post()
+                .uri(kakaoProperties.getSendMessageUrl())
+                .headers(httpHeaders -> httpHeaders.addAll(headers))
+                .body(BodyInserters.fromFormData(parameters))
+                .retrieve()
+                .onStatus(status -> status.isError(), response -> Mono.error(new RuntimeException("Error while sending Kakao message")))
+                .bodyToMono(String.class)
+                .map(response -> true)
+                .onErrorReturn(false)
+                .block();
+        } catch (Exception e) {
+            // 예외 처리
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    private String createMessagePayload(String messageContent) {
-        JSONObject payload = new JSONObject();
+    private Map<String, Object> createMessagePayload(String messageContent) {
+        Map<String, Object> payload = new HashMap<>();
         payload.put("object_type", "text");
         payload.put("text", messageContent);
-        JSONObject link = new JSONObject();
-        link.put("web_url", "");
-        link.put("mobile_web_url", "");
+        Map<String, String> link = new HashMap<>();
+        link.put("web_url", "https://www.example.com");
+        link.put("mobile_web_url", "https://www.example.com");
         payload.put("link", link);
-        payload.put("button_title", "버튼");
-        return payload.toString();
+        payload.put("button_title", "Open");
+        return payload;
     }
 }
