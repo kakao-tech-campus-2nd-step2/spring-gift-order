@@ -1,0 +1,63 @@
+package gift.domain;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "orders")
+public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private Long quantity;
+
+    private String message;
+
+    @Column(nullable = false)
+    private LocalDateTime orderDateTime;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    private Option option;
+
+    protected Order() {
+    }
+
+    public Order(Long quantity, String message, LocalDateTime orderDateTime, Option option) {
+        this.quantity = quantity;
+        this.message = message;
+        this.orderDateTime = orderDateTime;
+        this.option = option;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public Option getOption() {
+        return option;
+    }
+}

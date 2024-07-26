@@ -16,28 +16,18 @@ INSERT INTO product (name, price, image_url, category_id)
 INSERT INTO product (name, price, image_url, category_id)
     VALUES ('Product 3', 3000, 'http://example.com/product3.jpg', 3);
 
+-- Insert Options
+INSERT INTO option (name, quantity, product_id)
+    VALUES ('Option 1 for Product 1', 10, 1);
+INSERT INTO option (name, quantity, product_id)
+    VALUES ('Option 1 for Product 2', 20, 2);
+INSERT INTO option (name, quantity, product_id)
+    VALUES ('Option 1 for Product 3', 30, 3);
+
 -- Insert wishlist items
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user1@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 1')
-                     );
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user1@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 2')
-                     );
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user2@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 2')
-                     );
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user2@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 3')
-                     );
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user3@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 1')
-                     );
-INSERT INTO wishlist (member_id, product_id) VALUES (
-                      (SELECT id FROM member WHERE email = 'user3@example.com'),
-                      (SELECT id FROM product WHERE name = 'Product 3')
-                     );
+INSERT INTO wishlist (member_id, product_id) VALUES (1, 1);
+INSERT INTO wishlist (member_id, product_id) VALUES (1, 2);
+INSERT INTO wishlist (member_id, product_id) VALUES (2, 2);
+INSERT INTO wishlist (member_id, product_id) VALUES (2, 3);
+INSERT INTO wishlist (member_id, product_id) VALUES (3, 1);
+INSERT INTO wishlist (member_id, product_id) VALUES (3, 3);
