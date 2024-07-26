@@ -8,7 +8,6 @@ import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
 import gift.service.MemberService;
 import gift.service.oauth.KakaoOAuthService;
-import gift.util.JWTUtil;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

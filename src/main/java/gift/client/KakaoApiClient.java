@@ -53,7 +53,8 @@ public class KakaoApiClient {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(requestBody)
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody == null) {
@@ -80,7 +81,8 @@ public class KakaoApiClient {
                 .uri(URI.create(kakaoUnlinkUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody == null) {
@@ -119,7 +121,8 @@ public class KakaoApiClient {
                 .uri(URI.create(kakaoUserInfoUrl))
                 .headers(headers -> headers.setBearerAuth(accessToken))
                 .retrieve()
-                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {});
+                .toEntity(new ParameterizedTypeReference<Map<String, Object>>() {
+                });
             Map<String, Object> responseBody = response.getBody();
 
             if (responseBody == null) {
