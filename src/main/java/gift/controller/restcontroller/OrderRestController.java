@@ -7,6 +7,7 @@ import gift.service.OrderService;
 import gift.service.RedisService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -31,6 +32,7 @@ public class OrderRestController {
 
     @PostMapping("")
     @Operation(summary = "상품 주문", description = "상품을 주문합니다.")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<OrderResponse> createOrder(
             @Valid @RequestBody OrderRequest orderRequest,
             @Parameter(hidden = true) @NotNull @LoginMember Long memberId

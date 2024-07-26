@@ -6,6 +6,7 @@ import gift.controller.dto.response.TokenResponse;
 import gift.service.OAuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,7 @@ public class OAuthController {
 
     @PostMapping("/kakao/logout")
     @Operation(summary = "카카오 로그아웃", description = "카카오에서 로그아웃합니다.")
+    @SecurityRequirement(name = "Authorization")
     public ResponseEntity<Void> kakaoLogOut(
             @Parameter(hidden = true) @NotNull @LoginMember Long memberId) {
         oAuthService.signOut(memberId);
