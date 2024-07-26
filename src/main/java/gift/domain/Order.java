@@ -16,7 +16,7 @@ public class Order {
     private Long optionId;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @Column(nullable = false)
     private LocalDateTime orderDateTime;
@@ -24,13 +24,40 @@ public class Order {
     @Column(nullable = false)
     private String message;
 
+    @Column(nullable = false)
+    private Long receiveMemberId;
+
     public Order() { }
 
-    public Order(Long optionId, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Long optionId, Integer quantity, LocalDateTime orderDateTime, String message, Long receiveMemberId) {
         this.optionId = optionId;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;
         this.message = message;
+        this.receiveMemberId = receiveMemberId;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Long getOptionId() {
+        return optionId;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Long getReceiveMemberId() {
+        return receiveMemberId;
+    }
 }

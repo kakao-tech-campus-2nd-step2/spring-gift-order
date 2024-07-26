@@ -3,7 +3,6 @@ package gift.controller;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.service.OrderService;
-import gift.service.KakaoMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

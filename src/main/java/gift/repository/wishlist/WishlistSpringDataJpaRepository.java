@@ -14,4 +14,6 @@ public interface WishlistSpringDataJpaRepository extends JpaRepository<WishlistI
     Page<WishlistItem> findByMemberId(Long memberId, Pageable pageable);
 
     Optional<WishlistItem> findByMemberIdAndProductId(Long MemberId, Long productId);
+
+    void deleteByMemberIdAndProductId(Long memberId, Long productId);
 }

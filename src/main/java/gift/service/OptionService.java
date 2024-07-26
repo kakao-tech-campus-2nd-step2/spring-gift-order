@@ -83,4 +83,11 @@ public class OptionService {
         optionRepository.save(option);
     }
 
+    public Long getProductIdByOptionId(Long optionId) {
+        return optionRepository.findById(optionId)
+                .map(Option::getProduct)
+                .map(Product::getId)
+                .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND));
+    }
+
 }
