@@ -2,7 +2,6 @@ package gift.repository;
 
 import gift.service.dto.KakaoTokenDto;
 import org.redisson.api.RMapCache;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.TimeUnit;
@@ -10,52 +9,43 @@ import java.util.concurrent.TimeUnit;
 @Repository
 public class KakaoTokenRepository {
 
-    private static final String KAKAO_ACCESS_TOKEN_PREFIX = "kakao:access:";
-    private static final String KAKAO_REFRESH_TOKEN_PREFIX = "kakao:refresh:";
+    private final RMapCache<Long, String> kakaoAccessMap;
+    private final RMapCache<Long, String> kakaoRefreshMap;
 
-    private final RedissonClient redissonClient;
-
-    public KakaoTokenRepository(RedissonClient redissonClient) {
-        this.redissonClient = redissonClient;
+    public KakaoTokenRepository(RMapCache<Long, String> kakaoAccessMap, RMapCache<Long, String> kakaoRefreshMap) {
+        this.kakaoAccessMap = kakaoAccessMap;
+        this.kakaoRefreshMap = kakaoRefreshMap;
     }
 
     public void saveAccessToken(Long memberId, KakaoTokenDto tokenDto) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_ACCESS_TOKEN_PREFIX);
-        map.put(memberId, tokenDto.access_token(), tokenDto.expires_in(), TimeUnit.SECONDS);
+        kakaoAccessMap.put(memberId, tokenDto.access_token(), tokenDto.expires_in(), TimeUnit.SECONDS);
     }
 
     public void saveRefreshToken(Long memberId, KakaoTokenDto tokenDto) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_REFRESH_TOKEN_PREFIX);
-        map.put(memberId, tokenDto.refresh_token(), tokenDto.refresh_token_expires_in(), TimeUnit.SECONDS);
+        kakaoRefreshMap.put(memberId, tokenDto.refresh_token(), tokenDto.refresh_token_expires_in(), TimeUnit.SECONDS);
     }
 
     public String getAccessToken(Long memberId) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_ACCESS_TOKEN_PREFIX);
-        return map.get(memberId);
+        return kakaoAccessMap.get(memberId);
     }
 
     public String getRefreshToken(Long memberId) {
-        RMapCache<Long, String> map = redissonClient.getMapCache(KAKAO_REFRESH_TOKEN_PREFIX);
-        return map.get(memberId);
+        return kakaoRefreshMap.get(memberId);
     }
 
     public void deleteAccessToken(Long memberId) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_ACCESS_TOKEN_PREFIX);
-        map.fastRemove(memberId);
+        kakaoAccessMap.fastRemove(memberId);
     }
 
     public void deleteRefreshToken(Long memberId) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_REFRESH_TOKEN_PREFIX);
-        map.fastRemove(memberId);
+        kakaoRefreshMap.fastRemove(memberId);
     }
 
     public boolean existsAccessToken(Long memberId) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_ACCESS_TOKEN_PREFIX);
-        return map.containsKey(memberId);
+        return kakaoAccessMap.containsKey(memberId);
     }
 
     public boolean existsRefreshToken(Long memberId) {
-        RMapCache<Long, String> map  = redissonClient.getMapCache(KAKAO_REFRESH_TOKEN_PREFIX);
-        return map.containsKey(memberId);
+        return kakaoRefreshMap.containsKey(memberId);
     }
 }

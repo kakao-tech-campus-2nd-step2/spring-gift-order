@@ -1,6 +1,6 @@
 package gift;
 
-import gift.config.RedisConfig;
+import gift.config.RedissonConfig;
 import gift.model.Category;
 import gift.model.Option;
 import gift.model.Product;
@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ActiveProfiles("dev")
-@Import(RedisConfig.class)
+@Import(RedissonConfig.class)
 public class RaceConditionTest {
     @Autowired
     private ProductRepository productRepository;
