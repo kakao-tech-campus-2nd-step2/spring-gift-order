@@ -5,8 +5,11 @@ import gift.exception.RepositoryException;
 import gift.model.Option;
 import gift.model.Order;
 import gift.model.OrderDTO;
+import gift.model.Product;
+import gift.model.WishList;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
+import gift.repository.WishListRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.springframework.http.HttpEntity;
@@ -23,12 +26,14 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
+    private final WishListRepository wishListRepository;
     private final RestTemplate restTemplate;
 
     public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
-        RestTemplate restTemplate) {
+        WishListRepository wishListRepository, RestTemplate restTemplate) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
+        this.wishListRepository = wishListRepository;
         this.restTemplate = restTemplate;
     }
 
@@ -37,6 +42,12 @@ public class OrderService {
             .orElseThrow(() -> new RepositoryException(
                 ErrorCode.OPTION_NOT_FOUND, orderDTO.optionId()));
 
+        Product product = option.getProduct();
+        if (wishListRepository.findWishListByProductId(product.getId()).isPresent()) {
+            WishList wishlist = wishListRepository.findWishListByProductId(product.getId())
+                .orElseThrow(() -> new RuntimeException("해당 위시 리스트를 찾을 수 없습니다."));
+            wishListRepository.deleteById(wishlist.getId());
+        }
         option.subtract(orderDTO.quantity());
         Order order = new Order(orderDTO.optionId(), orderDTO.quantity(), orderDTO.message());
         order.updateOrderDate(LocalDateTime.now()
