@@ -3,7 +3,6 @@ package gift.Controller;
 import gift.Annotation.LoginMemberResolver;
 import gift.Entity.Wishlist;
 import gift.Model.MemberDto;
-import gift.Model.ProductDto;
 import gift.Model.WishlistDto;
 import gift.Service.WishlistService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,4 +62,5 @@ public class WishlistController {
 
         return "redirect:/wishlist";
     }
+
 }
