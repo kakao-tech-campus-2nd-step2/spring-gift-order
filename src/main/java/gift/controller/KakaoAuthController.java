@@ -1,9 +1,12 @@
 package gift.controller;
 
 import gift.dto.KakaoTokenResponseDTO;
+import gift.dto.KakaoUserDTO;
+import gift.model.Member;
 import gift.service.KakaoAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,12 +37,12 @@ public class KakaoAuthController {
 
     @GetMapping("/oauth/kakao/callback")
     public ResponseEntity<String> kakaoCallback(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
-        if (tokenResponse != null) {
-            response.sendRedirect("/?accessToken=" + tokenResponse.getAccessToken());
-            return null;
-        } else {
-            return ResponseEntity.badRequest().body("카카오 로그인 실패");
+        try{
+            KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
+            KakaoUserDTO kakaoUserDTO = kakaoAuthService.getKakaoUser(tokenResponse.getAccessToken());
+            Member member = kakaoAuthService.registerOrGetMember(kakaoUserDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카카오 로그인 실패: " + e.getMessage());
         }
     }
 }
