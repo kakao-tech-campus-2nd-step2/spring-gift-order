@@ -37,17 +37,17 @@ public class WishService {
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
         Optional<ProductEntity> productOptional = productRepository.findByName(name);
         if(memberOptional.isEmpty()) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("회원정보가 없습니다.");
         }
 
         if(productOptional.isEmpty()){
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException("상품을 찾을 수 없습니다.");
         }
 
         MemberEntity memberEntity = memberOptional.get();
         ProductEntity productEntity = productOptional.get();
         if(!memberEntity.getRole().equals(Role.ADMIN) && !memberEntity.getRole().equals(Role.CONSUMER))
-            throw new AuthorizedException();
+            throw new AuthorizedException("접근 권한이 없습니다.");
 
         wishRepository.save(new WishEntity(memberEntity, productEntity));
     }
@@ -56,12 +56,12 @@ public class WishService {
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
 
         if(memberOptional.isEmpty()) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("회원정보가 없습니다.");
         }
         MemberEntity memberEntity = memberOptional.get();
 
         if(!memberEntity.getRole().equals(Role.ADMIN) && !memberEntity.getRole().equals(Role.CONSUMER)) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("접근 권한이 없습니다.");
         }
 
         List<WishEntity> wishEntities = wishRepository.findByMemberId(memberEntity.getId());
@@ -79,17 +79,17 @@ public class WishService {
         Optional<ProductEntity> productOptional = productRepository.findByName(name);
 
         if(memberOptional.isEmpty()) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("회원정보가 없습니다.");
         }
 
         if(productOptional.isEmpty()){
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException("상품을 찾을 수 없습니다.");
         }
 
         ProductEntity productEntity = productOptional.get();
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.getRole().equals(Role.ADMIN) && !memberEntity.getRole().equals(Role.CONSUMER)) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("접근 권한이 없습니다.");
         }
 
         wishRepository.delete(wishRepository.findByMemberIdAndProductId(memberEntity.getId(), productEntity.getId()));

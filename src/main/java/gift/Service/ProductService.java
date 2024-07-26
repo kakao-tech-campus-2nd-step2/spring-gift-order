@@ -36,17 +36,17 @@ public class ProductService {
     public void create(String email, ProductDTO productDTO){
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
         if(memberOptional.isEmpty()) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("회원 정보가 없습니다.");
         }
 
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.isAdmin()) {
-            throw new AuthorizedException();
+            throw new AuthorizedException("관리자가 아닙니다.");
         }
 
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findByName(productDTO.categoryName());
         if(categoryEntityOptional.isEmpty()){
-            throw new CategoryDuplicatedException();
+            throw new CategoryDuplicatedException("카테고리가 중복됩니다.");
         }
 
         CategoryEntity categoryEntity = categoryEntityOptional.get();
@@ -56,11 +56,11 @@ public class ProductService {
 
     public List<ProductDTO> read(String email){
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
-        if(memberOptional.isEmpty()) throw new AuthorizedException();
+        if(memberOptional.isEmpty()) throw new AuthorizedException("회원 정보가 없습니다.");
 
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.isAdmin() && !memberEntity.isConsumer())
-            throw new AuthorizedException();
+            throw new AuthorizedException("접근 권한이 없습니다.");
         List<ProductEntity> entityList = productRepository.findAll();
         List<ProductDTO> dtoList = new ArrayList<>();
 
@@ -74,15 +74,15 @@ public class ProductService {
 
     public void update(String email, Long id, ProductDTO productDTO){
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
-        if(memberOptional.isEmpty()) throw new AuthorizedException();
+        if(memberOptional.isEmpty()) throw new AuthorizedException("회원 정보가 없습니다.");
 
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.isAdmin())
-            throw new AuthorizedException();
+            throw new AuthorizedException("관리자가 아닙니다.");
 
         Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findByName(productDTO.categoryName());
         if(categoryEntityOptional.isEmpty()){
-            throw new CategoryDuplicatedException();
+            throw new CategoryDuplicatedException("중복된 카테고리가 이미 있습니다.");
         }
 
         CategoryEntity categoryEntity = categoryEntityOptional.get();
@@ -95,11 +95,11 @@ public class ProductService {
 
     public void delete(String email, Long id){
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
-        if(memberOptional.isEmpty()) throw new AuthorizedException();
+        if(memberOptional.isEmpty()) throw new AuthorizedException("회원정보가 없습니다.");
 
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.isAdmin())
-            throw new AuthorizedException();
+            throw new AuthorizedException("관리자가 아닙니다.");
 
         productRepository.deleteById(id);
     }
@@ -118,16 +118,16 @@ public class ProductService {
 
     public ProductDTO getById(String email, Long id){
         Optional<MemberEntity> memberOptional = memberRepository.findByEmail(email);
-        if(memberOptional.isEmpty()) throw new AuthorizedException();
+        if(memberOptional.isEmpty()) throw new AuthorizedException("회원정보가 없습니다.");
 
         MemberEntity memberEntity = memberOptional.get();
         if(!memberEntity.isAdmin() && !memberEntity.isConsumer())
-            throw new AuthorizedException();
+            throw new AuthorizedException("접근 권한이 없습니다.");
 
         Optional<ProductEntity> productEntityOptional = productRepository.findById(id);
 
         if(productEntityOptional.isEmpty()){
-            throw new ProductNotFoundException();
+            throw new ProductNotFoundException("제품을 찾을 수 없습니다.");
         }
         ProductEntity productEntity = productEntityOptional.get();
 
