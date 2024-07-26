@@ -8,10 +8,13 @@ public class KakaoProperties {
     private final String clientId;
     private final String redirectUri;
 
+    private final String kakaoAuthUrl;
+
     @ConstructorBinding
-    public KakaoProperties(String clientId, String redirectUri) {
+    public KakaoProperties(String clientId, String redirectUri, String kakaoAuthUrl) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
+        this.kakaoAuthUrl = kakaoAuthUrl;
     }
 
     public String getClientId() {
@@ -20,5 +23,9 @@ public class KakaoProperties {
 
     public String getRedirectUri() {
         return redirectUri;
+    }
+
+    public String getKakaoAuthUrl() {
+        return kakaoAuthUrl;
     }
 }

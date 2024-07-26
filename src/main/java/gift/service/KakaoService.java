@@ -12,14 +12,18 @@ import reactor.core.publisher.Mono;
 @Service
 public class KakaoService {
     private final KakaoProperties kakaoProperties;
+    private final WebClient.Builder webClientBuilder;
 
-    public KakaoService(KakaoProperties kakaoProperties) {
+
+    public KakaoService(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder) {
         this.kakaoProperties = kakaoProperties;
+        this.webClientBuilder = webClientBuilder;
     }
 
     public String getAccessTokenFromKakao(String code) {
+        WebClient webClient = webClientBuilder.baseUrl(kakaoProperties.getKakaoAuthUrl()).build();
 
-        KakaoResponseDto kakaoResponseDto = WebClient.create("https://kauth.kakao.com").post()
+        KakaoResponseDto kakaoResponseDto = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .scheme("https")
                         .path("/oauth/token")
