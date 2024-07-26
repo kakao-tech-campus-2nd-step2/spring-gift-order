@@ -1,8 +1,9 @@
 package gift.global;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import gift.domain.annotation.ValidAdminMemberArgumentResolver;
 import gift.domain.annotation.ValidMemberArgumentResolver;
-import gift.domain.service.MemberService;
+import gift.domain.service.member.MemberService;
 import gift.global.util.JwtUtil;
 import java.util.Arrays;
 import java.util.List;
@@ -39,10 +40,24 @@ public class WebConfig implements WebMvcConfigurer {
 
             public static class Member {
 
-                public static class Permission {
+                public enum Type {
 
-                    public static final String MEMBER = "member";
-                    public static final String ADMIN = "admin";
+                    KAKAO, LOCAL;
+
+                    @JsonCreator
+                    public static Type from(String s) {
+                        return Type.valueOf(s.toUpperCase());
+                    }
+                }
+
+                public enum Permission {
+
+                    MEMBER, ADMIN;
+
+                    @JsonCreator
+                    public static Type from(String s) {
+                        return Type.valueOf(s.toUpperCase());
+                    }
                 }
             }
 

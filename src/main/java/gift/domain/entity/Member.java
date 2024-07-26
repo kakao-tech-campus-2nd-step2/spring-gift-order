@@ -1,10 +1,15 @@
 package gift.domain.entity;
 
+import gift.global.WebConfig.Constants.Domain.Member.Permission;
+import gift.global.WebConfig.Constants.Domain.Member.Type;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Member {
@@ -16,16 +21,24 @@ public class Member {
     @Column(nullable = false, unique = true, length = 64)
     private String email;
 
-    @Column(nullable = false, length = 64)
-    String password;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Type userType;
 
     @Column(nullable = false, length = 64)
-    String permission;
+    @Enumerated(EnumType.STRING)
+    private Permission permission;
 
-    public Member(String email, String password, String permission) {
+    @OneToOne(mappedBy = "member")
+    private LocalMember localMember;
+
+    @OneToOne(mappedBy = "member")
+    private KakaoOauthMember kakaoOauthMember;
+
+    public Member(String email, Permission permission, Type userType) {
         this.email = email;
-        this.password = password;
         this.permission = permission;
+        this.userType = userType;
     }
 
     protected Member() {
@@ -39,12 +52,20 @@ public class Member {
         return email;
     }
 
-    public String getPassword() {
-        return password;
+    public Type getUserType() {
+        return userType;
     }
 
-    public String getPermission() {
+    public Permission getPermission() {
         return permission;
+    }
+
+    public KakaoOauthMember getKakaoOauthMember() {
+        return kakaoOauthMember;
+    }
+
+    public LocalMember getLocalMember() {
+        return localMember;
     }
 
     public void setId(Long id) {
@@ -55,12 +76,20 @@ public class Member {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserType(Type userType) {
+        this.userType = userType;
     }
 
-    public void setPermission(String permission) {
+    public void setPermission(Permission permission) {
         this.permission = permission;
+    }
+
+    public void setKakaoOauthMember(KakaoOauthMember kakaoOauthMember) {
+        this.kakaoOauthMember = kakaoOauthMember;
+    }
+
+    public void setLocalMember(LocalMember localMember) {
+        this.localMember = localMember;
     }
 
     @Override
@@ -68,8 +97,10 @@ public class Member {
         return "Member{" +
             "id=" + id +
             ", email='" + email + '\'' +
-            ", password='" + password + '\'' +
+            ", userType='" + userType + '\'' +
             ", permission='" + permission + '\'' +
+            ", localMember=" + localMember +
+            ", kakaoOauthMember=" + kakaoOauthMember +
             '}';
     }
 }

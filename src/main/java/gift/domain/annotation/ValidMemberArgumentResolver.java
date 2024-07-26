@@ -1,7 +1,7 @@
 package gift.domain.annotation;
 
 import gift.domain.entity.Member;
-import gift.domain.service.MemberService;
+import gift.domain.service.member.MemberService;
 import gift.global.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
