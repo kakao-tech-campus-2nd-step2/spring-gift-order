@@ -51,9 +51,10 @@ public class AuthController {
         KakaoProperties properties = authService.getProperties();
         String clientId = properties.clientId();
         String redirectUri = properties.redirectUrl();
-        return
-            "redirect:https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri="
-                + redirectUri + "&client_id=" + clientId;
+        return "redirect:https://kauth.kakao.com/oauth/authorize?response_type=code"
+            + "&client_id=" + clientId
+            + "&redirect_uri=" + redirectUri
+            + "&scope=account_email";
     }
 
     @GetMapping("/")
@@ -64,22 +65,22 @@ public class AuthController {
     }
 
     @PostMapping("/api/oauth/kakao/login")
-    public ResponseEntity<SuccessBody<UserResponseDTO>> login(
+    public ResponseEntity<SuccessBody<UserResponseDTO>> kakaoLogin(
         @RequestParam("code") String code
     ) {
         String accessToken = authService.getAccessToken(code);
         String userEmail = authService.getUserEmail(accessToken);
         Optional<User> user = userService.findByEmail(userEmail);
-        final UserResponseDTO[] userResponseDTO = new UserResponseDTO[1];
-        user.ifPresentOrElse(
-            existUser -> userResponseDTO[0] = authService.login(existUser, new UserLoginRequestDTO(userEmail, "kakao")),
-            () -> {
-                User joinedUser = userService.join(
-                    new UserSignupRequestDTO(userEmail, "kakao", Role.USER.getRole()));
-                userResponseDTO[0] = authService.login(joinedUser, new UserLoginRequestDTO(userEmail, "kakao"));
-            }
-        );
 
-        return ApiResponseGenerator.success(HttpStatus.OK, "액세스 토큰 발급 성공", userResponseDTO[0]);
+        UserResponseDTO userResponseDTO = user.map(existUser ->
+            authService.login(existUser, new UserLoginRequestDTO(userEmail, "kakao"))
+        ).orElseGet(() -> {
+            User joinedUser = userService.join(
+                new UserSignupRequestDTO(userEmail, "kakao", Role.USER.getRole()));
+            return authService.login(joinedUser, new UserLoginRequestDTO(userEmail, "kakao"));
+        });
+
+        return ApiResponseGenerator.success(HttpStatus.OK, "jwt 토큰 발급 성공", userResponseDTO);
     }
+
 }
