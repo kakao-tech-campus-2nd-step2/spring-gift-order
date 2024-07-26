@@ -52,10 +52,9 @@ public class KakaoApiService {
         throws JsonProcessingException {
         var uri = kakaoApiSecurityProps.getMemoSend();
         var body = getSelfMessageRequestBody(text);
-        var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
-            .retrieve().toEntity(String.class);
+        client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body).contentType(MediaType.APPLICATION_JSON)
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(token)).retrieve().toBodilessEntity();
     }
 
     public LinkedMultiValueMap<String, String> getTokenRequestBody(String code) {
