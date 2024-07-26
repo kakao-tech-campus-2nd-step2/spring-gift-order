@@ -7,13 +7,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.OAuthLoginMember;
+import gift.product.dto.auth.LoginMember;
 import gift.product.dto.order.OrderDto;
 import gift.product.model.Category;
+import gift.product.model.KakaoToken;
 import gift.product.model.Option;
 import gift.product.model.Order;
 import gift.product.model.Product;
 import gift.product.repository.AuthRepository;
+import gift.product.repository.KakaoTokenRepository;
 import gift.product.repository.OptionRepository;
 import gift.product.repository.OrderRepository;
 import gift.product.repository.WishRepository;
@@ -52,6 +54,9 @@ class OrderServiceTest {
     @Mock
     AuthRepository authRepository;
 
+    @Mock
+    KakaoTokenRepository kakaoTokenRepository;
+
     @InjectMocks
     OrderService orderService;
 
@@ -74,38 +79,39 @@ class OrderServiceTest {
     @Test
     void 주문_전체_조회() {
         //given
-        OAuthLoginMember oAuthLoginMember = new OAuthLoginMember(1L, "test_access_token");
+        LoginMember loginMember = new LoginMember(1L);
 
         //when
-        orderService.getOrderAll(oAuthLoginMember);
+        orderService.getOrderAll(loginMember);
 
         //then
-        then(orderRepository).should().findAllByMemberId(oAuthLoginMember.id());
+        then(orderRepository).should().findAllByMemberId(loginMember.id());
     }
 
     @Test
     void 주문_조회() {
         //given
-        OAuthLoginMember oAuthLoginMember = new OAuthLoginMember(1L, "test_access_token");
+        LoginMember loginMember = new LoginMember(1L);
         Order order = new Order(1L, 1L, 1, "test_message");
         given(orderRepository.findByIdAndMemberId(1L, 1L)).willReturn(Optional.of(order));
 
         //when
-        orderService.getOrder(1L, oAuthLoginMember);
+        orderService.getOrder(1L, loginMember);
 
         //then
-        then(orderRepository).should().findByIdAndMemberId(1L, oAuthLoginMember.id());
+        then(orderRepository).should().findByIdAndMemberId(1L, loginMember.id());
     }
 
     @Test
     void 주문() {
         //given
         OrderDto orderDto = new OrderDto(1L, 3, "test_message");
-        OAuthLoginMember oAuthLoginMember = new OAuthLoginMember(1L, "test_access_token");
+        LoginMember loginMember = new LoginMember(1L);
         Order order = new Order(1L, orderDto.optionId(), 1L, 2, orderDto.message());
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 5, product);
+        KakaoToken kakaoToken = new KakaoToken(1L, 1L, "test_oauth_access_token", "test_oauth_refresh_token");
 
         String resultCode = "{\"result_code\":0}";
         mockWebServer.enqueue(new MockResponse().setBody(resultCode));
@@ -114,10 +120,11 @@ class OrderServiceTest {
         given(authRepository.existsById(any())).willReturn(true);
         given(wishRepository.existsByProductIdAndMemberId(any(), any())).willReturn(true);
         given(orderRepository.save(any())).willReturn(order);
+        given(kakaoTokenRepository.findByMemberId(any())).willReturn(Optional.of(kakaoToken));
 
         //when
         String mockUrl = mockWebServer.url("/v2/api/talk/memo/default/send").toString();
-        Order resultOrder = orderService.doOrder(orderDto, oAuthLoginMember, mockUrl);
+        Order resultOrder = orderService.doOrder(orderDto, loginMember, mockUrl);
 
         //then
         assertThat(resultOrder.getId()).isNotNull();
@@ -126,15 +133,15 @@ class OrderServiceTest {
     @Test
     void 주문_삭제() {
         //given
-        OAuthLoginMember oAuthLoginMember = new OAuthLoginMember(1L, "test_access_token");
+        LoginMember loginMember = new LoginMember(1L);
         Order order = new Order(1L, 1L, 1, "test_message");
         given(orderRepository.existsById(1L)).willReturn(true);
 
         //when
-        orderService.deleteOrder(1L, oAuthLoginMember);
+        orderService.deleteOrder(1L, loginMember);
 
         //then
-        then(orderRepository).should().deleteByIdAndMemberId(1L, oAuthLoginMember.id());
+        then(orderRepository).should().deleteByIdAndMemberId(1L, loginMember.id());
     }
 
     @Test
@@ -144,13 +151,13 @@ class OrderServiceTest {
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 1, product);
         OrderDto orderDto = new OrderDto(1L, 999, "test_message");
-        OAuthLoginMember oAuthLoginMember = new OAuthLoginMember(1L, "test_access_token");
+        LoginMember loginMember = new LoginMember(1L);
         given(optionRepository.findById(1L)).willReturn(Optional.of(option));
         given(authRepository.existsById(any())).willReturn(true);
 
         //when, then
         assertThatThrownBy(
-            () -> orderService.doOrder(orderDto, oAuthLoginMember, "test_url")).isInstanceOf(
+            () -> orderService.doOrder(orderDto, loginMember, "test_url")).isInstanceOf(
             IllegalArgumentException.class);
     }
 }

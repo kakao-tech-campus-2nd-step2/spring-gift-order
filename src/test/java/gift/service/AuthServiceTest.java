@@ -10,14 +10,18 @@ import static org.mockito.BDDMockito.then;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.LoginMember;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
+import gift.product.model.KakaoToken;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
+import gift.product.repository.KakaoTokenRepository;
 import gift.product.service.AuthService;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -46,6 +50,9 @@ class AuthServiceTest {
 
     @Mock
     AuthRepository authRepository;
+
+    @Mock
+    KakaoTokenRepository kakaoTokenRepository;
 
     @InjectMocks
     AuthService authService;
@@ -151,51 +158,44 @@ class AuthServiceTest {
     }
 
     @Test
-    void 카카오_유저_회원가입_처리() {
+    void 카카오_유저_회원가입_처리_및_자체_토큰_발급() {
         //given
         String testEmail = "test_email";
         given(authRepository.existsByEmail(testEmail)).willReturn(false);
+        given(authRepository.findByEmail(testEmail)).willReturn(new Member(1L, testEmail, "oauth"));
 
         String responseBody = "{\"kakao_account\":{\"email\":\"" + testEmail + "\"}}";
         mockWebServer.enqueue(new MockResponse().setBody(responseBody));
 
-        //when
-        String mockUrl = mockWebServer.url("/v2/user/me").toString();
-        authService.registerKakaoMember("test_oauth_access_token", mockUrl);
-
-        //then
-        then(authRepository).should().save(any());
-    }
-
-    @Test
-    void 자체_토큰_발급() {
-        //given
-        Member member = new Member(1L, "test@test.com", "test");
         OAuthJwt oAuthJwt = new OAuthJwt("test_oauth_access_token", "test_oauth_refresh_token");
 
         //when
-        JwtResponse jwtResponse = authService.getToken(member, oAuthJwt);
+        String mockUrl = mockWebServer.url("/v2/user/me").toString();
+        authService.registerKakaoMember(oAuthJwt, mockUrl);
 
         //then
-        assertSoftly(softly -> {
-            assertThat(jwtResponse.accessToken()).isNotNull();
-            assertThat(jwtResponse.refreshToken()).isNotNull();
-        });
+        then(authRepository).should().save(any());
+        then(kakaoTokenRepository).should().save(any());
     }
 
     @Test
     void 카카오_유저_연결_끊기() {
         //given
-        long testId = 1L;
-        String responseBody = "{\"id\":\"" + testId + "\"}";
+        long testMemberId = 1L;
+        String responseBody = "{\"id\":\"" + testMemberId + "\"}";
         mockWebServer.enqueue(new MockResponse().setBody(responseBody));
+
+        LoginMember loginMember = new LoginMember(testMemberId);
+        KakaoToken kakaoToken = new KakaoToken(1L, testMemberId, "test_oauth_access_token", "test_oauth_refresh_token");
+
+        given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
 
         //when
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
-        Long id = authService.unlinkKakaoAccount("test_oauth_access_token", mockUrl);
+        Long id = authService.unlinkKakaoAccount(loginMember, mockUrl);
 
         //then
-        assertThat(id).isEqualTo(testId);
+        assertThat(id).isEqualTo(testMemberId);
     }
 
     @Test
@@ -227,9 +227,10 @@ class AuthServiceTest {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
+        OAuthJwt oAuthJwt = new OAuthJwt("test_oauth_access_token", "test_oauth_refresh_token");
 
         //when, then
-        assertThatThrownBy(() -> authService.registerKakaoMember("test_oauth_access_token",
+        assertThatThrownBy(() -> authService.registerKakaoMember(oAuthJwt,
             mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
@@ -239,9 +240,13 @@ class AuthServiceTest {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
+        LoginMember loginMember = new LoginMember(1L);
+        KakaoToken kakaoToken = new KakaoToken(1L, 1L, "test_oauth_access_token", "test_oauth_refresh_token");
+
+        given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
 
         //when, then
-        assertThatThrownBy(() -> authService.unlinkKakaoAccount("test_oauth_access_token",
+        assertThatThrownBy(() -> authService.unlinkKakaoAccount(loginMember,
             mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
