@@ -52,7 +52,7 @@ public class User {
 
     public void checkLoginType(LoginType loginType) {
         if (this.loginType != loginType) {
-            throw new InvalidUserException("유효하지 않은 로그인상태입니다.");
+            throw new InvalidUserException("카카오 서비스를 이용할 수 없는 유저입니다.");
         }
     }
 
