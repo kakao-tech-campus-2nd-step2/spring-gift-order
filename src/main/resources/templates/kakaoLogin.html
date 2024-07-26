@@ -18,7 +18,7 @@
       var kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code" +
     "&redirect_uri=" + encodeURIComponent(redirectUri) + "&client_id=" + clientId;
 
-     window.open(kakaoAuthUrl, 'kakaoAuthPopup', 'width=600,height=600,scrollbars=yes');
+     window.location.href = kakaoAuthUrl
   }
 </script>
 </body>
