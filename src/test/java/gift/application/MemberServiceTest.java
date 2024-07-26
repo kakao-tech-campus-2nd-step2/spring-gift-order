@@ -1,6 +1,8 @@
 package gift.application;
 
+import gift.auth.application.KakaoClient;
 import gift.auth.dto.AuthResponse;
+import gift.auth.dto.KakaoTokenResponse;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
 import gift.global.security.JwtUtil;
@@ -21,7 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -36,6 +38,9 @@ class MemberServiceTest {
 
     @Mock
     private JwtUtil jwtUtil;
+
+    @Mock
+    private KakaoClient kakaoClient;
 
     @Test
     @DisplayName("회원가입 서비스 테스트")
@@ -108,6 +113,43 @@ class MemberServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessage(ErrorCode.AUTHENTICATION_FAILED
                                      .getMessage());
+    }
+
+    @Test
+    @DisplayName("회원 조회 기능 테스트")
+    void getMemberById() {
+        Long memberId = 1L;
+        Member member = MemberFixture.createMember("test@email.com");
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(member));
+
+        Member foundMember = memberService.getMemberById(memberId);
+
+        assertThat(foundMember.getEmail()).isEqualTo(member.getEmail());
+    }
+
+    @Test
+    @DisplayName("카카오 토큰 갱신 기능 테스트")
+    void refreshKakaoAccessToken() {
+        Long memberId = 1L;
+        Member member = MemberFixture.createMember("test@email.com");
+        KakaoTokenResponse response = new KakaoTokenResponse(
+                "token",
+                "test-token",
+                3600,
+                "test-refresh-token",
+                3600,
+                "code"
+        );
+
+        given(memberRepository.findById(anyLong()))
+                .willReturn(Optional.of(member));
+        given(kakaoClient.getRefreshTokenResponse(any()))
+                .willReturn(response);
+
+        memberService.refreshKakaoAccessToken(memberId);
+        assertThat(member.getKakaoAccessToken()).isEqualTo(response.accessToken());
+        assertThat(member.getKakaoRefreshToken()).isEqualTo(response.refreshToken());
     }
 
 }
