@@ -47,8 +47,8 @@ public class OrderService {
     public Map<String, Object> orderProduct(String authorization, OrderDTO orderDTO) {
         System.out.println("[OrderService] orderProduct()");
         Member member = jwtUtil.parsingToken(authorization);
-        Option option = optionRepository.findById(orderDTO.getOptionId()).orElseThrow(
-            () -> new InvalidIdException(NOT_EXIST_ID)
+        Option option = optionRepository.findById(orderDTO.getOptionId())
+            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID)
         );
         option.subtractQuantity(orderDTO.getQuantity());
         Order order = orderRepository.save(orderDTO.convert(optionRepository));

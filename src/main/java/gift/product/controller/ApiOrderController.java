@@ -1,5 +1,7 @@
 package gift.product.controller;
 
+import static gift.product.exception.GlobalExceptionHandler.INVALID_ORDER_REQUEST;
+
 import gift.product.dto.OrderDTO;
 import gift.product.service.OrderService;
 import jakarta.validation.Valid;
@@ -26,10 +28,13 @@ public class ApiOrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> orderProduct(@RequestHeader("Authorization") String authorization, @Valid @RequestBody OrderDTO orderDTO, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Object>> orderProduct(
+        @RequestHeader("Authorization") String authorization,
+        @Valid @RequestBody OrderDTO orderDTO,
+        BindingResult bindingResult) {
         System.out.println("[ApiOrderController] orderProduct()");
         if(bindingResult.hasErrors()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(INVALID_ORDER_REQUEST);
         }
         return new ResponseEntity<>(orderService.orderProduct(authorization, orderDTO), HttpStatus.CREATED);
     }

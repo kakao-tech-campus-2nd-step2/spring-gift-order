@@ -35,6 +35,8 @@ public class GlobalExceptionHandler {
     public static final String SUBTRACT_EXCEED_QUANTITY = "차감하려는 수량이 상품 옵션의 잔여 수량을 초과하였습니다.";
     // 서버 응답과 관련된 에러 메세지
     public static final String DID_NOT_RECEIVE_RESPONSE = "서버로부터 받은 응답이 존재하지 않습니다.";
+    // 주문과 관련된 에러 메세지
+    public static final String INVALID_ORDER_REQUEST = "주문하려는 상품의 ID, 수량을 정확하게 입력해주세요.";
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
