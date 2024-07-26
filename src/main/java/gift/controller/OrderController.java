@@ -10,22 +10,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
+import gift.exception.CustomException;
 import gift.service.OrderService;
+import gift.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
 
     private final OrderService orderService;
+    private final JwtUtil jwtUtil;
 
-    public OrderController(OrderService orderService){
+    public OrderController(OrderService orderService, JwtUtil jwtUtil){
         this.orderService = orderService;
+        this.jwtUtil = jwtUtil;
     }
     
     @PostMapping
-    public ResponseEntity<OrderResponse> order(@RequestHeader("Authorization") String token, @RequestBody OrderRequest orderRequest){
+    public ResponseEntity<OrderResponse> order(@RequestHeader("Authorization") String authorizationHeader, @RequestBody OrderRequest orderRequest){
         
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            throw new CustomException("Unvalid Token!", HttpStatus.BAD_REQUEST);
+        }
+
         OrderResponse orderResponse = orderService.orderOption(orderRequest);
+        orderService.deleteWishListByOrder(jwtUtil.extractToken(authorizationHeader), orderRequest.getOptionId());
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }

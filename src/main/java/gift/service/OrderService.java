@@ -6,7 +6,9 @@ import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.entity.Option;
 import gift.entity.Order;
+import gift.entity.Product;
 import gift.repository.OrderRepository;
+import gift.util.JwtUtil;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
@@ -17,10 +19,12 @@ public class OrderService {
 
     private OrderRepository orderRepository;
     private OptionService optionService;
+    private WishListService wishListService;
 
-    public OrderService(OrderRepository orderRepository, OptionService optionService){
+    public OrderService(OrderRepository orderRepository, OptionService optionService, WishListService wishListService){
         this.orderRepository = orderRepository;
         this.optionService = optionService;
+        this.wishListService = wishListService;
     }
     
     @Transactional
@@ -37,5 +41,12 @@ public class OrderService {
             savedOrder.getQuantity(), 
             savedOrder.getMessage(), 
             savedOrder.getOrderTime());
+    }
+
+    public void deleteWishListByOrder(String token, Long optionId){
+
+        Product product = optionService.findProductByOptionId(optionId);
+
+        wishListService.deleteWishList(token, product.getId());
     }
 }
