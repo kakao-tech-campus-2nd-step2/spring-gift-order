@@ -52,7 +52,6 @@ public class KakaoApiService {
         throws JsonProcessingException {
         var uri = kakaoApiSecurityProps.getMemoSend();
         var body = getSelfMessageRequestBody(text);
-        System.out.println(body);
         var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
