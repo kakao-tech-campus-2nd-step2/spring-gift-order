@@ -10,11 +10,12 @@ CREATE TABLE categories
 
 CREATE TABLE members
 (
-    id          BIGINT AUTO_INCREMENT NOT NULL,
-    member_type VARCHAR(255)          NULL,
-    email       VARCHAR(255)          NULL,
-    password    VARCHAR(255)          NULL,
-    nickname    VARCHAR(255)          NULL,
+    id           BIGINT AUTO_INCREMENT NOT NULL,
+    member_type  VARCHAR(255)          NULL,
+    access_token VARCHAR(255)          NULL,
+    email        VARCHAR(255)          NULL,
+    password     VARCHAR(255)          NULL,
+    nickname     VARCHAR(255)          NULL,
     CONSTRAINT pk_members PRIMARY KEY (id)
 );
 

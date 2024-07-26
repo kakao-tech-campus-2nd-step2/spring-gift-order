@@ -110,8 +110,13 @@ public class AuthService {
 
         Member responseMember = response.getBody().toMember();
 
-        // Member를 이메일로 조회하고, 없으면 responseMember를 저장
-        return memberRepository.findByEmail(responseMember.getEmail())
+        Member member = memberRepository.findByEmail(responseMember.getEmail())
                 .orElseGet(() -> memberRepository.save(responseMember));
+
+        member.updateAccessToken(accessToken);
+        memberRepository.save(member);
+
+        // Member를 이메일로 조회하고, 없으면 responseMember를 저장
+        return member;
     }
 }
