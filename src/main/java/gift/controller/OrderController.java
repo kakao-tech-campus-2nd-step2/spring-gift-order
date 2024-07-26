@@ -29,8 +29,9 @@ public class OrderController {
         String parsedToken = token.replace("Bearer ", "");
         Long userId = jwtUtil.extractUserId(parsedToken);
         String email = jwtUtil.extractEmail(parsedToken);
+        String access_token = jwtUtil.extractKakaoToken(parsedToken);
 
-        orderService.createOrder(order, userId, email);
+        orderService.createOrder(order, userId, email,access_token);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
