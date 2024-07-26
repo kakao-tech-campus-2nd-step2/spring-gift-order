@@ -56,6 +56,10 @@ public class OptionEntity {
         this.quantity = quantity;
     }
 
+    public ProductEntity getProductEntity() {
+        return productEntity;
+    }
+
     public void setProductEntity(ProductEntity productEntity) {
         this.productEntity = productEntity;
     }
