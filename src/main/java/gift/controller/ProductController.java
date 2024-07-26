@@ -35,25 +35,27 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @Operation(summary = "상품 리스트 조회(상세)")
+    @Operation(summary = "상품 리스트 조회(간략)", description = "상품의 id와 이름을 반환합니다.")
     @GetMapping
-    public PageResult<ProductDetail> getProductList(@Valid Product.getList param) {
-        return PageMapper.toPageResult(productService.getProductList(param));
-    }
-
-    @Operation(summary = "상품 리스트 조회(간략)")
-    @GetMapping("/simple")
     public PageResult<ProductSimple> getSimpleProductList(@Valid Product.getList param) {
         return PageMapper.toPageResult(productService.getSimpleProductList(param));
     }
 
-    @Operation(summary = "상품 단일 조회")
+    @Operation(summary = "상품 리스트 조회(상세)",
+        description = "상품의 id,이름,가격,이미지,생성일,수정일, 해당 상품을 위시리스트에 포함함 유저id 리스트, 속해있는 카테고리id를 반환합니다.")
+    @GetMapping("/detail")
+    public PageResult<ProductDetail> getProductList(@Valid Product.getList param) {
+        return PageMapper.toPageResult(productService.getProductList(param));
+    }
+
+    @Operation(summary = "상품 단일 조회",
+        description = "상품의 id,이름,가격,이미지,생성일,수정일, 해당 상품을 위시리스트에 포함함 유저id 리스트, 속해있는 카테고리id를 반환합니다.")
     @GetMapping("/{id}")
     public SingleResult<ProductDetail> getProduct(@PathVariable long id) {
         return new SingleResult<>(productService.getProduct(id));
     }
 
-    @Operation(summary = "상품 생성")
+    @Operation(summary = "상품 생성", description = "상품을 생성합니다.")
     @PostMapping
     public SingleResult<Long> createProduct(@Valid @RequestBody Product.CreateProduct create) {
         SingleResult singleResult = new SingleResult<>(productService.createProduct(create));
@@ -61,7 +63,7 @@ public class ProductController {
         return singleResult;
     }
 
-    @Operation(summary = "상품 수정")
+    @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     @PutMapping("/{id}")
     public SingleResult<Long> updateProduct(@Valid @RequestBody Product.UpdateProduct update,
         @PathVariable long id) {
@@ -71,7 +73,7 @@ public class ProductController {
         return singleResult;
     }
 
-    @Operation(summary = "상품 삭제")
+    @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
     @DeleteMapping("/{id}")
     public SingleResult<Long> deleteProduct(@PathVariable long id) {
         return new SingleResult<>(productService.deleteProduct(id));

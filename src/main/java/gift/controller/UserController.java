@@ -59,7 +59,7 @@ public class UserController {
         return new SingleResult<>(userService.updatePassword(id, update));
     }
 
-    @Operation(summary = "유저 삭제", description = "soft delete")
+    @Operation(summary = "유저 삭제", description = "soft delete를 수행합니다.")
     @DeleteMapping("/{id}")
     public SingleResult<Long> deleteUser(@PathVariable long id) {
         return new SingleResult<>(userService.deleteUser(id));

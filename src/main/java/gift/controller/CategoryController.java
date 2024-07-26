@@ -36,25 +36,25 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @Operation(summary = "카테고리 목록을 조회한다.")
+    @Operation(summary = "카테고리 목록을 조회한다.", description = "카테고리의 아이디와 카테고리명을 담은 리스를 반환합니다.")
     @GetMapping
     public PageResult<SimpleCategory> getCategoryList(@Valid Category.getList req) {
         return PageMapper.toPageResult(categoryService.getCategoryList(req));
     }
 
-    @Operation(summary = "단일 카테고리를 조회한다.")
+    @Operation(summary = "단일 카테고리를 조회한다.", description = "카테고리에 포함된 상품id, 카테고리id, 카테고리명, 생성일, 수정일을 반환합니다.")
     @GetMapping("/{id}")
     public SingleResult<DetailCategory> getCategory(@PathVariable long id) {
         return new SingleResult(categoryService.getCategory(id));
     }
 
-    @Operation(summary = "카테고리를 생성한다.")
+    @Operation(summary = "카테고리를 생성한다.", description = "카테고리명은 중복될 수 없습니다.")
     @PostMapping
     public SingleResult<Long> createCategory(@Valid @RequestBody CreateCategory create) {
         return new SingleResult(categoryService.createCategory(create));
     }
 
-    @Operation(summary = "카테고리를 수정한다.")
+    @Operation(summary = "카테고리를 수정한다.", description = "카테고리명은 중복될 수 없습니다.")
     @PutMapping("/{id}")
     public SingleResult<Long> updateCategory(@PathVariable long id,
         @Valid @RequestBody UpdateCategory update) {

@@ -39,7 +39,7 @@ public class WishController {
 
     //    user id로 위시리스트 반환
     //    user id 검증
-    @Operation(summary = "유저 위시 리스트 조회")
+    @Operation(summary = "유저 위시 리스트 조회", description = "위시리스트 id, 유저id, 상품id 반환")
     @GetMapping
     public PageResult<wishSimple> getWishList(HttpServletRequest req,
         @Valid Wish.getList pram) {
@@ -48,7 +48,7 @@ public class WishController {
 
     //    Wish id로 상세정보 반환
     //    wish id 검증
-    @Operation(summary = "유저 위시 조회")
+    @Operation(summary = "유저 위시 조회", description = "위시리스트 id, 유저id, 상품id, 상품명, 상품가격, 상품 이미지 반환")
     @GetMapping("/{id}")
     public SingleResult<wishDetail> getWish(@PathVariable long id) {
         return new SingleResult(wishListService.getWish(id));

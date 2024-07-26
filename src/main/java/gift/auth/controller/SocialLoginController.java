@@ -19,7 +19,7 @@ public class SocialLoginController {
         this.socialService = socialService;
     }
 
-    @Operation(summary  = "카카오 코드로 카카오 코드를 받아온다.")
+    @Operation(summary  = "카카오 코드로 카카오 코드를 받아온다.", description = "Rest방식이 아닙니다 주의하세요, 요청시 카카오 로그인 뷰를 반환합니다.")
     @GetMapping("/code/kakao")
     public String GetKakaoCode() {
         return "redirect:" + socialService.getKakoCode();
