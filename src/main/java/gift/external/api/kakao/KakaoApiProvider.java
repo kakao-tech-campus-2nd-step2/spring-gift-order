@@ -1,5 +1,10 @@
 package gift.external.api.kakao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.auth.oauth.entity.OauthToken;
+import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.external.api.kakao.client.KakaoApiClient;
 import gift.external.api.kakao.client.KakaoAuthClient;
 import gift.external.api.kakao.dto.KakaoToken;
@@ -15,19 +20,21 @@ public class KakaoApiProvider {
     private final KakaoProperties kakaoProperties;
     private final KakaoAuthClient kakaoAuthClient;
     private final KakaoApiClient kakaoApiClient;
+    private final ObjectMapper objectMapper;
 
     private static final String[] SCOPE = { "profile_nickname", "talk_message", "account_email" };
     private static final String RESPONSE_TYPE = "code";
-    private static final String GRANT_TYPE = "authorization_code";
 
     public KakaoApiProvider(
         KakaoProperties kakaoProperties,
         KakaoAuthClient kakaoAuthClient,
-        KakaoApiClient kakaoApiClient
+        KakaoApiClient kakaoApiClient,
+        ObjectMapper objectMapper
     ) {
         this.kakaoProperties = kakaoProperties;
         this.kakaoAuthClient = kakaoAuthClient;
         this.kakaoApiClient = kakaoApiClient;
+        this.objectMapper = objectMapper;
     }
 
     public String getAuthCodeUrl() {
@@ -39,7 +46,7 @@ public class KakaoApiProvider {
 
     public KakaoToken getToken(String code) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", GRANT_TYPE);
+        body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
@@ -59,5 +66,29 @@ public class KakaoApiProvider {
         headers.setBearerAuth(accessToken);
 
         return kakaoApiClient.getUserInfo(headers);
+    }
+
+    public KakaoToken renewToken(OauthToken oauthToken) {
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", kakaoProperties.clientId());
+        body.add("refresh_token", oauthToken.getRefreshToken());
+
+        return kakaoAuthClient.getAccessToken(body);
+    }
+
+    public Integer sendMessageToMe(String accessToken, FeedObjectRequest templateObject) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        try {
+            body.add("template_object", objectMapper.writeValueAsString(templateObject));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        JsonNode jsonResponse = kakaoApiClient.sendMessageToMe(headers, body);
+        return Integer.parseInt(jsonResponse.get("result_code").asText());
     }
 }

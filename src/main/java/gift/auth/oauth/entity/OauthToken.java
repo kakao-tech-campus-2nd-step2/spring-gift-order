@@ -47,4 +47,31 @@ public class OauthToken {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
+    public void updateInfo(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        if (refreshToken != null) {
+            this.refreshToken = refreshToken;
+        }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public AuthProvider getProvider() {
+        return provider;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 }

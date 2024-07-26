@@ -1,6 +1,6 @@
 package gift.config;
 
-import gift.exception.OauthLoginException;
+import gift.exception.ExternalApiException;
 import gift.external.api.kakao.KakaoProperties;
 import gift.external.api.kakao.client.KakaoApiClient;
 import gift.external.api.kakao.client.KakaoAuthClient;
@@ -40,7 +40,7 @@ public class RestClientConfig {
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
-                throw new OauthLoginException("error.oauth.response");
+                throw new ExternalApiException("error.oauth.response");
             })
             .requestFactory(requestFactory)
             .build();
@@ -56,7 +56,7 @@ public class RestClientConfig {
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
             .defaultStatusHandler(HttpStatusCode::isError, (request, response) -> {
-                throw new OauthLoginException("error.oauth.response");
+                throw new ExternalApiException("error.oauth.response");
             })
             .build();
         return HttpServiceProxyFactory
