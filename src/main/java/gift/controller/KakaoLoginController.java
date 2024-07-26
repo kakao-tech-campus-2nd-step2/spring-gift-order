@@ -34,13 +34,13 @@ public class KakaoLoginController {
 
             if (memberService.findByEmail(kakaoInfo.getEmail()).isPresent()) {
                 // 회원이 존재하면 로그인 처리 및 JWT 발급
-                String jwt = memberService.login(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword()));
+                String jwt = memberService.login(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword(), accessToken));
                 return ResponseEntity.ok().body(new JwtResponse(jwt));
 
             } else {
                 // 4. 회원이 없으면 회원가입 후 로그인 처리 및 JWT 발급
-                memberService.registerMember(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword()));
-                String jwt = memberService.login(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword()));
+                memberService.registerMember(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword(), accessToken));
+                String jwt = memberService.login(new MemberDto(kakaoInfo.getId(), kakaoInfo.getEmail(), kakaoInfo.getPassword(), accessToken));
                 return ResponseEntity.status(HttpStatus.CREATED).body(new JwtResponse(jwt));
             }
         } catch (JsonProcessingException e) {

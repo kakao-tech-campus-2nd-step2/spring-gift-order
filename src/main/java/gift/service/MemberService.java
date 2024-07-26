@@ -21,7 +21,7 @@ public class MemberService {
             throw new RuntimeException("Email already registered");
         }
 
-        Member newMember = new Member(memberDto.getEmail(), memberDto.getPassword());
+        Member newMember = new Member(memberDto.getEmail(), memberDto.getPassword(), memberDto.getAccessToken());
         memberRepository.save(newMember);
         return newMember.getEmail();
     }
