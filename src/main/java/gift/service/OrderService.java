@@ -4,7 +4,8 @@ import gift.domain.Member;
 import gift.domain.Option;
 import gift.domain.Order;
 import gift.domain.Product;
-import gift.dto.CreateOrderDto;
+import gift.dto.OrderRequest;
+import gift.dto.OrderResponse;
 import gift.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,16 +25,18 @@ public class OrderService {
         this.wishService = wishService;
     }
 
-    public Order createOrder(CreateOrderDto orderDto) {
-        Member member = memberService.getMemberById(orderDto.getMemberId());
-        Product product = productService.getProduct(orderDto.getProductId());
+    public OrderResponse createOrder(OrderRequest orderDto) {
+        Member member = memberService.getMemberById(1L); // 임시!
         Option option = optionService.getOption(orderDto.getOptionId());
+        Product product = option.getProduct();
 
         optionService.decreaseQuantity(orderDto.getOptionId(), orderDto.getQuantity());
 
         wishService.deleteWish(product);
 
-        Order order = new Order(member, product, option, orderDto.getQuantity(), orderDto.getMessage());
-        return orderRepository.save(order);
+        Order order = new Order(member, option, orderDto.getQuantity(), orderDto.getMessage());
+        orderRepository.save(order);
+
+        return new OrderResponse(order.getId(), orderDto.getOptionId(), order.getQuantity(), order.getOrdered_at(), order.getMessage());
     }
 }

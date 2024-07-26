@@ -1,12 +1,11 @@
 package gift.controller;
 
-import gift.domain.Order;
-import gift.dto.CreateOrderDto;
+import gift.dto.OrderRequest;
+import gift.dto.OrderResponse;
 import gift.service.OrderService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/orders")
@@ -17,8 +16,11 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PutMapping()
-    public Order createOrder(@RequestBody CreateOrderDto orderDto) {
-        return orderService.createOrder(orderDto);
+    @PostMapping
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+        // 주문 처리 로직
+        OrderResponse orderResponse = orderService.createOrder(orderRequest);
+
+        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }
