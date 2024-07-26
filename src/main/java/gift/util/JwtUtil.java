@@ -1,11 +1,13 @@
 package gift.util;
 
 import gift.domain.Member;
+import gift.error.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,6 +58,14 @@ public class JwtUtil {
             .setSigningKey(key)
             .parseClaimsJws(token)
             .getBody();
+    }
+
+    public static String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        throw new UnauthorizedException("Invalid token");
     }
 
 }

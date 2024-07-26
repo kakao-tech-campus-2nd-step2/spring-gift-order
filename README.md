@@ -1,41 +1,70 @@
 # spring-gift-order
 
-## STEP-1 기능 구현 사항
-##### 카카오 로그인을 통해 인가 코드를 받고, 인가 코드를 사용해 토큰을 받은 후 향후 카카오 API 사용을 준비한다.
-- 카카오계정 로그인을 통해 인증 코드를 받는다.
-- 토큰 받기를 읽고 액세스 토큰을 추출한다.
-- 앱 키, 인가 코드가 절대 유출되지 않도록 한다.
-- (선택) 인가 코드를 받는 방법이 불편한 경우 카카오 로그인 화면을 구현한다.
+## STEP-2 기능 구현 사항
+- 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
+- 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감된다.
+- 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
+- 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
+- 메시지는 메시지 템플릿의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.
+- 아래 예시와 같이 HTTP 메시지를 주고받도록 구현한다.
 
-#### 인증 절차
-1. Client --> Server : 카카오 로그인 요청
-2. Server --> Kakao Server : GET /oauth/authorize
-3. Kakao Auth Server --> Client : 카카오 계정 로그인 요청
-4. Client --> Kakao Server : 카카오 계정 로그인
-5. Kakao Server --> Client : 동의 화면 보여줌
-6. Client --> Kakao Server : 동의하고 계속하기
-7. Kakao Server --> Server : 302 Redirect URI로 인가 코드 전달
-8. Server --> Kakao Server : POST /oauth/token
-9. Kakao Server --> Server : 토큰 발급
-10. Server : ID 토큰 유효성 검증
-11. Server : 토큰으로 정보 조회
-12. Server --> CLient : 로그인 완료
+- Request
+```
+POST /api/orders HTTP/1.1
+Authorization: Bearer {token}
+Content-Type: application/json
 
-#### 그러나 현재 클라이언트가 없기 때문에 아래의 방법으로 인가코드를 얻는다
-- https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id={REST_API_KEY}에 접속한다.
-- 이후 redirection된 http://localhost:8080/?code={AUTHORIZATION_CODE}에서 인가 코드를 추출한다.
+{
+"optionId": 1,
+"quantity": 2,
+"message": "Please handle this order with care."
+}
+```
 
-#### 위의 절차에서 Server가 맡아야 할 일
-- 해당 url으로 부터 인가 코드 받아오기
-- POST /oauth/token을 통해 토큰 받아오기
 
-#### 구현 할 기능 및 프로젝트 구조
-- Controller
-  - GET /login
-- Service
-  - getAuthCode()
-  - getToken()
-- Properties
-  - Config restApiKey
-  - Config redirectUrl
+- Response
+```
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+"id": 1,
+"optionId": 1,
+"quantity": 2,
+"orderDateTime": "2024-07-21T10:00:00",
+"message": "Please handle this order with care."
+}
+```
+
+- 실제 카카오톡 메시지는 아래와 같이 전송된다.
+
+1. User -> Application : 메세지 보내기 클릭
+2. Application -> Kakao Server : 카카오톡 친구 가져오기 API 호출
+3. Kakao Server -> Application : 카카오톡 친구 데이터 제공
+4. Applicaton -> User : 서비스의 친구 목록
+5. User -> Application : 선택한 친구에게 메세지 보내기 요청
+6. Application -> Kakao Server : 카카오톡 메세지 API 호출
+
+- 하지만 이번 미션에서는 수신자가 본인이기 때문에 카카오톡 친구 목록 가져오기는 생략한다.
+
+## STEP-2 구현 해야 될 목록
+- OrderEntity를 정의
+  - Long id 
+  - Long optionId
+  - Long quantity
+  - String message
+  - LocalDateTime orderDateTime
+- 해당 도메인에 대한 Controller, Service, Repository 구현
+  - OrderController
+    - POST addOrder()
+    - GET getAllOrder()
+  - OrderService
+    - addOrder()
+    - getAllOrder()
+  - OrderRepository
+  - KakaoService
+    - createMessage()
+    - sendMessage()
+  - OptionService
+    - Order의 quantity 만큼 quantity 차감
 

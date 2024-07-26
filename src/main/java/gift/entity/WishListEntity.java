@@ -54,6 +54,10 @@ public class WishListEntity {
         this.productEntity = productEntity;
     }
 
+    public boolean equalByProductEntity(ProductEntity productEntity) {
+        return this.productEntity.equals(productEntity);
+    }
+
     public static WishList toDto(WishListEntity wishListEntity) {
         return new WishList(wishListEntity.getMemberEntity().getId(), wishListEntity.getProductEntity().getPrice());
     }
