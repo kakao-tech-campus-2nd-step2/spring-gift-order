@@ -18,6 +18,7 @@ public class JwtProvider {
     private long expirationTime;
 
     private final String MEMBER_ID_CLAIM_KEY = "memberId";
+    private final String SOCIAL_TOKEN_CLAIM_KEY = "socialToken";
 
     public JwtProvider(@Value("${jwt.secretkey}") String secret) {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
@@ -30,6 +31,20 @@ public class JwtProvider {
 
         return Token.from(Jwts.builder()
             .claim(MEMBER_ID_CLAIM_KEY, member.getId())
+            .issuedAt(now)
+            .expiration(expiration)
+            .signWith(key)
+            .compact());
+    }
+
+    public Token generateToken(Member member, String socialToken) {
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+        Date expiration = new Date(nowMillis + expirationTime);
+
+        return Token.from(Jwts.builder()
+            .claim(MEMBER_ID_CLAIM_KEY, member.getId())
+            .claim(SOCIAL_TOKEN_CLAIM_KEY, socialToken)
             .issuedAt(now)
             .expiration(expiration)
             .signWith(key)
