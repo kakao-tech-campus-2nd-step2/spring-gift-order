@@ -24,6 +24,13 @@ public class AppConfig {
         return restTemplate;
     }
 
+    @Bean
+    public RestTemplate kakaoRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
+        restTemplate.setErrorHandler(errorHandler());
+        return restTemplate;
+    }
+
     private ClientHttpRequestFactory clientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(5000);  // 연결 타임아웃 5초

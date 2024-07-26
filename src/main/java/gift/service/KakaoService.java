@@ -1,5 +1,6 @@
 package gift.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,10 @@ public class KakaoService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate kakaoRestTemplate;
 
-    public KakaoService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public KakaoService(@Qualifier("kakaoRestTemplate") RestTemplate kakaoRestTemplate) {
+        this.kakaoRestTemplate = kakaoRestTemplate;
     }
 
     public String getAccessToken(String code) {
@@ -39,7 +40,7 @@ public class KakaoService {
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
-        ResponseEntity<Map> response = restTemplate.exchange(request, Map.class);
+        ResponseEntity<Map> response = kakaoRestTemplate.exchange(request, Map.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return (String) response.getBody().get("access_token");
