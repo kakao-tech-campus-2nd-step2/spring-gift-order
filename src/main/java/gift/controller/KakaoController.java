@@ -1,7 +1,10 @@
 package gift.controller;
 
 import gift.config.KakaoProperties;
+import gift.dto.KakaoToken;
+import gift.dto.TokenResponseDto;
 import gift.service.KakaoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,10 +39,11 @@ public class KakaoController {
     }
 
     @GetMapping("/redirect")
-    public void getToken(
+    public ResponseEntity<TokenResponseDto> getTokenAndUserInfo(
             @RequestParam(value = "code") String kakaoCode
     ) {
-        kakaoService.getKakaoToken(kakaoCode);
-        //TODO 토큰 파싱해서 응답
+        KakaoToken kakaoToken = kakaoService.getKakaoToken(kakaoCode);
+        TokenResponseDto token = kakaoService.generateToken(kakaoToken.accessToken());
+        return ResponseEntity.ok(token);
     }
 }
