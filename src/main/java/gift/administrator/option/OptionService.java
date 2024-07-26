@@ -1,6 +1,5 @@
 package gift.administrator.option;
 
-import gift.administrator.product.Product;
 import gift.error.NotFoundIdException;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -54,21 +53,26 @@ public class OptionService {
 
     private Option findByOptionId(long optionId) {
         return optionRepository.findById(optionId)
-            .orElseThrow(() -> new NotFoundIdException("아이디를 찾을 수 없습니다."));
+            .orElseThrow(() -> new NotFoundIdException("옵션 아이디를 찾을 수 없습니다."));
+    }
+
+    public void subtractOptionQuantityErrorIfNotPossible(long optionId, int quantity){
+        Option option = findByOptionId(optionId);
+        if (option.getQuantity() < quantity) {
+            throw new IllegalArgumentException("옵션의 재고가 부족합니다.");
+        }
     }
 
     public Option subtractOptionQuantity(long optionId, int quantity) {
         Option option = findByOptionId(optionId);
-        if (option.getQuantity() < quantity) {
-            throw new IllegalArgumentException("옵션의 수량이 부족합니다.");
-        }
         option.subtract(quantity);
+        optionRepository.save(option);
         return option;
     }
 
     public void deleteOptionByOptionId(long optionId) {
         if (!optionRepository.existsById(optionId)) {
-            throw new IllegalArgumentException("없는 아이디입니다.");
+            throw new IllegalArgumentException("옵션 없는 아이디입니다.");
         }
         Option option = findByOptionId(optionId);
         option.getProduct().removeOption(option);

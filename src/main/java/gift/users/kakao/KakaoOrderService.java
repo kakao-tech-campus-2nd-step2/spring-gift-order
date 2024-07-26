@@ -52,10 +52,15 @@ public class KakaoOrderService {
                 kakaoOrderDTO.productId() + " 상품에 " + kakaoOrderDTO.optionId() + " 옵션이 존재하지 않습니다.");
         }
 
+        optionService.subtractOptionQuantityErrorIfNotPossible(kakaoOrderDTO.optionId(),
+            kakaoOrderDTO.quantity());
+
         String accessToken = tokenService.findToken(userId, "kakao");
         String messageObject = makeKakaoMessage(kakaoOrderDTO);
 
         sendKakaoMessage(accessToken, messageObject);
+
+        optionService.subtractOptionQuantity(kakaoOrderDTO.optionId(), kakaoOrderDTO.quantity());
 
         return new KakaoOrderDTO(kakaoOrderDTO.productId(), kakaoOrderDTO.optionId(),
             kakaoOrderDTO.quantity(), orderDateTime, kakaoOrderDTO.message());
