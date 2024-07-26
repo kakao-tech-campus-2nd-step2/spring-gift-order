@@ -1,9 +1,8 @@
 package gift.controller.api;
 
-import gift.client.KakaoApiClient;
-import gift.client.requestBody.KakaoTokenRequestBody;
 import gift.dto.response.JwtTokenResponse;
 import gift.dto.response.KakaoTokenResponse;
+import gift.service.KakaoApiService;
 import gift.service.MemberService;
 import gift.service.TokenService;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,7 +20,7 @@ import static org.mockito.Mockito.when;
 class KakaoLoginControllerTest {
 
     @Mock
-    private KakaoApiClient kakaoApiClient;
+    private KakaoApiService kakaoApiService;
     @Mock
     private MemberService memberService;
     @Mock
@@ -39,8 +37,8 @@ class KakaoLoginControllerTest {
         Long memberId = 1L;
         JwtTokenResponse jwtTokenResponse = new JwtTokenResponse("jwtToken");
 
-        when(kakaoApiClient.getKakaoToken(any(KakaoTokenRequestBody.class))).thenReturn(kakaoTokenResponse);
-        when(kakaoApiClient.getMemberEmail(kakaoTokenResponse.accessToken())).thenReturn(email);
+        when(kakaoApiService.getKakaoToken(code)).thenReturn(kakaoTokenResponse);
+        when(kakaoApiService.getMemberEmail(kakaoTokenResponse.accessToken())).thenReturn(email);
         when(memberService.findMemberIdByEmail(email)).thenReturn(memberId);
         when(tokenService.generateJwtToken(memberId)).thenReturn(jwtTokenResponse);
 

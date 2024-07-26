@@ -1,9 +1,8 @@
 package gift.controller.api;
 
-import gift.client.KakaoApiClient;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
-import gift.repository.KakaoAccessTokenRepository;
+import gift.service.KakaoApiService;
 import gift.service.OptionService;
 import gift.service.OrderService;
 import gift.service.WishService;
@@ -23,11 +22,9 @@ class OrderControllerTest {
     @Mock
     private   WishService wishService;
     @Mock
-    private KakaoApiClient kakaoApiClient;
+    private KakaoApiService kakaoApiService;
     @Mock
     private   OrderService orderService;
-    @Mock
-    private KakaoAccessTokenRepository kakaoAccessTokenRepository;
 
     @InjectMocks
     OrderController orderController;
@@ -41,7 +38,6 @@ class OrderControllerTest {
         OrderResponse orderResponse = new OrderResponse(1L, 1L, 10, null, "조심히 배송");
         when(orderService.saveOrder(orderRequest)).thenReturn(orderResponse);
         when(optionService.getProductIdByOptionId(orderRequest)).thenReturn(productId);
-        when(kakaoAccessTokenRepository.getAccessToken(memberId)).thenReturn("accessToken");
 
         //When
         ResponseEntity<OrderResponse> response = orderController.order(memberId, orderRequest);
