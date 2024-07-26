@@ -3,6 +3,9 @@ package gift.service.kakao;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.user.User;
+import gift.service.user.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,11 +23,14 @@ public class KakaoService {
     private final RestClient client;
     private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
+    private final UserService userService;
 
-    public KakaoService(KakaoProperties kakaoProperties) {
+    @Autowired
+    public KakaoService(KakaoProperties kakaoProperties, UserService userService) {
         this.client = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
         this.kakaoProperties = kakaoProperties;
+        this.userService = userService;
     }
 
     public Map<String, Object> kakaoLogin(String authorizationCode) {
@@ -44,6 +50,15 @@ public class KakaoService {
 
             Map<String, Object> userInfo = getUserInfo(accessToken);
             userInfo.put("access_token", accessToken);
+
+            // 사용자 정보 조회 및 생성 로직 추가
+            Long id = (Long) userInfo.get("id");
+            String email = (String) userInfo.get("email");
+            User user = userService.findOrCreateUser(id, email);
+
+            // 필요하다면 user 객체의 정보를 userInfo에 추가
+            //userInfo.put("user_id", user.getId());
+            //userInfo.put("user_email", user.getEmail());
 
             return userInfo;
 
