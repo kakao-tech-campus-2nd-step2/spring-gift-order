@@ -33,3 +33,13 @@ Content-Type: application/json
 ### delete option
 DELETE http://localhost:8080/api/options/1
 Content-Type: application/json
+
+### order option
+POST http://localhost:8080/api/options/order
+Content-Type: application/json
+
+{
+  "optionId": 1,
+  "count": 1000,
+  "message" : "111"
+}

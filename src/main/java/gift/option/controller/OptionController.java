@@ -11,6 +11,7 @@ import gift.option.domain.Option;
 import gift.option.dto.OptionListResponseDto;
 import gift.option.dto.OptionRequestDto;
 import gift.option.dto.OptionResponseDto;
+import gift.option.dto.OrderRequestDto;
 import gift.option.exception.OptionValidException;
 import gift.option.service.OptionService;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,12 @@ public class OptionController {
     public ResponseEntity<SimpleResultResponseDto> deleteOption(@PathVariable(name = "id") Long id) {
         optionService.deleteOption(id);
         return ResponseHelper.createSimpleResponse(ResultCode.DELETE_OPTION_SUCCESS);
+    }
+
+    @PostMapping("/order")
+    public ResponseEntity<SimpleResultResponseDto> orderOption(@RequestBody OrderRequestDto orderRequestDto) {
+        optionService.orderOption(orderRequestDto);
+        return ResponseHelper.createSimpleResponse(ResultCode.CREATE_OPTION_SUCCESS);
     }
 
     // GlobalException Handler 에서 처리할 경우,

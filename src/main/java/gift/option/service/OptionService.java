@@ -5,11 +5,13 @@ import gift.option.domain.Option;
 import gift.option.dto.OptionListResponseDto;
 import gift.option.dto.OptionResponseDto;
 import gift.option.dto.OptionServiceDto;
+import gift.option.dto.OrderRequestDto;
 import gift.option.exception.DuplicateOptionNameException;
 import gift.option.exception.OptionNotFoundException;
 import gift.option.repository.OptionRepository;
 import gift.product.domain.Product;
 import gift.product.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -53,11 +55,13 @@ public class OptionService {
         optionRepository.deleteById(id);
     }
 
-    public void orderOption(Long id, int count) {
-        Option option = optionRepository.findById(id)
+    @Transactional
+    public void orderOption(OrderRequestDto orderRequestDto) {
+        Option option = optionRepository.findById(orderRequestDto.optionId())
                 .orElseThrow(OptionNotFoundException::new);
-        option.subtract(count);
+        option.subtract(orderRequestDto.count());
         optionRepository.save(option);
+        sendMessage(orderRequestDto.message());
     }
 
     private void validateOptionExists(Long id) {
@@ -70,5 +74,8 @@ public class OptionService {
         if (optionRepository.existsByName(optionServiceDto.name())) {
             throw new DuplicateOptionNameException();
         }
+    }
+
+    private void sendMessage(String message) {
     }
 }
