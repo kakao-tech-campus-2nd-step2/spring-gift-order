@@ -7,7 +7,8 @@ public record UserResponse(
     String name,
     String email,
     String password,
-    String role)
+    String role,
+    String authProvider)
 {
     public static UserResponse from(User user) {
         return new UserResponse(
@@ -15,7 +16,8 @@ public record UserResponse(
             user.getName(),
             user.getEmail(),
             user.getPassword(),
-            user.getRole().toString()
+            user.getRole().toString(),
+            user.getAuthProvider().toString()
         );
     }
 }

@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import gift.auth.AuthProvider;
 import gift.auth.jwt.JwtProvider;
 import gift.auth.dto.Token;
 import gift.domain.user.repository.UserJpaRepository;
@@ -61,7 +62,7 @@ class UserServiceTest {
         // given
         UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "test123");
 
-        User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER);
+        User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER, AuthProvider.LOCAL);
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.of(user));
 
         Token expectedToken = new Token("token");
@@ -96,6 +97,7 @@ class UserServiceTest {
 
         User user = mock(User.class);
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.of(user));
+        given(user.getAuthProvider()).willReturn(AuthProvider.LOCAL);
         given(user.checkPassword(eq("test123"))).willReturn(false);
 
         // when & then

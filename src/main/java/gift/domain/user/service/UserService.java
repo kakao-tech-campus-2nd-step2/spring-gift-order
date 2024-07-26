@@ -1,5 +1,6 @@
 package gift.domain.user.service;
 
+import gift.auth.AuthProvider;
 import gift.auth.dto.Token;
 import gift.domain.user.dto.UserResponse;
 import gift.domain.user.repository.UserJpaRepository;
@@ -32,6 +33,10 @@ public class UserService {
     public Token login(UserLoginRequest userLoginRequest) {
         User user = userJpaRepository.findByEmail(userLoginRequest.email())
             .orElseThrow(() -> new InvalidUserInfoException("error.invalid.userinfo.email"));
+
+        if (user.getAuthProvider() != AuthProvider.LOCAL) {
+            throw new InvalidUserInfoException("error.invalid.userinfo.provider");
+        }
 
         if (!user.checkPassword(userLoginRequest.password())) {
             throw new InvalidUserInfoException("error.invalid.userinfo.password");

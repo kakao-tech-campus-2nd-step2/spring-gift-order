@@ -1,5 +1,6 @@
 package gift.domain.user.dto;
 
+import gift.auth.AuthProvider;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import jakarta.validation.constraints.Email;
@@ -19,6 +20,6 @@ public record UserRequest(
     String password)
 {
     public User toUser() {
-        return new User(null, name, email, password, Role.USER);
+        return new User(null, name, email, password, Role.USER, AuthProvider.LOCAL);
     }
 }
