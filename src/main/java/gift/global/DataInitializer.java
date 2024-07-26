@@ -1,15 +1,21 @@
 package gift.global;
 
 import gift.domain.entity.Category;
+import gift.domain.entity.KakaoOauthMember;
+import gift.domain.entity.LocalMember;
 import gift.domain.entity.Member;
 import gift.domain.entity.Option;
 import gift.domain.entity.Product;
 import gift.domain.entity.Wish;
 import gift.domain.repository.CategoryRepository;
+import gift.domain.repository.KakaoOauthMemberRepository;
+import gift.domain.repository.LocalMemberRepository;
 import gift.domain.repository.OptionRepository;
 import gift.domain.repository.ProductRepository;
 import gift.domain.repository.MemberRepository;
 import gift.domain.repository.WishRepository;
+import gift.global.WebConfig.Constants.Domain.Member.Permission;
+import gift.global.WebConfig.Constants.Domain.Member.Type;
 import gift.global.util.HashUtil;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -22,17 +28,21 @@ public class DataInitializer {
     @Bean
     ApplicationRunner init(
         ProductRepository product,
-        MemberRepository user,
+        MemberRepository member,
+        LocalMemberRepository localMember,
+        KakaoOauthMemberRepository kakaoMember,
         WishRepository wish,
         CategoryRepository category,
         OptionRepository option) {
-        return args -> insertInitialData(product, user, wish, category, option);
+        return args -> insertInitialData(product, member, localMember, kakaoMember, wish, category, option);
     }
 
     @Transactional
     public void insertInitialData(
         ProductRepository productRepository,
         MemberRepository memberRepository,
+        LocalMemberRepository localMemberRepository,
+        KakaoOauthMemberRepository kakaoOauthMemberRepository,
         WishRepository wishRepository,
         CategoryRepository categoryRepository,
         OptionRepository optionRepository
@@ -69,11 +79,26 @@ public class DataInitializer {
         }
 
         Member[] members = {
-            new Member("admin@example.com", HashUtil.hashCode("admin"), "admin"),
-            new Member("user@example.com", HashUtil.hashCode("user"), "member"),
-            new Member("user2@example.com", HashUtil.hashCode("user"), "member")};
-        for (int i = 0; i < members.length; i++) {
+            new Member("admin@example.com", Permission.ADMIN, Type.LOCAL),
+            new Member("user@example.com", Permission.MEMBER, Type.LOCAL),
+            new Member("user2@example.com", Permission.MEMBER, Type.LOCAL),
+            new Member("kakaoUser@kakao.com", Permission.MEMBER, Type.KAKAO)};
+        for(int i = 0; i < members.length; i++) {
             members[i] = memberRepository.save(members[i]);
+        }
+
+        LocalMember[] localMembers = {
+            new LocalMember(HashUtil.hashCode("admin"), members[0]),
+            new LocalMember(HashUtil.hashCode("user"), members[1]),
+            new LocalMember(HashUtil.hashCode("user"), members[2])};
+        for (int i = 0; i < localMembers.length; i++) {
+            localMembers[i] = localMemberRepository.save(localMembers[i]);
+        }
+
+        KakaoOauthMember[] kakaoMembers = {
+            new KakaoOauthMember(12345, members[3])};
+        for (int i = 0; i < kakaoMembers.length; i++) {
+            kakaoMembers[i] = kakaoOauthMemberRepository.save(kakaoMembers[i]);
         }
 
         Wish[] wishes = {
