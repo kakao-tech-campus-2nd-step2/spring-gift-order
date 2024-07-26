@@ -47,4 +47,5 @@ public class OrderRequestDto {
     public void setMemberId(long memberId) {
         this.memberId = memberId;
     }
+
 }
