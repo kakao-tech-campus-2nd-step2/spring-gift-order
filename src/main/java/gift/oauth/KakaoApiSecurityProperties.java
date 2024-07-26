@@ -27,12 +27,14 @@ public class KakaoApiSecurityProperties {
         private final String login;
         private final String token;
         private final String userInfo;
+        private final String memoSend;
 
         @ConstructorBinding
-        public Uri(String login, String token, String userInfo) {
+        public Uri(String login, String token, String userInfo, String memoSend) {
             this.login = login;
             this.token = token;
             this.userInfo = userInfo;
+            this.memoSend = memoSend;
         }
 
         public String getLogin() {
@@ -41,6 +43,10 @@ public class KakaoApiSecurityProperties {
 
         public String getToken() {
             return token;
+        }
+
+        public String getMemoSend() {
+            return memoSend;
         }
 
         public String getUserInfo() {
@@ -57,7 +63,7 @@ public class KakaoApiSecurityProperties {
     }
 
     public URI getLoginUri() {
-        var loginUri = ServletUriComponentsBuilder.fromUriString(url.login)
+        var loginUri = ServletUriComponentsBuilder.fromUriString(url.getLogin())
             .queryParam("response_type", "code")
             .queryParam("client_id", clientId)
             .queryParam("redirect_uri", redirectUri)
@@ -71,5 +77,9 @@ public class KakaoApiSecurityProperties {
 
     public URI getUserInfoUri() {
         return URI.create(url.getUserInfo());
+    }
+
+    public URI getMemoSend() {
+        return URI.create(url.getMemoSend());
     }
 }
