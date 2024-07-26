@@ -115,8 +115,15 @@ public class Product {
             .orElseThrow(() -> new NoSuchElementException("해당 이름의 옵션 없음: " + name));
     }
 
-    public void subtractOptionQuantity(String optionName, int amount) {
-        Option option = getOptionByName(optionName);
+    public Option getOptionById(Long optionId) {
+        return options.stream()
+            .filter(option -> option.getId().equals(optionId))
+            .findFirst()
+            .orElseThrow(() -> new NoSuchElementException("해당 ID의 옵션 없음: " + optionId));
+    }
+
+    public void subtractOptionQuantity(Long optionId, int amount) {
+        Option option = getOptionById(optionId);
         option.subtract(amount);
     }
 }
