@@ -2,7 +2,7 @@ package gift.user.client;
 
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
-import gift.user.config.KakaoProperties;
+import gift.config.KakaoProperties;
 import gift.user.dto.response.KakaoTokenResponse;
 import gift.user.dto.response.KakaoUserInfoResponse;
 import org.springframework.http.HttpStatusCode;
@@ -24,7 +24,7 @@ public class KakaoLoginClient {
     }
 
     public KakaoTokenResponse getKakaoTokenResponse(String code) {
-        var url = "https://kauth.kakao.com/oauth/token";
+        var url = properties.tokenUrl();
         var body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
@@ -43,7 +43,7 @@ public class KakaoLoginClient {
     }
 
     public KakaoUserInfoResponse getKakaoUserId(String token) {
-        var url = "https://kapi.kakao.com/v2/user/me?property_keys=[]";
+        var url = properties.userInfoUrl() + "?property_keys=[]";
         return restClient.get()
             .uri(url)
             .header("Authorization", "Bearer " + token)
