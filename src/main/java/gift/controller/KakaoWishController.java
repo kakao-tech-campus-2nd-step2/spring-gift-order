@@ -32,7 +32,7 @@ public class KakaoWishController {
         WishPageResponseDTO wishOptions = wishService.getWishlist(kakaoUserDTO.user().getId(), pageable);
         model.addAttribute("wishOptions", wishOptions);
 
-        return "wishlist";
+        return "kakaoWishlist";
     }
 
     @PostMapping("/send/message")
@@ -48,6 +48,6 @@ public class KakaoWishController {
         WishPageResponseDTO wishOptions = wishService.getWishlist(user.getId(), pageable);
         model.addAttribute("wishOptions", wishOptions);
 
-        return "wishlist";
+        return "kakaoWishlist";
     }
 }

@@ -40,7 +40,7 @@ public class KakaoApiController {
     public String kakaoLoginSuccess(Model model) {
         model.addAttribute("accessToken", accessToken);
 
-        return "kakaoLogin";
+        return "kakaoLoginSuccess";
     }
 
     @PostMapping("/send/message")
