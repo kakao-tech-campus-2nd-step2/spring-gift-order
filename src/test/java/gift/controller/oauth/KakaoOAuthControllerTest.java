@@ -1,9 +1,9 @@
 package gift.controller.oauth;
 
-import static gift.util.constants.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;

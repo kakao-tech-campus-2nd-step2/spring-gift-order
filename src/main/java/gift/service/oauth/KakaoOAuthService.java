@@ -1,5 +1,7 @@
 package gift.service.oauth;
 
+import static gift.util.constants.auth.KakaoOAuthConstants.TOKEN_NOT_FOUND;
+
 import gift.client.KakaoApiClient;
 import gift.dto.member.MemberRegisterRequest;
 import gift.dto.member.MemberResponse;
@@ -8,6 +10,7 @@ import gift.dto.oauth.KakaoTokenResponse;
 import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
 import gift.exception.member.EmailAlreadyUsedException;
+import gift.exception.oauth.KakaoTokenNotFoundException;
 import gift.model.RegisterType;
 import gift.model.oauth.KakaoToken;
 import gift.repository.TokenRepository;
@@ -58,19 +61,19 @@ public class KakaoOAuthService {
 
     public KakaoUnlinkResponse unlinkUser(Long memberId) {
         KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
+            .orElseThrow(() -> new KakaoTokenNotFoundException(TOKEN_NOT_FOUND));
         return kakaoApiClient.unlinkUser(kakaoToken.getAccessToken());
     }
 
     public KakaoScopeResponse getUserScopes(Long memberId) {
         KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
+            .orElseThrow(() -> new KakaoTokenNotFoundException(TOKEN_NOT_FOUND));
         return kakaoApiClient.getUserScopes(kakaoToken.getAccessToken());
     }
 
     public KakaoUserResponse getUserInfo(Long memberId) {
         KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
+            .orElseThrow(() -> new KakaoTokenNotFoundException(TOKEN_NOT_FOUND));
         return kakaoApiClient.getUserInfo(kakaoToken.getAccessToken());
     }
 
@@ -113,7 +116,7 @@ public class KakaoOAuthService {
         requestBody.add("template_object", templateObject);
 
         KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
-            .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
+            .orElseThrow(() -> new KakaoTokenNotFoundException(TOKEN_NOT_FOUND));
 
         restClient.post()
             .uri(url)

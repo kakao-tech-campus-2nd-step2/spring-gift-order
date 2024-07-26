@@ -1,12 +1,12 @@
 package gift.client;
 
-import static gift.util.constants.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.TOKEN_RESPONSE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.UNLINK_RESPONSE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
-import static gift.util.constants.KakaoOAuthConstants.USERINFO_RESPONSE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.SCOPES_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.TOKEN_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.TOKEN_RESPONSE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.UNLINK_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.UNLINK_RESPONSE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.USERINFO_FAILURE_ERROR;
+import static gift.util.constants.auth.KakaoOAuthConstants.USERINFO_RESPONSE_ERROR;
 
 import gift.config.KakaoProperties;
 import gift.dto.oauth.KakaoScopeResponse;
