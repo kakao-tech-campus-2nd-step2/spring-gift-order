@@ -27,17 +27,21 @@
         │       │   ├── HomeController.java
         │       │   ├── KakaoController.java
         │       │   ├── MemberController.java
+        │       │   ├── OrderController.java
         │       │   ├── ProductConroller.java
         │       │   └── WishController.java
         │       ├── dto
         │       │   ├── MemberDto.java
         │       │   ├── OptionDto.java
+        │       │   ├── OrderRequest.java
+        │       │   ├── OrderResponse.java
         │       │   ├── ProductDto.java
         │       │   └── WishRequest.java
         │       ├── entity
         │       │   ├── Catogory.java
         │       │   ├── Member.java
         │       │   ├── Option.java
+        │       │   ├── Order.java
         │       │   ├── Product.java
         │       │   └── Wish.java
         │       ├── exception
@@ -53,6 +57,7 @@
         │       │   ├── CategoryRepository.java
         │       │   ├── MemberRepository.java
         │       │   ├── OptionRepository.java
+        │       │   ├── OrderRepository.java
         │       │   ├── ProductRepository.java
         │       │   └── WishRepository.java
         │       ├── service
@@ -60,6 +65,7 @@
         │       │   ├── KakaoProperties.java
         │       │   ├── KakaoService.java
         │       │   ├── MemberService.java
+        │       │   ├── OrderService.java
         │       │   ├── ProductService.java
         │       │   ├── TokenService.java
         │       │   └── WishService.java   

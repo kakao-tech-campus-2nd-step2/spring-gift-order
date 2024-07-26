@@ -82,7 +82,7 @@ public class KakaoService {
         ResponseEntity<String> response = kakaoRestTemplate.postForEntity(apiUrl, request, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new RuntimeException("Failed to send Kakao message: " + response.getBody());
+            throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
         }
     }
 }
