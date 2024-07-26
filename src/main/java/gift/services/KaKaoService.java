@@ -23,11 +23,14 @@ public class KaKaoService {
     @Value("${kakao.redirect.url}")
     private String KAKAO_REDIRECT_URL;
 
-    private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
-    private final static String KAKAO_API_URI = "https://kapi.kakao.com";
+    @Value("${kakao.auth.uri}")
+    private String KAKAO_AUTH_URI;
+
+    @Value("${kakao.api.uri}")
+    private String KAKAO_API_URI;
 
     public String getKaKaoLogin() {
-        return KAKAO_AUTH_URI + "/oauth/authorize"
+        return KAKAO_AUTH_URI
             + "?client_id=" + KAKAO_CLIENT_ID
             + "&redirect_uri=" + KAKAO_REDIRECT_URL
             + "&response_type=code";
@@ -55,7 +58,7 @@ public class KaKaoService {
             HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, headers);
 
             ResponseEntity<String> response = restTemplate.exchange(
-                KAKAO_AUTH_URI + "/oauth/token",
+                KAKAO_AUTH_URI,
                 HttpMethod.POST,
                 httpEntity,
                 String.class
