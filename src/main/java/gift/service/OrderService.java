@@ -20,21 +20,25 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
+    private final KakaoMessageService kakaoMessageService;
 
     public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
-        WishRepository wishRepository) {
+        WishRepository wishRepository, KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.wishRepository = wishRepository;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @Transactional
     public OrderResponseDto addOrder(User user, OrderAddRequestDto orderAddRequestDto) {
         Option option = optionRepository.findById(orderAddRequestDto.getOptionId())
-            .orElseThrow(() -> new NoSuchOptionException("해당 옵션이 존재하지 않습니다: " + orderAddRequestDto.getOptionId()));
+            .orElseThrow(() -> new NoSuchOptionException(
+                "해당 옵션이 존재하지 않습니다: " + orderAddRequestDto.getOptionId()));
 
         if (option.getQuantity() < orderAddRequestDto.getQuantity()) {
-            throw new InsufficientQuantityException("해당 옵션의 재고가 부족합니다: " + orderAddRequestDto.getOptionId());
+            throw new InsufficientQuantityException(
+                "해당 옵션의 재고가 부족합니다: " + orderAddRequestDto.getOptionId());
         }
 
         // 수량 차감
@@ -42,13 +46,17 @@ public class OrderService {
         optionRepository.save(option);
 
         // 주문 생성
-        Order order = new Order(user, option, orderAddRequestDto.getQuantity(), LocalDateTime.now(),orderAddRequestDto.getMessage());
+        Order order = new Order(user, option, orderAddRequestDto.getQuantity(), LocalDateTime.now(),
+            orderAddRequestDto.getMessage());
         Order savedOrder = orderRepository.save(order);
 
         // 위시리스트에서 제거
         wishRepository.deleteByUserAndProduct(user, option.getProduct());
 
-        //todo 카카오톡 메시지 전송
+        // 나에게 카카오톡 메시지 전송
+        kakaoMessageService.sendOrderMessage(user.getKakaoAccessToken(),
+            option.getProduct().getName(), option.getName(), orderAddRequestDto.getQuantity(),
+            orderAddRequestDto.getMessage(), option.getProduct().getImageUrl());
 
         return new OrderResponseDto(
             savedOrder.getId(),
