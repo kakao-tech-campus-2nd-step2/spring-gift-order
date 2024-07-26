@@ -1,7 +1,9 @@
 package gift.oauth.controller;
 
-import gift.oauth.exception.KakaoOAuthException;
+import gift.kakaoApi.exceptiion.KakaoLoginException;
+import gift.kakaoApi.service.KakaoApiService;
 import gift.oauth.service.OAuthService;
+import gift.util.dto.JwtResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +17,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class OAuthController {
 
     private final OAuthService  oauthService;
+    private  final KakaoApiService kakaoApiService;
 
-    public OAuthController(OAuthService oauthService) {
+    public OAuthController(OAuthService oauthService, KakaoApiService kakaoApiService) {
         this.oauthService = oauthService;
+        this.kakaoApiService = kakaoApiService;
     }
 
-    @GetMapping("/authorize")
-    public void getAuthorizeUri(HttpServletResponse response) throws IOException {
-        response.sendRedirect(oauthService.getAuthorizeUri());
+    @GetMapping("/login")
+    public void loginKakao(HttpServletResponse response) throws IOException {
+        response.sendRedirect(kakaoApiService.getKakaoLoginUri());
     }
 
     @GetMapping("/token")
-    public ResponseEntity<String> getAccessToken(
+    public ResponseEntity<JwtResponse> getAccessToken(
         @RequestParam(required = false) String code,
         @RequestParam(required = false) String error,
         @RequestParam(required = false) String error_description
     ){
         if (error != null || error_description != null){
-            throw new KakaoOAuthException(error, error_description);
+            throw new KakaoLoginException(error, error_description);
         }
-        return ResponseEntity.ok(oauthService.getAccessToken(code));
+        return ResponseEntity.ok(new JwtResponse(oauthService.getAccessToken(code)));
     }
 }
