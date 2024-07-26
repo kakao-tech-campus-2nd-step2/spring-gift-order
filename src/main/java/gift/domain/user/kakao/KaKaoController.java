@@ -15,7 +15,6 @@ import org.springframework.web.servlet.view.RedirectView;
 @RestController
 @RequestMapping("/api/users/oauth")
 public class KaKaoController {
-
     private final KaKaoService kaKaoService;
 
     public KaKaoController(KaKaoService kaKaoService) {
