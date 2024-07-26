@@ -36,13 +36,16 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<String> kakaoCallback(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        try{
+    public ResponseEntity<String> kakaoCallback(@RequestParam(name = "code") String code) throws IOException {
+        try {
             KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
-            KakaoUserDTO kakaoUserDTO = kakaoAuthService.getKakaoUser(tokenResponse.getAccessToken());
+            KakaoUserDTO kakaoUserDTO = kakaoAuthService.getKakaoUser(
+                tokenResponse.getAccessToken());
             Member member = kakaoAuthService.registerOrGetMember(kakaoUserDTO);
+            return ResponseEntity.ok(tokenResponse.getAccessToken());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("카카오 로그인 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("카카오 로그인 실패: " + e.getMessage());
         }
     }
 }
