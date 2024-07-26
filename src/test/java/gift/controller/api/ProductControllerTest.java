@@ -8,7 +8,7 @@ import gift.dto.response.AddedOptionIdResponse;
 import gift.dto.response.AddedProductIdResponse;
 import gift.dto.response.OptionResponse;
 import gift.dto.response.ProductResponse;
-import gift.service.JwtTokenService;
+import gift.service.TokenService;
 import gift.service.ProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class ProductControllerTest {
     @MockBean
     private ProductService productService;
     @MockBean
-    private JwtTokenService jwtTokenService;
+    private TokenService tokenService;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @Autowired

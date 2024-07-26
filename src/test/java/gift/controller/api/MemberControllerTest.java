@@ -3,7 +3,7 @@ package gift.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.MemberRequest;
 import gift.dto.response.TokenResponse;
-import gift.service.JwtTokenService;
+import gift.service.TokenService;
 import gift.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ class MemberControllerTest {
     @MockBean
     private MemberService memberService;
     @MockBean
-    private JwtTokenService jwtTokenService;
+    private TokenService tokenService;
 
     @Test
     @DisplayName("회원가입")
@@ -42,7 +42,7 @@ class MemberControllerTest {
         MemberRequest registerRequest = new MemberRequest("member1@gmail.com", "1234");
 
         when(memberService.register(registerRequest)).thenReturn(1L);
-        when(jwtTokenService.generateToken(1L)).thenReturn(new TokenResponse("JSH"));
+        when(tokenService.generateJwtToken(1L)).thenReturn(new TokenResponse("JSH"));
 
         //When
         mockMvc.perform(MockMvcRequestBuilders
@@ -63,7 +63,7 @@ class MemberControllerTest {
         //Given
         MemberRequest loginRequest = new MemberRequest("member1@gmail.com", "1234");
         when(memberService.login(loginRequest)).thenReturn(1L);
-        when(jwtTokenService.generateToken(1L)).thenReturn(new TokenResponse("secret"));
+        when(tokenService.generateJwtToken(1L)).thenReturn(new TokenResponse("secret"));
 
         //When
         mockMvc.perform(MockMvcRequestBuilders

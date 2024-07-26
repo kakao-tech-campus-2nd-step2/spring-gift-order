@@ -127,7 +127,7 @@ class WishServiceTest {
             when(wishRepository.findByMemberAndProduct(member, product)).thenReturn(Optional.of(wish));
 
             //When
-            wishService.deleteProductInWish(memberId, productId);
+            wishService.findAndDeleteProductInWish(memberId, productId);
 
             //Then
             verify(wishRepository).delete(wish);
@@ -147,7 +147,7 @@ class WishServiceTest {
             when(wishRepository.findByMemberAndProduct(member, product)).thenReturn(Optional.empty());
 
             //When Then
-            assertThatThrownBy(() -> wishService.deleteProductInWish(memberId, productId))
+            assertThatThrownBy(() -> wishService.findAndDeleteProductInWish(memberId, productId))
                     .isInstanceOf(WishNotFoundException.class);
         }
     }

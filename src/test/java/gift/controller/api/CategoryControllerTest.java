@@ -5,7 +5,7 @@ import gift.dto.request.AddCategoryRequest;
 import gift.dto.response.CategoryIdResponse;
 import gift.dto.response.CategoryResponse;
 import gift.service.CategoryService;
-import gift.service.JwtTokenService;
+import gift.service.TokenService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +35,7 @@ class CategoryControllerTest {
     @MockBean
     private CategoryService categoryService;
     @MockBean
-    private JwtTokenService jwtTokenService;
+    private TokenService tokenService;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 

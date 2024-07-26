@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.WishRequest;
 import gift.dto.response.WishProductResponse;
 import gift.interceptor.AuthInterceptor;
-import gift.service.JwtTokenService;
+import gift.service.TokenService;
 import gift.service.WishService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ class WishControllerTest {
 
     private static final String URL = "/api/wishlist";
     @MockBean
-    private JwtTokenService jwtTokenService;
+    private TokenService tokenService;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @MockBean
