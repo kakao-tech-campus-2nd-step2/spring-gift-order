@@ -1,9 +1,6 @@
 package gift.main.service;
 
-import gift.main.dto.OptionListRequest;
-import gift.main.dto.OptionRequest;
-import gift.main.dto.ProductRequest;
-import gift.main.dto.UserVo;
+import gift.main.dto.*;
 import gift.main.entity.Category;
 import gift.main.entity.Product;
 import gift.main.entity.User;
@@ -71,9 +68,10 @@ class ProductServiceTest {
         options.add(new OptionRequest("2번", 2));
         options.add(new OptionRequest("3번", 3));
         OptionListRequest optionListRequest = new OptionListRequest(options);
-
+        ProductAllRequest productAllRequest = new ProductAllRequest(productRequest, optionListRequest);
         //when
-        productService.registerProduct(productRequest, optionListRequest, userVo);
+        //ProductAllRequest productAllRequest
+        productService.registerProduct(productAllRequest, userVo);
 
         //then
         assertThat(productRepository.existsById(1L)).isTrue();
@@ -94,14 +92,14 @@ class ProductServiceTest {
     void deleteProductWithWishProductTest() {
         //given
         User user = new User("user", "user@", "1234", "ADMIN");
-        User saveUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         Category category = categoryRepository.findByName("패션").get();
 
-        Product product = new Product("testProduct1", 12000, "Url", saveUser, category);
+        Product product = new Product("testProduct1", 12000, "Url", savedUser, category);
         Product saveProduct = productRepository.save(product);
 
-        WishProduct wishProduct = new WishProduct(saveProduct, saveUser);
+        WishProduct wishProduct = new WishProduct(saveProduct, savedUser);
         wishProductRepository.save(wishProduct);
 
         //when
@@ -122,11 +120,11 @@ class ProductServiceTest {
     void deleteProductTest() {
         //given
         User user = new User("user", "user@", "1234", "ADMIN");
-        User saveUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         Category category = categoryRepository.findByName("패션").get();
 
-        Product product = new Product("testProduct1", 12000, "Url", saveUser, category);
+        Product product = new Product("testProduct1", 12000, "Url", savedUser, category);
         Product saveProduct = productRepository.save(product);
 
         //when

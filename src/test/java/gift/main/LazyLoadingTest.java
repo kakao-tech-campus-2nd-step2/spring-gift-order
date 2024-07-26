@@ -12,6 +12,12 @@ import java.util.List;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
+interface ProductTestRepository extends JpaRepository<ProductTest, Long> {
+}
+
+interface OptionTestRepository extends JpaRepository<OptionTest, Long> {
+}
+
 @Entity
 class ProductTest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +50,6 @@ class OptionTest {
     public void setProduct(ProductTest product) {
         this.product = product;
     }
-}
-
-interface ProductTestRepository extends JpaRepository<ProductTest, Long> {
-}
-
-interface OptionTestRepository extends JpaRepository<OptionTest, Long> {
 }
 
 @Transactional

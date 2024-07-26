@@ -22,8 +22,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        //컨트롤러 호출 전 호출되는 메서드드드드...
-
         String authorization = request.getHeader("Authorization");
         if (authorization == null || !authorization.startsWith(BEARER)) {
             throw new CustomException(ErrorCode.NO_TOKEN);

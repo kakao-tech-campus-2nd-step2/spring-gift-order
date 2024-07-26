@@ -79,7 +79,7 @@ class OptionServiceTest {
     void findOptionAllTest() {
         //given
         //when
-        List<?> options = optionService.findAllOption(1l);
+        List<?> options = optionService.findAllOption(1L);
 
         //then
         assertThat(options.size()).isEqualTo(3);
@@ -90,7 +90,7 @@ class OptionServiceTest {
     @Rollback
     void deleteOptionTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         List<Option> options = optionRepository.findAllByProductId(saveProduct.getId()).get();
 
         //when
@@ -108,7 +108,7 @@ class OptionServiceTest {
     @Rollback
     void deleteOptionAllTest() {
         //given\
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         List<Option> options = optionRepository.findAllByProductId(saveProduct.getId()).get();
         optionService.deleteOption(saveProduct.getId(), options.get(0).getId());
         optionService.deleteOption(saveProduct.getId(), options.get(1).getId());
@@ -124,7 +124,7 @@ class OptionServiceTest {
     @Rollback
     void addOptionTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         OptionRequest optionRequest = new OptionRequest("4번", 4);
 
         //when
@@ -136,14 +136,14 @@ class OptionServiceTest {
     }
 
     /*
-    * 중복되는 옵션을 넣었을때 실패하는 메서드
+     * 중복되는 옵션을 넣었을때 실패하는 메서드
      */
     @Test
     @Transactional
     @Rollback
     void addDuplicateOptionTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         OptionRequest optionRequest = new OptionRequest("3번", 3);
 
         //when
@@ -161,7 +161,7 @@ class OptionServiceTest {
     @Rollback
     void updateOptionTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         OptionRequest optionRequest = new OptionRequest("4번", 4);
 
         //when
@@ -178,7 +178,7 @@ class OptionServiceTest {
     @Rollback
     void updateDuplicateOptionTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         OptionRequest optionRequest = new OptionRequest("3번", 3);
 
         //when
@@ -193,12 +193,12 @@ class OptionServiceTest {
     @Rollback
     void removeOptionQuantityTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         Option saveOption = optionRepository.findByProductIdAndOptionName(saveProduct.getId(), "1번").get();
         OptionChangeQuantityRequest optionChangeQuantityRequest = new OptionChangeQuantityRequest(3);
 
         //when
-        optionService.removeOptionQuantity(saveOption.getId(),optionChangeQuantityRequest);
+        optionService.removeOptionQuantity(saveOption.getId(), optionChangeQuantityRequest);
 
         //then
         assertThat(saveOption.getQuantity()).isEqualTo(97);
@@ -210,13 +210,13 @@ class OptionServiceTest {
     @Rollback
     void RemoveInvalidOptionQuantityTest() {
         //given
-        Product saveProduct = productRepository.findById(1l).get();
+        Product saveProduct = productRepository.findById(1L).get();
         Option saveOption = optionRepository.findByProductIdAndOptionName(saveProduct.getId(), "1번").get();
         OptionChangeQuantityRequest optionChangeQuantityRequest = new OptionChangeQuantityRequest(300);
 
         //when
         //thrn
-        assertThatThrownBy(() -> optionService.removeOptionQuantity(saveOption.getId(),optionChangeQuantityRequest))
+        assertThatThrownBy(() -> optionService.removeOptionQuantity(saveOption.getId(), optionChangeQuantityRequest))
                 .isInstanceOf(CustomException.class);
     }
 

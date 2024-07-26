@@ -8,19 +8,18 @@ import java.util.Objects;
 @Table(name = "wish-products")
 public class WishProduct {
 
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = true)
+    public Product product;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    public User user;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = true)
-    public Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    public User user;
-
     public WishProduct() {
+
     }
 
     public WishProduct(Product product, User user) {

@@ -2,20 +2,20 @@ package gift.main.controller;
 
 import gift.main.Exception.CustomException;
 import gift.main.config.KakaoProperties;
-import gift.main.dto.KakaoProfile;
 import gift.main.dto.KakaoToken;
-import gift.main.dto.KakaoUser;
+import gift.main.dto.UserJoinRequest;
 import gift.main.service.KakaoService;
 import gift.main.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/kakao/login")
@@ -24,8 +24,6 @@ public class KakaoController {
     private final KakaoProperties kakaoProperties;
     private final UserService userService;
     private final KakaoService kakaoService;
-    private String code;
-    private HttpServletResponse response;
 
     public KakaoController(KakaoProperties kakaoProperties, UserService userService, KakaoService kakaoService) {
         this.kakaoProperties = kakaoProperties;
@@ -43,28 +41,24 @@ public class KakaoController {
         response.sendRedirect(url);
     }
 
+
     //1. 전달받은 코드로 엑세스 토큰 요청하기
     @GetMapping("/callback")
-    public ResponseEntity<?> getKakaoCode(@RequestParam(value = "code",required = false) String code,
-                                          @RequestParam(value = "error",required = false) String error,
-                                          @RequestParam(value = "error_description",required = false) String error_description) {
-        if (error!=null || error_description!=null ) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, error_description);
+    public ResponseEntity<?> LoginKakaoUser(@RequestParam(value = "code", required = false) String code,
+                                            @RequestParam(value = "error", required = false) String error,
+                                            @RequestParam(value = "error_description", required = false) String errorDescription) {
+        if (error != null || errorDescription != null) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, errorDescription);
         }
 
-        Map<String, Object> responseBody = new HashMap<>();
         KakaoToken kakaoToken = kakaoService.requestKakaoToken(code);
-        KakaoUser kakaoUser = kakaoService.getKakaoProfile(kakaoToken);
-        String token = userService.loginKakaoUser(kakaoUser);
+        UserJoinRequest userJoinRequest = kakaoService.getKakaoProfile(kakaoToken);
+        String jwtToken = userService.loginKakaoUser(userJoinRequest, kakaoToken);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .body(responseBody);
+                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .body("successfully LoggedIn");
     }
-
-
-
-
 
 
 }

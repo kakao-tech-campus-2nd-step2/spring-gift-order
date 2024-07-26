@@ -1,6 +1,5 @@
 package gift.main.util;
 
-import gift.main.dto.UserDto;
 import gift.main.entity.Role;
 import gift.main.entity.User;
 import io.jsonwebtoken.Jwts;
@@ -51,28 +50,9 @@ public class JwtUtil {
         return BEARER + token;
     }
 
-    public String createToken(Long id, UserDto userDto) {
-
-        String token = Jwts.builder()
-                .claim("id", id)
-                .claim("name", userDto.getName())
-                .claim("email", userDto.getEmail())
-
-                .claim("role", userDto.getRole())
-                .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발생시간
-                .setExpiration(new Date(System.currentTimeMillis() + 2400000L)) // 소멸시간 셋팅
-                .signWith(secretKey) // 시그니처~!
-                .compact();
-
-        return BEARER + token;
-
-    }
 
     public boolean validateToken(String token) {
-        if (isExpired(token)) {
-            return false;
-        }
-        return true;
+        return !isExpired(token);
 
     }
 

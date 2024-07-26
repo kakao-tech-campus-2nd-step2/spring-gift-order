@@ -20,9 +20,9 @@ public class SessionUserArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override //넣어줄 반환값을 넣어준다.
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest(HttpServletRequest.class);
+        HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         HttpSession session = request.getSession();
-        return (UserVo) session.getAttribute("user");
+        return session.getAttribute("user");
     }
 
 }

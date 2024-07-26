@@ -4,7 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### Build directories ###
->>>>>>> up/step3
 !**/src/main/**/build/
 !**/src/test/**/build/
 

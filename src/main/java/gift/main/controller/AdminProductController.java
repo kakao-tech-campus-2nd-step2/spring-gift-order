@@ -1,7 +1,7 @@
 package gift.main.controller;
 
 import gift.main.annotation.SessionUser;
-import gift.main.dto.OptionListRequest;
+import gift.main.dto.ProductAllRequest;
 import gift.main.dto.ProductRequest;
 import gift.main.dto.UserVo;
 import gift.main.service.ProductService;
@@ -20,8 +20,10 @@ public class AdminProductController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerProduct(@Valid @RequestBody ProductRequest productRequest, @Valid @RequestBody OptionListRequest optionListRequest, @SessionUser UserVo sessionUserVo) {
-        productService.registerProduct(productRequest, optionListRequest, sessionUserVo);
+    public ResponseEntity<String> registerProduct(@RequestBody ProductAllRequest productAllRequest,
+                                                  @SessionUser UserVo sessionUserVo) {
+        productService.registerProduct(productAllRequest, sessionUserVo);
+        System.out.println("productAllInformation = " + productAllRequest);
         return ResponseEntity.ok("Product added successfully");
     }
 
