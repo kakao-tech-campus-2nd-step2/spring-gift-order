@@ -1,4 +1,4 @@
-package gift.dto.body;
+package gift.client.requestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

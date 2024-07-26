@@ -1,7 +1,7 @@
 package gift.client;
 
-import gift.dto.body.KakaoMessageTemplateBody;
-import gift.dto.body.KakaoTokenRequestBody;
+import gift.client.requestBody.KakaoMessageTemplateBody;
+import gift.client.requestBody.KakaoTokenRequestBody;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.exception.KakaoApiHasProblemException;

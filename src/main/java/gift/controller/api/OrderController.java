@@ -1,7 +1,7 @@
 package gift.controller.api;
 
 import gift.client.KakaoApiClient;
-import gift.dto.body.KakaoMessageTemplateBody;
+import gift.client.requestBody.KakaoMessageTemplateBody;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.exception.WishNotFoundException;

@@ -1,4 +1,4 @@
-package gift.dto.body;
+package gift.client.requestBody;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

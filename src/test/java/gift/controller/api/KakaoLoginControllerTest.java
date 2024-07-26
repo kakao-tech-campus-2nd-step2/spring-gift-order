@@ -1,7 +1,7 @@
 package gift.controller.api;
 
 import gift.client.KakaoApiClient;
-import gift.dto.body.KakaoTokenRequestBody;
+import gift.client.requestBody.KakaoTokenRequestBody;
 import gift.dto.response.JwtTokenResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.service.MemberService;
