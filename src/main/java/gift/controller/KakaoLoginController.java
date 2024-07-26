@@ -24,9 +24,8 @@ public class KakaoLoginController {
 
     @GetMapping("/kakao/auth")
     public String kakaoLogin(Model model) {
-        model.addAttribute("clientId", kakaoProperties.clientId());
-        model.addAttribute("redirectUrl", kakaoProperties.redirectUrl());
-        return "kakao_login";
+        String loginUrl = kakaoService.generateKakaoLoginUrl();
+        return "redirect:" + loginUrl;
     }
 
     @GetMapping("/")
@@ -37,7 +36,8 @@ public class KakaoLoginController {
             redirectAttributes.addFlashAttribute("accessToken", accessToken);
             return "redirect:/kakao/success";
         }
-        return "kakao_login";
+        String loginUrl = kakaoService.generateKakaoLoginUrl();
+        return "redirect:" + loginUrl;
     }
 
     @GetMapping("/kakao/success")
