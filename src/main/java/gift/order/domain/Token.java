@@ -12,13 +12,16 @@ public class Token {
     String accessToken;
     String refreshToken;
     String userName;
+    Long expiresIn;
 
     // constructor
-    public Token(String accessToken, String refreshToken, String userName) {
+    public Token(String accessToken, String refreshToken, String userName, Long expiresIn) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userName = userName;
+        this.expiresIn = expiresIn;
     }
+
 
     public Token() {
     }
@@ -55,5 +58,13 @@ public class Token {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Long getExpiresIn() {
+        return expiresIn;
+    }
+
+    public void setExpiresIn(Long expiresIn) {
+        this.expiresIn = expiresIn;
     }
 }

@@ -94,7 +94,8 @@ public class KakaoService {
         String accessToken = tokenResponse.accessToken();
         String refreshToken = tokenResponse.refreshToken();
         String userName = kakaoUser.nickname();
-        Token token = new Token(accessToken, refreshToken, userName);
+        Long expiresIn = tokenResponse.expiresIn();
+        Token token = new Token(accessToken, refreshToken, userName, expiresIn);
 
         tokenJPARepository.save(token);
     }
@@ -123,5 +124,60 @@ public class KakaoService {
                 .body(body_map)
                 .retrieve()
                 .body(String.class);
+    }
+
+    // 토큰이 유효한지 검증하는 로직
+    public boolean validateToken(String accessToken) {
+        String url = "https://kapi.kakao.com/v1/user/access_token_info";
+
+        // RestClient 사용하여 GET 요청
+        String response = restClient.get()
+                .uri(URI.create(url))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .retrieve()
+                .toEntity(String.class)
+                .getBody();
+
+        // 토큰이 유효한지 확인
+        JsonNode jsonNode = null;
+        try {
+            jsonNode = objectMapper.readTree(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return jsonNode != null;
+    }
+
+    // 토큰값 갱신하기
+    @Transactional
+    public void renewToken(String accessToken) {
+        String refreshToken = tokenJPARepository.findByAccessToken(accessToken).getRefreshToken();
+        String url = "https://kauth.kakao.com/oauth/token";
+
+        // RestClient 사용하여 POST 요청하여 토큰값 갱신
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", kakaoProperties.clientId());
+        body.add("refresh_token", refreshToken);
+
+        KakaoTokenResponse tokenResponse = restClient.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .toEntity(KakaoTokenResponse.class)
+                .getBody();
+        if (tokenResponse == null) {
+            throw new IllegalArgumentException("[ERROR] 유효하지 않은 액세스 토큰입니다.");
+        }
+        System.out.println("tokenResponse = " + tokenResponse);
+
+        // 토큰값 update
+        Token token = tokenJPARepository.findByAccessToken(accessToken);
+        token.setAccessToken(tokenResponse.accessToken());
+        token.setRefreshToken(tokenResponse.refreshToken());
+        tokenJPARepository.save(token);
+        System.out.println("token = " + token);
     }
 }

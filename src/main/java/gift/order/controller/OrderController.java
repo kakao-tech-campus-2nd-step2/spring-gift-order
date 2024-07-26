@@ -32,6 +32,11 @@ public class OrderController {
         // Bearer 접두사를 제거하여 액세스 토큰만 추출
         String accessToken = authorizationHeader.replace("Bearer ", "");
 
+        // validate accesstoken
+        if (!kakaoService.validateToken(accessToken)) {
+            kakaoService.renewToken(accessToken);
+        }
+
         // 1. 주문 요청 및 주문 내역 저장
         OrderResponse orderResponse = orderService.requestOrder(orderRequest);
 
