@@ -6,6 +6,7 @@ import gift.exception.ForbiddenException;
 import gift.domain.Member;
 import gift.repository.MemberRepository;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,5 +39,9 @@ public class MemberService {
         Member member = memberRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("해당 id의 멤버 없음: " + id));
         return member;
+    }
+
+    public Optional<Member> findByEmail(String email) {
+        return Optional.ofNullable(memberRepository.findByEmail(email));
     }
 }
