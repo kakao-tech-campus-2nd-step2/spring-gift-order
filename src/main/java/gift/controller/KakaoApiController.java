@@ -23,7 +23,6 @@ public class KakaoApiController {
     @GetMapping("/callback")
     public void kakaoLogin(@RequestParam(value = "code") String code) {
         String accessToken = kakaoApiService.getAccessToken(code);
-        System.out.println(accessToken);
     }
 
 }
