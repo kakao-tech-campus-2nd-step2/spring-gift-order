@@ -1,21 +1,13 @@
 package gift.RepositoryTest;
 
-import gift.Entity.Category;
-import gift.Entity.Member;
-import gift.Entity.Product;
-import gift.Entity.Wishlist;
+import gift.Entity.*;
 import gift.Mapper.Mapper;
 import gift.Model.MemberDto;
+import gift.Model.OptionDto;
 import gift.Model.ProductDto;
 import gift.Model.WishlistDto;
-import gift.Repository.CategoryJpaRepository;
-import gift.Repository.MemberJpaRepository;
-import gift.Repository.ProductJpaRepository;
-import gift.Repository.WishlistJpaRepository;
-import gift.Service.CategoryService;
-import gift.Service.MemberService;
-import gift.Service.ProductService;
-import gift.Service.WishlistService;
+import gift.Repository.*;
+import gift.Service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,6 +38,9 @@ public class WishlistRepositoryTest {
     @Autowired
     private CategoryJpaRepository categoryJpaRepository;
 
+    @Autowired
+    private OptionJpaRepository optionJpaRepository;
+
     private Mapper mapper;
 
     @BeforeEach
@@ -54,20 +49,9 @@ public class WishlistRepositoryTest {
         MemberService memberService = Mockito.mock(MemberService.class);
         WishlistService wishlistService = Mockito.mock(WishlistService.class);
         CategoryService categoryService = Mockito.mock(CategoryService.class);
+        OptionService optionService = Mockito.mock(OptionService.class);
 
-        Category category = new Category(1L, "category1");
-        BDDMockito.given(categoryService.getCategoryById(1L)).willReturn(Optional.of(category));
-
-
-        // 예시 데이터 설정
-        MemberDto mockMemberDto = new MemberDto(1L, "test@test.com", "testName", "testPassword", false);
-        ProductDto mockProductDto = new ProductDto(1L, "testProduct", 1L, 1000, "testUrl", false);
-
-        // 목 객체에 대한 반환 값 설정
-        Mockito.when(memberService.findByUserId(Mockito.anyLong())).thenReturn(Optional.of(mockMemberDto));
-        Mockito.when(productService.getProductById(Mockito.anyLong())).thenReturn(Optional.of(mockProductDto));
-
-        mapper = new Mapper(productService, memberService, wishlistService, categoryService);
+        mapper = new Mapper(productService, memberService, wishlistService, categoryService, optionService);
     }
 
     @Test
@@ -76,7 +60,11 @@ public class WishlistRepositoryTest {
         Member member = mapper.memberDtoToEntity(member1);
         memberJpaRepository.save(member);
 
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 1, 0, "test", 1000);
+        OptionDto optionDto = new OptionDto(1L, 1L, "option1", 1000, 1);
+        Option option = mapper.optionDtoToEntity(optionDto);
+        optionJpaRepository.save(option);
+
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 1, 0, "test", 1000, 1L);
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
 
@@ -89,7 +77,7 @@ public class WishlistRepositoryTest {
 
     @Test
     public void testAddWishlist() {
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 1, 0, "test", 1000);
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 1, 0, "test", 1000, 1L);
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
 
@@ -114,7 +102,11 @@ public class WishlistRepositoryTest {
         Product product = mapper.productDtoToEntity(productDto1);
         productJpaRepository.save(product);
 
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 0, "productDto1", 1000);
+        OptionDto optionDto = new OptionDto(1L, 1L, "option1", 1000, 1);
+        Option option = mapper.optionDtoToEntity(optionDto);
+        optionJpaRepository.save(option);
+
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 0, "productDto1", 1000, 1L);
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
 
@@ -140,12 +132,16 @@ public class WishlistRepositoryTest {
         Product product = mapper.productDtoToEntity(productDto1);
         productJpaRepository.save(product);
 
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 0, "productDto1", 5000);
+        OptionDto optionDto = new OptionDto(1L, 1L, "option1", 1000, 1);
+        Option option = mapper.optionDtoToEntity(optionDto);
+        optionJpaRepository.save(option);
+
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 0, "productDto1", 5000, 1L);
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         wishlistJpaRepository.save(wishlist);
 
         //수량을 5개에서 3개로 변경
-        WishlistDto updateDto = new WishlistDto(1L, 1L, 3, 0, "test", 3000);
+        WishlistDto updateDto = new WishlistDto(1L, 1L, 3, 0, "test", 3000, 1L);
         Wishlist updateWishlist = mapper.wishlistDtoToEntity(updateDto);
 
         wishlistJpaRepository.save(updateWishlist);
