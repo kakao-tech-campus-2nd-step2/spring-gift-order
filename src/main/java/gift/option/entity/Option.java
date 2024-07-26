@@ -42,6 +42,10 @@ public class Option {
         return quantity.getValue();
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     protected Option() {
 
     }
