@@ -24,15 +24,4 @@ public class RestClientBuilderConfig {
 
         return factory;
     }
-
-//    @Bean
-//    public RestClient restClient(RestClient.Builder builder) {
-//        return builder.build();
-//    }
-//
-//    @Bean
-//    public RestClientCustomizer restClientCustomizer() {
-//        return (restClientBuilder) -> restClientBuilder
-//                .requestFactory(getClientHttpRequestFactory());
-//    }
 }
