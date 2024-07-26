@@ -1,7 +1,8 @@
 package gift.controller;
 
+import gift.Login;
+import gift.domain.Member;
 import gift.dto.request.OrderRequest;
-import gift.service.OptionService;
 import gift.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +21,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public void addOption(@Valid @RequestBody OrderRequest orderRequest) {
-        orderService.order(orderRequest);
+    public void order(@Login Member member, @Valid @RequestBody OrderRequest orderRequest) {
+        orderService.order(member, orderRequest);
     }
 }
