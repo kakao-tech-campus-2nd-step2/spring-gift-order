@@ -12,13 +12,13 @@ public class TokenAuth {
     @Column(nullable = false)
     private String token;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     public TokenAuth(String token, Member member) {
         this.token = token;
-        this.member = member;
+        setMember(member);
     }
 
     public TokenAuth() { }
@@ -32,6 +32,17 @@ public class TokenAuth {
     }
 
     public void setMember(Member member) {
+        if (this.member != null) {
+            this.member.setTokenAuth(null);
+        }
+
         this.member = member;
+        if (member != null && member.getTokenAuth() != this) {
+            member.setTokenAuth(this);
+        }
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

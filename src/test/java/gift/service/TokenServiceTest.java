@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import static gift.domain.LoginType.NORMAL;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +40,7 @@ public class TokenServiceTest {
 
     @Test
     public void testSaveToken() {
-        Member member = new Member(EMAIL, "password");
+        Member member = new Member(EMAIL, "password", NORMAL);
         member.setId(MEMBER_ID);
 
         String token = tokenService.saveToken(member);
@@ -48,7 +49,7 @@ public class TokenServiceTest {
 
     @Test
     public void testFindToken() {
-        Member member = new Member(EMAIL, "password");
+        Member member = new Member(EMAIL, "password", NORMAL);
         member.setId(MEMBER_ID);
         String token = tokenService.saveToken(member);
 

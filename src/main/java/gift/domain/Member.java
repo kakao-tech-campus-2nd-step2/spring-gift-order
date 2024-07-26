@@ -6,31 +6,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "member")
+@Table(name = "member", uniqueConstraints = @UniqueConstraint(columnNames = {"email", "loginType"}))
 public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LoginType loginType;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WishlistItem> wishlistItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<TokenAuth> tokenAuths = new ArrayList<>();
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private TokenAuth tokenAuth;
 
     public Member() {
     }
 
-    public Member(String email, String password) {
+    public Member(String email, String password, LoginType loginType) {
         this.email = email;
         this.password = password;
+        this.loginType = loginType;
     }
 
     public Long getId() {
@@ -49,4 +54,11 @@ public class Member {
         return password;
     }
 
+    public void setTokenAuth(TokenAuth tokenAuth) {
+        this.tokenAuth = tokenAuth;
+    }
+
+    public TokenAuth getTokenAuth() {
+        return tokenAuth;
+    }
 }

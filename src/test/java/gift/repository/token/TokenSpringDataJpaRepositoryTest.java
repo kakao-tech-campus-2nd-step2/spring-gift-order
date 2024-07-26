@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
+import static gift.domain.LoginType.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -22,7 +23,7 @@ public class TokenSpringDataJpaRepositoryTest {
 
     @Test
     public void testSaveToken() {
-        Member member = new Member("test@example.com", "password");
+        Member member = new Member("test@example.com", "password", NORMAL);
         memberRepository.save(member);
 
         TokenAuth token = new TokenAuth("test-token", member);
@@ -35,7 +36,7 @@ public class TokenSpringDataJpaRepositoryTest {
 
     @Test
     public void testFindToken() {
-        Member member = new Member("test@example.com", "password");
+        Member member = new Member("test@example.com", "password", NORMAL);
         memberRepository.save(member);
 
 
@@ -50,7 +51,7 @@ public class TokenSpringDataJpaRepositoryTest {
 
     @Test
     public void testDeleteToken() {
-        Member member = new Member("test@example.com", "password");
+        Member member = new Member("test@example.com", "password", NORMAL);
         memberRepository.save(member);
 
 

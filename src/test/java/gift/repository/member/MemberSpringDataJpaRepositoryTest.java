@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.Optional;
 
+import static gift.domain.LoginType.NORMAL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -28,20 +29,20 @@ public class MemberSpringDataJpaRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        Member member = new Member("test@example.com", "password");
+        Member member = new Member("test@example.com", "password", NORMAL);
         memberRepository.save(member);
     }
 
     @Test
     public void testSaveMember() {
-        Optional<Member> foundMember = memberRepository.findByEmail("test@example.com");
+        Optional<Member> foundMember = memberRepository.findByEmailAndLoginType("test@example.com", NORMAL);
         assertThat(foundMember).isPresent();
         assertThat(foundMember.get().getEmail()).isEqualTo("test@example.com");
     }
 
     @Test
     public void testFindByEmail() {
-        Optional<Member> foundMember = memberRepository.findByEmail("test@example.com");
+        Optional<Member> foundMember = memberRepository.findByEmailAndLoginType("test@example.com", NORMAL);
         assertThat(foundMember).isPresent();
         assertThat(foundMember.get().getEmail()).isEqualTo("test@example.com");
     }
@@ -50,7 +51,7 @@ public class MemberSpringDataJpaRepositoryTest {
     public void testSaveMember_이메일_중복() {
         MemberRequest memberRequest = new MemberRequest("test@example.com", "password");
 
-        assertThatThrownBy(() -> memberService.register(memberRequest))
+        assertThatThrownBy(() -> memberService.register(memberRequest, NORMAL))
                 .isInstanceOf(DuplicateMemberEmailException.class)
                 .hasMessage("이미 등록된 이메일입니다.");
     }
