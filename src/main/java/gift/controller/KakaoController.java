@@ -1,5 +1,6 @@
 package gift.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/kakao")
@@ -79,9 +81,20 @@ public class KakaoController {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<Object> response = restTemplate.exchange(request, Object.class);
-
-        System.out.println("Response: " + response.getBody());
+        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String responseBody = response.getBody();
+        try{
+            Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
+            Map<String, Object> properties = (Map<String, Object>) responseMap.get("properties");
+            Map<String, Object> kakao_account = (Map<String,Object>)responseMap.get("kakao_account");
+            String nickname = (String) properties.get("nickname");
+            System.out.println(responseMap);
+            System.out.println(nickname);
+            System.out.println(kakao_account.get("email"));
+        }
+        catch (Exception e){
+        }
 
     }
 
