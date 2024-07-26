@@ -16,14 +16,17 @@ import java.util.Map;
 @Component
 public class JwtTokenProvider {
 
-    private Key secretKey;
+    @Value("${jwt.secret-key}")
+    private String secretKeyString;
 
     @Value("${token.expire-length}")
     private long validityInMilliseconds;
 
+    private Key secretKey;
+
     @PostConstruct
     protected void init() {
-        this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        this.secretKey = Keys.hmacShaKeyFor(secretKeyString.getBytes());
     }
 
     public String getEmailFromToken(String token) {

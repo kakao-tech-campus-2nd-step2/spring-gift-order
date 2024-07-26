@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
@@ -45,25 +46,49 @@ public class KakaoService {
     public User getKakaoUserInfo(String accessToken) throws Exception {
         var url = "https://kapi.kakao.com/v2/user/me";
 
-        ResponseEntity<String> entity = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .toEntity(String.class);
+        try {
+            ResponseEntity<String> entity = client.post()
+                    .uri(URI.create(url))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .retrieve()
+                    .toEntity(String.class);
 
-        String resBody = entity.getBody();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(resBody);
-        String email = jsonNode.path("kakao_account").path("email").asText();
+            String resBody = entity.getBody();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(resBody);
+            String email = jsonNode.path("kakao_account").path("email").asText();
 
-        if (userRepository.existsByEmail(email)) {
-            return userRepository.findByEmail(email);
+            if (userRepository.existsByEmail(email)) {
+                return userRepository.findByEmail(email);
+            }
+
+            User user = new User(email, UUID.randomUUID().toString());
+            userRepository.save(user);
+
+            return user;
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Failed to get Kakao user info: " + e.getResponseBodyAsString(), e);
         }
+    }
 
-        User user = new User(email, UUID.randomUUID().toString());
-        userRepository.save(user);
+    @Transactional
+    public void sendMessageToMe(String email, String message) throws Exception {
+        String accessToken = kakaoTokenProvider.getTokenForUser(email);
 
-        return user;
+        // 메시지 템플릿 생성
+        String templateObject = "{ \"object_type\": \"text\", \"text\": \"" + message + "\", \"link\": { \"web_url\": \"http://localhost:8080\", \"mobile_web_url\": \"http://localhost:8080\" }}";
+
+        // 카카오 API 호출
+        try {
+            kakaoTokenProvider.sendMessage(accessToken, templateObject);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("this access token does not exist")) {
+                accessToken = kakaoTokenProvider.getTokenForUser(email);
+                kakaoTokenProvider.sendMessage(accessToken, templateObject);
+            } else {
+                throw e;
+            }
+        }
     }
 }
