@@ -4,7 +4,6 @@ import gift.administrator.category.Category;
 import gift.administrator.category.CategoryService;
 import gift.administrator.option.Option;
 import gift.administrator.option.OptionDTO;
-import gift.administrator.option.OptionService;
 import gift.error.NotFoundIdException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -95,6 +94,10 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(existingProduct);
         return ProductDTO.fromProduct(savedProduct);
+    }
+
+    public boolean existsByProductId(long productId){
+        return !productRepository.existsById(productId);
     }
 
     private void existsByNameAndIdNotThrowException(String name, long productId) {

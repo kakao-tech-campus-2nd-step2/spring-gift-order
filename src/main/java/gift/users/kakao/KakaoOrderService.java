@@ -7,6 +7,7 @@ import gift.administrator.option.OptionDTO;
 import gift.administrator.option.OptionService;
 import gift.administrator.product.ProductService;
 import gift.error.KakaoOrderException;
+import gift.users.wishlist.WishListService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import org.slf4j.Logger;
@@ -26,17 +27,19 @@ public class KakaoOrderService {
     private final OptionService optionService;
     private final RestClient.Builder restClientBuilder;
     private final KakaoProperties kakaoProperties;
+    private final WishListService wishListService;
 
     private static final String HEADER_NAME = "Authorization";
 
     public KakaoOrderService(TokenService tokenService, ProductService productService,
         OptionService optionService, RestClient.Builder restClientBuilder,
-        KakaoProperties kakaoProperties) {
+        KakaoProperties kakaoProperties, WishListService wishListService) {
         this.tokenService = tokenService;
         this.productService = productService;
         this.optionService = optionService;
         this.restClientBuilder = restClientBuilder;
         this.kakaoProperties = kakaoProperties;
+        this.wishListService = wishListService;
     }
 
     public KakaoOrderDTO kakaoOrder(long userId, KakaoOrderDTO kakaoOrderDTO,
@@ -62,6 +65,8 @@ public class KakaoOrderService {
 
         optionService.subtractOptionQuantity(kakaoOrderDTO.optionId(), kakaoOrderDTO.quantity());
 
+        wishListService.findOrderAndDeleteIfExists(userId, kakaoOrderDTO.productId(),
+            kakaoOrderDTO.optionId());
         return new KakaoOrderDTO(kakaoOrderDTO.productId(), kakaoOrderDTO.optionId(),
             kakaoOrderDTO.quantity(), orderDateTime, kakaoOrderDTO.message());
     }
