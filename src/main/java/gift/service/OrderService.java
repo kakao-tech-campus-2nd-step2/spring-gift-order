@@ -44,8 +44,7 @@ public class OrderService {
                 product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
         subtractQuantity(orders.getProductId(), orders.getOptionId(), orders.getQuantity());
         deleteWishIfExists(product.getId(), memberId);
-        return new OrderResponse(orders.getId(), orders.getOptionId(), orders.getProductName(), orders.getOptionName(),
-                orders.getPrice(), orders.getQuantity(), orders.getCreatedAt(), orders.getDescription());
+        return OrderResponse.from(orders);
     }
 
     @Transactional
@@ -62,14 +61,13 @@ public class OrderService {
         product.subtractOptionQuantity(optionId, amount);
     }
 
-    public void sendKakaoMessage(Long memberId, OrderResponse order) {
+    public void sendKakaoMessage(Long memberId, Long orderId) {
         Member member = memberRepository.getReferenceById(memberId);
         if(member.getLoginType() != SocialLoginType.KAKAO) {
             return;
         }
+        Orders orders = orderRepository.getReferenceById(orderId);
         String accessToken = kakaoTokenService.refreshIfAccessTokenExpired(memberId);
-        Orders orders = new Orders(order.productId(), order.optionId(), memberId,
-                order.productName(), order.optionName(), order.price(), order.quantity(), order.message());
         kakaoApiCaller.sendKakaoMessage(accessToken, orders);
     }
 
