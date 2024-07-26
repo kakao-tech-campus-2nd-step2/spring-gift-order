@@ -2,10 +2,7 @@ package gift.domain;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Menu {
@@ -55,7 +52,7 @@ public class Menu {
         this.price = menuRequest.price();
         this.imageUrl = menuRequest.imageUrl();
         this.category = category;
-        this.options = menuRequest.options();
+        this.options = new HashSet<Option>();
     }
 
     public Long getId() {

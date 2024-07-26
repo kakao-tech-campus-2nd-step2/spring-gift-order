@@ -17,11 +17,8 @@ import java.net.URI;
 public class MemberController {
     private final MemberService memberService;
 
-    private KakaoService kakaoService;
-
-    public MemberController(MemberService memberService, KakaoService kakaoService) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-        this.kakaoService = kakaoService;
     }
 
     @PostMapping("/join")

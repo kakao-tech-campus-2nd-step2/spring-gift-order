@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jdk8.OptionalSerializer;
 import gift.domain.Menu;
 import gift.domain.Option;
 import gift.domain.OptionRequest;
+import gift.domain.OptionResponse;
 import gift.repository.MenuRepository;
 import gift.service.OptionService;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,10 @@ public class OptionController {
     }
     
     @PostMapping("/save")
-    public ResponseEntity<Option> save(
+    public ResponseEntity<OptionResponse> save(
             @RequestBody OptionRequest optionRequest
     ){
-        return ResponseEntity.ok().body(optionService.save(optionService));
+        return ResponseEntity.ok().body(optionService.save(optionRequest));
     }
 
 }

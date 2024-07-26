@@ -38,6 +38,10 @@ public class Option {
         return quantity;
     }
 
+    public Menu getMenu() {
+        return menu;
+    }
+
     public void subtract(Long subtractNumber) throws IllegalAccessException {
         quantity -= subtractNumber;
         if(quantity <= 0 || quantity > 1_000_000_000){

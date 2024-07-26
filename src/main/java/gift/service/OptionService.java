@@ -3,6 +3,7 @@ package gift.service;
 import gift.domain.Menu;
 import gift.domain.Option;
 import gift.domain.OptionRequest;
+import gift.domain.OptionResponse;
 import gift.repository.MenuRepository;
 import gift.repository.OptionRepository;
 import org.springframework.stereotype.Service;
@@ -16,13 +17,17 @@ public class OptionService {
         this.menuRepository = menuRepository;
         this.optionRepository = optionRepository;
     }
-    public void save(OptionRequest optionRequest) {
+    public OptionResponse save(OptionRequest optionRequest) {
         Menu menu = menuRepository.findById(optionRequest.menuId()).get();
         Option option = mapOptionRequestToOption(optionRequest,menu);
-        optionRepository.save(option);
+        return mapOptionToOptionResponse(optionRepository.save(option));
     }
 
     public Option mapOptionRequestToOption(OptionRequest optionRequest,Menu menu){
         return new Option(optionRequest.id(),optionRequest.name(), optionRequest.quantity(),menu);
+    }
+
+    public OptionResponse mapOptionToOptionResponse(Option option){
+        return new OptionResponse(option.getId(),option.getName(),option.getQuantity(),option.getMenu());
     }
 }
