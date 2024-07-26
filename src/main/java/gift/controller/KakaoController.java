@@ -2,6 +2,7 @@ package gift.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
+import gift.service.KakaoService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,22 +17,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/kakao")
 public class KakaoController {
+    private KakaoService kakaoService;
 
-    @Value("${my.client_id}")
-    private String client_id;
+    public KakaoController(KakaoService kakaoService){
+        this.kakaoService = kakaoService;
+    }
+
     @GetMapping("/getcode")
     public RedirectView getUserAgree(){
-
-        URI uri = UriComponentsBuilder
-                .fromUriString("https://kauth.kakao.com/oauth/authorize")
-                .queryParam("client_id", client_id)
-                .queryParam("redirect_uri", "http://localhost:8080/api/kakao/code")
-                .queryParam("response_type", "code")
-                .encode()
-                .build()
-                .toUri();
-        System.out.println(uri);
-
+        URI uri = kakaoService.makeUri();
         return new RedirectView(uri.toString());
     }
 
