@@ -2,6 +2,7 @@ package gift.domain;
 
 import jakarta.persistence.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,7 +12,10 @@ public class Member {
     @Id
     private String id;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "password")
     private String password;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -20,11 +24,13 @@ public class Member {
     public Member() {
     }
 
-    public Member(String id, String password, List<WishList> wishList) {
+    public Member(String id, String password, String name,List<WishList> wishList) {
         this.id = id;
         this.password = password;
         this.wishList = wishList;
+        this.name = name;
     }
+
 
     public String getPassword() {
         return password;
