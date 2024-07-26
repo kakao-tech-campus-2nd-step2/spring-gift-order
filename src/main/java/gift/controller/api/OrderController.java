@@ -1,12 +1,10 @@
 package gift.controller.api;
 
-import gift.client.KakaoApiClient;
-import gift.client.requestBody.KakaoMessageTemplateBody;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.exception.WishNotFoundException;
 import gift.interceptor.MemberId;
-import gift.repository.KakaoAccessTokenRepository;
+import gift.service.KakaoApiService;
 import gift.service.OptionService;
 import gift.service.OrderService;
 import gift.service.WishService;
@@ -26,15 +24,13 @@ public class OrderController {
     private final OptionService optionService;
     private final WishService wishService;
     private final OrderService orderService;
-    private final KakaoApiClient kakaoApiClient;
-    private final KakaoAccessTokenRepository kakaoAccessTokenRepository;
+    private final KakaoApiService kakaoApiService;
 
-    public OrderController(OptionService optionService, WishService wishService, OrderService orderService, KakaoApiClient kakaoApiClient, KakaoAccessTokenRepository kakaoAccessTokenRepository) {
+    public OrderController(OptionService optionService, WishService wishService, OrderService orderService, KakaoApiService kakaoApiService) {
         this.optionService = optionService;
         this.wishService = wishService;
         this.orderService = orderService;
-        this.kakaoApiClient = kakaoApiClient;
-        this.kakaoAccessTokenRepository = kakaoAccessTokenRepository;
+        this.kakaoApiService = kakaoApiService;
     }
 
     @PostMapping("/api/orders")
@@ -50,8 +46,7 @@ public class OrderController {
             Logger.getLogger(OrderController.class.getName()).log(Level.INFO, "위시리스트에 없는 상품입니다");
         }
 
-        String accessToken = kakaoAccessTokenRepository.getAccessToken(memberId);
-        kakaoApiClient.sendMessageToMe(accessToken, new KakaoMessageTemplateBody(orderRequest.message()));
+        kakaoApiService.sendMessageToMe(memberId, orderRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
