@@ -57,7 +57,7 @@ public class KakaoController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                .body("");
+                .body("successfully LoggedIn");
     }
 
 
