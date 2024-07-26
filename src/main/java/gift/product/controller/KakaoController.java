@@ -16,13 +16,12 @@ public class KakaoController {
     }
 
     @GetMapping("/kakao/login")
-    public String getAuthCode() {
+    public String login() {
         return "redirect:" + kakaoService.getAuthCode();
     }
 
     @GetMapping(params = "code")
-    public ResponseEntity<String> login(@RequestParam String code) {
-        kakaoService.getAccessToken(code);
-        return ResponseEntity.ok().body("SUCCESS LOGIN!");
+    public ResponseEntity<String> handleKakaoCallback(@RequestParam String code) {
+        return ResponseEntity.ok(kakaoService.login(code));
     }
 }

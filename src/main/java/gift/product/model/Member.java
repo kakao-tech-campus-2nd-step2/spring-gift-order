@@ -15,11 +15,21 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @ManyToOne
+    @JoinColumn
+    private SnsMember snsMember;
+
     public Member() {}
 
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(SnsMember snsMember) {
+        this.email = "";
+        this.password = "";
+        this.snsMember = snsMember;
     }
 
     public Long getId() {
@@ -32,5 +42,9 @@ public class Member {
 
     public String getPassword() {
         return password;
+    }
+
+    public SnsMember getSnsMember() {
+        return snsMember;
     }
 }

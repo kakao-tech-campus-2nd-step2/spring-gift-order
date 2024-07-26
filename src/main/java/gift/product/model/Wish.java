@@ -1,6 +1,5 @@
 package gift.product.model;
 
-
 import jakarta.persistence.*;
 
 @Entity
@@ -28,7 +27,6 @@ public class Wish {
     public Long getId() {
         return id;
     }
-
     public Member getMember() {
         return member;
     }

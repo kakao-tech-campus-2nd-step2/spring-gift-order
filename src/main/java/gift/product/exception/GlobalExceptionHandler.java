@@ -18,6 +18,7 @@ public class GlobalExceptionHandler {
     // 토큰 인증과 관련된 에러 메세지
     public static final String INVALID_TOKEN = "유효하지 않은 토큰입니다.";
     public static final String NO_PERMISSION = "본인의 위시 리스트만 수정할 수 있습니다.";
+    public static final String NOT_EXIST_AUTHENTICATION = "헤더에 인증 필드가 존재하지 않습니다.";
     // 유저 정보와 관련된 에러 메세지
     public static final String DUPLICATE_EMAIL = "이미 가입된 이메일입니다.";
     public static final String INVALID_INPUT = "이메일 또는 비밀번호를 잘못 입력하였습니다.";
@@ -32,6 +33,8 @@ public class GlobalExceptionHandler {
     // 수량과 관련된 에러 메세지
     public static final String CANNOT_SUBTRACT_ZERO_OR_NEGATIVE = "수량을 차감할 때는 1 이상의 양의 정수만 입력되어야 합니다.";
     public static final String SUBTRACT_EXCEED_QUANTITY = "차감하려는 수량이 상품 옵션의 잔여 수량을 초과하였습니다.";
+    // 서버 응답과 관련된 에러 메세지
+    public static final String DID_NOT_RECEIVE_RESPONSE = "서버로부터 받은 응답이 존재하지 않습니다.";
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -69,4 +72,9 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorMessage", "Login error: " + ex.getMessage());
     }
 
+    @ExceptionHandler(ResponseException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public void handleDidNotGetResponseException(ResponseException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
 }
