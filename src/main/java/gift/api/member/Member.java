@@ -19,6 +19,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String kakaoAccessToken;
+
     protected Member() {
     }
 
@@ -26,6 +28,10 @@ public class Member extends BaseEntity {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public void saveKakaoToken(String accessToken) {
+        this.kakaoAccessToken = accessToken;
     }
 
     public String getEmail() {

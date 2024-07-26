@@ -26,11 +26,13 @@ import org.springframework.web.client.RestClient;
 @Service
 public class MemberService {
 
+    private final MemberDao memberDao;
     private final MemberRepository memberRepository;
     private final KakaoProperties properties;
     private final RestClient restClient;
 
-    public MemberService(MemberRepository memberRepository, KakaoProperties properties) {
+    public MemberService(MemberDao memberDao, MemberRepository memberRepository, KakaoProperties properties) {
+        this.memberDao = memberDao;
         this.memberRepository = memberRepository;
         this.properties = properties;
         restClient = RestClient.create();
@@ -46,7 +48,7 @@ public class MemberService {
 
     public void login(MemberRequest memberRequest, String token) {
         if (memberRepository.existsByEmailAndPassword(memberRequest.email(), memberRequest.password())) {
-            Long id = memberRepository.findByEmail(memberRequest.email()).get().getId();
+            Long id = memberDao.findMemberByEmail(memberRequest.email()).getId();
             if (token.equals(JwtUtil.generateAccessToken(id, memberRequest.email(), memberRequest.role()))) {
                 return;
             }
@@ -85,6 +87,12 @@ public class MemberService {
                 throw new RegisterNeededException();
             }
         }
+    }
+
+    @Transactional
+    public void saveKakaoToken(ResponseEntity<TokenResponse> tokenResponse, ResponseEntity<UserInfoResponse> userInfoResponse) {
+        Member member = memberDao.findMemberByEmail(userInfoResponse.getBody().kakaoAccount().email());
+        member.saveKakaoToken(tokenResponse.getBody().accessToken());
     }
 
     public LinkedMultiValueMap<Object, Object> createBody(String code) {
