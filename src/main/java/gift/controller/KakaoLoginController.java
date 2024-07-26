@@ -30,7 +30,8 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/")
-    public String kakaoAccessToken(@RequestParam(value = "code") String authorizationCode, RedirectAttributes redirectAttributes) {
+    public String kakaoAccessToken(@RequestParam(value = "code") String authorizationCode,
+        RedirectAttributes redirectAttributes) {
         if (authorizationCode != null) {
             String accessToken = kakaoService.getAccessToken(authorizationCode);
             redirectAttributes.addFlashAttribute("accessToken", accessToken);

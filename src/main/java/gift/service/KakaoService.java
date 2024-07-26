@@ -34,7 +34,7 @@ public class KakaoService {
     private LinkedMultiValueMap<String, String> createBody(String authorizationCode) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id",kakaoProperties.clientId());
+        body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_url", kakaoProperties.redirectUrl());
         body.add("code", authorizationCode);
         return body;
