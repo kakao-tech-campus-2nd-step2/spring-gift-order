@@ -27,7 +27,7 @@ public class OptionService {
         return productRepository.findById(productId).orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다. "));
     }
 
-    private Option getOption(Long optionId) {
+    public Option getOption(Long optionId) {
         return optionRepository.findById(optionId).orElseThrow(() -> new NoSuchElementException("해당 옵션을 찾을 수 없습니다. "));
     }
 

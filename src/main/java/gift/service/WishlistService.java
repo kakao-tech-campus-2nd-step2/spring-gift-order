@@ -44,4 +44,9 @@ public class WishlistService {
         wishlistRepository.deleteById(id);
     }
 
+    public Long hasFindWishByMemberAndProduct(Member member, Product product) {
+        return wishlistRepository.findByMemberAndProduct(member, product)
+                .map(Wish::getId)
+                .orElse(null);
+    }
 }
