@@ -4,11 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.KakaoMessageTemplate;
 import gift.dto.response.OrderResponse;
+import gift.exception.KakaoApiHasProblemException;
 import gift.repository.KakaoAccessTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class KakaoMessageService {
@@ -24,26 +30,32 @@ public class KakaoMessageService {
 
     public void sendToMe(Long memberId, OrderResponse order) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        ObjectMapper objectMapper = new ObjectMapper();
         KakaoMessageTemplate template = new KakaoMessageTemplate(order.message());
-        String ss = null;
-        try {
-            ss = objectMapper.writeValueAsString(template);
-        } catch (JsonProcessingException e) {
-            System.out.println("heelo");
-        }
 
-        multiValueMap.add("template_object", ss);
-        System.out.println(ss);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            multiValueMap.add("template_object", objectMapper.writeValueAsString(template));
+        } catch (JsonProcessingException e) {
+            Logger.getLogger(KakaoMessageService.class.getName()).log(Level.WARNING, "ObjectMapper가 JSON 파싱에 실패");
+        }
 
         String accessToken = accessTokenRepository.getAccessToken(memberId);
 
-        String body = restClient.post()
-                .uri(MESSAGE_URI)
-                .body(multiValueMap)
-                .header("Authorization", String.format("Bearer %s", accessToken))
-                .retrieve()
-                .body(String.class);
-        System.out.println(body);
+        int maxRetries = 4;
+        int retryCount = 0;
+        List<Exception> exceptions = new ArrayList<>();
+        while (retryCount < maxRetries) {
+            try {
+                restClient.post()
+                        .uri(MESSAGE_URI)
+                        .body(multiValueMap)
+                        .header("Authorization", String.format("Bearer %s", accessToken))
+                        .retrieve();
+            } catch (Exception e) {
+                exceptions.add(e);
+                retryCount++;
+            }
+        }
+        throw new KakaoApiHasProblemException("카카오API의 '나에게 메세지 보내기' 기능에 문제가 생겼습니다.", exceptions);
     }
 }

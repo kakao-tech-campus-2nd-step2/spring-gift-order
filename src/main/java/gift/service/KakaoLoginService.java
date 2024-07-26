@@ -2,11 +2,15 @@ package gift.service;
 
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
+import gift.exception.KakaoApiHasProblemException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class KakaoLoginService {
@@ -32,23 +36,45 @@ public class KakaoLoginService {
         multiValueMap.add("client_id", clientId);
         multiValueMap.add("code", code);
 
-        return restClient
-                .post()
-                .uri(TOKEN_REQUEST_URI)
-                .body(multiValueMap)
-                .retrieve()
-                .body(KakaoTokenResponse.class);
+        int maxRetries = 4;
+        int retryCount = 0;
+        List<Exception> exceptions = new ArrayList<>();
+        while (retryCount < maxRetries) {
+            try {
+                return restClient
+                        .post()
+                        .uri(TOKEN_REQUEST_URI)
+                        .body(multiValueMap)
+                        .retrieve()
+                        .body(KakaoTokenResponse.class);
+            } catch (Exception e) {
+                exceptions.add(e);
+                retryCount++;
+            }
+        }
+        throw new KakaoApiHasProblemException("카카오API의 '토큰 받기' 기능에 문제가 생겼습니다.", exceptions);
     }
 
-    public String getEmail(String token) {
-        KakaoUserInfoResponse body = restClient
-                .get()
-                .uri(USER_INFO_REQUEST_URI)
-                .header("Authorization", String.format("Bearer %s", token))
-                .retrieve()
-                .body(KakaoUserInfoResponse.class);
+    public String getMemberEmail(String token) {
 
-        return body.kakaoAccount()
-                .email();
+        int maxRetries = 4;
+        int retryCount = 0;
+        List<Exception> exceptions = new ArrayList<>();
+        while (retryCount < maxRetries) {
+            try {
+                return restClient
+                        .get()
+                        .uri(USER_INFO_REQUEST_URI)
+                        .header("Authorization", String.format("Bearer %s", token))
+                        .retrieve()
+                        .body(KakaoUserInfoResponse.class)
+                        .kakaoAccount()
+                        .email();
+            } catch (Exception e) {
+                exceptions.add(e);
+                retryCount++;
+            }
+        }
+        throw new KakaoApiHasProblemException("카카오API의 '사용자 정보 가져오기' 기능에 문제가 생겼습니다.", exceptions);
     }
 }
