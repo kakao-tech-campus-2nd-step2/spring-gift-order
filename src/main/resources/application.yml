@@ -15,3 +15,5 @@ kakao:
   client-id: ${KAKAO_CLIENT_ID}
   redirect-uri: ${KAKAO_REDIRECT_URI}
   auth-url: ${KAKAO_AUTH_URL}
+  message-url : ${KAKAO_MESSAGE_URL}
+  token-info-url: ${KAKAO_TOKEN_INFO_URL}
