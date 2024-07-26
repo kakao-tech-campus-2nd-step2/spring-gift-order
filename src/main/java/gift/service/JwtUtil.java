@@ -19,10 +19,11 @@ public class JwtUtil {
     private final Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 
     // userId와 email을 주체로 하는 토큰 생성
-    public String generateToken(String email, Long userId) {
+    public String generateToken(String email, Long userId, String kakaoToken) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         claims.put("userId", userId);
+        claims.put("kakaoToken", kakaoToken);
 
         return Jwts.builder()
             .setClaims(claims)
@@ -60,6 +61,21 @@ public class JwtUtil {
             return claims.get("email", String.class);
         } catch (JwtException | IllegalArgumentException e) {
             return null;
+        }
+    }
+
+    // 액세스 토큰 추출
+    public String extractKakaoToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+            return claims.get("kakaoToken", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            return null; // 카카오 토큰 추출 실패
         }
     }
 
