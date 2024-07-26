@@ -9,10 +9,12 @@ import gift.domain.User;
 import gift.dto.requestdto.UserLoginRequestDTO;
 import gift.dto.requestdto.UserSignupRequestDTO;
 import gift.dto.responsedto.UserResponseDTO;
+import jakarta.transaction.Transactional;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class AuthService {
     private final JwtUtil jwtUtil;
     private final KakaoClient kakaoClient;
@@ -33,6 +35,7 @@ public class AuthService {
             throw new NoSuchElementException("회원의 정보가 일치하지 않습니다.");
         }
         String token = jwtUtil.createToken(user.getEmail(), user.getRole());
+        user.updateAccessToken(token);
         return new UserResponseDTO(token);
     }
 
