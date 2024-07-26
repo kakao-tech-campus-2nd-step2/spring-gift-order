@@ -8,12 +8,18 @@ import gift.core.domain.authentication.Token;
 import gift.core.domain.user.User;
 import gift.core.domain.user.UserAccount;
 import gift.core.domain.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "인증/인가")
 public class AuthenticationController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
@@ -28,12 +34,19 @@ public class AuthenticationController {
     }
 
     @PostMapping("/api/auth/login")
+    @Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인을 수행합니다.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "로그인 성공 시 액세스 토큰을 생성하여 반환합니다.",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))
+    )
     public LoginResponse login(@RequestBody LoginRequest request) {
         Token token = authenticationService.authenticate(request.email(), request.password());
         return LoginResponse.of(token);
     }
 
     @PostMapping("/api/auth/signup")
+    @Operation(summary = "회원가입 API", description = "이름, 이메일, 비밀번호로 회원가입을 수행합니다.")
     public void signUp(@RequestBody SignUpRequest request) {
         userService.registerUser(userOf(request));
     }
