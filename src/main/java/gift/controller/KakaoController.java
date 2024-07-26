@@ -29,7 +29,7 @@ public class KakaoController {
     @GetMapping
     public void redirectKaKaoLogin(HttpServletResponse response) throws IOException {
         String url = kakaoProperties.authUrl() +
-            "?response_type=code&client_id=" + kakaoProperties.clientId() +
+            "?scope=talk_message&response_type=code&client_id=" + kakaoProperties.clientId() +
             "&redirect_uri=" + kakaoProperties.redirectUrl();
         response.sendRedirect(url);
     }
