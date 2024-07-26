@@ -59,6 +59,16 @@ public class OrderService {
         return createResponse(order);
     }
 
+    private @NotNull Map<String, Object> createResponse(Order order) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", order.getId());
+        response.put("optionId", order.getOption().getId());
+        response.put("quantity", order.getQuantity());
+        response.put("orderDateTime", order.getOrderDateTime());
+        response.put("message", order.getMessage());
+        return response;
+    }
+
     public void sendToMe(String accessToken, Order order) {
         System.out.println("[OrderService] sendToMe()");
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
@@ -68,23 +78,21 @@ public class OrderService {
                 + "수량: " + order.getQuantity() + "\n"
                 + "메세지: " + order.getMessage()
             );
-        client.post()
-            .uri(URI.create(url))
-            .header("Authorization", "Bearer " + accessToken)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .retrieve()
-            .toEntity(String.class);
+        postRequest(url, accessToken, body);
     }
 
-    private @NotNull Map<String, Object> createResponse(Order order) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", order.getId());
-        response.put("optionId", order.getOption().getId());
-        response.put("quantity", order.getQuantity());
-        response.put("orderDateTime", order.getOrderDateTime());
-        response.put("message", order.getMessage());
-        return response;
+    private void postRequest(String url, String accessToken, LinkedMultiValueMap<String, Object> body) {
+        try {
+            client.post()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .toEntity(String.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private @NotNull LinkedMultiValueMap<String, Object> createBody(String message) {
