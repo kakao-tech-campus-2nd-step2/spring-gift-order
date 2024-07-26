@@ -1,14 +1,14 @@
 package gift.service;
 
-import gift.controller.MenuController;
-import gift.domain.*;
+import gift.domain.Menu;
+import gift.domain.MenuRequest;
+import gift.domain.MenuResponse;
+import gift.domain.Option;
 import gift.repository.CategoryRepository;
 import gift.repository.MenuRepository;
 import gift.repository.OptionRepository;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

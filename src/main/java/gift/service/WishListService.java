@@ -1,8 +1,6 @@
 package gift.service;
 
-import gift.controller.WishListController;
 import gift.domain.WishList;
-import gift.domain.WishListRequest;
 import gift.domain.WishListResponse;
 import gift.repository.WishListRepository;
 import org.springframework.data.domain.Pageable;

@@ -1,20 +1,15 @@
 package gift.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.KakaoLoginResponse;
 import gift.domain.Member;
-import gift.domain.MemberResponse;
 import gift.service.KakaoService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/kakao")

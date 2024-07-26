@@ -3,9 +3,6 @@ package gift.domain;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-import java.util.List;
-import java.util.Set;
-
 public record MenuRequest(
         @Size(max = 15, message = "메뉴명은 15자 이내로 해주세요")
         @Pattern(regexp = "^[a-zA-Z0-9가-힣\\s\\(\\)\\[\\]\\+\\-\\&\\/\\_]*$", message = " ( ), [ ], +, -, &, /, _ 이외의 특수문자는 사용이 불가능합니다")

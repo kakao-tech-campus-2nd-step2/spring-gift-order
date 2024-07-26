@@ -6,14 +6,12 @@ import gift.domain.*;
 import gift.repository.MemberRepository;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

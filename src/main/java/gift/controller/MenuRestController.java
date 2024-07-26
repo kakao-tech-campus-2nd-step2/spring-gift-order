@@ -3,15 +3,12 @@ package gift.controller;
 import gift.domain.MenuRequest;
 import gift.domain.MenuResponse;
 import gift.domain.Option;
-import gift.domain.OptionRequest;
-import gift.domain.Menu;
 import gift.service.MenuService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.Set;
