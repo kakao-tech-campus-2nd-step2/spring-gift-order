@@ -5,6 +5,7 @@ import gift.auth.JwtService;
 import gift.exception.InputException;
 import gift.request.OrderRequest;
 import gift.response.OrderResponse;
+import gift.service.KakaoMessageService;
 import gift.service.OptionsService;
 import gift.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderApiController {
 
     private final OrderService orderService;
-    private final OptionsService optionsService;
-    private final JwtService jwtService;
+    private final KakaoMessageService kakaoMessageService;
 
-    public OrderApiController(OrderService orderService, OptionsService optionsService, JwtService jwtService) {
+    public OrderApiController(OrderService orderService,
+        KakaoMessageService kakaoMessageService) {
         this.orderService = orderService;
-        this.optionsService = optionsService;
-        this.jwtService = jwtService;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @CheckRole("ROLE_USER")
@@ -36,9 +36,12 @@ public class OrderApiController {
         if (bindingResult.hasErrors()) {
             throw new InputException(bindingResult.getAllErrors());
         }
+        //주문 생성 및 수량 차감 처리
         Long memberId = Long.valueOf(request.getAttribute("member_id").toString());
         OrderResponse dto = orderService.makeOrder(memberId, orderRequest.productId(),
             orderRequest.optionId(), orderRequest.quantity(), orderRequest.message());
+        //카카오톡 메시지 API 호출
+        kakaoMessageService.sendMessageToMe(memberId, orderRequest.message());
         return new ResponseEntity<>(dto, HttpStatus.OK);
 
     }

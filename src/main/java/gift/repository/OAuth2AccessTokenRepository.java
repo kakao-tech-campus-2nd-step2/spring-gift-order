@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OAuth2AccessTokenRepository extends JpaRepository<OAuth2AccessToken, Long> {
 
+    Optional<OAuth2AccessToken> findByMemberId(Long memberId);
+
     boolean existsByMemberId(Long memberId);
 }

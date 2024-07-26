@@ -26,7 +26,6 @@ public class KakaoLoginService implements OAuth2LoginService {
     public static final String AUTH_ERROR = "error";
     public static final String AUTH_ERROR_DESCRIPTION = "error_description";
 
-    private final ObjectMapper mapper;
     private final WebClient client;
     private final OAuth2AccessTokenRepository accessTokenRepository;
 
@@ -35,9 +34,8 @@ public class KakaoLoginService implements OAuth2LoginService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public KakaoLoginService(ObjectMapper mapper, WebClient client,
+    public KakaoLoginService(WebClient client,
         OAuth2AccessTokenRepository accessTokenRepository) {
-        this.mapper = mapper;
         this.client = client;
         this.accessTokenRepository = accessTokenRepository;
     }
