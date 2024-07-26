@@ -5,6 +5,7 @@ import gift.Mapper.Mapper;
 import gift.Model.MemberDto;
 import gift.Repository.MemberJpaRepository;
 import gift.Service.MemberService;
+import gift.Service.OptionService;
 import gift.Service.ProductService;
 import gift.Service.WishlistService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,9 +32,10 @@ public class MemberDtoRepositoryTest {
         ProductService productService = Mockito.mock(ProductService.class);
         MemberService memberService = Mockito.mock(MemberService.class);
         WishlistService wishListService = Mockito.mock(WishlistService.class);
+        OptionService optionService = Mockito.mock(OptionService.class);
 
         // Mapper 인스턴스 수동 생성 및 주입
-        mapper = new Mapper(productService, memberService, wishListService, null);
+        mapper = new Mapper(productService, memberService, wishListService, null, optionService);
     }
 
     @Test
