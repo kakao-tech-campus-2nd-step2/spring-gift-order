@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.CategoryResponseDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import gift.entity.Category;
@@ -7,6 +8,14 @@ import gift.entity.Product;
 import gift.exception.CategoryException;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Product API")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
@@ -38,10 +48,18 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<ProductResponseDto>> getProducts() {
-//        return ResponseEntity.ok(productService.findAll());
-//    }
+    @Operation(summary = "모든 상품 조회", description = "모든 상품을 조회합니다.",
+        parameters = {
+        @Parameter(name = "page", description = "페이지 번호"),
+        @Parameter(name = "size", description = "한페이지 크기")
+    })
+    @ApiResponses(
+        value = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "상품 목록을 조회합니다.",
+                content = @Content(array = @ArraySchema(schema = @Schema(implementation = ProductResponseDto.class))))
+        })
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getProducts(
         @RequestParam(defaultValue = "0") int page,
@@ -62,7 +80,24 @@ public class ProductController {
     }
 
 
-
+    @Operation(summary = "상품 추가", description = "상품을 추가합니다.")
+    @ApiResponses(
+        value  = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "상품을 추가합니다.",
+                content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "존재하지 않는 카테고리입니다."
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "이미존재하는 상품 입니다."
+            )
+        }
+    )
     @PostMapping
     public ResponseEntity<String> addProducts(@Valid @RequestBody ProductRequestDto productRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -77,6 +112,24 @@ public class ProductController {
         return new ResponseEntity<>("이미존재하는 상품 id", HttpStatus.BAD_REQUEST);
     }
 
+    @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
+    @ApiResponses(
+        value  = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "상품 수정성공.",
+                content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                responseCode = "404",
+                description = "존재하지 않는 카테고리입니다."
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "존재하지 않는 상품 입니다."
+            )
+        }
+    )
     @PutMapping("/{id}")
     public ResponseEntity<String> modifyProducts(@PathVariable("id") long id, @Valid @RequestBody  ProductRequestDto productRequestDto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -92,6 +145,20 @@ public class ProductController {
         return new ResponseEntity<>("존재하지 않는 상품 id", HttpStatus.BAD_REQUEST);
     }
 
+    @Operation(summary = "상품 추가", description = "상품을 추가합니다.")
+    @ApiResponses(
+        value  = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "상품 삭제 완료.",
+                content = @Content(schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(
+                responseCode = "400",
+                description = "존재하지 않는 상품입니다."
+            )
+        }
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProducts(@PathVariable("id") long id) {
         if (productService.deleteProduct(id)!=-1L) {
