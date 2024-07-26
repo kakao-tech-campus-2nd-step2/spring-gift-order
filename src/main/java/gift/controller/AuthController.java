@@ -11,7 +11,6 @@ import gift.oauth.KakaoApiService;
 import gift.service.JwtProvider;
 import gift.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -38,7 +37,6 @@ public class AuthController {
 
     @GetMapping("/login/kakao")
     public ResponseEntity<?> getKakaoLoginPage() {
-        var header = new HttpHeaders();
         var uri = kakaoApiClient.getKakaoLoginPage();
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
     }
@@ -47,7 +45,7 @@ public class AuthController {
     public ResponseEntity<?> handleKakaoLoginRequest(@RequestParam("code") String code) {
         var token = kakaoApiClient.requestToken(code);
         Long kakaoId = kakaoApiClient.getKakaoId(token.accessToken());
-        UserDTO userDTO = userService.findByKakaoId(kakaoId);
+        UserDTO userDTO = userService.findByKakaoId(kakaoId, token);
         String newToken = jwtProvider.generateToken(userDTO);
         return ResponseEntity.ok(newToken);
     }

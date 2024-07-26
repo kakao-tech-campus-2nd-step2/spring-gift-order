@@ -5,6 +5,7 @@ import gift.exception.customException.CustomNotFoundException;
 import gift.model.user.User;
 import gift.model.user.UserDTO;
 import gift.model.user.UserForm;
+import gift.oauth.response.KakaoTokenResponse;
 import gift.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,10 +32,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO findByKakaoId(Long kakaoId) {
+    public UserDTO findByKakaoId(Long kakaoId, KakaoTokenResponse token) {
         User user = userRepository.findByKakaoId(kakaoId)
             .orElseGet(() -> userRepository.save(
-                new User(String.valueOf(kakaoId), String.valueOf(kakaoId), kakaoId)));
+                new User(String.valueOf(kakaoId), String.valueOf(kakaoId), kakaoId,
+                    token.accessToken(), token.refreshToken())));
         return new UserDTO(user);
     }
 
@@ -49,6 +51,11 @@ public class UserService {
             .equals(userRepository.findByEmail(userForm.getEmail())
                 .orElseThrow(() -> new CustomNotFoundException(ErrorCode.USER_NOT_FOUND))
                 .getPassword());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isKakaoUser(Long userId) {
+        return userRepository.findById(userId).isPresent();
     }
 
     @Transactional
