@@ -7,7 +7,6 @@ public record KakaoUserInfoResponse(
         long id,
         @JsonProperty("kakao_account")
         KakaoAccount kakaoAccount
-
 ) {
     public record KakaoAccount(
             @JsonProperty("email")
