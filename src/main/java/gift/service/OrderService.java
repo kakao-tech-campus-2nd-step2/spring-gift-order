@@ -2,17 +2,13 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.KakaoToken;
-import gift.domain.Option;
-import gift.domain.Product;
-import gift.domain.Wish;
+import gift.domain.*;
 import gift.dto.LoginMember;
 import gift.dto.TemplateObject;
 import gift.dto.request.OrderRequest;
+import gift.dto.response.OrderResponse;
 import gift.exception.CustomException;
-import gift.repository.KakaoTokenRepository;
-import gift.repository.OptionRepository;
-import gift.repository.WishRepository;
+import gift.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,21 +35,31 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final KakaoTokenRepository kakaoTokenRepository;
+    private final MemberRepository memberRepository;
 
-    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, KakaoTokenRepository kakaoTokenRepository) {
+    private final OrderRepository orderRepository;
+
+    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, KakaoTokenRepository kakaoTokenRepository, MemberRepository memberRepository, OrderRepository orderRepository) {
         this.optionRepository = optionRepository;
         this.wishRepository = wishRepository;
         this.kakaoTokenRepository = kakaoTokenRepository;
+        this.memberRepository = memberRepository;
+        this.orderRepository = orderRepository;
     }
 
-    public void order(LoginMember member, OrderRequest orderRequest) {
+    public OrderResponse order(LoginMember loginMember, OrderRequest orderRequest) {
         Option option = optionRepository.findById(orderRequest.optionId()).orElseThrow(() -> new CustomException(DATA_NOT_FOUND));
         option.subtract(orderRequest.quantity());
 
-        deleteFromWishList(member.getId(), option.getProduct());
+        deleteFromWishList(loginMember.getId(), option.getProduct());
 
-        KakaoToken token = kakaoTokenRepository.findKakaoTokensByMember_Id(member.getId());
+        KakaoToken token = kakaoTokenRepository.findKakaoTokensByMember_Id(loginMember.getId());
         sendMessage(orderRequest.message(), token.getAccessToken());
+
+        Member member = memberRepository.findMemberById(loginMember.getId()).get();
+        Order savedOrder = orderRepository.save(new Order(option, member, orderRequest));
+
+        return new OrderResponse(savedOrder);
       }
 
     private void deleteFromWishList(Long memberId, Product product) {

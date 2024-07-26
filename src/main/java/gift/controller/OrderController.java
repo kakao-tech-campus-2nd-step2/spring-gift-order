@@ -3,8 +3,11 @@ package gift.controller;
 import gift.Login;
 import gift.dto.LoginMember;
 import gift.dto.request.OrderRequest;
+import gift.dto.response.OrderResponse;
 import gift.service.OrderService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public void order(@Login LoginMember member, @Valid @RequestBody OrderRequest orderRequest) {
-        orderService.order(member, orderRequest);
+    public ResponseEntity<OrderResponse> order(@Login LoginMember member, @Valid @RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderService.order(member, orderRequest));
     }
 }

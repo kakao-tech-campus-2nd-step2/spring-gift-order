@@ -1,5 +1,6 @@
 package gift.domain;
 
+import gift.dto.request.OrderRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 
@@ -37,12 +38,12 @@ public class Order {
 
     }
 
-    public Order(Option option, Member member, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Option option, Member member, OrderRequest orderRequest) {
         this.option = option;
         this.member = member;
-        this.quantity = quantity;
-        this.orderDateTime = orderDateTime;
-        this.message = message;
+        this.quantity = orderRequest.quantity();
+        this.orderDateTime = LocalDateTime.now();
+        this.message = orderRequest.message();
     }
 
     public Long getId() {
