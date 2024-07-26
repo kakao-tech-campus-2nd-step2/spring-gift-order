@@ -75,7 +75,13 @@ public class WishlistService {
         wishlistRepository.delete(findWishlist);
     }
 
-    public Pair<Product, Member> verifyTokenAndProductId(
+    public void deleteWishlistIfExists(Product product, Member member) {
+        wishlistRepository.findByProductAndMember(
+            product, member
+        ).ifPresent(wishlistRepository::delete);
+    }
+
+    private Pair<Product, Member> verifyTokenAndProductId(
         MemberTokenDTO memberTokenDTO,
         long productId
     ) {
