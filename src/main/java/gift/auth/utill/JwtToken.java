@@ -86,4 +86,16 @@ public class JwtToken {
                 .parseClaimsJws(token).getBody();
         return claims.get("id", Long.class);
     }
+
+    /**
+     * JWT 토큰에서 kakaoAccessToken 추출
+     *
+     * @param token 추출할 토큰
+     * @return 추출된 kakaoAccessToken
+     */
+    public String getKakaoAccessToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey.getBytes()).build()
+                .parseClaimsJws(token).getBody();
+        return claims.get("kakao", String.class);
+    }
 }
