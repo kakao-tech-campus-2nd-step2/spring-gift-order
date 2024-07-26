@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,7 +39,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     @Size(min=1, message = "option은 최소한 1개 있어야한다.")
-    private List<Option> optionList;
+    private List<Option> optionList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)

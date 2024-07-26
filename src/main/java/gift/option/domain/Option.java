@@ -40,7 +40,7 @@ public class Option {
     private Product product;
 
     // Constructor
-    protected Option() {
+    public Option() {
     }
 
     public Option(String name, Long quantity) {
@@ -78,6 +78,11 @@ public class Option {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     // business logic
     public void subtract(Long quantity){
         setQuantity(this.quantity - quantity);

@@ -12,6 +12,7 @@ import gift.product.domain.ProductDTO;
 import gift.product.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,13 +27,15 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final OptionRepository optionRepository;
     private final OptionService optionService;
 
     public ProductService(ProductRepository productRepository,
         CategoryRepository categoryRepository,
-        OptionService optionService) {
+        OptionRepository optionRepository, OptionService optionService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
+        this.optionRepository = optionRepository;
         this.optionService = optionService;
     }
 
@@ -57,28 +60,45 @@ public class ProductService {
     }
 
     public void createProduct(@Valid ProductDTO productDTO) {
-        Product product = productRepository.save(convertToEntity(productDTO));
-        optionService.saveAllwithProductId(productDTO.getOptionDTOList(), product.getId());
+        Product product = convertToEntityWithoutOptions(productDTO);
+        product = productRepository.save(product);
+
+        Long productId = product.getId();
+        productDTO.getOptionDTOList().forEach(optionDTO -> optionDTO.setProductId(productId));
+
+        updateProduct(product.getId(), productDTO);
+        optionService.saveAll(productDTO.getOptionDTOList());
     }
 
     public void updateProduct(Long id, @Valid ProductDTO productDTO) {
-        if(productRepository.existsById(id)){
-            Product product = updateById(id, productDTO);
+        if (productRepository.existsById(id)) {
+            Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Category id " + productDTO.getCategoryId() + "가 없습니다."));
+
+            Product product = productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product id " + id + "가 없습니다."));
+
+            product.setName(productDTO.getName());
+            product.setPrice(productDTO.getPrice());
+            product.setImageUrl(productDTO.getImageUrl());
+            product.setCategory(category);
+
+            List<Option> optionList = productDTO.getOptionDTOList().stream()
+                .map(optionService::convertToEntity)
+                .peek(option -> option.setProduct(product))
+                .toList();
+
+            product.getOptionList().clear();
+            product.getOptionList().addAll(optionList);
+
             productRepository.save(product);
         }
-    }
-
-    private Product updateById(Long id, ProductDTO productDTO) {
-        Category category = categoryRepository.findById(productDTO.getCategoryId())
-            .orElseThrow(() -> new EntityNotFoundException("Category id " + productDTO.getCategoryId() + "가 없습니다."));
-
-        return productRepository.updateProduct(id, productDTO.getName(), productDTO.getPrice(), productDTO.getImageUrl(), category);
     }
 
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
-    private ProductDTO convertToDTO(Product product) {
+    public ProductDTO convertToDTO(Product product) {
         List<OptionDTO> optionDTOList = optionService.findAllByProductId(product.getId());
         return new ProductDTO(
             product.getId(),
@@ -104,5 +124,31 @@ public class ProductService {
             .toList();
         product.setOptionList(optionList);
         return product;
+    }
+    private Product convertToEntityWithoutOptions(ProductDTO productDTO) {
+        Category category = categoryRepository.findById(productDTO.getCategoryId())
+            .orElseThrow(() -> new EntityNotFoundException("Category id " + productDTO.getCategoryId() + "가 없습니다."));
+
+        Product product = new Product();
+        product.setName(productDTO.getName());
+        product.setPrice(productDTO.getPrice());
+        product.setImageUrl(productDTO.getImageUrl());
+        product.setCategory(category);
+
+        List<Option> optionList = new ArrayList<>();
+        optionList.add(new Option("temp", 1L));
+        product.setOptionList(optionList);
+        return product;
+    }
+    private Option convertToOptionEntity(OptionDTO optionDTO, Long productId) {
+        Option option = new Option();
+        option.setName(optionDTO.getName());
+        option.setQuantity(optionDTO.getQuantity());
+
+        Product product = new Product();
+        product.setId(productId);
+        option.setProduct(product);
+
+        return option;
     }
 }
