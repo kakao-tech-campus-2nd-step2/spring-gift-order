@@ -9,6 +9,7 @@ import gift.repository.MemberRepository;
 import gift.security.JwtProvider;
 import gift.service.dto.KakaoTokenDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OAuthService {
@@ -27,10 +28,12 @@ public class OAuthService {
         this.kakaoTokenService = kakaoTokenService;
     }
 
+    @Transactional
     public TokenResponse signIn(String code) {
         return signIn(code, properties.redirectUrl());
     }
 
+    @Transactional
     public TokenResponse signIn(String code, String redirectUrl) {
         KakaoTokenDto kakaoTokenDto = kakaoApiCaller.getKakaoAccessToken(code, redirectUrl);
         String email = kakaoApiCaller.getKakaoMemberInfo(kakaoTokenDto.access_token());

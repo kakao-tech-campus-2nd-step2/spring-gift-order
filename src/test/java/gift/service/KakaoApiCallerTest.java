@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.exception.AuthenticationException;
 import gift.common.properties.KakaoProperties;
+import gift.model.Orders;
+import gift.service.dto.KakaoRequest;
 import gift.service.dto.KakaoTokenDto;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
@@ -100,6 +102,28 @@ public class KakaoApiCallerTest {
                 .onStatus(HttpStatusCode::isError, (request, response) -> {
                     throw new AuthenticationException("Logout failed");
                 });
+        System.out.println(res);
+    }
+
+    @Test
+    void sendSelfMessage() throws JsonProcessingException {
+        String accessToken = "9oPh4kFJB_mKt-94b_3hXPZ9HEwB1UiDAAAAAQo8JCAAAAGQ6pC9Eyn2EFsnJsRZ";
+        Orders orders = new Orders(1L, 2L, 3L, "상품명", "옵션명",
+                1000, 10, "이건 설명이다.");
+        KakaoRequest.Feed feed = KakaoRequest.Feed.from(orders);
+
+        String template_str = objectMapper.writeValueAsString(feed);
+        MultiValueMap<Object, Object> map = new LinkedMultiValueMap<>();
+        map.set("template_object", template_str);
+
+        var res = client.post()
+                .uri(URI.create(properties.selfMessageUrl()))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .body(map)
+                .retrieve()
+                .toEntity(String.class);
+
         System.out.println(res);
     }
 
