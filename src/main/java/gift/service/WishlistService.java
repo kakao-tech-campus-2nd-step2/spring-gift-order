@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 
+import gift.dto.WishlistRequest;
+import gift.dto.WishlistResponse;
 import gift.entity.Product;
 import gift.entity.User;
 import gift.entity.Wishlist;
@@ -20,46 +22,47 @@ public class WishlistService {
 	
 	private final WishlistRepository wishlistRepository;
 	private final ProductRepository productRepository;
-	private final AuthService authService;
+	private final UserService userService;
 	
 	public WishlistService(WishlistRepository wishlistRepository, ProductRepository productRepository,
-			AuthService authService) {
+			UserService userService) {
 		this.wishlistRepository = wishlistRepository;
 		this.productRepository = productRepository;
-		this.authService = authService;
+		this.userService = userService;
 	}
 	
-	public Page<Wishlist> getWishlist(String token, BindingResult bindingResult, Pageable pageable) {
-        User user = getUserFormToekn(token, bindingResult);
-        return wishlistRepository.findByUserId(user.getId(), pageable);
-    }
+	public Page<WishlistResponse> getWishlist(String token, Pageable pageable) {
+        User user = userService.getUserFromToken(token);
+        Page<Wishlist> wishlistPage = wishlistRepository.findByUserId(user.getId(), pageable);
+        return wishlistPage.map(Wishlist::toDto);
+	}
 	
-	public void addWishlist(String token, Wishlist wishlist, BindingResult bindingResult) {
+	public void addWishlist(String token, WishlistRequest request, BindingResult bindingResult) {
 		validateBindingResult(bindingResult);
-		User user = getUserFormToekn(token, bindingResult);
-        Product product = findProductById(wishlist.getProduct().getId());
-        Wishlist newWishlist = new Wishlist(user, product);
+		User user = userService.getUserFromToken(token);
+        Product product = findProductById(request.getProductId());
+        Wishlist newWishlist = request.toEntity(user, product);
         wishlistRepository.save(newWishlist);
 	}
 	
-	public void removeWishlist(String token, Wishlist wishlist, BindingResult bindingResult) {
+	public void removeWishlist(String token, WishlistRequest request, BindingResult bindingResult) {
 		validateBindingResult(bindingResult);
-		User user = getUserFormToekn(token, bindingResult);
-        Wishlist deleteWishlist = findWishlistById(wishlist.getId());
+		User user = userService.getUserFromToken(token);
+        Wishlist deleteWishlist = findWishlistById(request.getProductId());
         validateUserPermission(deleteWishlist, user);
         wishlistRepository.delete(deleteWishlist);
 	}
 	
-	public void updateWishlistQuantity(String token, Wishlist wishlist, BindingResult bindingResult) {
+	public void updateWishlistQuantity(String token, WishlistRequest request, BindingResult bindingResult) {
 		validateBindingResult(bindingResult);
-		User user = getUserFormToekn(token, bindingResult);
-        Wishlist updateWishlist = findWishlistById(wishlist.getId());
+		User user = userService.getUserFromToken(token);
+        Wishlist updateWishlist = findWishlistById(request.getProductId());
         validateUserPermission(updateWishlist, user);
-        if (wishlist.getQuantity() == 0) {
+        if (request.getQuantity() == 0) {
         	wishlistRepository.delete(updateWishlist);
         	return;
         }
-        updateWishlist.setQuantity(wishlist.getQuantity());
+        updateWishlist.setQuantity(request.getQuantity());
         wishlistRepository.save(updateWishlist);
 	}
 	
@@ -71,11 +74,6 @@ public class WishlistService {
 			throw new InvalidUserException(errorMessage, HttpStatus.BAD_REQUEST);
         }
     }
-	
-	private User getUserFormToekn(String token, BindingResult bindingResult) {
-		String email = authService.parseToken(token);
-		return authService.searchUser(email, bindingResult);
-	}
 	
 	private void validateUserPermission(Wishlist wishlist, User user) {
 		if (!wishlist.getUser().equals(user)) {
