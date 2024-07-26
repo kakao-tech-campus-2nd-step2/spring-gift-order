@@ -26,10 +26,10 @@ public class KakaoLoginTokenTest {
     @Autowired
     private TokenJPARepository tokenJPARepository;
 
-    private String testAccessToken = "lZgUpoks_4qinU2HUVVQd1L5Ycck5cKNAAAAAQorDKcAAAGQ7gJ0RK3XznpenZPe";
-    private String testRefreshToken = "hNJIVJL7mhbbczYQ2nD_XN74_UhS3y13AAAAAgorDKcAAAGQ7gJ0Qa3XznpenZPe";
+    private String testAccessToken = "p5dOKDUo_zjA_tD6TDi1O_wZ-uqVonulAAAAAQorDNQAAAGQ7gx3ia3XznpenZPe";
+    private String testRefreshToken = "iqfZ4xfWkmDFq7WoA0zAOTVrN35KbNsrAAAAAgorDNQAAAGQ7gx3hq3XznpenZPe";
     private String testUserName = "testUser";
-    private Long testExpiresIn = 5183999L; // access token 만료 시간 (초)
+    private Long testExpiresIn = 21599L; // access token 만료 시간 (초)
 
     @BeforeEach
     public void setup() {
@@ -55,13 +55,9 @@ public class KakaoLoginTokenTest {
     public void testRenewToken() {
         kakaoService.renewToken(testAccessToken);
         Token updatedToken = tokenJPARepository.findByRefreshToken(testRefreshToken);
-        if (updatedToken == null) {
-            System.out.println("updatedToken = " + updatedToken);
-            assertThat(updatedToken).isNotNull();
-            return;
-        }
+
 
         assertThat(updatedToken.getAccessToken()).isNotEqualTo(testAccessToken);
-        assertThat(updatedToken.getRefreshToken()).isNotEqualTo(testRefreshToken);
+        assertThat(updatedToken.getRefreshToken()).isEqualTo(testRefreshToken);
     }
 }

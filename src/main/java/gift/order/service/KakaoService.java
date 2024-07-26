@@ -176,8 +176,10 @@ public class KakaoService {
         // 토큰값 update
         Token token = tokenJPARepository.findByAccessToken(accessToken);
         token.setAccessToken(tokenResponse.accessToken());
-        token.setRefreshToken(tokenResponse.refreshToken());
+        token.setRefreshToken(refreshToken);
         tokenJPARepository.save(token);
         System.out.println("token = " + token);
+        System.out.println("token.getAccessToken() = " + token.getAccessToken());
+        System.out.println("token.getRefreshToken() = " + token.getRefreshToken());
     }
 }
