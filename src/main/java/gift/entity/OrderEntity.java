@@ -25,10 +25,11 @@ public class OrderEntity{
     @Column(name = "date", nullable = false)
     private LocalDateTime orderDateTime;
 
-    public OrderEntity(OptionEntity optionEntity, Long quantity, String message) {
+    public OrderEntity(OptionEntity optionEntity, Long quantity, String message, LocalDateTime orderDateTime) {
         this.optionEntity = optionEntity;
         this.quantity = quantity;
         this.message = message;
+        this.orderDateTime = orderDateTime;
     }
 
     public OrderEntity(Long id, OptionEntity optionEntity, Long quantity, String message,
