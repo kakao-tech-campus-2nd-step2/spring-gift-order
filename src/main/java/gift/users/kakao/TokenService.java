@@ -12,6 +12,9 @@ public class TokenService {
     }
 
     public void saveToken(Long userId, KakaoTokenDTO kakaoTokenDTO){
+        if(tokenRepository.existsByUserId(userId)){
+            return;
+        }
         Token token = new Token(userId, "kakao", kakaoTokenDTO.accessToken(),
             kakaoTokenDTO.expiresIn(), kakaoTokenDTO.refreshToken(), kakaoTokenDTO.refreshTokenExpiresIn());
         tokenRepository.save(token);
