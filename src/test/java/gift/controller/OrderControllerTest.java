@@ -49,7 +49,7 @@ public class OrderControllerTest {
         when(orderService.createOrder(any(OrderRequest.class))).thenReturn(orderResponse);
 
         // When & Then
-        mockMvc.perform(post("/order")
+        mockMvc.perform(post("/order/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"id\":1,\"quantity\":2,\"message\":\"Please handle this order with care.\"}")
                         .header("Authorization", "Bearer token"))
