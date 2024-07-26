@@ -28,11 +28,20 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Wish> wishList = new ArrayList<>();
 
+    @Column
+    private String accessToken;
+
     public Member(){};
 
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(String email, String password, String accessToken) {
+        this.email = email;
+        this.password = password;
+        this.accessToken = accessToken;
     }
 
     public Long getId() {
@@ -65,5 +74,13 @@ public class Member {
 
     public void setWishList(List<Wish> wishList) {
         this.wishList = wishList;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }
