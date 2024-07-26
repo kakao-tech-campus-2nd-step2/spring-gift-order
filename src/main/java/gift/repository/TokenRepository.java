@@ -1,12 +1,12 @@
 package gift.repository;
 
-import gift.model.Token;
+import gift.model.oauth.KakaoToken;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TokenRepository extends JpaRepository<Token, Long> {
+public interface TokenRepository extends JpaRepository<KakaoToken, Long> {
 
-    Optional<Token> findByMemberId(Long memberId);
+    Optional<KakaoToken> findByMemberId(Long memberId);
 }

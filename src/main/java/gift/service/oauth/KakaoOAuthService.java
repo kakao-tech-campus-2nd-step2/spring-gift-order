@@ -9,14 +9,18 @@ import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
 import gift.exception.member.EmailAlreadyUsedException;
 import gift.model.RegisterType;
-import gift.model.Token;
+import gift.model.oauth.KakaoToken;
 import gift.repository.TokenRepository;
 import gift.service.MemberService;
 import gift.util.JWTUtil;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoOAuthService {
@@ -25,6 +29,7 @@ public class KakaoOAuthService {
     private final MemberService memberService;
     private final TokenRepository tokenRepository;
     private final JWTUtil jwtUtil;
+    private final RestClient restClient;
 
     @Value("${kakao.password}")
     private String kakaoPassword;
@@ -33,12 +38,14 @@ public class KakaoOAuthService {
         KakaoApiClient kakaoApiClient,
         MemberService memberService,
         TokenRepository tokenRepository,
-        JWTUtil jwtUtil
+        JWTUtil jwtUtil,
+        RestClient restClient
     ) {
         this.kakaoApiClient = kakaoApiClient;
         this.memberService = memberService;
         this.tokenRepository = tokenRepository;
         this.jwtUtil = jwtUtil;
+        this.restClient = restClient;
     }
 
     public KakaoTokenResponse getAccessToken(String code) {
@@ -50,21 +57,21 @@ public class KakaoOAuthService {
     }
 
     public KakaoUnlinkResponse unlinkUser(Long memberId) {
-        Token token = tokenRepository.findByMemberId(memberId)
+        KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
             .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
-        return kakaoApiClient.unlinkUser(token.getAccessToken());
+        return kakaoApiClient.unlinkUser(kakaoToken.getAccessToken());
     }
 
     public KakaoScopeResponse getUserScopes(Long memberId) {
-        Token token = tokenRepository.findByMemberId(memberId)
+        KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
             .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
-        return kakaoApiClient.getUserScopes(token.getAccessToken());
+        return kakaoApiClient.getUserScopes(kakaoToken.getAccessToken());
     }
 
     public KakaoUserResponse getUserInfo(Long memberId) {
-        Token token = tokenRepository.findByMemberId(memberId)
+        KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
             .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
-        return kakaoApiClient.getUserInfo(token.getAccessToken());
+        return kakaoApiClient.getUserInfo(kakaoToken.getAccessToken());
     }
 
     @Transactional
@@ -86,17 +93,36 @@ public class KakaoOAuthService {
     @Transactional
     public void saveToken(KakaoTokenResponse tokenResponse, Long memberId) {
         LocalDateTime now = LocalDateTime.now();
-        Token token = new Token(
+        KakaoToken kakaoToken = new KakaoToken(
             memberId,
             tokenResponse.accessToken(),
             tokenResponse.refreshToken(),
             now.plusSeconds(tokenResponse.expiresIn()),
             now.plusSeconds(tokenResponse.refreshTokenExpiresIn())
         );
-        tokenRepository.save(token);
+        tokenRepository.save(kakaoToken);
     }
 
     public String generateJwt(Long memberId, String email) {
         return jwtUtil.generateToken(memberId, email);
+    }
+
+    public void sendMessage(Long memberId, String templateObject) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("template_object", templateObject);
+
+        KakaoToken kakaoToken = tokenRepository.findByMemberId(memberId)
+            .orElseThrow(() -> new RuntimeException("토큰을 찾을 수 없습니다."));
+
+        restClient.post()
+            .uri(url)
+            .headers(headers -> {
+                headers.setBearerAuth(kakaoToken.getAccessToken());
+                headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            })
+            .body(requestBody)
+            .retrieve()
+            .toBodilessEntity();
     }
 }

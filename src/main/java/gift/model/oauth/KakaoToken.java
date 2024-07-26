@@ -1,4 +1,4 @@
-package gift.model;
+package gift.model.oauth;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,8 +9,8 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "token")
-public class Token {
+@Table(name = "kakaotoken")
+public class KakaoToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +31,10 @@ public class Token {
     @Column(nullable = false)
     private LocalDateTime refreshTokenExpiresAt;
 
-    protected Token() {
+    protected KakaoToken() {
     }
 
-    public Token(
+    public KakaoToken(
         Long memberId,
         String accessToken,
         String refreshToken,
@@ -58,29 +58,5 @@ public class Token {
 
     public String getAccessToken() {
         return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public LocalDateTime getAccessTokenExpiresAt() {
-        return accessTokenExpiresAt;
-    }
-
-    public LocalDateTime getRefreshTokenExpiresAt() {
-        return refreshTokenExpiresAt;
-    }
-
-    public void updateTokens(
-        String accessToken,
-        String refreshToken,
-        LocalDateTime accessTokenExpiresAt,
-        LocalDateTime refreshTokenExpiresAt
-    ) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
-        this.accessTokenExpiresAt = accessTokenExpiresAt;
-        this.refreshTokenExpiresAt = refreshTokenExpiresAt;
     }
 }

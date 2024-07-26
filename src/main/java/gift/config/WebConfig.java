@@ -17,7 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(memberInterceptor)
-            .addPathPatterns("/api/wishes/**", "/oauth/kakao/**")
+            .addPathPatterns("/api/wishes/**", "/oauth/kakao/**", "/api/orders/**")
             .excludePathPatterns("/oauth/kakao", "/oauth/kakao/callback");
     }
 }

@@ -6,6 +6,7 @@ import gift.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(
         @RequestBody OrderRequest orderRequest,
-        @RequestHeader("Authorization") String token
+        @RequestAttribute("memberId") Long memberId
     ) {
-        OrderResponse orderResponse = orderService.createOrder(orderRequest);
+        OrderResponse orderResponse = orderService.createOrder(orderRequest, memberId);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }
