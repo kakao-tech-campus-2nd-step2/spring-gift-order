@@ -1,4 +1,4 @@
-package gift.auth.dto;
+package gift.kakao.message.dto;
 
 import org.springframework.util.LinkedMultiValueMap;
 

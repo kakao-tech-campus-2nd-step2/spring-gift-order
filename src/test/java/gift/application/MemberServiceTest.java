@@ -1,11 +1,10 @@
 package gift.application;
 
-import gift.auth.application.KakaoClient;
-import gift.auth.dto.AuthResponse;
-import gift.auth.dto.KakaoTokenResponse;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
 import gift.global.security.JwtUtil;
+import gift.kakao.auth.dto.KakaoTokenResponse;
+import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
 import gift.member.dao.MemberRepository;
 import gift.member.dto.MemberDto;
@@ -21,9 +20,10 @@ import testFixtures.MemberFixture;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 

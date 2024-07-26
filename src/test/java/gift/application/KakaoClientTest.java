@@ -1,8 +1,8 @@
 package gift.application;
 
-import gift.auth.application.KakaoClient;
-import gift.auth.dto.KakaoTokenResponse;
-import gift.auth.vo.KakaoProperties;
+import gift.kakao.client.KakaoClient;
+import gift.kakao.auth.dto.KakaoTokenResponse;
+import gift.kakao.vo.KakaoProperties;
 import gift.global.config.RestTemplateConfig;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;

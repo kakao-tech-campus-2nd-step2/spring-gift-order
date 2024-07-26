@@ -1,6 +1,7 @@
-package gift.auth.api;
+package gift.kakao.auth.api;
 
-import gift.auth.vo.KakaoProperties;
+import gift.auth.application.AuthService;
+import gift.kakao.vo.KakaoProperties;
 import gift.member.application.MemberService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +30,7 @@ public class KakaoAuthController {
     @GetMapping("/callback")
     public String handleKakaoCallback(RedirectAttributes redirectAttributes,
                                       @RequestParam("code") String code) {
-        redirectAttributes.addFlashAttribute("tokenResponse", memberService.authenticate(code));
+        redirectAttributes.addFlashAttribute("tokenResponse", authService.authenticate(code));
         return "redirect:/members/order";
     }
 

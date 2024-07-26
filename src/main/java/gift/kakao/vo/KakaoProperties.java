@@ -1,4 +1,4 @@
-package gift.auth.vo;
+package gift.kakao.vo;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.LinkedMultiValueMap;

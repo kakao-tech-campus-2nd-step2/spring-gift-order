@@ -1,10 +1,10 @@
-package gift.auth.application;
+package gift.kakao.client;
 
-import gift.auth.dto.KakaoMessageResponse;
-import gift.auth.dto.KakaoTokenResponse;
-import gift.auth.dto.KakaoUserInfoResponse;
-import gift.auth.dto.TemplateObject;
-import gift.auth.vo.KakaoProperties;
+import gift.kakao.message.dto.KakaoMessageResponse;
+import gift.kakao.auth.dto.KakaoTokenResponse;
+import gift.kakao.auth.dto.KakaoUserInfoResponse;
+import gift.kakao.message.dto.TemplateObject;
+import gift.kakao.vo.KakaoProperties;
 import gift.global.error.CustomException;
 import gift.global.error.ErrorCode;
 import org.springframework.http.HttpHeaders;

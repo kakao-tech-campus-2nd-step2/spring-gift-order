@@ -1,6 +1,6 @@
 package gift.order.application;
 
-import gift.auth.application.KakaoClient;
+import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
 import gift.member.entity.Member;
 import gift.order.dao.OrderRepository;
