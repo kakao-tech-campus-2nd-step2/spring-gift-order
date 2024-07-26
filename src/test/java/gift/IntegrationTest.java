@@ -45,9 +45,9 @@ public class IntegrationTest {
 
     public void registerUser(String email, String password) {
         String registerUrl = baseUrl + REGISTER_URL;
-        UserRequest registerRequest = new UserRequest(email, password);
+        UserRequest.Create registerRequest = new UserRequest.Create(email, password);
 
-        HttpEntity<UserRequest> registerRequestEntity = new HttpEntity<>(registerRequest);
+        HttpEntity<UserRequest.Create> registerRequestEntity = new HttpEntity<>(registerRequest);
         ResponseEntity<String> registerResponse = restTemplate.postForEntity(registerUrl, registerRequestEntity, String.class);
 
         assertThat(registerResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -56,9 +56,9 @@ public class IntegrationTest {
 
     public String loginAndGetToken(String email, String password) {
         String loginUrl = baseUrl + LOGIN_URL;
-        UserRequest loginRequest = new UserRequest(email, password);
+        UserRequest.Create loginRequest = new UserRequest.Create(email, password);
 
-        HttpEntity<UserRequest> loginRequestEntity = new HttpEntity<>(loginRequest);
+        HttpEntity<UserRequest.Create> loginRequestEntity = new HttpEntity<>(loginRequest);
         ResponseEntity<Map> loginResponse = restTemplate.postForEntity(loginUrl, loginRequestEntity, Map.class);
 
         assertThat(loginResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
