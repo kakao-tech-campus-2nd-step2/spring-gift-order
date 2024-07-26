@@ -38,4 +38,10 @@ public class KakaoController {
         response.sendRedirect("https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=8b0993ea8425d3f401667223d8d6b1a7&redirect_uri=http://localhost:8080/kakao/login/token");
 
     }
+
+    @GetMapping("/token")
+    public ResponseEntity<?> token(@RequestParam("code") String code) {
+        Map<String, Object> responseBody = new HashMap<>();
+        KakaoTokenResponseDto kakaoTokenResponseDto = kakaoService.getAccessTokenFromKakao(code);
+    }
 }
