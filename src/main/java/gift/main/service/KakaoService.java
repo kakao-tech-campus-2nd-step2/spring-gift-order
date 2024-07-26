@@ -13,6 +13,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 import static io.jsonwebtoken.lang.Strings.UTF_8;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
@@ -42,13 +45,18 @@ public class KakaoService {
         map.add("redirect_uri", kakaoProperties.redirectUri());
         map.add("code", code);
 
-        return restClient.post()
+        KakaoToken kakaoToken= restClient.post()
                 .uri(kakaoProperties.tokenRequestUri())
                 .contentType(FORM_URLENCODED)
                 .body(map)
-                .retrieve()
-                .toEntity(KakaoToken.class)
-                .getBody();
+        .exchange((request, response) -> {
+            System.out.println("response.getClass() = " + response.getClass());
+            System.out.println("response = " + response);
+            KakaoToken token = new KakaoToken(Objects.requireNonNull(response.bodyTo(TempToken.class)),LocalDateTime.now());
+                return token;
+        });
+        System.out.println("kakaoToken = " + kakaoToken);
+        return kakaoToken;
     }
 
     //카카오 엑세스 토큰을 이용한 유저정보 가져오기
@@ -64,29 +72,6 @@ public class KakaoService {
         System.out.println("kakaoProfileRequest = " + kakaoProfileRequest);
         return new UserJoinRequest(kakaoProfileRequest);
 
-    }
-
-    public void renewToken(UserVo userVo) {
-
-        ApiToken apiToken = apiTokenRepository.findByUserId(userVo.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TOKEN));
-
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", kakaoProperties.refreshToken());
-        map.add("client_id", kakaoProperties.clientId());
-        map.add("refresh_token", apiToken.getRefreshToken());
-
-        KakaoToken renewToken = restClient.post()
-                .uri(kakaoProperties.tokenRenewalRequestUri())
-                .contentType(FORM_URLENCODED)
-                .body(map)
-                .retrieve()
-                .toEntity(KakaoToken.class)
-                .getBody();
-
-        assert renewToken != null;
-        apiToken.updete(renewToken);
-        apiTokenRepository.save(apiToken);
     }
 
     public void sendOrderMessage(OrderResponce orderResponce, UserVo userVo) {

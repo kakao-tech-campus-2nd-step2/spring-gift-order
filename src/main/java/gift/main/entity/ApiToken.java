@@ -3,6 +3,8 @@ package gift.main.entity;
 import gift.main.dto.KakaoToken;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class ApiToken {
 
@@ -20,10 +22,13 @@ public class ApiToken {
     @Column(nullable = false)
     private String refreshToken;
 
+    private LocalDateTime expirationDate;
+
     public ApiToken(User user, KakaoToken kakaoToken) {
         this.user = user;
         this.accessToken = kakaoToken.accessToken();
         this.refreshToken = kakaoToken.refreshToken();
+        this.expirationDate = kakaoToken.expirationDate();
     }
 
     public ApiToken() {
@@ -35,6 +40,7 @@ public class ApiToken {
         if (renewToken.refreshToken() != null && !renewToken.refreshToken().isBlank() && !renewToken.refreshToken().equals("null")) {
             this.refreshToken = renewToken.refreshToken();
         }
+        this.expirationDate = renewToken.expirationDate();
     }
 
     public long getId() {
@@ -51,5 +57,9 @@ public class ApiToken {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
     }
 }
