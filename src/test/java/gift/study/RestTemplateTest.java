@@ -18,7 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @ConfigurationPropertiesScan
-@ConfigurationProperties(prefix = "kakao")
+@ConfigurationProperties
 record KakaoProperties(
     String clientId,
     String redirectUrl
