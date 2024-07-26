@@ -1,4 +1,4 @@
-package gift.application;
+package gift.client;
 
 import gift.kakao.client.KakaoClient;
 import gift.kakao.auth.dto.KakaoTokenResponse;

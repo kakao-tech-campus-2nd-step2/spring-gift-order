@@ -15,16 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
     private final KakaoClient kakaoClient;
 
     public MemberService(MemberRepository memberRepository,
-                         JwtUtil jwtUtil,
-                         KakaoClient kakaoClient
-
-    ) {
+                         KakaoClient kakaoClient) {
         this.memberRepository = memberRepository;
-        this.jwtUtil = jwtUtil;
         this.kakaoClient = kakaoClient;
     }
 
@@ -38,50 +33,14 @@ public class MemberService {
         memberRepository.save(MemberMapper.toEntity(memberDto));
     }
 
-    public AuthResponse authenticate(MemberDto memberDto) {
-        Member member = memberRepository.findByEmail(memberDto.email())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
-        if (!member.getPassword()
-                   .equals(memberDto.password())) {
-            throw new CustomException(ErrorCode.AUTHENTICATION_FAILED);
-        }
-        
-        return AuthResponse.of(
-                jwtUtil.generateToken(member.getId())
-        );
-    }
-
-    public AuthResponse authenticate(String code) {
-        KakaoTokenResponse tokenResponse = kakaoClient.getTokenResponse(code);
-        Long kakaoUserId = kakaoClient.getUserId(tokenResponse.accessToken());
-        String email = "kakao_user" + kakaoUserId + "@kakao.com";
-
-        Member member = memberRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    String password = KakaoAuthUtil.generateTemporaryPassword();
-                    Member newMember = new Member(
-                            email,
-                            password,
-                            tokenResponse.accessToken(),
-                            tokenResponse.refreshToken()
-                    );
-                    return memberRepository.save(newMember);
-                });
-
-        return AuthResponse.of(
-                jwtUtil.generateToken(member.getId())
-        );
-    }
-
-    public Member getMemberById(Long id) {
+    public Member getMemberByIdOrThrow(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Transactional
     public void refreshKakaoAccessToken(Long id) {
-        Member member = getMemberById(id);
+        Member member = getMemberByIdOrThrow(id);
         KakaoTokenResponse refreshTokenResponse = kakaoClient.getRefreshTokenResponse(member.getKakaoRefreshToken());
         member.updateTokens(
                 refreshTokenResponse.accessToken(),

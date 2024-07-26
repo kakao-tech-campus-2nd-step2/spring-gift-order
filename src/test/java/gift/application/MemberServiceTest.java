@@ -72,48 +72,6 @@ class MemberServiceTest {
                                      .getMessage());
     }
 
-    @Test
-    @DisplayName("회원 검증 서비스 테스트")
-    void authenticate() {
-        MemberDto memberDto = new MemberDto("test@email.com", "password");
-        Member member = MemberMapper.toEntity(memberDto);
-        String token = "token";
-        given(jwtUtil.generateToken(any()))
-                .willReturn(token);
-        given(memberRepository.findByEmail(any()))
-                .willReturn(Optional.of(member));
-
-        AuthResponse authToken = memberService.authenticate(memberDto);
-
-        assertThat(authToken.token()).isEqualTo(token);
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 회원 검증 실패 테스트")
-    void authenticateMemberNotFound() {
-        MemberDto memberDto = new MemberDto("test@email.com", "password");
-        given(memberRepository.findByEmail(any()))
-                .willReturn(Optional.empty());
-
-        assertThatThrownBy(() -> memberService.authenticate(memberDto))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.MEMBER_NOT_FOUND
-                                     .getMessage());
-    }
-
-    @Test
-    @DisplayName("회원 비밀번호 검증 실패 테스트")
-    void authenticateIncorrectPassword() {
-        Member member = MemberFixture.createMember("test@email.com");
-        MemberDto memberDto = new MemberDto("test@email.com", "incorrect " + member.getPassword());
-        given(memberRepository.findByEmail(any()))
-                .willReturn(Optional.of(member));
-
-        assertThatThrownBy(() -> memberService.authenticate(memberDto))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.AUTHENTICATION_FAILED
-                                     .getMessage());
-    }
 
     @Test
     @DisplayName("회원 조회 기능 테스트")
@@ -123,7 +81,7 @@ class MemberServiceTest {
         given(memberRepository.findById(anyLong()))
                 .willReturn(Optional.of(member));
 
-        Member foundMember = memberService.getMemberById(memberId);
+        Member foundMember = memberService.getMemberByIdOrThrow(memberId);
 
         assertThat(foundMember.getEmail()).isEqualTo(member.getEmail());
     }

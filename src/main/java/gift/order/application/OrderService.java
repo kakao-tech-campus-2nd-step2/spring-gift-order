@@ -43,7 +43,7 @@ public class OrderService {
         Long productId = option.getProductId();
         wishesService.removeWishIfPresent(memberId, productId);
 
-        Member member = memberService.getMemberById(memberId);
+        Member member = memberService.getMemberByIdOrThrow(memberId);
 
         try {
             sendKakaoMessage(member, request.message(), option);

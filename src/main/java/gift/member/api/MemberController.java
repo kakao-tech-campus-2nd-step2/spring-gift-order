@@ -1,5 +1,6 @@
 package gift.member.api;
 
+import gift.auth.application.AuthService;
 import gift.global.pagination.dto.PageResponse;
 import gift.product.dto.ProductResponse;
 import gift.wishlist.api.WishesController;
@@ -26,13 +27,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MemberController {
 
     private final MemberService memberService;
+    private final AuthService authService;
     private final ProductController productController;
     private final WishesController wishesController;
 
     public MemberController(MemberService memberService,
+                            AuthService authService,
                             ProductController productController,
                             WishesController wishesController) {
         this.memberService = memberService;
+        this.authService = authService;
         this.productController = productController;
         this.wishesController = wishesController;
     }
@@ -49,14 +53,14 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    public String showLoginView(Model model) {
+    public String showLoginView() {
         return "login";
     }
 
     @PostMapping("/login")
     @ResponseBody
     public AuthResponse login(@RequestBody @Valid MemberDto memberDto) {
-        return memberService.authenticate(memberDto);
+        return authService.authenticate(memberDto);
     }
 
     @GetMapping("/wishlist")

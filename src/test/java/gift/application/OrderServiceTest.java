@@ -60,7 +60,7 @@ class OrderServiceTest {
         OrderRequest request = new OrderRequest(2L, 1, "message");
         given(optionService.getOptionById(anyLong()))
                 .willReturn(option);
-        given(memberService.getMemberById(anyLong()))
+        given(memberService.getMemberByIdOrThrow(anyLong()))
                 .willReturn(MemberFixture.createMember("test@email.com"));
         given(orderRepository.save(any()))
                 .willReturn(new Order(request.message(), option, member));
@@ -71,7 +71,7 @@ class OrderServiceTest {
         verify(optionService).getOptionById(request.optionId());
         verify(optionService).subtractQuantity(any(), eq(request.quantity()));
         verify(wishesService).removeWishIfPresent(eq(memberId), any());
-        verify(memberService).getMemberById(memberId);
+        verify(memberService).getMemberByIdOrThrow(memberId);
         verify(orderRepository).save(any());
     }
 
