@@ -1,9 +1,6 @@
 package gift.ServiceTest;
 
-import gift.Entity.Member;
-import gift.Entity.Product;
-import gift.Entity.Wishlist;
-import gift.Entity.WishlistId;
+import gift.Entity.*;
 import gift.Mapper.Mapper;
 import gift.Model.MemberDto;
 import gift.Model.WishlistDto;
@@ -72,9 +69,10 @@ public class WishlistServiceTest {
         // given
         Member member = new Member(1, "1234@naver.com", "1234", "1234", false);
         Product product = new Product(1L, "product1", null, 1000, "http://localhost:8080/image1.jpg", false);
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 3, "product1", 0);
+        Option option = new Option(1L, product, "option1", 10, 1);
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 3, "product1", 0, 1L);
         WishlistId wishlistId = new WishlistId(1L, 1L);
-        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 2, 5000);
+        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 2, 5000, option);
 
         given(mapper.wishlistDtoToEntity(wishlistDto)).willReturn(wishlist);
         given(wishlistJpaRepository.save(wishlist)).willReturn(wishlist);
@@ -92,9 +90,10 @@ public class WishlistServiceTest {
         // given
         Member member = new Member(1, "1234@naver.com", "1234", "1234", false);
         Product product = new Product(1L, "product1", null, 1000, "http://localhost:8080/image1.jpg", false);
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 3, "product1", 0);
+        Option option = new Option(1L, product, "option1", 10, 1);
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 5, 3, "product1", 0, 1L);
         WishlistId wishlistId = new WishlistId(1L, 1L);
-        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 2, 5000);
+        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 2, 5000, option);
         given(wishlistJpaRepository.save(wishlist)).willReturn(wishlist);
 
         // when
@@ -111,9 +110,10 @@ public class WishlistServiceTest {
         // given
         Member member = new Member(1, "1234@naver.com", "1234", "1234", false);
         Product product = new Product(1L, "product1", null, 1000, "http://localhost:8080/image1.jpg", false);
-        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 0, 6, "product1", 0);
+        Option option = new Option(1L, product, "option1", 10, 1);
+        WishlistDto wishlistDto = new WishlistDto(1L, 1L, 0, 6, "product1", 0, 1L);
         WishlistId wishlistId = new WishlistId(1L, 1L);
-        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 5, 5000);
+        Wishlist wishlist = new Wishlist(wishlistId, member, product, "product1", 5, 5000, option);
         given(wishlistJpaRepository.save(wishlist)).willReturn(wishlist);
 
         // when
