@@ -14,5 +14,6 @@ INSERT INTO OPTIONS(product_id, name, quantity) VALUES (3, '03. 체리 핸드 & 
 
 INSERT INTO MEMBER(email, password, role) VALUES ('kakao@kakao.com', 'helloKakao12', 'ADMIN');
 INSERT INTO MEMBER(email, password, role) VALUES ('test@test.com', 'Tester789', 'USER');
+INSERT INTO MEMBER(email, password, role) VALUES ('hws2008@naver.com', 'testKakao123', 'ADMIN');
 
 INSERT INTO WISH(member_id, product_id, quantity) VALUES (1, 1, 3);

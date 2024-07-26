@@ -45,6 +45,10 @@ public class Option extends BaseEntity {
             '}';
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public String getName() {
         return name;
     }

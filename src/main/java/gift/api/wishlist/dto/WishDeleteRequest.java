@@ -7,4 +7,9 @@ public record WishDeleteRequest(
     @NotNull(message = "Product id is mandatory")
     @Positive(message = "Product id must be greater than zero")
     Long productId
-) {}
+) {
+
+    public static WishDeleteRequest of(Long productId) {
+        return new WishDeleteRequest(productId);
+    }
+}

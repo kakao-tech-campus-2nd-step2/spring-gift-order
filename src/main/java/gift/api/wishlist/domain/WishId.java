@@ -16,6 +16,10 @@ public class WishId implements Serializable {
         this.product = product;
     }
 
+    public static WishId of(Long memberId, Long productId) {
+        return new WishId(memberId, productId);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

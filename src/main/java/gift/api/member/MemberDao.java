@@ -16,4 +16,9 @@ public class MemberDao {
         return memberRepository.findByEmail(email)
             .orElseThrow(() -> new NoSuchEntityException("member"));
     }
+
+    public Member findMemberById(Long id) {
+        return memberRepository.findById(id)
+            .orElseThrow(() -> new NoSuchEntityException("member"));
+    }
 }

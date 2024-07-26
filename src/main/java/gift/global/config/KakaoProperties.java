@@ -1,4 +1,4 @@
-package gift.api.member.config;
+package gift.global.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

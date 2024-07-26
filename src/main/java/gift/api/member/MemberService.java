@@ -5,7 +5,6 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-import gift.api.member.config.KakaoProperties;
 import gift.api.member.dto.KakaoAccount;
 import gift.api.member.dto.MemberRequest;
 import gift.api.member.dto.TokenResponse;
@@ -13,6 +12,7 @@ import gift.api.member.dto.UserInfoResponse;
 import gift.api.member.exception.EmailAgreementNeededException;
 import gift.api.member.exception.EmailAlreadyExistsException;
 import gift.api.member.exception.RegisterNeededException;
+import gift.global.config.KakaoProperties;
 import gift.global.exception.ForbiddenMemberException;
 import gift.global.exception.UnauthorizedMemberException;
 import gift.global.utils.JwtUtil;

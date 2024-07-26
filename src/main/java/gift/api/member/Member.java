@@ -38,6 +38,10 @@ public class Member extends BaseEntity {
         return email;
     }
 
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
+    }
+
     @Override
     public String toString() {
         return "Member{" +
