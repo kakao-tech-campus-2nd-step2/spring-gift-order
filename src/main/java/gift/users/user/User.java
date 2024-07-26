@@ -19,23 +19,27 @@ public class User {
     private String password;
     @Column(unique = true)
     private String kakaoId;
+    private String sns;
 
     public User() {
     }
 
     public User(String kakaoId) {
         this.kakaoId = kakaoId;
+        this.sns = "kakao";
     }
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
+        this.sns = "local";
     }
 
     public User(Long id, String email, String password) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.sns = "local";
     }
 
     public Long getId() {
@@ -49,4 +53,6 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    public String getSns(){return sns;}
 }

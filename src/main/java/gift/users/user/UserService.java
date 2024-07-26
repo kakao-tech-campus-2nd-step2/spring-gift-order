@@ -25,6 +25,11 @@ public class UserService {
         return user.getId();
     }
 
+    public String findSns(long userId){
+        User user = findUserById(userId);
+        return user.getSns();
+    }
+
     public String loginGiveJwt(String userId) {
         String jwtToken = jwtUtil.generateToken(userId);
         if (jwtToken != null) {
@@ -66,9 +71,13 @@ public class UserService {
         return true;
     }
 
+    private User findUserById(long id){
+        return userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundIdException("없는 회원 아이디입니다."));
+    }
+
     public UserDTO findById(long id) {
-        return UserDTO.fromUser(userRepository.findById(id)
-            .orElseThrow(() -> new NotFoundIdException("없는 회원 아이디입니다.")));
+        return UserDTO.fromUser(findUserById(id));
     }
 
     public UserDTO findUserByEmail(String email) {

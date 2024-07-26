@@ -43,9 +43,8 @@ public class JwtAuthenticationFilter implements Filter {
         String token = authHeader.substring(7);
         String tokenUserId = jwtUtil.extractUserId(token);
         String place = "";
-        if(request.getRequestURI().contains("wishlist")){
-            place = "wishlist";
-        }
+        place = containgTextReplace(request, "wishlist", place);
+        place = containgTextReplace(request, "orders", place);
 
         String path = request.getRequestURI().split(request.getContextPath() + "/api/" + place + "/")[1];
         String[] pathParts = path.split("/");
@@ -62,5 +61,12 @@ public class JwtAuthenticationFilter implements Filter {
     @Override
     public void destroy() {
         Filter.super.destroy();
+    }
+
+    private String containgTextReplace(HttpServletRequest request, String text, String place){
+        if(request.getRequestURI().contains(text)){
+            return text;
+        }
+        else return place;
     }
 }
