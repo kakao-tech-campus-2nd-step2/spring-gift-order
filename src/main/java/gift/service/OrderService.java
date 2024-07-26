@@ -72,7 +72,6 @@ public class OrderService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
 
-        System.out.println("Response: " + response.getBody());
 
         Date now = new Date();
 

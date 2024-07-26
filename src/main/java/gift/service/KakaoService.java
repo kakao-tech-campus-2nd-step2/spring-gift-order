@@ -39,7 +39,6 @@ public class KakaoService {
                 .encode()
                 .build()
                 .toUri();
-        System.out.println(uri);
         return uri;
     }
 
@@ -61,8 +60,6 @@ public class KakaoService {
 
         ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
 
-        System.out.println("Response: " + response.getBody());
-        System.out.println(response.getBody().access_token());
         headers = new HttpHeaders();
         headers.add("Authorization",response.getBody().access_token() );
         return getUserInformation(response.getBody().access_token());
@@ -70,7 +67,6 @@ public class KakaoService {
 
     public Member getUserInformation(String token){
         var url = "https://kapi.kakao.com/v2/user/me";
-        System.out.println(token);
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
