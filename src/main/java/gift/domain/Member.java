@@ -36,6 +36,18 @@ public class Member {
         return password;
     }
 
+    public String getId(){
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<WishList> getWishList() {
+        return wishList;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -2,6 +2,8 @@ package gift.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
+import gift.domain.Member;
+import gift.domain.MemberResponse;
 import gift.service.KakaoService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -30,66 +32,12 @@ public class KakaoController {
     }
 
     @GetMapping("/code")
-    public void getCode(
+    public ResponseEntity<Member> getUserInfomation(
             @RequestParam("code") String code
     ){
-        getToken(code);
-    }
-
-
-    public ResponseEntity<String> getToken(String code){
-        var url = "https://kauth.kakao.com/oauth/token";
-
-        var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", "d10bca9343a675e1c7e772e899667311");
-        body.add("redirect_uri", "http://localhost:8080/api/kakao/code");
-        body.add("code", code);
-
-        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
-
-        System.out.println("Response: " + response.getBody());
-        System.out.println(response.getBody().access_token());
-        headers = new HttpHeaders();
-        headers.add("Authorization",response.getBody().access_token() );
-        getUserInformation(response.getBody().access_token());
-        return ResponseEntity.ok().headers(headers).body("로그인 성공");
-    }
-
-    public void getUserInformation(String token){
-        var url = "https://kapi.kakao.com/v2/user/me";
-        System.out.println(token);
-
-        var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        headers.add("Authorization","Bearer " + token);
-
-        var request = new RequestEntity<>(headers, HttpMethod.GET, URI.create(url));
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String responseBody = response.getBody();
-        try{
-            Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
-            Map<String, Object> properties = (Map<String, Object>) responseMap.get("properties");
-            Map<String, Object> kakao_account = (Map<String,Object>)responseMap.get("kakao_account");
-            String nickname = (String) properties.get("nickname");
-            System.out.println(responseMap);
-            System.out.println(nickname);
-            System.out.println(kakao_account.get("email"));
-        }
-        catch (Exception e){
-        }
-
+        Member member = kakaoService.getToken(code);
+        System.out.println(member);
+        return ResponseEntity.ok().body(member);
     }
 
 }
