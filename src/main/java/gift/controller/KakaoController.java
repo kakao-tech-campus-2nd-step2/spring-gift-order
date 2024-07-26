@@ -44,5 +44,10 @@ public class KakaoController {
         Map<String, Object> responseBody = new HashMap<>();
         KakaoTokenResponseDto kakaoTokenResponseDto = kakaoService.getAccessTokenFromKakao(code);
         KakaoMember kakaoMember = kakaoService.getKakaoProfile(kakaoTokenResponseDto);
+        String token = memberService.loginKakaoMember(kakaoMember);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(HttpHeaders.AUTHORIZATION, token)
+            .body(responseBody);
     }
+
 }
