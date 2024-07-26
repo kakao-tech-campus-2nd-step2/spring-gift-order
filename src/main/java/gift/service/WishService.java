@@ -30,7 +30,7 @@ public class WishService {
         this.optionRepository = optionRepository;
     }
 
-    public void addWishProduct(Long userId, WishRequestDTO wishRequestDTO) {
+    public void addWishOption(Long userId, WishRequestDTO wishRequestDTO) {
         User user = userRepository.findById(userId).orElseThrow(CustomException::userNotFoundException);
         Option option = optionRepository.findById(wishRequestDTO.optionId()).orElseThrow(CustomException::optionNotFoundException);
         Wish wish = new Wish(user, option);
@@ -49,7 +49,7 @@ public class WishService {
     }
 
     @Transactional
-    public void deleteWishProduct(Long userId, Long optionId) {
+    public void deleteWishOption(Long userId, Long optionId) {
         User user = userRepository.findById(userId).orElseThrow(CustomException::userNotFoundException);
         Option option = optionRepository.findById(optionId).orElseThrow(CustomException::optionNotFoundException);
 
