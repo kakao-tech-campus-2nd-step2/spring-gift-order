@@ -8,6 +8,7 @@ import gift.core.domain.wishes.WishesService;
 import gift.wishes.restapi.dto.request.AddWishRequest;
 import gift.wishes.restapi.dto.response.PagedWishResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,7 +35,14 @@ public class WishesController {
     }
 
     @GetMapping("/api/wishes")
-    @Operation(summary = "위시리스트 조회", description = "위시리스트를 조회합니다.")
+    @Operation(
+            summary = "위시리스트 조회",
+            description = "위시리스트를 조회합니다.",
+            parameters = {
+                    @Parameter(name = "page", description = "페이지 번호 (기본 값 : 0)"),
+                    @Parameter(name = "size", description = "페이지 크기 (기본 값 : 10)")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "위시리스트를 조회합니다.",
@@ -60,7 +68,13 @@ public class WishesController {
     }
 
     @DeleteMapping("/api/wishes/{productId}")
-    @Operation(summary = "위시리스트 삭제", description = "위시리스트에서 상품을 삭제합니다.")
+    @Operation(
+            summary = "위시리스트 삭제",
+            description = "위시리스트에서 상품을 삭제합니다.",
+            parameters = {
+                    @Parameter(name = "productId", description = "상품 ID")
+            }
+    )
     @ApiResponse(
             responseCode = "200",
             description = "위시리스트에서 상품을 삭제합니다."
