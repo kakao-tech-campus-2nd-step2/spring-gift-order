@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.KakaoTokenResponseDTO;
 import gift.entity.Member;
 import gift.repository.MemberRepository;
 import io.jsonwebtoken.Jwts;
@@ -38,6 +39,16 @@ public class MemberService {
             return authenticate(email, password);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid email or password : " + "(Email " + email + "), (Password " + password + ")", e);
+        }
+    }
+
+    public void kakaoLogin(KakaoTokenResponseDTO kakaoTokenResponseDTO) {
+        var email = kakaoTokenResponseDTO.email;
+        var token = kakaoTokenResponseDTO.accessToken;
+        try {
+            memberRepository.save(new Member(email, token));
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid email : " + email);
         }
     }
 
