@@ -29,20 +29,23 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    protected User() {
-    }
+    private String accessToken;
+    private String refreshToken;
 
-    public User(Long id, String email, String password, UserRole role) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.role = role;
+    protected User() {
     }
 
     public User(String email, String password) {
         this.email = email;
         this.password = password;
         this.role = UserRole.USER;
+    }
+    public User(String email, String password, String accessToken, String refreshToken) {
+        this.email = email;
+        this.password = password;
+        this.role = UserRole.USER;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public Long getId() {
@@ -55,6 +58,14 @@ public class User extends BaseTimeEntity {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     @Override

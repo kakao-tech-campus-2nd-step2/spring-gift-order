@@ -39,7 +39,7 @@ public class KaKaoController {
         KaKaoToken kaKaoToken = kaKaoService.getKaKaoToken(authorizedCode);
         System.out.println("kaKaoToken = " + kaKaoToken);
 
-        User findUser = kaKaoService.findUserByKaKaoAccessToken(kaKaoToken.accessToken());
+        User findUser = kaKaoService.findUserByKaKaoAccessToken(kaKaoToken.accessToken(), kaKaoToken.refreshToken());
 
         String jwt = JwtProvider.generateToken(findUser);
         return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "카카오 로그인 성공", jwt);

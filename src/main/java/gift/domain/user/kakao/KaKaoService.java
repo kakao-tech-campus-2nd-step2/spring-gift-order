@@ -66,7 +66,7 @@ public class KaKaoService {
         }
     }
 
-    public User findUserByKaKaoAccessToken(String accessToken) {
+    public User findUserByKaKaoAccessToken(String accessToken, String refreshToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE);
@@ -76,7 +76,7 @@ public class KaKaoService {
         ResponseEntity<String> response = restTemplate.exchange(USER_INFO_URL, HttpMethod.GET, request, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            return parseUserInfo(response);
+            return parseUserInfo(response, accessToken, refreshToken);
         }
         throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "사용자 정보 조회 중 오류 발생");
     }
@@ -92,7 +92,7 @@ public class KaKaoService {
         }
     }
 
-    private User parseUserInfo(ResponseEntity<String> response) {
+    private User parseUserInfo(ResponseEntity<String> response, String accessToken, String refreshToken) {
         try {
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             String id = rootNode.path("id").asText(); // unique
@@ -101,7 +101,7 @@ public class KaKaoService {
 
             User findUser = userRepository.findByEmail(email);
             if (findUser == null) {
-                findUser = createUser(email);
+                findUser = createKaKaoUser(email, accessToken, refreshToken);
             }
 
             return findUser;
@@ -110,12 +110,12 @@ public class KaKaoService {
         }
     }
 
-    private User createUser(String email) {
+    private User createKaKaoUser(String email, String accessToken, String refreshToken) {
         String salt = UUID.randomUUID().toString();
         String ori_password = salt + UUID.randomUUID().toString();
         String hashed_password = ori_password; // hash 과정 생략
 
-        User user = new User(email, hashed_password);
+        User user = new User(email, hashed_password, accessToken, refreshToken);
         userRepository.save(user);
         return userRepository.findByEmail(email);
     }

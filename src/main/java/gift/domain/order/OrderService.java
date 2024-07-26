@@ -9,6 +9,8 @@ import gift.domain.option.Option;
 import gift.domain.option.OptionService;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
+import gift.domain.user.JpaUserRepository;
+import gift.domain.user.User;
 import gift.domain.user.dto.UserInfo;
 import gift.domain.user.kakao.KaKaoProperties;
 import java.io.UnsupportedEncodingException;
@@ -38,6 +40,7 @@ public class OrderService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final KaKaoProperties kaKaoProperties;
+    private final JpaUserRepository userRepository;
 
     @Autowired
     public OrderService(
@@ -47,7 +50,8 @@ public class OrderService {
         JpaCartItemRepository jpaCartItemRepository,
         RestTemplateBuilder restTemplateBuilder,
         ObjectMapper objectMapper,
-        KaKaoProperties kaKaoProperties
+        KaKaoProperties kaKaoProperties,
+        JpaUserRepository userRepository
     ) {
         optionRepository = jpaOptionRepository;
         this.optionService = optionService;
@@ -56,6 +60,7 @@ public class OrderService {
         restTemplate = restTemplateBuilder.build();
         this.objectMapper = objectMapper;
         this.kaKaoProperties = kaKaoProperties;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -83,7 +88,8 @@ public class OrderService {
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBearerAuth(kaKaoProperties.tempAccessKey()); // 엑세스 토큰
+        User user = userRepository.findById(userInfo.getId()).get();
+        headers.setBearerAuth(user.getAccessToken()); // 엑세스 토큰
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
         ResponseEntity<Object> response = restTemplate.exchange(SEND_ME_URL, HttpMethod.POST,
