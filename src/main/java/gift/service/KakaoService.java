@@ -18,6 +18,13 @@ public class KakaoService {
         this.kakaoProperties = kakaoProperties;
     }
 
+    public String generateKakaoLoginUrl() {
+        String clientId = kakaoProperties.clientId();
+        String redirectUrl = kakaoProperties.redirectUrl();
+        String loginUrl = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUrl;
+        return loginUrl;
+    }
+
     public String getAccessToken(String authorizationCode) {
         var url = "https://kauth.kakao.com/oauth/token";
         final var body = createBody(authorizationCode);
