@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 @Controller
+//@RequestMapping("/kakao")
 public class KakaoController {
 
     private final KakaoProperties kakaoProperties;
@@ -40,10 +41,8 @@ public class KakaoController {
     @GetMapping("/callback")
     public String callback(@RequestParam String code, HttpServletRequest request) {
         String accessToken = kakaoService.getAccessToken(code);
-
         // 액세스 토큰을 세션에 저장
         request.getSession().setAttribute("accessToken", accessToken);
-
         // 로그인 완료 후 홈 페이지로 리디렉션
         return "redirect:/home";
     }
@@ -66,6 +65,6 @@ public class KakaoController {
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
         kakaoService.sendKakaoMessage(orderResponse);
-        return ResponseEntity.ok("Message sent successfully.");
+        return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
     }
 }

@@ -1,10 +1,7 @@
 package gift.controller;
 
 import gift.dto.MemberDto;
-import gift.service.KakaoProperties;
-import gift.service.KakaoService;
 import gift.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
