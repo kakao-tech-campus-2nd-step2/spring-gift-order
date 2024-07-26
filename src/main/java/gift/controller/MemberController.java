@@ -63,9 +63,9 @@ public class MemberController {
 
         KakaoProfileResponse profileResponse = kakaoLoginService.getUserProfile(tokenResponse.accessToken());
 
-        String email = profileResponse.kakaoAccount().profile().nickname();
+        String email = profileResponse.kakaoAccount().profile().nickname() + "@kakao.com";
 
-        if (email == null || email.isEmpty()) {
+        if (email.equals("@kakao.com")) {
             return new ResponseEntity<>(Map.of("error", "이메일을 가져올 수 없습니다."), HttpStatus.BAD_REQUEST);
         }
 
