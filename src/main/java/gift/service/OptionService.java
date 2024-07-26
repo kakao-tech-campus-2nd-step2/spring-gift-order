@@ -56,14 +56,21 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractQuantity(String name, int subtractQuantity) {
+    public Option subtractQuantity(Long optionId, int subtractQuantity) {
 
-        Option option = optionRepository.findByName(name)
-                        .orElseThrow(() -> new CustomException("Option with name " + name + " not exists", HttpStatus.NOT_FOUND));
+        Option option = optionRepository.findById(optionId)
+                        .orElseThrow(() -> new CustomException("Option with id" + optionId + " not exists", HttpStatus.NOT_FOUND));
         
         Option updatedOption = option.substract(subtractQuantity);
 
         optionRepository.delete(option);
-        optionRepository.save(updatedOption);
+        return optionRepository.save(updatedOption);
+    }
+
+    public Product findProductByOptionId(Long optionId){
+
+        Option option = optionRepository.findById(optionId)
+                        .orElseThrow(() -> new CustomException("Option with id" + optionId + " not exists", HttpStatus.NOT_FOUND));
+        return option.getProduct();
     }
 }
