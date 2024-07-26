@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/kakao")
@@ -17,6 +18,13 @@ public class KakaoLoginController {
         this.kakaoLoginService = kakaoLoginService;
     }
 
+    @GetMapping("/login")
+    public RedirectView getKakaoLoginUrl() {
+        RedirectView redirectView = new RedirectView();
+        String url = kakaoLoginService.getKakaoUrl();
+        redirectView.setUrl(url);
+        return redirectView;
+    }
     @GetMapping("/callback")
     public ResponseEntity<?> callback(@RequestParam("code") String code) {
         String accessToken = kakaoLoginService.getAccessToken(code);
