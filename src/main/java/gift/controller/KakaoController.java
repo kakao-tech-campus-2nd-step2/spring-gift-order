@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.service.KakaoProperties;
 import gift.service.KakaoService;
+import gift.value.KakaoString;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,10 @@ public class KakaoController {
 
     @GetMapping("/login")
     public void kakaoLogin(HttpServletResponse response) throws IOException {
+        String clientId = new KakaoString(kakaoProperties.getClientId()).removeNewlines();
+        String redirectUri = new KakaoString(kakaoProperties.getRedirectUri()).removeNewlines();
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="
-                + removeNewlines(kakaoProperties.getClientId()) + "&redirect_uri=" + removeNewlines(kakaoProperties.getRedirectUri());
+                + clientId + "&redirect_uri=" + redirectUri;
         response.sendRedirect(url);
     }
 
@@ -37,12 +40,5 @@ public class KakaoController {
 
         // 로그인 완료 후 홈 페이지로 리디렉션
         return "redirect:/home";
-    }
-
-    private String removeNewlines(String input) {
-        if (input == null) {
-            return null;
-        }
-        return input.replaceAll("[\\r\\n]", ""); // 개행 문자 제거
     }
 }
