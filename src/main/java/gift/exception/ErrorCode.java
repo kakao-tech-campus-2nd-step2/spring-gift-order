@@ -23,7 +23,9 @@ public enum ErrorCode {
 
     KAKAO_ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 서비스를 이용하시려면 kakao 로그인이 필요합니다."),
 
-    QUANTITY_EXCEEDS_AVAILABLE_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다.");
+    QUANTITY_EXCEEDS_AVAILABLE_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다."),
+
+    CONNECT_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "요청 시간 초과");
 
     private final HttpStatus status;
     private final String message;
