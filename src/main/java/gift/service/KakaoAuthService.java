@@ -1,6 +1,9 @@
 package gift.service;
 
 import gift.dto.KakaoTokenResponseDTO;
+import gift.dto.KakaoUserDTO;
+import gift.model.Member;
+import gift.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -19,10 +22,12 @@ public class KakaoAuthService {
     private String redirectUri;
 
     private final RestTemplate restTemplate;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public KakaoAuthService(RestTemplate restTemplate) {
+    public KakaoAuthService(RestTemplate restTemplate, MemberRepository memberRepository) {
         this.restTemplate = restTemplate;
+        this.memberRepository = memberRepository;
     }
 
     public KakaoTokenResponseDTO getKakaoToken(String code) {
@@ -46,6 +51,31 @@ public class KakaoAuthService {
         } else {
             throw new RuntimeException("카카오 토큰을 찾을 수 없습니다.");
         }
+    }
+
+    // 카카오 사용자 정보 조회
+    public KakaoUserDTO getKakaoUser(String accessToken) {
+        String userUrl = "https://kapi.kakao.com/v2/user/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        ResponseEntity<KakaoUserDTO> response = restTemplate.exchange(userUrl, HttpMethod.GET, request, KakaoUserDTO.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("카카오 사용자 정보를 가져올 수 없습니다.");
+        }
+    }
+
+    // 사용자 등록 or 조회
+    public Member registerOrGetMember(KakaoUserDTO kakaoUserDTO) {
+        return memberRepository.findByEmail(kakaoUserDTO.getEmail())
+            .orElseGet(() -> {
+                Member newMember = new Member(kakaoUserDTO.getEmail(), "");
+                memberRepository.save(newMember);
+                return newMember;
+            });
     }
 
     public String getKakaoLoginUrl() {
