@@ -67,13 +67,4 @@ public class MenuRestController {
         return ResponseEntity.ok().body(menuService.getOptions(id));
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<String> addOptions(
-            @PathVariable("id") Long id,
-            @RequestBody OptionRequest optionRequest
-    ){
-        menuService.addOptions(id,optionRequest);
-        return ResponseEntity.ok().body("옵션 추가에 성공하셨습니다.");
-    }
-
 }

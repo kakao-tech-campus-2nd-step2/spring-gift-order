@@ -13,8 +13,7 @@ public record MenuRequest(
         String name,
         int price,
         String imageUrl,
-        Long categoryId,
-        Set<Option> options
+        Long categoryId
 ) {
 
 }
