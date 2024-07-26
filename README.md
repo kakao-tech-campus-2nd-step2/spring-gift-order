@@ -22,6 +22,7 @@
       - https://kauth.kakao.com/oauth/authorize로 로그인
       - redirect_uri로 code를 받아서 토큰 발급하는 카카오api로 토큰 생성
       - client_id는 비공개
+      - 토큰 발급시 카카오 토큰의 맡
     - 소셜 로그인 등록
       - 토큰을 검증해 가져온 id를 서버에 저장
     - 소셜 로그인 인증
@@ -39,6 +40,8 @@
 ## step3 구현 기능
 
 - /api/social/code/kakao로 카카오 토큰을 받게금 수정함
+  - 기존에 카카오로 직접 url을 요청해야 했으나 해당 api로 대체
+    - 클라이언트 id 보호 차원
   - @RestController가 아닌 뷰를 반환해야 해서 @Controller로 구현
   - 로그인폼 반환
   - 로그인 및 동의시 /api/social/token/kakao로 리다이렉트
