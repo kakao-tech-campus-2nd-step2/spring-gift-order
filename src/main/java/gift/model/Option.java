@@ -50,6 +50,10 @@ public class Option {
         return name;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void setName(@NotBlank @Size(max = 50) @Pattern(regexp = "^[a-zA-Z0-9가-힣\\(\\)\\[\\]\\+\\-\\&\\/\\_\\s]*$") String name) {
         this.name = name;
     }
