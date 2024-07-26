@@ -1,71 +1,44 @@
 package gift.oauth.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.oauth.dto.KakaoTokenFailResponse;
-import gift.oauth.dto.KakaoTokenResponse;
-import gift.oauth.exception.KakaoOAuthException;
-import gift.oauth.properties.KakaoProperties;
-import java.net.URI;
-import org.springframework.http.MediaType;
+import gift.domain.member.entity.Member;
+import gift.domain.member.repository.MemberRepository;
+import gift.kakaoApi.service.KakaoApiService;
+import gift.kakaoApi.dto.userInfo.KakaoAccount;
+import gift.util.JwtUtil;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @Transactional(readOnly = true)
 public class OAuthService {
 
-    private final KakaoProperties properties;
-    private final ObjectMapper objectMapper;
-    private final RestClient client;
+    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
+    private final KakaoApiService kakaoApiService;
 
-    public OAuthService(KakaoProperties properties, ObjectMapper objectMapper) {
-        this.properties = properties;
-        this.objectMapper = objectMapper;
-        this.client = RestClient.builder().build();
-    }
-
-    public String getAuthorizeUri(){
-        return UriComponentsBuilder.newInstance()
-            .path("https://kauth.kakao.com/oauth/authorize")
-            .queryParam("response_type","code")
-            .queryParam("client_id", properties.clientId())
-            .queryParam("redirect_uri", properties.redirectUrl())
-            .toUriString();
+    public OAuthService(MemberRepository memberRepository,
+        JwtUtil jwtUtil,
+        KakaoApiService kakaoApiService) {
+        this.memberRepository = memberRepository;
+        this.jwtUtil = jwtUtil;
+        this.kakaoApiService = kakaoApiService;
     }
 
     public String getAccessToken(String code){
+        String accessToken = kakaoApiService.getKakaoToken(code).accessToken();
+        return jwtUtil.generateToken(registerOrLoginKakoMember(accessToken));
 
-        String url = "https://kauth.kakao.com/oauth/token";
-
-        LinkedMultiValueMap<String, String> body = creatBody(code);
-
-         KakaoTokenResponse tokenResponse = client.post()
-             .uri(URI.create(url))
-             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-             .body(body)
-             .exchange((request, response) -> {
-                 if (response.getStatusCode().is4xxClientError()) {
-                     KakaoTokenFailResponse failResponse = objectMapper.readValue(response.getBody(), KakaoTokenFailResponse.class);
-                     throw new KakaoOAuthException(failResponse.errorCode(), failResponse.errorDescription());
-                 }
-
-                 return objectMapper.readValue(response.getBody(), KakaoTokenResponse.class);
-             });
-
-         return tokenResponse.accessToken();
     }
 
-    private LinkedMultiValueMap<String, String> creatBody(String code) {
+    private Member registerOrLoginKakoMember(String accessToken){
+        KakaoAccount kakaoAccount = kakaoApiService.getKakaoAccount(accessToken).kakaoAccount();
+        Optional<Member> member = memberRepository.findByEmail(kakaoAccount.email());
 
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", properties.clientId());
-        body.add("redirect_uri", properties.redirectUrl());
-        body.add("code", code);
-        return body;
+        return member.orElseGet(
+            () -> memberRepository.save(new Member(kakaoAccount.email(), "", accessToken)));
+
     }
+
 }
 
