@@ -2,11 +2,14 @@ package gift.doamin.user.service;
 
 import gift.doamin.user.dto.LoginForm;
 import gift.doamin.user.dto.SignUpForm;
+import gift.doamin.user.entity.RefreshToken;
 import gift.doamin.user.entity.User;
 import gift.doamin.user.entity.UserRole;
+import gift.doamin.user.exception.InvalidRefreshTokenException;
 import gift.doamin.user.exception.InvalidSignUpFormException;
 import gift.doamin.user.exception.UserNotFoundException;
 import gift.doamin.user.repository.JpaUserRepository;
+import gift.doamin.user.repository.RefreshTokenRepository;
 import gift.global.JwtProvider;
 import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +21,14 @@ public class AuthService {
     private final JpaUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public AuthService(JpaUserRepository userRepository, PasswordEncoder passwordEncoder,
-        JwtProvider jwtProvider) {
+        JwtProvider jwtProvider, RefreshTokenRepository refreshTokenRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     public void signUp(SignUpForm signUpForm) {
@@ -54,5 +59,18 @@ public class AuthService {
         }
 
         return jwtProvider.generateToken(user.get().getId(), user.get().getRole());
+    }
+
+    public String makeNewAccessToken(String refreshToken) {
+        if (jwtProvider.validateToken(refreshToken)) {
+            throw new InvalidRefreshTokenException();
+        }
+
+        RefreshToken tokenEntity = refreshTokenRepository.findByToken(refreshToken)
+            .orElseThrow(InvalidRefreshTokenException::new);
+
+
+        User user = tokenEntity.getUser();
+        return jwtProvider.generateToken(user.getId(), user.getRole());
     }
 }

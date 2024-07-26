@@ -34,7 +34,7 @@ public class OAuthController {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", myRefreshToken)
             .httpOnly(true)
             .maxAge(12*60*60)
-            .path("/api/auth/refreshToken")
+            .path("/api/auth/accessToken")
             .build();
         return ResponseEntity.ok()
             .header("Set-Cookie", cookie.toString())
