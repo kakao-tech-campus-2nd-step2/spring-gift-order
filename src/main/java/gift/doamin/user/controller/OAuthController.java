@@ -1,7 +1,9 @@
 package gift.doamin.user.controller;
 
 import gift.doamin.user.service.OAuthService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +30,15 @@ public class OAuthController {
     public ResponseEntity<Void> kakaoLogin(@RequestParam(name = "code") String authorizeCode) {
         String kakaoAccessToken = oAuthService.getAccessToken(authorizeCode);
         String myRefreshToken = oAuthService.authenticate(kakaoAccessToken);
-        System.out.println("myRefreshToken = " + myRefreshToken);
-        return null;
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", myRefreshToken)
+            .httpOnly(true)
+            .maxAge(12*60*60)
+            .path("/api/auth/refreshToken")
+            .build();
+        return ResponseEntity.ok()
+            .header("Set-Cookie", cookie.toString())
+            .build();
     }
 
 }

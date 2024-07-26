@@ -29,7 +29,12 @@ public class JwtProvider {
 
     public String generateRefreshToken() {
 
-        return null;
+        Date expiredDate = Date.from(Instant.now().plus(12, ChronoUnit.HOURS));
+
+        return Jwts.builder()
+            .expiration(expiredDate)
+            .signWith(key)
+            .compact();
     }
 
     public boolean validateToken(String token) {
