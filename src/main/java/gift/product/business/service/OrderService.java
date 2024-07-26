@@ -1,5 +1,6 @@
 package gift.product.business.service;
 
+import gift.global.exception.custrom.NotFoundException;
 import gift.member.business.service.WishlistService;
 import gift.member.persistence.repository.MemberRepository;
 import gift.oauth.business.client.KakaoApiClient;
@@ -42,7 +43,7 @@ public class OrderService {
 
         try {
             wishlistService.deleteWishList(orderInCreate.memberId(), orderInCreate.productId());
-        } catch (Exception ignored) {
+        } catch (NotFoundException ignored) {
         }
 
         var product = productRepository.getProductById(orderInCreate.productId());
