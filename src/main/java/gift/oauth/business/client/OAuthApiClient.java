@@ -1,7 +1,7 @@
 package gift.oauth.business.client;
 
 import gift.oauth.business.dto.OAuthParam;
-import gift.oauth.business.dto.OAuthProvider;
+import gift.global.domain.OAuthProvider;
 
 public interface OAuthApiClient {
 

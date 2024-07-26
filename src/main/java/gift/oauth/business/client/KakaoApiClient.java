@@ -2,7 +2,7 @@ package gift.oauth.business.client;
 
 import gift.global.util.StringUtils;
 import gift.oauth.business.dto.OAuthParam;
-import gift.oauth.business.dto.OAuthProvider;
+import gift.global.domain.OAuthProvider;
 import gift.oauth.business.dto.OauthInfo;
 import gift.oauth.business.dto.OauthToken;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;

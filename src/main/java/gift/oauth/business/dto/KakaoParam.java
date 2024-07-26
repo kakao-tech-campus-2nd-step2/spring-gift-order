@@ -1,5 +1,6 @@
 package gift.oauth.business.dto;
 
+import gift.global.domain.OAuthProvider;
 import gift.oauth.presentation.config.KakaoConfig;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

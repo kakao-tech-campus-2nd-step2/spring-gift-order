@@ -8,7 +8,7 @@ import gift.member.business.service.MemberService;
 import gift.member.persistence.repository.MemberRepository;
 import gift.oauth.business.client.OAuthApiClient;
 import gift.oauth.business.dto.OAuthParam;
-import gift.oauth.business.dto.OAuthProvider;
+import gift.global.domain.OAuthProvider;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

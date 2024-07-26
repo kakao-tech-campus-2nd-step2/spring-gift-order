@@ -1,5 +1,6 @@
 package gift.oauth.business.dto;
 
+import gift.global.domain.OAuthProvider;
 import org.springframework.util.MultiValueMap;
 
 public interface OAuthParam {
