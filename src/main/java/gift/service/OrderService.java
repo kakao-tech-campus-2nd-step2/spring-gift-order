@@ -27,9 +27,9 @@ public class OrderService {
 
     @Transactional
     public void orderOption(OrderRequest orderRequest, MemberRequest memberRequest, String accessToken){
-        optionService.subtractQuantityById(orderRequest.optionId(), orderRequest.quantity());
+        Option option = optionService.subtractQuantityById(orderRequest.optionId(), orderRequest.quantity()).toEntity();
 
-        save(memberRequest, orderRequest);
+        save(memberRequest, orderRequest, option);
 
         if(wishService.existsByOptionId(orderRequest.optionId())){
             wishService.deleteByOptionId(orderRequest.optionId());
@@ -37,14 +37,12 @@ public class OrderService {
 
         String message = "옵션 id " + orderRequest.optionId() + " 상품이 주문되었습니다.";
         kakaoMemberService.sendKakaoMessage(accessToken,message);
-
     }
 
-    @Transactional
-    public void save(MemberRequest memberRequest, OrderRequest orderRequest){
+
+    public void save(MemberRequest memberRequest, OrderRequest orderRequest, Option option){
         LocalDateTime orderDateTime = LocalDateTime.now();
         Member member = memberRequest.toEntity();
-        Option option = optionService.findById(orderRequest.optionId()).toEntity();
 
         Order order =  orderRequest.toEntity(orderDateTime, member, option);
         orderRepository.save(order);
