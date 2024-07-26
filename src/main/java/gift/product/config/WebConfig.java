@@ -79,7 +79,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public OrderService orderService() {
-        return new OrderService(orderRepository, wishRepository, optionRepository, authRepository, kakaoTokenRepository);
+        return new OrderService(orderRepository,
+            wishRepository,
+            optionRepository,
+            authRepository,
+            kakaoTokenRepository);
     }
 
     @Bean

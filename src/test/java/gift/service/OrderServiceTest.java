@@ -111,7 +111,10 @@ class OrderServiceTest {
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 5, product);
-        KakaoToken kakaoToken = new KakaoToken(1L, 1L, "test_oauth_access_token", "test_oauth_refresh_token");
+        KakaoToken kakaoToken = new KakaoToken(1L,
+            1L,
+            "test_oauth_access_token",
+            "test_oauth_refresh_token");
 
         String resultCode = "{\"result_code\":0}";
         mockWebServer.enqueue(new MockResponse().setBody(resultCode));

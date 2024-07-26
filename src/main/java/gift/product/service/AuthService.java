@@ -40,7 +40,9 @@ public class AuthService {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    public AuthService(AuthRepository authRepository, KakaoTokenRepository kakaoTokenRepository, KakaoProperties kakaoProperties) {
+    public AuthService(AuthRepository authRepository,
+        KakaoTokenRepository kakaoTokenRepository,
+        KakaoProperties kakaoProperties) {
         this.authRepository = authRepository;
         this.kakaoTokenRepository = kakaoTokenRepository;
         this.kakaoProperties = kakaoProperties;
@@ -207,6 +209,7 @@ public class AuthService {
     }
 
     private KakaoToken getKakaoToken(LoginMember loginMember) {
-        return kakaoTokenRepository.findByMemberId(loginMember.id()).orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
+        return kakaoTokenRepository.findByMemberId(loginMember.id())
+            .orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 
 @Entity
 public class KakaoToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private final Long id;

@@ -5,7 +5,6 @@ import gift.product.dto.auth.LoginMember;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.RegisterSuccessResponse;
-import gift.product.model.Member;
 import gift.product.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URI;

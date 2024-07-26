@@ -186,7 +186,10 @@ class AuthServiceTest {
         mockWebServer.enqueue(new MockResponse().setBody(responseBody));
 
         LoginMember loginMember = new LoginMember(testMemberId);
-        KakaoToken kakaoToken = new KakaoToken(1L, testMemberId, "test_oauth_access_token", "test_oauth_refresh_token");
+        KakaoToken kakaoToken = new KakaoToken(1L,
+            testMemberId,
+            "test_oauth_access_token",
+            "test_oauth_refresh_token");
 
         given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
 
@@ -241,7 +244,10 @@ class AuthServiceTest {
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
         LoginMember loginMember = new LoginMember(1L);
-        KakaoToken kakaoToken = new KakaoToken(1L, 1L, "test_oauth_access_token", "test_oauth_refresh_token");
+        KakaoToken kakaoToken = new KakaoToken(1L,
+            1L,
+            "test_oauth_access_token",
+            "test_oauth_refresh_token");
 
         given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
 

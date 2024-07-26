@@ -145,7 +145,8 @@ public class OrderService {
     }
 
     private KakaoToken getKakaoToken(LoginMember loginMember) {
-        return kakaoTokenRepository.findByMemberId(loginMember.id()).orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
+        return kakaoTokenRepository.findByMemberId(loginMember.id())
+            .orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }
 
