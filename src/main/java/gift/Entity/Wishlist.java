@@ -25,16 +25,21 @@ public class Wishlist {
     private int count;
     private int price;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "optionId", referencedColumnName = "id")
+    private Option option;
+
     protected Wishlist() {
     }
 
-    public Wishlist(WishlistId id, Member member, Product product, String productName, int count, int price) {
+    public Wishlist(WishlistId id, Member member, Product product, String productName, int count, int price, Option option) {
         this.id = id;
         this.member = member;
         this.product = product;
         this.productName = productName;
         this.count = count;
         this.price = price;
+        this.option = option;
     }
 
     public WishlistId getId() {
@@ -83,5 +88,9 @@ public class Wishlist {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public Option getOption() {
+        return option;
     }
 }
