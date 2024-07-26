@@ -1,11 +1,8 @@
 package gift.client;
 
-import gift.client.requestBody.KakaoMessageTemplateBody;
-import gift.client.requestBody.KakaoTokenRequestBody;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.exception.KakaoApiHasProblemException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -15,11 +12,10 @@ import java.util.List;
 
 @Component
 public class KakaoApiClient {
+
     private static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
     private static final String MESSAGE_SEND_REQUEST_URI = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-    @Value("${clientId}")
-    private String clientId;
 
     private final RestClient restClient;
 
@@ -27,9 +23,8 @@ public class KakaoApiClient {
         this.restClient = builder.build();
     }
 
-    public KakaoTokenResponse getKakaoToken(KakaoTokenRequestBody body) {
-        MultiValueMap<String, String> multiValueMap = body.toMultiValueMap();
-        multiValueMap.add("client_id", clientId);
+    public KakaoTokenResponse getKakaoToken(MultiValueMap<String, String> bodyParams) {
+
         int maxRetries = 4;
         int retryCount = 0;
         List<Exception> exceptions = new ArrayList<>();
@@ -38,7 +33,7 @@ public class KakaoApiClient {
                 return restClient
                         .post()
                         .uri(TOKEN_REQUEST_URI)
-                        .body(multiValueMap)
+                        .body(bodyParams)
                         .retrieve()
                         .body(KakaoTokenResponse.class);
             } catch (Exception e) {
@@ -50,6 +45,7 @@ public class KakaoApiClient {
     }
 
     public String getMemberEmail(String token) {
+
         int maxRetries = 4;
         int retryCount = 0;
         List<Exception> exceptions = new ArrayList<>();
@@ -71,7 +67,8 @@ public class KakaoApiClient {
         throw new KakaoApiHasProblemException("카카오API의 '사용자 정보 가져오기' 기능에 문제가 생겼습니다.", exceptions);
     }
 
-    public void sendMessageToMe(String accessToken, KakaoMessageTemplateBody body) {
+    public void sendMessageToMe(String accessToken, MultiValueMap<String, String> bodyParams) {
+
         int maxRetries = 4;
         int retryCount = 0;
         List<Exception> exceptions = new ArrayList<>();
@@ -80,7 +77,7 @@ public class KakaoApiClient {
             try {
                 restClient.post()
                         .uri(MESSAGE_SEND_REQUEST_URI)
-                        .body(body.toMultiValueMap())
+                        .body(bodyParams)
                         .header("Authorization", String.format("Bearer %s", accessToken))
                         .retrieve();
                 return;
