@@ -3,7 +3,7 @@ package gift.vo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table
@@ -21,7 +21,7 @@ public class Option {
     private String name;
 
     @NotNull
-    @PositiveOrZero
+    @Positive
     private int quantity;
 
     public Option(Long id, Product product, String name, int quantity) {
@@ -75,6 +75,9 @@ public class Option {
     public void subtractQuantity(int quantity) {
         if (this.quantity < quantity) {
             throw new IllegalArgumentException("해당 상품 옵션의 재고가 선택하신 수량 보다 작습니다. " + "[남은 수량: "+this.quantity+"]" );
+        }
+        if (this.quantity == 1 && quantity == 1) {
+            throw new IllegalArgumentException("해당 상품 옵션의 재고가 하나 남았습니다.\n 수량은 최소 1개 이상이어야 합니다.");
         }
         this.quantity -= quantity;
     }
