@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.domain.Member;
 import gift.dto.OrderDTO;
+import gift.dto.OrderRequest;
 import gift.service.OrderService;
 import gift.util.LoginMember;
 import org.springframework.http.ResponseEntity;
