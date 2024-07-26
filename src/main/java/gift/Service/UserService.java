@@ -37,7 +37,7 @@ public class UserService {
 
         public JwtToken register(MemberDTO memberDTO){
             if(memberRepository.findByEmail(memberDTO.email()).isPresent())
-                throw new LoginException();
+                throw new LoginException("중복된 이메일이 있습니다.");
 
             MemberEntity memberEntity = new MemberEntity(memberDTO.email(), memberDTO.password(), Role.CONSUMER);
             memberRepository.save(memberEntity);
@@ -48,7 +48,7 @@ public class UserService {
             Optional<MemberEntity> member = memberRepository.findByEmail(memberDTO.email());
 
             if(member.isEmpty() || !member.get().getPassword().equals(memberDTO.password()))
-                throw new LoginException();
+                throw new LoginException("회원 정보가 일치하지 않습니다.");
 
             return new JwtToken(jwtTokenProvider.createToken(member.get()));
         }
