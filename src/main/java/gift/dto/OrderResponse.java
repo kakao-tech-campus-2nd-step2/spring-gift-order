@@ -6,7 +6,7 @@ public class OrderResponse {
     private Long id;
     private Long optionId;
     private int quantity;
-    private String orderDateTime;
+    private LocalDate orderDateTime;
     private String message;
 
     public OrderResponse(Long id, Long optionId, int quantity, LocalDate orderDateTime, String message) {
