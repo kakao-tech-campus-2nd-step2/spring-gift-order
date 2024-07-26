@@ -1,7 +1,7 @@
 package gift.service;
 
 import gift.component.KakaoApiComponent;
-import gift.dto.KakaoMessageRequest;
+import gift.dto.kakao.KakaoMessageRequest;
 import gift.dto.OrderRequest;
 import gift.exception.NotFoundException;
 import gift.model.Member;

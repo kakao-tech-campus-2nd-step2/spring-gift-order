@@ -2,8 +2,10 @@ package gift.component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.dto.KakaoMessageRequest;
-import gift.dto.KakaoProperties;
+import gift.dto.kakao.KakaoAccessTokenResponse;
+import gift.dto.kakao.KakaoMessageRequest;
+import gift.dto.kakao.KakaoProperties;
+import gift.dto.kakao.KakaoUserInfoResponse;
 import gift.exception.auth.UnauthorizedException;
 import org.apache.logging.log4j.util.InternalException;
 import org.json.JSONObject;
@@ -14,8 +16,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class KakaoApiComponent {
@@ -41,14 +41,12 @@ public class KakaoApiComponent {
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
+        ResponseEntity<KakaoAccessTokenResponse> response = restTemplate.exchange(request, KakaoAccessTokenResponse.class);
 
-        String scope = getJsonNode(response.getBody(), "scope");
-
-        if (!scope.contains("talk_message")) {
+        if (response.getBody().scope() == null || !response.getBody().scope().equals("talk_message")) {
             throw new UnauthorizedException("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
         }
-        return getJsonNode(response.getBody(), "access_token");
+        return response.getBody().accessToken();
     }
 
     public String getMemberProfileId(String accessToken) {
@@ -58,9 +56,9 @@ public class KakaoApiComponent {
         headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
 
         HttpEntity<Object> kakaoProfileRequest = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, String.class);
+        ResponseEntity<KakaoUserInfoResponse> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, KakaoUserInfoResponse.class);
 
-        return getJsonNode(response.getBody(), "id");
+        return response.getBody().id().toString();
     }
 
     public void sendMessage(String accessToken, KakaoMessageRequest kakaoMessageRequest) {
@@ -84,15 +82,5 @@ public class KakaoApiComponent {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
         restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-    }
-
-    private String getJsonNode(String response, String content) {
-        try {
-            JsonNode responseBody = objectMapper.readTree(response);
-            JsonNode contentNode = responseBody.get(content);
-            return contentNode != null ? contentNode.asText() : null;
-        } catch (Exception e) {
-            throw new InternalException("서버 내부 오류: " + e.getMessage());
-        }
     }
 }

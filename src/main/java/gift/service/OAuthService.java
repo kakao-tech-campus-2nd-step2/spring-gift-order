@@ -1,26 +1,14 @@
 package gift.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.component.KakaoApiComponent;
-import gift.dto.KakaoProperties;
 import gift.dto.LoginResponse;
 import gift.dto.OAuthLoginRequest;
-import gift.exception.auth.UnauthorizedException;
 import gift.exception.user.MemberNotFoundException;
 import gift.jwt.JwtUtil;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import jakarta.transaction.Transactional;
-import org.apache.logging.log4j.util.InternalException;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 
 @Service
 public class OAuthService {
