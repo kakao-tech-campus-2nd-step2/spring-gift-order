@@ -68,6 +68,10 @@ public class User {
         return userRoles;
     }
 
+    public Set<Wish> getWishes() {
+        return wishes;
+    }
+
     public void changePassword(String password) {
         this.password = password;
     }

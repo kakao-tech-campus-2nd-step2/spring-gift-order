@@ -103,10 +103,10 @@ Content-Type: application/json
 ### 기능 목록
 
 - 아래 과정은 하나의 Transaction
-- [ ] 옵션 수량 차감 (`OptionService.subtractOptionQuantity()` 호출)
-- [ ] 옵션 상품 불러오기
-- [ ] 옵션 상품으로 위시리스트 존재 확인
-  - [ ] 위시리스트에 존재하는 경우 위시리스트에서 해당 상품 삭제
+- [x] 옵션 수량 차감 (`OptionService.subtractOptionQuantity()` 호출)
+- [x] 옵션 상품 불러오기 - Option을 불러와 productId 사용
+- [x] 옵션 상품 id로 위시리스트 존재 확인
+  - [x] 위시리스트에 존재하는 경우 위시리스트에서 해당 상품 삭제
 - [ ] 카카오 메시지 api에 order message를 보내도록 요청
 
 
