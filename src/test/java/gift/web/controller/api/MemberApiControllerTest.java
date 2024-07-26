@@ -16,12 +16,8 @@
 //import gift.utils.MemberDummyDataProvider;
 //import gift.utils.ProductDummyDataProvider;
 //import gift.utils.WishProductDummyDataProvider;
-//import gift.web.dto.request.LoginRequest;
-//import gift.web.dto.request.member.CreateMemberRequest;
 //import gift.web.dto.request.wishproduct.UpdateWishProductRequest;
 //import gift.web.dto.response.LoginResponse;
-//import gift.web.dto.response.member.CreateMemberResponse;
-//import gift.web.dto.response.member.ReadMemberResponse;
 //import gift.web.dto.response.wishproduct.ReadAllWishProductsResponse;
 //import gift.web.dto.response.wishproduct.UpdateWishProductResponse;
 //import org.junit.jupiter.api.AfterEach;
