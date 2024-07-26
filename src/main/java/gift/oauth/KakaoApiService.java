@@ -12,10 +12,12 @@ import org.springframework.web.client.RestClient;
 public class KakaoApiService {
 
     private final KakaoApiSecurityProperties kakaoApiSecurityProps;
-    private final RestClient client = RestClient.builder().build();
+    private final RestClient client;
 
-    public KakaoApiService(KakaoApiSecurityProperties kakaoApiSecurityProps) {
+    public KakaoApiService(KakaoApiSecurityProperties kakaoApiSecurityProps,
+        RestClient restClient) {
         this.kakaoApiSecurityProps = kakaoApiSecurityProps;
+        this.client = restClient;
     }
 
     public URI getKakaoLoginPage() {
