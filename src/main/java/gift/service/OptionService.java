@@ -78,9 +78,10 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractQuantityById(Long id, int quantity){
+    public OptionResponse subtractQuantityById(Long id, int quantity){
         Option foundOption = optionRepository.findById(id)
                 .orElseThrow(()->new OptionNotFoundException(NOT_FOUND_OPTION));
         foundOption.subtract(quantity);
+        return OptionResponse.from(foundOption);
     }
 }
