@@ -32,7 +32,6 @@ public class ExternalAPIService {
         String state = null;
         String error = null;
         String errorDescription = null;
-
         for (String param : params) {
             String[] keyValue = param.split("=");
             if (keyValue[0].equals("code")) {
