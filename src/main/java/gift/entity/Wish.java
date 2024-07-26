@@ -43,4 +43,8 @@ public class Wish {
     public Product getProduct() {
         return product;
     }
+
+    public Long getOptionId() {
+        return optionId;
+    }
 }
