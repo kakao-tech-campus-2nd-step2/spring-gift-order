@@ -1,10 +1,9 @@
 package gift.controller;
 
-import gift.DTO.KakaoToken;
+import gift.auth.DTO.TokenDTO;
 import gift.service.KakaoLoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,9 +22,8 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/token")
-    public ResponseEntity<String> getTokenGET(@RequestParam("code") String code) {
-        var token = KakaoLoginService.getToken(code);
-        var ret = KakaoLoginService.getKakaoUserInfo(token.access_token());
-        return ResponseEntity.ok(ret);
+    public TokenDTO getTokenGET(@RequestParam("code") String code) {
+        var kakaoToken = KakaoLoginService.getToken(code);
+        return KakaoLoginService.createToken(kakaoToken);
     }
 }

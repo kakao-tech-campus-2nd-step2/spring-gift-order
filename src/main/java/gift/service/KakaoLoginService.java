@@ -1,6 +1,9 @@
 package gift.service;
 
+import gift.DTO.KakaoProfile;
 import gift.DTO.KakaoToken;
+import gift.DTO.MemberDTO;
+import gift.auth.DTO.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import gift.DTO.KakaoProperties;
 import org.springframework.http.MediaType;
@@ -17,7 +20,10 @@ public class KakaoLoginService {
     @Autowired
     private KakaoProperties kakaoProperties;
 
-    private RestClient restClient = RestClient.builder().build();
+    @Autowired
+    private MemberService memberService;
+
+    private final RestClient restClient = RestClient.builder().build();
 
     public String getAuthorizeUrl() {
         return "https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri="
@@ -41,7 +47,9 @@ public class KakaoLoginService {
                 .getBody();
     }
 
-    public String getKakaoUserInfo(String accessToken) {
+    public KakaoProfile getKakaoUserInfo(KakaoToken kakaoToken) {
+        String accessToken = kakaoToken.access_token();
+
         String uri = UriComponentsBuilder.newInstance()
                 .scheme("https")
                 .host("kapi.kakao.com")
@@ -57,7 +65,16 @@ public class KakaoLoginService {
                 .header("Authorization", "Bearer " + accessToken)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .toEntity(String.class)
+                .toEntity(KakaoProfile.class)
                 .getBody();
+    }
+
+    public TokenDTO createToken(KakaoToken kakaoToken) {
+        String email = getKakaoUserInfo(kakaoToken).id() + "@kakao.com";
+        var member = new MemberDTO(email, "kakao", kakaoToken.access_token());
+        if (!memberService.isExist(member)) {
+            return memberService.signUp(member, kakaoToken.expires_in());
+        }
+        return memberService.login(member, kakaoToken.expires_in());
     }
 }

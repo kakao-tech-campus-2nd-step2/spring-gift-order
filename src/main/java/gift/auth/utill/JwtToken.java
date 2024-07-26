@@ -18,7 +18,6 @@ public class JwtToken {
 
     private final String secretKey = Base64.getEncoder()
             .encodeToString("kaTeCamABCDEFGHIJKLmnoPQRSTUVWXYZ".getBytes());
-    private final long tokenExpTime = 3600L; // 1시간
 
     public JwtToken() {
     }
@@ -29,10 +28,11 @@ public class JwtToken {
      * @param memberDTO 로그인 정보
      * @return 생성된 토큰
      */
-    public TokenDTO createToken(MemberDTO memberDTO) {
+    public TokenDTO createToken(MemberDTO memberDTO, long tokenExpTime) {
         Claims claims = Jwts.claims();
         claims.put("email", memberDTO.getEmail());
         claims.put("id", memberDTO.getId());
+        claims.put("kakao", memberDTO.kakaoAccessToken());
 
         ZonedDateTime now = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime expirationDateTime = now.plusSeconds(tokenExpTime);
