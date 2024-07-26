@@ -1,5 +1,7 @@
 package gift.controller;
 
+import gift.annotation.LoginMember;
+import gift.domain.TokenAuth;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.service.OrderService;
@@ -19,14 +21,9 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("api/orders")
-    public String createOrderForm(){
-        return "kakao-order-form";
-    }
-
     @PostMapping("api/orders")
-    public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String authorization, @RequestBody OrderRequest orderRequest) {
-        String token = authorization.replace("Bearer ", "");
+    public ResponseEntity<OrderResponse> createOrder(@LoginMember TokenAuth tokenAuth, @RequestBody OrderRequest orderRequest) {
+        String token = tokenAuth.getToken();
         OrderResponse orderResponse = orderService.createOrder(token, orderRequest);
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
