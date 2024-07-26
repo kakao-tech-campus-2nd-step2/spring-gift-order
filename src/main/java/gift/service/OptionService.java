@@ -63,4 +63,14 @@ public class OptionService {
         }
         return currentQuantity - 1;
     }
+
+    public int findProductIdByOptionId(int optionId) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new NoSuchElementException("Option not found with id: " + optionId));
+
+        Options options = optionsRepository.findByOptionListContaining(option)
+                .orElseThrow(() -> new NoSuchElementException("Options not found for option id: " + optionId));
+
+        return options.getProduct().getId();
+    }
 }
