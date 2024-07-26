@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.oauth.response.KakaoInfoResponse;
 import gift.oauth.response.KakaoTokenResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +35,8 @@ public class KakaoApiService {
         var body = getTokenRequestBody(code);
         var response = client.post().uri(uri)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED).body(body)
-            .retrieve().toEntity(KakaoTokenResponse.class);
+            .retrieve()
+            .toEntity(KakaoTokenResponse.class);
         return response.getBody();
     }
 
@@ -49,7 +49,7 @@ public class KakaoApiService {
     }
 
     public void sendMessageToMe(String token, String text)
-        throws JsonProcessingException, UnsupportedEncodingException {
+        throws JsonProcessingException {
         var uri = kakaoApiSecurityProps.getMemoSend();
         var body = getSelfMessageRequestBody(text);
         System.out.println(body);
@@ -69,12 +69,12 @@ public class KakaoApiService {
     }
 
     public MultiValueMap<String, String> getSelfMessageRequestBody(String text)
-        throws JsonProcessingException{
+        throws JsonProcessingException {
         Map<String, String> templateObject = new HashMap<>();
         templateObject.put("object_type", "text");
         templateObject.put("text", text);
-        templateObject.put("link",null);
-        templateObject.put("button_title","버튼");
+        templateObject.put("link", null);
+        templateObject.put("button_title", "버튼");
         var jsonTemplateObject = objectMapper.writeValueAsString(templateObject);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();

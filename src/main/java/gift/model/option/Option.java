@@ -1,7 +1,6 @@
 package gift.model.option;
 
 import gift.exception.ErrorCode;
-import gift.exception.customException.CustomArgumentNotValidException;
 import gift.exception.customException.CustomOutOfStockException;
 import gift.model.item.Item;
 import jakarta.persistence.Column;
@@ -61,7 +60,7 @@ public class Option {
         return item;
     }
 
-    public void update(String name, Long quantity) throws CustomArgumentNotValidException {
+    public void update(String name, Long quantity){
         this.name = name;
         this.quantity = quantity;
     }
