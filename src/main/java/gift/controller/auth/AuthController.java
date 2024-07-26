@@ -41,4 +41,13 @@ public class AuthController {
     public void getAuthorizationCode(HttpServletResponse response) throws IOException {
         response.sendRedirect(authService.getAuthorizationUrl());
     }
+
+    @GetMapping("/kakaoLogin")
+    public ResponseEntity<KakaoToken> loginWithKakao(@RequestParam String code) {
+        KakaoToken token = authService.getKakaoToken(code);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token.accessToken());
+        return ResponseEntity.status(HttpStatus.OK).headers(headers)
+            .body(token);
+    }
 }
