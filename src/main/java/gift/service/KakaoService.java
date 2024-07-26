@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.OrderResponse;
 import gift.entity.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -60,7 +61,7 @@ public class KakaoService {
         throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
     }
 
-    public void sendKakaoMessage(Order order) {
+    public void sendKakaoMessage(OrderResponse order) {
         String message = String.format("Order ID: %d\nQuantity: %d\nMessage: %s", order.getId(), order.getQuantity(), order.getMessage());
 
         HttpHeaders headers = new HttpHeaders();
@@ -81,7 +82,7 @@ public class KakaoService {
         ResponseEntity<String> response = kakaoRestTemplate.postForEntity(apiUrl, request, String.class);
 
         if (response.getStatusCode() != HttpStatus.OK) {
-            throw new RuntimeException("카카오 메시지를 받을 수 없습니다.: " + response.getBody());
+            throw new RuntimeException("Failed to send Kakao message: " + response.getBody());
         }
     }
 }

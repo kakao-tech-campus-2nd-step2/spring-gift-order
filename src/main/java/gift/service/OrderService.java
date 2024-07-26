@@ -1,6 +1,5 @@
 package gift.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gift.entity.Order;
 import gift.dto.OrderRequest;
@@ -29,16 +28,18 @@ public class OrderService {
         // 위시 리스트에서 삭제
         wishRepository.deleteByOptionId(request.getOptionId());
 
-        // 카카오톡 메시지 전송
-        kakaoService.sendKakaoMessage(order);
-
         // 응답 생성
-        return new OrderResponse.Builder()
+        OrderResponse response = new OrderResponse.Builder()
                 .id(order.getId())
                 .optionId(order.getOptionId())
                 .quantity(order.getQuantity())
                 .orderDateTime(order.getOrderDateTime())
                 .message(order.getMessage())
                 .build();
+
+        // 카카오톡 메시지 전송
+        kakaoService.sendKakaoMessage(response);
+
+        return response;
     }
 }
