@@ -1,5 +1,6 @@
 package gift.config;
 
+import feign.Client;
 import gift.authentication.filter.AuthenticationExceptionHandlerFilter;
 import gift.authentication.filter.AuthenticationFilter;
 import gift.authentication.token.JwtResolver;
@@ -43,4 +44,8 @@ public class WebConfig implements WebMvcConfigurer {
         resolvers.add(loginUserArgumentResolver);
     }
 
+    @Bean
+    public Client feignClient() {
+        return new Client.Default(null, null);
+    }
 }
