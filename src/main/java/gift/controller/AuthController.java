@@ -7,7 +7,7 @@ import gift.exception.customException.CustomException;
 import gift.exception.customException.PassWordMissMatchException;
 import gift.model.user.UserDTO;
 import gift.model.user.UserForm;
-import gift.oauth.KakaoApiService;
+import gift.oauth.KakaoOAuthService;
 import gift.service.JwtProvider;
 import gift.service.UserService;
 import jakarta.validation.Valid;
@@ -26,25 +26,25 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final KakaoApiService kakaoApiClient;
+    private final KakaoOAuthService kakaoOAuthService;
 
     public AuthController(UserService userService, JwtProvider jwtProvider,
-        KakaoApiService kakaoApiClient) {
+        KakaoOAuthService kakaoOAuthService) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
-        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoOAuthService = kakaoOAuthService;
     }
 
     @GetMapping("/login/kakao")
     public ResponseEntity<?> getKakaoLoginPage() {
-        var uri = kakaoApiClient.getKakaoLoginPage();
+        var uri = kakaoOAuthService.getKakaoLoginPage();
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
     }
 
     @GetMapping
     public ResponseEntity<?> handleKakaoLoginRequest(@RequestParam("code") String code) {
-        var token = kakaoApiClient.requestToken(code);
-        Long kakaoId = kakaoApiClient.getKakaoId(token.accessToken());
+        var token = kakaoOAuthService.requestToken(code);
+        Long kakaoId = kakaoOAuthService.getKakaoId(token.accessToken());
         UserDTO userDTO = userService.findByKakaoId(kakaoId, token);
         String newToken = jwtProvider.generateToken(userDTO);
         return ResponseEntity.ok(newToken);
