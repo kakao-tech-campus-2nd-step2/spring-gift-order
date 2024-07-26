@@ -88,6 +88,7 @@ public class UserService {
 
     public User findOrCreateUser(Long id, String email) {
         // 이메일이 주어진 경우, 해당 이메일로 사용자 검색
+        // 현재 카카오 서버에서 이메일을 못 받는 상황을 고려하여 임시 코드
         Optional<User> userOptional = userRepository.findByEmail(email);
 
         if (userOptional.isPresent()) {
@@ -103,17 +104,17 @@ public class UserService {
             String emailToUse = (email == null || email.isEmpty()) ? id.toString() : email;
 
             // 중복 이메일 확인
-            if (userRepository.findByEmail(emailToUse).isEmpty()) {
+            Optional<User> existingUserOptional = userRepository.findByEmail(emailToUse);
+            if (existingUserOptional.isEmpty()) {
+                // 이메일이 비어있거나 유저가 없으면 새 사용자 생성
                 User newUser = new User(id, emailToUse, encodedPassword);
-                //System.out.println("Created new user: " + newUser);
                 return userRepository.save(newUser);
             } else {
-                // 중복 이메일 처리 로직 (예: 예외를 던지거나 다른 처리)
-                //System.out.println("User already exists");
-                //System.out.println(userRepository.findByEmail(emailToUse).get().getEmail());
-                throw new RuntimeException("User with email already exists: " + emailToUse);
+                // 이메일이 이미 존재하면 해당 사용자 반환
+                return existingUserOptional.get();
             }
         }
     }
+
 
 }

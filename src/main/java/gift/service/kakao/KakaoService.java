@@ -12,6 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
+import gift.util.JwtTokenUtil;  // Import JwtTokenUtil
 
 import java.net.URI;
 import java.util.HashMap;
@@ -24,14 +25,17 @@ public class KakaoService {
     private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
     private final UserService userService;
+    private final JwtTokenUtil jwtTokenUtil;  // Add JwtTokenUtil field
 
     @Autowired
-    public KakaoService(KakaoProperties kakaoProperties, UserService userService) {
+    public KakaoService(KakaoProperties kakaoProperties, UserService userService, JwtTokenUtil jwtTokenUtil) {
         this.client = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
         this.kakaoProperties = kakaoProperties;
         this.userService = userService;
+        this.jwtTokenUtil = jwtTokenUtil;  // Initialize JwtTokenUtil
     }
+
 
     public Map<String, Object> kakaoLogin(String authorizationCode) {
         String tokenUrl = "https://kauth.kakao.com/oauth/token";
@@ -55,6 +59,11 @@ public class KakaoService {
             Long id = (Long) userInfo.get("id");
             String email = (String) userInfo.get("email");
             User user = userService.findOrCreateUser(id, email);
+            // JWT 토큰을 생성하여 반환
+            String jwtToken = jwtTokenUtil.generateAccessToken(user.getEmail());
+            userInfo.put("jwt_token", jwtToken);
+            String jwtRefresh = jwtTokenUtil.generateRefreshToken(user.getEmail());
+            userInfo.put("jwt_refresh", jwtRefresh);
 
             // 필요하다면 user 객체의 정보를 userInfo에 추가
             //userInfo.put("user_id", user.getId());
