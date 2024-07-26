@@ -21,7 +21,7 @@ public class EmailAuthService implements AuthService {
 
     @Override
     public String getLoginUrl() {
-        return ""; // 이메일 로그인은 별도 URL이 필요 없음
+        return "";
     }
 
     @Override
@@ -33,7 +33,7 @@ public class EmailAuthService implements AuthService {
         User user = userRepository.findByEmail(userLoginDto.getEmail())
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_CREDENTIALS));
 
-        if (!user.isPasswordCorrect(userLoginDto.getPassword())) {
+        if (user.isPasswordIncorrect(userLoginDto.getPassword())) {
             throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
 
