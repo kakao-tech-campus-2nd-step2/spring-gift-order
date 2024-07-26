@@ -27,44 +27,11 @@ public class KakaoTokenResponseDto {
     public KakaoTokenResponseDto() {
     }
 
-    public String getTokenType() {
-        return tokenType;
-    }
-
     public String getAccessToken() {
         return accessToken;
     }
 
-    public String getIdToken() {
-        return idToken;
-    }
-
-    public Integer getExpiresIn() {
-        return expiresIn;
-    }
-
     public String getRefreshToken() {
         return refreshToken;
-    }
-
-    public Integer getRefreshTokenExpiresIn() {
-        return refreshTokenExpiresIn;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    @Override
-    public String toString() {
-        return "KakaoTokenResponseDto{" +
-            "tokenType='" + tokenType + '\'' +
-            ", accessToken='" + accessToken + '\'' +
-            ", idToken='" + idToken + '\'' +
-            ", expiresIn=" + expiresIn +
-            ", refreshToken='" + refreshToken + '\'' +
-            ", refreshTokenExpiresIn=" + refreshTokenExpiresIn +
-            ", scope='" + scope + '\'' +
-            '}';
     }
 }

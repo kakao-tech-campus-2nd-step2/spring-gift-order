@@ -26,7 +26,15 @@ public class KakaoLoginService {
         this.restClient = RestClient.create();
     }
 
-    public String getAccessTokenFromKakao(String code) {
+    public KakaoUserInfo getUserInfo(String accessToken) {
+        return restClient.get()
+            .uri(KAPI_USER_ME_URL)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .retrieve()
+            .body(KakaoUserInfo.class);
+    }
+
+    public KakaoTokenResponseDto getTokensFromKakao(String code) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
@@ -41,17 +49,9 @@ public class KakaoLoginService {
             .body(KakaoTokenResponseDto.class);
 
         if (kakaoTokenResponseDto == null) {
-            throw new RuntimeException("Failed to retrieve token from Kakao");
+            throw new RuntimeException("Failed to retrieve tokens from Kakao");
         }
 
-        return kakaoTokenResponseDto.getAccessToken();
-    }
-
-    public KakaoUserInfo getUserInfo(String accessToken) {
-        return restClient.get()
-            .uri(KAPI_USER_ME_URL)
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            .retrieve()
-            .body(KakaoUserInfo.class);
+        return kakaoTokenResponseDto;
     }
 }

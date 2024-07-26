@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.domain.model.dto.KakaoTokenResponseDto;
 import gift.domain.model.dto.TokenResponseDto;
 import gift.service.KakaoLoginService;
 import gift.service.UserService;
@@ -23,8 +24,8 @@ public class KakaoLoginController {
 
     @GetMapping
     public ResponseEntity<TokenResponseDto> callback(@RequestParam("code") String code) {
-        String accessToken = kakaoLoginService.getAccessTokenFromKakao(code);
-        TokenResponseDto tokenResponse = userService.loginOrRegisterKakaoUser(accessToken);
+        KakaoTokenResponseDto Tokens = kakaoLoginService.getTokensFromKakao(code);
+        TokenResponseDto tokenResponse = userService.loginOrRegisterKakaoUser(Tokens);
         return ResponseEntity.ok(tokenResponse);
     }
 }

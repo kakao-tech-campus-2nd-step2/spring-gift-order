@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.model.dto.KakaoTokenResponseDto;
 import gift.domain.model.dto.KakaoUserInfo;
 import gift.domain.model.dto.TokenResponseDto;
 import gift.domain.model.entity.User;
@@ -62,8 +63,8 @@ public class UserService {
             .orElseThrow(() -> new NoSuchEmailException("사용자를 찾을 수 없습니다."));
     }
 
-    public TokenResponseDto loginOrRegisterKakaoUser(String accessToken) {
-        KakaoUserInfo kakaoUserInfo = kakaoLoginService.getUserInfo(accessToken);
+    public TokenResponseDto loginOrRegisterKakaoUser(KakaoTokenResponseDto kakaoTokens) {
+        KakaoUserInfo kakaoUserInfo = kakaoLoginService.getUserInfo(kakaoTokens.getAccessToken());
         String email = kakaoUserInfo.getEmail();
 
         User user = userRepository.findByEmail(email)
@@ -71,20 +72,28 @@ public class UserService {
                 if (existingUser.getAuthProvider() != User.AuthProvider.KAKAO) {
                     throw new RuntimeException("이미 가입된 이메일입니다.");
                 }
+                updateKakaoTokenInfo(existingUser, kakaoTokens);
                 return existingUser;
             })
-            .orElseGet(() -> registerNewKakaoUser(kakaoUserInfo));
+            .orElseGet(() -> registerNewKakaoUser(kakaoUserInfo, kakaoTokens));
 
         String jwtToken = jwtUtil.generateToken(email);
         return new TokenResponseDto(jwtToken);
     }
 
-    private User registerNewKakaoUser(KakaoUserInfo kakaoUserInfo) {
+    private User registerNewKakaoUser(KakaoUserInfo kakaoUserInfo, KakaoTokenResponseDto kakaoTokens) {
         User newUser = new User(
             kakaoUserInfo.getEmail(),
             User.AuthProvider.KAKAO,
-            kakaoUserInfo.getId().toString()
+            kakaoUserInfo.getId().toString(),
+            kakaoTokens.getAccessToken(),
+            kakaoTokens.getRefreshToken()
         );
         return userRepository.save(newUser);
+    }
+
+    private void updateKakaoTokenInfo(User user, KakaoTokenResponseDto kakaoTokens) {
+        user.updateKakaoTokens(kakaoTokens.getAccessToken(), kakaoTokens.getRefreshToken());
+        userRepository.save(user);
     }
 }
