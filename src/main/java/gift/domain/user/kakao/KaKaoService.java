@@ -25,7 +25,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KaKaoService {
-
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private final ObjectMapper objectMapper;
