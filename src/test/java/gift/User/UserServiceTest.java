@@ -15,12 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
 @ActiveProfiles("test")
-public class UserRepositoryTest {
+public class UserServiceTest {
 
     @Autowired
     UserService userService;
@@ -42,9 +43,12 @@ public class UserRepositoryTest {
     @Description("회원 가입")
     public void join() {
         // when
-        User savedUser = userRepository.saveAndFlush(user);
+        userService.join(userDTO);
+        User findUser = userRepository.findByEmail(userDTO.getEmail());
+
         // then
-        assertThat(savedUser).isEqualTo(user);
+        assertThat(findUser.getEmail()).isEqualTo(userDTO.getEmail());
+        assertThat(findUser.getPassword()).isEqualTo(userDTO.getPassword());
     }
 
     @Test

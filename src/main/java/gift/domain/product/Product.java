@@ -3,20 +3,20 @@ package gift.domain.product;
 import gift.domain.BaseTimeEntity;
 import gift.domain.category.Category;
 import gift.domain.option.Option;
-import gift.global.annotation.NotContainsValue;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
-import jakarta.persistence.*;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 public class Product extends BaseTimeEntity {
@@ -26,7 +26,6 @@ public class Product extends BaseTimeEntity {
     private Long id;
 
     @Column(unique = true)
-    @NotContainsValue(value = "카카오", message = "'{value}' 가 포함된 문구는 담당 MD 와 협의 후 사용 가능합니다.")
     private String name;
 
     @ManyToOne
@@ -39,28 +38,25 @@ public class Product extends BaseTimeEntity {
     private int price;
     private String imageUrl;
 
-    private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-    private static final Validator validator = validatorFactory.getValidator();
-
     // JPA 사용을 위한 기본 생성자
     protected Product() {
     }
 
     public Product(String name, Category category, int price, String imageUrl) {
+        validateNotContainKaKao(name);
         this.name = name;
         this.category = category;
         this.price = price;
         this.imageUrl = imageUrl;
-        validateProduct();
     }
 
     public Product(Long id, String name, Category category, int price, String imageUrl) {
+        validateNotContainKaKao(name);
         this.id = id;
         this.name = name;
         this.category = category;
         this.price = price;
         this.imageUrl = imageUrl;
-        validateProduct();
     }
 
     public Long getId() {
@@ -95,6 +91,10 @@ public class Product extends BaseTimeEntity {
         return category;
     }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     public List<Option> getOptions() {
         return options;
     }
@@ -104,21 +104,11 @@ public class Product extends BaseTimeEntity {
     }
 
     public void update(String name, Category category, int price, String imageUrl) {
+        validateNotContainKaKao(name);
         this.name = name;
         this.category = category;
         this.price = price;
         this.imageUrl = imageUrl;
-        validateProduct();
-    }
-
-    private void validateProduct() {
-        Set<ConstraintViolation<Product>> violations = validator.validate(this);
-        if (!violations.isEmpty()) {
-            String message = violations.stream()
-                .map(ConstraintViolation::getMessage)
-                .collect(Collectors.joining(", "));
-            throw new BusinessException(ErrorCode.BAD_REQUEST, message);
-        }
     }
 
     @Override
@@ -135,8 +125,12 @@ public class Product extends BaseTimeEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Product product = (Product) o;
         return id.equals(product.id) &&
                price == product.price &&
@@ -148,5 +142,12 @@ public class Product extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, category, price, imageUrl);
+    }
+
+    private void validateNotContainKaKao(String name) {
+        if (name.toLowerCase().contains("카카오")) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST,
+                "'카카오' 문구를 포함할 수 없습니다. 담당 MD와 협의하세요.");
+        }
     }
 }

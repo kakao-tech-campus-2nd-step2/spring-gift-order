@@ -1,12 +1,9 @@
 package gift.domain.cartItem;
 
 import gift.domain.cartItem.dto.CartItemDTO;
-import gift.domain.product.Product;
 import gift.domain.user.dto.UserInfo;
 import gift.global.resolver.LoginInfo;
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;

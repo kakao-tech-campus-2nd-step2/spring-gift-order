@@ -5,19 +5,14 @@ import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
 import gift.domain.user.JpaUserRepository;
 import gift.domain.user.User;
-import gift.global.exception.BusinessException;
-import gift.global.exception.ErrorCode;
 import gift.global.exception.cartItem.CartItemNotFoundException;
 import gift.global.exception.product.ProductNotFoundException;
 import gift.global.exception.user.UserNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,8 +58,7 @@ public class CartItemService {
     /**
      * 장바구니 상품 조회 - 페이징(매개변수별)
      */
-    public List<CartItemDTO> getProductsInCartByUserIdAndPageAndSort(Long userId, int page, int size,
-        Sort sort) {
+    public List<CartItemDTO> getProductsInCartByUserIdAndPageAndSort(Long userId, int page, int size, Sort sort) {
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
         Page<CartItem> cartItemsPage = cartItemRepository.findAllByUserId(userId,

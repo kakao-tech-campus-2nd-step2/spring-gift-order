@@ -5,7 +5,6 @@ import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import gift.global.exception.user.UserDuplicateException;
 import gift.global.jwt.JwtProvider;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service

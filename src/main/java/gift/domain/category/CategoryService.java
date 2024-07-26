@@ -50,7 +50,7 @@ public class CategoryService {
     }
 
     /**
-     * @param id 수정할 카테고리 ID
+     * @param id   수정할 카테고리 ID
      * @param name 수정할 카테고리 이름
      */
     private boolean hasDuplicateName(Long id, String name) {

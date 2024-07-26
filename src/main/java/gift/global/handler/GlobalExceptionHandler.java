@@ -1,10 +1,10 @@
 package gift.global.handler;
 
 import gift.global.exception.BusinessException;
+import gift.global.exception.ErrorCode;
 import gift.global.exception.cartItem.CartItemNotFoundException;
 import gift.global.exception.category.CategoryDuplicateException;
 import gift.global.exception.category.CategoryNotFoundException;
-import gift.global.exception.ErrorCode;
 import gift.global.exception.option.OptionDuplicateException;
 import gift.global.exception.option.OptionNotFoundException;
 import gift.global.exception.product.ProductDuplicateException;
@@ -30,7 +30,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponseDto> handleBusinessException(BusinessException e) {
-        return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage()); // TODO 수정 필요
+        return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST,
+            e.getMessage()); // TODO 수정 필요
     }
 
 
@@ -73,14 +74,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> ProductDuplicateException(ProductDuplicateException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage());
     }
+
     @ExceptionHandler(CategoryDuplicateException.class)
-    public ResponseEntity<ErrorResponseDto> CategoryDuplicateException(CategoryDuplicateException e) {
+    public ResponseEntity<ErrorResponseDto> CategoryDuplicateException(
+        CategoryDuplicateException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage());
     }
+
     @ExceptionHandler(OptionDuplicateException.class)
     public ResponseEntity<ErrorResponseDto> OptionDuplicateException(OptionDuplicateException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage());
     }
+
     @ExceptionHandler(UserDuplicateException.class)
     public ResponseEntity<ErrorResponseDto> UserDuplicateException(UserDuplicateException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST, e.getMessage());
@@ -108,6 +113,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> UserNotFoundException(UserNotFoundException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.NOT_FOUND, e.getMessage());
     }
+
     @ExceptionHandler(CartItemNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> CartItemNotFoundException(CartItemNotFoundException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.NOT_FOUND, e.getMessage());

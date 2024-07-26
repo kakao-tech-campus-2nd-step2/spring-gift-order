@@ -10,13 +10,10 @@ import gift.domain.cartItem.CartItem;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
-import gift.domain.product.ProductService;
 import gift.domain.user.JpaUserRepository;
 import gift.domain.user.User;
-import gift.global.exception.BusinessException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +21,7 @@ import jdk.jfr.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,15 +30,13 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
 @Transactional
+@DataJpaTest
 @ActiveProfiles("test")
 public class ProductRepositoryTest {
 
     @Autowired
     private JpaProductRepository productRepository;
-    @Autowired
-    private ProductService productService;
     @Autowired
     private JpaCategoryRepository categoryRepository;
     @Autowired
@@ -83,29 +78,6 @@ public class ProductRepositoryTest {
 
         //then
         assertThat(savedProduct).isEqualTo(findProduct);
-    }
-
-    @Test
-    @Description("카카오 문구 포함 상품 저장 실패")
-    void kakaoPersistFailed() {
-        // given
-        Product product = new Product("아이스 카카오 라떼 T", ethiopia, 4500,
-            "https://example.com/image.jpg");
-
-        // when, then
-        assertThrows(ConstraintViolationException.class,
-            () -> productRepository.saveAndFlush(product));
-    }
-
-    @Test
-    @Description("카카오 문구 포함 상품 검증 메서드")
-    void kakaoValidation() {
-        // given
-        Product product = new Product("아이스 카카오 라떼 T", ethiopia, 4500,
-            "https://example.com/image.jpg");
-
-        // when, then
-        assertThrows(BusinessException.class, () -> productService.validateProduct(product));
     }
 
     @Test

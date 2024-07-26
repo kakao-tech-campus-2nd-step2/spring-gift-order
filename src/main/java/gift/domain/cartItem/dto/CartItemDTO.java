@@ -10,6 +10,7 @@ public record CartItemDTO(
     String imageUrl,
     Integer count
 ) {
+
     public CartItemDTO(CartItem cartItem) {
         this(
             cartItem.getId(),

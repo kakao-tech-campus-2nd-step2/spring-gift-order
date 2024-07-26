@@ -91,7 +91,8 @@ public class OptionService {
     public void decreaseOptionQuantity(Long productId, Long optionId, Long quantity) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotFoundException(productId));
-        Option option = optionRepository.findById(optionId)
+        // 비관적 락 적용
+        Option option = optionRepository.findByIdForUpdate(optionId)
             .orElseThrow(() -> new OptionNotFoundException(optionId));
 
         if (option.getQuantity() < quantity || quantity <= 0) {

@@ -7,6 +7,7 @@ build/
 
 ### Application ###
 application.properties
+application-key.properties
 
 ### STS ###
 .apt_generated
