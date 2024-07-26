@@ -31,11 +31,11 @@ public class OrderProcessingService {
                 member
         );
 
-        // 주문 메시지 보냄
-        orderService.sendOrderMessage(request, member);
-
         // 주문
         Order order = orderService.make(request);
+
+        // 주문 메시지 보냄
+        orderService.sendOrderMessage(request, member);
 
         return order.toDto();
     }
