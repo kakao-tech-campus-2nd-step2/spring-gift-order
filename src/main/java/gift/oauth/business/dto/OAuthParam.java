@@ -10,6 +10,4 @@ public interface OAuthParam {
     MultiValueMap<String, String> getTokenRequestBody();
 
     MultiValueMap<String, String> getEmailRequestBody();
-
-    String secretKey();
 }

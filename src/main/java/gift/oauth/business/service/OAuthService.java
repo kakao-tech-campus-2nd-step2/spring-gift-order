@@ -32,19 +32,16 @@ public class OAuthService {
     @Transactional
     public JwtToken loginOrRegister(OAuthParam param) {
         OAuthApiClient client = clients.get(param.oAuthProvider());
-        var accessToken = client.getAccessToken(param);
-        var email = client.getEmail(accessToken, param);
-        String password = null;
-        try {
-            password = EncryptionUtils.encrypt(email, param.secretKey());
-        } catch (Exception e) {
-            throw new RuntimeException("비밀번호 암호화 실패");
-        }
+        var oAuthToken = client.getOAuthToken(param);
+        var email = client.getEmail(oAuthToken.accessToken(), param);
         if(memberRepository.existsByEmail(email)) {
-            var memberLoginDto = new MemberIn.Login(email, password);
-            return memberService.loginMember(memberLoginDto);
+            var memberInVendorLogin = new MemberIn.VendorLogin(
+                email, param.oAuthProvider(),
+                oAuthToken.accessToken(), oAuthToken.refreshToken());
+            return memberService.loginVendorMember(memberInVendorLogin);
         }
-        var memberRegisterDto = new MemberIn.Register(email, password);
-        return memberService.registerMember(memberRegisterDto);
+        var memberInVendorRegister = new MemberIn.VendorRegister(email,  param.oAuthProvider(),
+            oAuthToken.accessToken(), oAuthToken.refreshToken());
+        return memberService.registerVendorMember(memberInVendorRegister);
     }
 }

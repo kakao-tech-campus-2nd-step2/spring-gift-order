@@ -7,6 +7,5 @@ public record KakaoConfig (
     String clientId,
     String redirectUri,
     String grantType,
-    String codeUrl,
-    String secret
+    String codeUrl
 ) {}

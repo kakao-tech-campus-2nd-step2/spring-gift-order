@@ -52,7 +52,7 @@ public class KakaoApiClient implements OAuthApiClient {
     }
 
     @Override
-    public String getAccessToken(OAuthParam param) {
+    public OauthToken.Common getOAuthToken(OAuthParam param) {
         var url = "https://kauth.kakao.com/oauth/token";
 
         var result =  restClient.post()
@@ -69,9 +69,9 @@ public class KakaoApiClient implements OAuthApiClient {
             )
             .body(OauthToken.Kakao.class);
 
-        log.info("Kakao access token: {}", result.access_token());
+        log.info("Kakao response: {}", result);
 
-        return result.access_token();
+        return result.toCommon();
     }
 
     @Override
