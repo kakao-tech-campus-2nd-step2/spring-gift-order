@@ -7,9 +7,13 @@ import gift.kakao.client.KakaoClient;
 import gift.member.dao.MemberRepository;
 import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
+import gift.member.util.KakaoTokenMapper;
 import gift.member.util.MemberMapper;
+import gift.member.validator.KakaoUserValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class MemberService {
@@ -39,12 +43,19 @@ public class MemberService {
     }
 
     @Transactional
+    public void checkKakaoUserAndToken(Member member) {
+        KakaoUserValidator.validate(member);
+        if (member.isTokenExpired(LocalDateTime.now())) {
+            refreshKakaoAccessToken(member.getId());
+        }
+    }
+
+    @Transactional
     public void refreshKakaoAccessToken(Long id) {
         Member member = getMemberByIdOrThrow(id);
         KakaoTokenResponse refreshTokenResponse = kakaoClient.getRefreshTokenResponse(member.getKakaoRefreshToken());
-        member.updateTokens(
-                refreshTokenResponse.accessToken(),
-                refreshTokenResponse.refreshToken()
+        member.updateTokenInfo(
+                KakaoTokenMapper.toTokenInfo(refreshTokenResponse)
         );
     }
 

@@ -12,7 +12,6 @@ import gift.product.entity.Option;
 import gift.wishlist.application.WishesService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class OrderService {
@@ -35,7 +34,7 @@ public class OrderService {
         this.kakaoClient = kakaoClient;
     }
 
-    @Transactional(noRollbackFor = HttpClientErrorException.Unauthorized.class)
+    @Transactional
     public OrderResponse order(Long memberId, OrderRequest request) {
         Option option = optionService.getOptionById(request.optionId());
         optionService.subtractQuantity(option, request.quantity());
@@ -45,23 +44,15 @@ public class OrderService {
 
         Member member = memberService.getMemberByIdOrThrow(memberId);
 
-        try {
-            sendKakaoMessage(member, request.message(), option);
-        } catch (HttpClientErrorException.Unauthorized exception) {
-            memberService.refreshKakaoAccessToken(memberId);
-            sendKakaoMessage(member, request.message(), option);
-        }
+        memberService.checkKakaoUserAndToken(member);
+        kakaoClient.sendMessageToMe(
+                member.getKakaoAccessToken(),
+                request.message(),
+                "/members/order/" + option.getId()
+        );
 
         return OrderMapper.toResponseDto(
                 orderRepository.save(OrderMapper.toEntity(request, option, member))
-        );
-    }
-
-    private void sendKakaoMessage(Member member, String message, Option option) {
-        kakaoClient.sendMessageToMe(
-                member.getKakaoAccessToken(),
-                message,
-                "/members/order/" + option.getId()
         );
     }
 

@@ -10,6 +10,7 @@ import gift.kakao.client.KakaoClient;
 import gift.member.dao.MemberRepository;
 import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
+import gift.member.util.KakaoTokenMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,8 +53,7 @@ public class AuthService {
                     Member newMember = new Member(
                             email,
                             password,
-                            tokenResponse.accessToken(),
-                            tokenResponse.refreshToken()
+                            KakaoTokenMapper.toTokenInfo(tokenResponse)
                     );
                     return memberRepository.save(newMember);
                 });

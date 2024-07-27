@@ -7,6 +7,7 @@ import gift.kakao.auth.dto.KakaoTokenResponse;
 import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
 import gift.member.dao.MemberRepository;
+import gift.member.dto.KakaoTokenInfo;
 import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
 import gift.member.util.MemberMapper;
@@ -18,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import testFixtures.MemberFixture;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,7 +92,16 @@ class MemberServiceTest {
     @DisplayName("카카오 토큰 갱신 기능 테스트")
     void refreshKakaoAccessToken() {
         Long memberId = 1L;
-        Member member = MemberFixture.createMember("test@email.com");
+        Member member = new Member(
+                "test@email.com",
+                "password",
+                new KakaoTokenInfo(
+                        "token",
+                        LocalDateTime.now(),
+                        "refresh-token"
+                )
+        );
+
         KakaoTokenResponse response = new KakaoTokenResponse(
                 "token",
                 "test-token",

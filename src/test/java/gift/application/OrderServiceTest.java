@@ -2,6 +2,7 @@ package gift.application;
 
 import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
+import gift.member.dto.KakaoTokenInfo;
 import gift.member.entity.Member;
 import gift.order.application.OrderService;
 import gift.order.dao.OrderRepository;
@@ -18,14 +19,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import testFixtures.MemberFixture;
 import testFixtures.OptionFixture;
 import testFixtures.ProductFixture;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -54,14 +54,23 @@ class OrderServiceTest {
     @DisplayName("상품 주문 기능 테스트")
     void order() {
         Product product = ProductFixture.createProduct("product", null);
-        Member member = MemberFixture.createMember("test@email.com");
+        Member member = new Member(
+                "test@email.com",
+                "password",
+                new KakaoTokenInfo(
+                        "token",
+                        LocalDateTime.now()
+                                     .plusSeconds(100000L),
+                        "refresh-token"
+                )
+        );
         Option option = OptionFixture.createOption("옵션", product);
         Long memberId = 1L;
         OrderRequest request = new OrderRequest(2L, 1, "message");
         given(optionService.getOptionById(anyLong()))
                 .willReturn(option);
         given(memberService.getMemberByIdOrThrow(anyLong()))
-                .willReturn(MemberFixture.createMember("test@email.com"));
+                .willReturn(member);
         given(orderRepository.save(any()))
                 .willReturn(new Order(request.message(), option, member));
 

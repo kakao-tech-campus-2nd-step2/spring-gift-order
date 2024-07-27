@@ -23,6 +23,7 @@ public enum ErrorCode {
     // Member Error
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 회원 계정입니다."),
     MEMBER_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 회원 계정입니다."),
+    MEMBER_NOT_KAKAO_USER(HttpStatus.CONFLICT, "해당 서비스는 카카오 유저만 이용할 수 있습니다."),
 
     // Wish Error
     WISH_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 해당 상품이 위시리스트에 존재합니다."),

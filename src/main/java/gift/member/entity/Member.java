@@ -1,14 +1,19 @@
 package gift.member.entity;
 
+import gift.global.error.CustomException;
+import gift.global.error.ErrorCode;
+import gift.member.dto.KakaoTokenInfo;
 import gift.member.dto.MemberDto;
 import gift.wishlist.entity.Wish;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +31,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Wish> wishList = new ArrayList<>();
 
-    private String kakaoAccessToken;
-
-    private String kakaoRefreshToken;
+    @Embedded
+    private KakaoTokenInfo kakaoTokenInfo;
 
     protected Member() {
     }
@@ -40,12 +44,10 @@ public class Member {
 
     public Member(String email,
                   String password,
-                  String kakaoAccessToken,
-                  String kakaoRefreshToken) {
+                  KakaoTokenInfo kakaoTokenInfo) {
         this.email = email;
         this.password = password;
-        this.kakaoAccessToken = kakaoAccessToken;
-        this.kakaoRefreshToken = kakaoRefreshToken;
+        this.kakaoTokenInfo = kakaoTokenInfo;
     }
 
     public Long getId() {
@@ -65,11 +67,11 @@ public class Member {
     }
 
     public String getKakaoAccessToken() {
-        return kakaoAccessToken;
+        return kakaoTokenInfo.getKakaoAccessToken();
     }
 
     public String getKakaoRefreshToken() {
-        return kakaoRefreshToken;
+        return kakaoTokenInfo.getKakaoRefreshToken();
     }
 
     public void update(MemberDto memberDto) {
@@ -77,9 +79,16 @@ public class Member {
         password = memberDto.password();
     }
 
-    public void updateTokens(String accessToken, String refreshToken) {
-        kakaoAccessToken = accessToken;
-        kakaoRefreshToken = refreshToken;
+    public void updateTokenInfo(KakaoTokenInfo tokenInfo) {
+        kakaoTokenInfo.update(tokenInfo);
+    }
+
+    public boolean isKakaoTokenInfoNull() {
+        return kakaoTokenInfo == null;
+    }
+
+    public boolean isTokenExpired(LocalDateTime localDateTime) {
+        return kakaoTokenInfo.isExpired(localDateTime);
     }
 
 }
