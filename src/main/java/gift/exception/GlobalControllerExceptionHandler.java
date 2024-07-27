@@ -57,7 +57,7 @@ public class GlobalControllerExceptionHandler {
     }
 
     @ExceptionHandler(value = DataNotFoundException.class)
-    public ResponseEntity<String> handleDataNotFoundE(DataNotFoundException ex) {
+    public ResponseEntity<String> handleDataNotFound(DataNotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -66,5 +66,9 @@ public class GlobalControllerExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = MemberNotFoundException.class)
+    public ResponseEntity<String> handleMemberNotFound(MemberNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 
 }
