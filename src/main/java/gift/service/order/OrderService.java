@@ -6,12 +6,12 @@ import gift.dto.order.OrderResponse;
 import gift.model.gift.Gift;
 import gift.model.option.Option;
 import gift.model.order.Order;
-import gift.model.token.KakaoToken;
+import gift.model.token.OAuthToken;
 import gift.model.user.User;
 import gift.repository.gift.GiftRepository;
 import gift.repository.option.OptionRepository;
 import gift.repository.order.OrderRepository;
-import gift.repository.token.KakaoTokenRepository;
+import gift.repository.token.OAuthTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
 import gift.util.AuthUtil;
@@ -38,7 +38,7 @@ public class OrderService {
 
     private final UserRepository userRepository;
 
-    private final KakaoTokenRepository kakaoTokenRepository;
+    private final OAuthTokenRepository OAuthTokenRepository;
 
     private final AuthUtil authUtil;
 
@@ -51,14 +51,14 @@ public class OrderService {
                         WishRepository wishRepository,
                         UserRepository userRepository,
                         OrderRepository orderRepository,
-                        KakaoTokenRepository kakaoTokenRepository,
+                        OAuthTokenRepository OAuthTokenRepository,
                         AuthUtil authUtil) {
         this.optionRepository = optionRepository;
         this.giftRepository = giftRepository;
         this.wishRepository = wishRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
-        this.kakaoTokenRepository = kakaoTokenRepository;
+        this.OAuthTokenRepository = OAuthTokenRepository;
         this.authUtil = authUtil;
     }
 
@@ -95,11 +95,11 @@ public class OrderService {
                 .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
         Option option = optionRepository.findById(orderRequest.optionId())
                 .orElseThrow(() -> new NoSuchElementException("해당 옵션을 찾을 수 없습니다 id :  " + orderRequest.optionId()));
-        KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
-        kakaoToken = tokenManager.checkExpiredToken(kakaoToken);
+        OAuthToken OAuthToken = OAuthTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
+        OAuthToken = tokenManager.checkExpiredToken(OAuthToken);
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
-        authUtil.sendMessage(kakaoToken.getAccessToken(), message);
+        authUtil.sendMessage(OAuthToken.getAccessToken(), message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {

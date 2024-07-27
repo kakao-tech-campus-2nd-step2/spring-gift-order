@@ -1,10 +1,11 @@
 package gift.service.OAuth;
 
 import gift.common.enums.LoginType;
+import gift.common.enums.TokenType;
 import gift.dto.OAuth.AuthTokenResponse;
-import gift.model.token.KakaoToken;
+import gift.model.token.OAuthToken;
 import gift.model.user.User;
-import gift.repository.token.KakaoTokenRepository;
+import gift.repository.token.OAuthTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.util.AuthUtil;
 import gift.util.JwtUtil;
@@ -17,14 +18,14 @@ public class KakaoAuthService {
     private final AuthUtil authUtil;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
-    private final KakaoTokenRepository kakaoTokenRepository;
+    private final OAuthTokenRepository OAuthTokenRepository;
 
     @Autowired
-    public KakaoAuthService(AuthUtil authUtil, JwtUtil jwtUtil, UserRepository userRepository, KakaoTokenRepository kakaoTokenRepository) {
+    public KakaoAuthService(AuthUtil authUtil, JwtUtil jwtUtil, UserRepository userRepository, OAuthTokenRepository OAuthTokenRepository) {
         this.authUtil = authUtil;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
-        this.kakaoTokenRepository = kakaoTokenRepository;
+        this.OAuthTokenRepository = OAuthTokenRepository;
     }
 
     public String createCodeUrl() {
@@ -48,14 +49,14 @@ public class KakaoAuthService {
     }
 
     private void saveKakaoAccessToken(String accessToken, String refreshToken, User user) {
-        kakaoTokenRepository.findByUser(user).ifPresentOrElse(
+        OAuthTokenRepository.findByUser(user).ifPresentOrElse(
                 existingToken -> {
                     existingToken.updateTokens(refreshToken, accessToken);
-                    kakaoTokenRepository.save(existingToken);
+                    OAuthTokenRepository.save(existingToken);
                 },
                 () -> {
-                    KakaoToken newToken = new KakaoToken(user, refreshToken, accessToken);
-                    kakaoTokenRepository.save(newToken);
+                    OAuthToken newToken = new OAuthToken(user, refreshToken, accessToken, TokenType.KAKAO);
+                    OAuthTokenRepository.save(newToken);
                 }
         );
     }
