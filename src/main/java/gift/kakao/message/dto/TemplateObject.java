@@ -22,7 +22,7 @@ public record TemplateObject(
     @Override
     public String toString() {
         return "{\"object_type\":\"" + objectType + "\"," +
-                "\"text\":\"" + text + "\"," +
+                "\"text\":\"" + text.replace("\n", "\\n") + "\"," +
                 "\"link\":{" +
                 "\"web_url\":\"" + link.webUrl() + "\"," +
                 "\"mobile_url\":\"" + link.mobileUrl() + "\"}}";
