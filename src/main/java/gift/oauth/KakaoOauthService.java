@@ -7,9 +7,11 @@ import gift.exception.FailedLoginException;
 import gift.exception.InvalidAccessTokenException;
 import gift.member.MemberService;
 import gift.order.dto.DefaultMessageTemplate;
+import gift.order.dto.KakaoUserInfoDTO;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,8 +23,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class KakaoOauthService {
 
     private final RestClient restClient;
-    private final MemberService memberService;
     private final KakaoOauthConfigure kakaoOauthConfigure;
+    private final MemberService memberService;
 
     public KakaoOauthService(
         KakaoOauthConfigure kakaoOauthConfigure,
@@ -57,7 +59,14 @@ public class KakaoOauthService {
             ).toEntity(KakaoTokenResponseDTO.class)
             .getBody();
 
-        memberService.registerIfNotExistsByIdToken(Objects.requireNonNull(kakaoToken).getIdToken());
+        Pair<String, Long> emailAndPassword = getEmailAndSubFromAccessToken(
+            Objects.requireNonNull(kakaoToken).getAccessToken()
+        );
+
+        memberService.registerIfNotExists(
+            emailAndPassword.getFirst(),
+            emailAndPassword.getSecond().toString()
+        );
 
         return Objects.requireNonNull(kakaoToken).getAccessToken();
     }
@@ -94,5 +103,27 @@ public class KakaoOauthService {
         body.add("template_object", defaultMessageTemplate.toJson());
 
         return body;
+    }
+
+    public Pair<String, Long> getEmailAndSubFromAccessToken(String accessToken) {
+        if (!accessToken.startsWith("Bearer")) {
+            accessToken = "Bearer " + accessToken;
+        }
+
+        return restClient.get()
+            .uri(kakaoOauthConfigure.getUserInfoFromAccessTokenURL())
+            .header("Authorization", accessToken)
+            .accept(APPLICATION_FORM_URLENCODED)
+            .exchange((request, response) -> {
+                if (response.getStatusCode().is2xxSuccessful()) {
+                    KakaoUserInfoDTO kakaoUserInfoDTO = response.bodyTo(KakaoUserInfoDTO.class);
+                    return Pair.of(
+                        Objects.requireNonNull(kakaoUserInfoDTO).getEmail(),
+                        kakaoUserInfoDTO.getId()
+                    );
+                }
+
+                throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
+            });
     }
 }

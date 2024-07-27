@@ -6,8 +6,6 @@ import static gift.exception.ErrorMessage.WRONG_PASSWORD;
 
 import gift.exception.FailedLoginException;
 import gift.token.JwtProvider;
-import gift.token.KakaoJwkProvider;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +15,13 @@ public class MemberService {
 
     public final MemberRepository memberRepository;
     public final JwtProvider jwtProvider;
-    private final KakaoJwkProvider kakaoJwkProvider;
 
     public MemberService(
         MemberRepository memberRepository,
-        JwtProvider jwtProvider,
-        KakaoJwkProvider kakaoJwkProvider
+        JwtProvider jwtProvider
     ) {
         this.memberRepository = memberRepository;
         this.jwtProvider = jwtProvider;
-        this.kakaoJwkProvider = kakaoJwkProvider;
     }
 
     public Member getMember(String email) {
@@ -46,11 +41,9 @@ public class MemberService {
         return jwtProvider.generateToken(memberDTO.toTokenDTO());
     }
 
-    public void registerIfNotExistsByIdToken(String idToken) {
-        Pair<String, String> emailAndSub = kakaoJwkProvider.getEmailAndSub(idToken);
-
-        if (!memberRepository.existsById(emailAndSub.getFirst())) {
-            memberRepository.save(new Member(emailAndSub.getFirst(), emailAndSub.getSecond()));
+    public void registerIfNotExists(String email, String password) {
+        if (!memberRepository.existsById(email)) {
+            memberRepository.save(new Member(email, password));
         }
     }
 
