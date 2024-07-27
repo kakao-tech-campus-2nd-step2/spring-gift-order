@@ -1,8 +1,7 @@
 package gift.domain.order.entity;
 
-import gift.domain.product.entity.Option;
-import gift.domain.product.entity.Product;
 import gift.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,8 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -27,19 +29,14 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id", nullable = false)
-    private Option option;
-
-    @Column(nullable = false)
-    private int quantity;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems = new ArrayList<>();;
 
     @Column
     private String message;
+
+    @Column(nullable = false)
+    private int totalPrice;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -48,13 +45,20 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long id, User user, Product product, Option option, int quantity, String message) {
+    public Order(Long id, User user, String message, int totalPrice) {
         this.id = id;
         this.user = user;
-        this.product = product;
-        this.option = option;
-        this.quantity = quantity;
         this.message = message;
+        this.totalPrice = totalPrice;
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
+    }
+
+    public void removeOrderItem(OrderItem orderItem) {
+        orderItems.remove(orderItem);
     }
 
     public Long getId() {
@@ -65,20 +69,16 @@ public class Order {
         return user;
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
-    public Option getOption() {
-        return option;
-    }
-
-    public int getQuantity() {
-        return quantity;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
     }
 
     public LocalDateTime getOrderDateTime() {

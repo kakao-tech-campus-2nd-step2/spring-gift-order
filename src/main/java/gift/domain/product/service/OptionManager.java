@@ -27,8 +27,8 @@ public class OptionManager {
 
     }
 
-    public void create(Product product, List<OptionRequest> optionRequestDtos) {
-        for (OptionRequest optionRequest : optionRequestDtos) {
+    public void create(Product product, List<OptionRequest> optionRequests) {
+        for (OptionRequest optionRequest : optionRequests) {
             Option option = optionRequest.toOption(product);
             product.addOption(option);
         }
@@ -42,10 +42,10 @@ public class OptionManager {
     }
 
     @Transactional
-    public void update(Product product, List<OptionRequest> optionRequestDtos) {
+    public void update(Product product, List<OptionRequest> optionRequests) {
         optionJpaRepository.deleteAllByProductId(product.getId());
         product.removeOptions();
-        create(product, optionRequestDtos);
+        create(product, optionRequests);
     }
 
     @Transactional

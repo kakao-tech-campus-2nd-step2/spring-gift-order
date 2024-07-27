@@ -29,14 +29,14 @@ public class KakaoTalkMessageManager {
             "feed",
             new Content(
                 "주문해 주셔서 감사합니다.",
-                orderResponse.productResponse().imageUrl(),
+                orderResponse.orderItems().get(0).product().imageUrl(),
                 orderResponse.message(),
-                new Link("http://localhost:8080/api/products/" + orderResponse.productResponse().id())
+                new Link("http://localhost:8080/api/products/" + orderResponse.orderItems().get(0).product().id())
             ),
             new Button[]{
                 new Button(
                     "자세히 보기",
-                    new Link("http://localhost:8080/api/products/" + orderResponse.productResponse().id())
+                    new Link("http://localhost:8080/api/products/" + orderResponse.orderItems().get(0).product().id())
                 )
             }
         );

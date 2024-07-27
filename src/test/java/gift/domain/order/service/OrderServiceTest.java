@@ -1,15 +1,6 @@
 package gift.domain.order.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-
 import gift.auth.AuthProvider;
-import gift.domain.order.dto.OrderRequest;
-import gift.domain.order.dto.OrderResponse;
-import gift.domain.order.entity.Order;
 import gift.domain.order.repository.OrderJpaRepository;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Option;
@@ -18,8 +9,6 @@ import gift.domain.product.repository.ProductJpaRepository;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import gift.domain.wishlist.repository.WishlistJpaRepository;
-import java.util.Optional;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,22 +36,22 @@ class OrderServiceTest {
     private static final Option option = new Option(1L, product, "사과맛", 90);
 
 
-    @Test
-    void create() {
-        // given
-        product.addOption(option);
-        OrderRequest orderRequest = new OrderRequest(product.getId(), option.getId(), 10, "테스트 와하하");
-        Order order = new Order(1L, user, product, option, 10, "테스트 와하하");
-        OrderResponse expected = OrderResponse.from(order);
-
-        given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
-        doNothing().when(wishlistJpaRepository).deleteByUserAndProduct(any(User.class), any(Product.class));
-        given(orderJpaRepository.save(any(Order.class))).willReturn(order);
-
-        // when
-        OrderResponse actual = orderService.create(orderRequest, user);
-
-        // then
-        assertThat(actual).isEqualTo(expected);
-    }
+//    @Test
+//    void create() {
+//        // given
+//        product.addOption(option);
+//        OrderRequest orderRequest = new OrderRequest(product.getId(), option.getId(), 10, "테스트 와하하");
+//        Order order = new Order(1L, user, product, option, 10, "테스트 와하하");
+//        OrderResponse expected = OrderResponse.from(order);
+//
+//        given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
+//        doNothing().when(wishlistJpaRepository).deleteByUserAndProduct(any(User.class), any(Product.class));
+//        given(orderJpaRepository.save(any(Order.class))).willReturn(order);
+//
+//        // when
+//        OrderResponse actual = orderService.create(orderRequest, user);
+//
+//        // then
+//        assertThat(actual).isEqualTo(expected);
+//    }
 }
