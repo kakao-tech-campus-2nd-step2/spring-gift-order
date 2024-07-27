@@ -20,7 +20,7 @@ public class MemberService {
         this.jwtUtil = new JwtUtil();
     }
     public Member registerMember(Member member) {
-        member.setPassword(PasswordUtil.hashPassword(member.getPassword()));
+        member.setPassword(member.getPassword());
         return memberRepository.save(member);
     }
 
@@ -36,6 +36,13 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+    public Member getMemberById(Long id) {
+        return memberRepository.findById(id).orElse(null); //카카오 컨트롤러에서 토큰을 통해 멤버 불러오기 위해 생성
+    }
+
+    public void updateMember(Member member) {
+        memberRepository.save(member); //멤버에 토큰을 넣어서 다시 저장하기 위함
+    }
     @Transactional
     public String loginKakaoMember(KakaoMember kakaoMember) {
         Member member = memberRepository.findByEmail(kakaoMember.email())
