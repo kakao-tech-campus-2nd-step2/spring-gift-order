@@ -27,6 +27,7 @@ import org.springframework.web.client.RestClient;
 
 @Service
 @PropertySource("classpath:application-kakao-login.properties")
+@PropertySource("classpath:application-secret.properties")
 public class KakaoTokenService {
 
     @Value("${kakao-token-url}")
