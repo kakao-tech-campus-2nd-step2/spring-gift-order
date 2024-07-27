@@ -9,11 +9,12 @@ public class OrderRequest {
     private final String message;
 
     @JsonCreator
-    public OrderRequest(
-            @JsonProperty("optionId") Long optionId,
-            @JsonProperty("quantity") int quantity,
-            @JsonProperty("message") String message
-    ) {
+    public OrderRequest(@JsonProperty("optionId") Long optionId,
+                        @JsonProperty("quantity") int quantity,
+                        @JsonProperty("message") String message) {
+        if (optionId == null) {
+            throw new IllegalArgumentException("Option id를 입력해야 합니다.");
+        }
         this.optionId = optionId;
         this.quantity = quantity;
         this.message = message;
@@ -24,7 +25,7 @@ public class OrderRequest {
         private int quantity;
         private String message;
 
-        public Builder optionId(Long optionId) {
+        public Builder optionId (Long optionId) {
             this.optionId = optionId;
             return this;
         }

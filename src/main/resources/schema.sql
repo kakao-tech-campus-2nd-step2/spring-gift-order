@@ -33,6 +33,17 @@ CREATE TABLE IF NOT EXISTS wish (
                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                     member_id BIGINT NOT NULL,
                                     product_id BIGINT NOT NULL,
+                                    option_id BIGINT NOT NULL,
                                     CONSTRAINT fk_wish_member FOREIGN KEY (member_id) REFERENCES member(id),
-                                    CONSTRAINT fk_wish_product FOREIGN KEY (product_id) REFERENCES product(id)
+                                    CONSTRAINT fk_wish_product FOREIGN KEY (product_id) REFERENCES product(id),
+                                    CONSTRAINT fk_wish_option FOREIGN KEY (option_id) REFERENCES option(id)
+);
+
+CREATE TABLE orders (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        option_id BIGINT NOT NULL,
+                        quantity INT NOT NULL,
+                        message VARCHAR(255),
+                        order_date_time TIMESTAMP NOT NULL,
+                        CONSTRAINT fk_orders_option_id FOREIGN KEY (option_id) REFERENCES option(id)
 );

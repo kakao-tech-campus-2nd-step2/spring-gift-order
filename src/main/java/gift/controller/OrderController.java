@@ -8,7 +8,7 @@ import gift.dto.OrderResponse;
 import gift.service.OrderService;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
