@@ -53,4 +53,24 @@ public class OrderService {
         order.setOrderDateTime(dateTime);
         return orderRepository.save(order);
     }
+
+    public void sendMessage(Order order, Member member) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        KakaoMessage kakaoMessage = new KakaoMessage("text",order.getMessage(),new Link("link"));
+        String kakaoMessageJson = null;
+        kakaoMessageJson = objectMapper.writeValueAsString(kakaoMessage);
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.set("template_object", kakaoMessageJson);
+
+        restClient.post()
+            .uri("https://kapi.kakao.com/v2/api/talk/memo/default/send")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(AUTHORIZATION, BEARER + member.getKakaoToken())
+            .body(map)
+            .retrieve()
+            .toEntity(String.class);
+
+
+    }
+
 }
