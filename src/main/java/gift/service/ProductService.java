@@ -2,14 +2,13 @@ package gift.service;
 
 import gift.entity.*;
 import gift.exception.ResourceNotFoundException;
-import gift.repository.OptionRepository;
-import gift.repository.ProductOptionRepository;
-import gift.repository.ProductRepository;
-import gift.repository.ProductWishlistRepository;
+import gift.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,14 +21,18 @@ public class ProductService {
     private final CategoryService categoryService;
     private final ProductOptionRepository productOptionRepository;
     private final OptionRepository optionRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, ProductWishlistRepository productWishlistRepository, CategoryService categoryService, ProductOptionRepository productOptionRepository, OptionRepository optionRepository) {
+    public ProductService(ProductRepository productRepository, ProductWishlistRepository productWishlistRepository, CategoryService categoryService, ProductOptionRepository productOptionRepository, OptionRepository optionRepository, UserService userService, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.productWishlistRepository = productWishlistRepository;
         this.categoryService = categoryService;
         this.productOptionRepository = productOptionRepository;
         this.optionRepository = optionRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     public Page<Product> findAll(Pageable pageable) {
@@ -49,10 +52,10 @@ public class ProductService {
         return wishlists;
     }
 
-    public Product save(ProductDTO productDTO) {
-        Category category = categoryService.findById(productDTO.getCategoryid());
-        productDTO.setCategoryid(category.getId());
-        Product product = productRepository.save(new Product(productDTO));
+    public Product save(ProductDTO productDTO, String email) {
+        User user = userService.findOne(email);
+
+        Product product = productRepository.save(new Product(productDTO, user));
 
         Option defaultOption = optionRepository.findById(1L)
                 .orElseThrow(() -> new ResourceNotFoundException("Option not found with id: 1L"));
@@ -62,16 +65,31 @@ public class ProductService {
         return product;
     }
 
-    public Product update(Long id, ProductDTO productDTO) {
+    public Product update(Long id, ProductDTO productDTO, String email) {
+        if (!productMatchesUser(id, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+
         Product product = findById(id);
-        Category category = categoryService.findById(productDTO.getCategoryid());
-        productDTO.setCategoryid(category.getId());
-        product.setProductWithCategory(productDTO);
+        if (product.getCategoryid() != productDTO.getCategoryid()) {
+            Category category = categoryService.findById(productDTO.getCategoryid());
+            productDTO.setCategoryid(category.getId());
+        }
+
+        product.updateProduct(productDTO);
+
         return productRepository.save(product);
     }
 
-    public void delete(Long id) {
-        productRepository.deleteById(id);
+    public void delete(Long id, String email) {
+        if (!productMatchesUser(id, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+
+        Product product = findById(id);
+        product.setUser(null);
+
+        productRepository.delete(product);
     }
 
     // option
@@ -82,19 +100,31 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public void addProductOption(Long productId, Long optionId) {
+    public void addProductOption(Long productId, Long optionId, String email) {
+        if (!productMatchesUser(productId, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Option not found with id: " + optionId));
         Product product = findById(productId);
         productOptionRepository.save(new ProductOption(product, option, option.getName()));
     }
 
-    public void deleteProductOption(Long productId, Long optionId) {
+    public void deleteProductOption(Long productId, Long optionId, String email) {
+        if (!productMatchesUser(productId, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
         // 옵션이 하나 이상인지 확인 로직
         if (productOptionRepository.findByProductId(productId).size() <= 1) {
             throw new IllegalArgumentException("Option should have at least one product option");
         }
 
         productOptionRepository.deleteByProductIdAndOptionId(productId, optionId);
+    }
+
+    public boolean productMatchesUser(Long id, String email) {
+        User user = userService.findOne(email);
+        Product product = findById(id);
+        return user.getId() == product.getUser().getId();
     }
 }

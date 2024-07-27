@@ -2,9 +2,14 @@ package gift.service;
 
 import gift.entity.Option;
 import gift.entity.OptionDTO;
+import gift.entity.User;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.OptionRepository;
+import gift.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -12,14 +17,20 @@ import java.util.List;
 public class OptionService {
 
     private final OptionRepository optionRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
-    public OptionService(OptionRepository optionRepository) {
+    @Autowired
+    public OptionService(OptionRepository optionRepository, UserService userService, UserRepository userRepository) {
         this.optionRepository = optionRepository;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
-    public Option save(OptionDTO optionDTO) {
-        Option option = new Option();
-        option.setOptionDTO(optionDTO);
+    public Option save(OptionDTO optionDTO, String email) {
+        User user = userService.findOne(email);
+        Option option = new Option(optionDTO);
+        option.setUser(user);
         return optionRepository.save(option);
     }
 
@@ -32,13 +43,25 @@ public class OptionService {
         return optionRepository.findAll();
     }
 
-    public Option update(Long id, OptionDTO optionDTO) {
+    public Option update(Long id, OptionDTO optionDTO, String email) {
+        if (!optionMatchesUser(id, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+
         Option option = findById(id);
         option.setOptionDTO(optionDTO);
+
         return optionRepository.save(option);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id, String email) {
+        if (!optionMatchesUser(id, email)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
+
+        Option option = findById(id);
+        option.setUser(null);
+
         optionRepository.deleteById(id);
     }
 
@@ -52,5 +75,11 @@ public class OptionService {
         }
         option.subtract(amount);
         return optionRepository.save(option);
+    }
+
+    public boolean optionMatchesUser(Long id, String email) {
+        User user = userService.findOne(email);
+        Option option = findById(id);
+        return user.getId() == option.getUser().getId();
     }
 }

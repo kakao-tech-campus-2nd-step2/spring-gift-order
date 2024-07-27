@@ -11,6 +11,7 @@ import gift.util.UserUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -19,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class UserService {
@@ -44,24 +44,50 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public String signup(UserDTO userDTO) {
-        Optional<User> user = userRepository.findByEmail(userDTO.getEmail());
-        if (user.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
-        }
-        User savedUser = userRepository.save(new User(userDTO));
-        return userUtility.makeAccessToken(savedUser);
+    public User findOne(Long id) {
+        return userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public String login(UserDTO userDTO) {
-        User user = userRepository.findByEmail(userDTO.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("Email does not exist"));
-        if (!userDTO.getPassword().equals(user.getPassword()))
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Password does not match");
+    public String signup(UserDTO userDTO) {
+        // 이미 존재하는 이메일
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+
+        // pw 암호화해서 저장
+        String hashpw = BCrypt.hashpw(userDTO.getPassword(), BCrypt.gensalt());
+        userDTO.setPassword(hashpw);
+
+        User user = userRepository.save(new User(userDTO));
         return userUtility.makeAccessToken(user);
     }
 
-    public Map<String, String> kakaoLogin(String code) {
+    public String login(UserDTO userDTO) {
+        // admin용 로그인
+        String adminEmail = "admin@naver.com";
+        if (userDTO.getEmail().equals(adminEmail)) {
+            User admin = findOne(adminEmail);
+            if (!userDTO.getPassword().equals(admin.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
+            }
+            return userUtility.makeAccessToken(admin);
+        }
+
+        // 존재하지 않는 이메일
+        User user = userRepository.findByEmail(userDTO.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Email does not exist"));
+
+        // pw 틀린 경우
+        if (!BCrypt.checkpw(userDTO.getPassword(), user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
+        }
+
+        return userUtility.makeAccessToken(user);
+    }
+
+    public String kakaoLogin(String code) {
         // access token 받아오기
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -79,6 +105,10 @@ public class UserService {
         JsonObject jsonObject = JsonParser.parseString(accessTokenResponse).getAsJsonObject();
         String kakaoAccessToken = jsonObject.get("access_token").getAsString();
 
+        return kakaoAccessToken;
+    }
+
+    public Map<String, String> getKakaoProfile(String kakaoAccessToken) {
         // 유저 정보 받아오기
         String userDataResponse = client.post()
                 .uri(URI.create("https://kapi.kakao.com/v2/user/me"))
@@ -87,7 +117,7 @@ public class UserService {
                 .retrieve()
                 .body(String.class);
 
-        jsonObject = JsonParser.parseString(userDataResponse).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(userDataResponse).getAsJsonObject();
         JsonObject kakaoObject = jsonObject.get("kakao_account").getAsJsonObject();
         String email = kakaoObject.get("email").getAsString();
 
@@ -101,7 +131,6 @@ public class UserService {
         Map<String, String> response = new HashMap<>();
         response.put("email", email);
         response.put("accessToken", accessToken);
-        response.put("kakaoAccessToken", kakaoAccessToken);
 
         return response;
     }

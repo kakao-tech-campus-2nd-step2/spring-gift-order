@@ -46,6 +46,20 @@ public class WishlistService {
         return new PageImpl<>(products, pageable, productWishlists.getTotalElements());
     }
 
+    public List<Product> getWishlistProducts(String email) {
+        Optional<Wishlist> wishlist = wishlistRepository.findByEmail(email);
+        if (wishlist.isEmpty()) {
+            wishlist = Optional.of(wishlistRepository.save(new Wishlist(email)));
+        }
+
+        List<ProductWishlist> productWishlists = productWishlistRepository.findByWishlistId(wishlist.get().getId());
+        List<Product> products = productWishlists.stream()
+                .map(productWishlist -> productWishlist.getProduct())
+                .collect(Collectors.toList());
+
+        return products;
+    }
+
     public void addWishlistProduct(String email, WishlistDTO wishlistDTO) {
         Long id = wishlistDTO.getProductId();
         Product product = productRepository.findById(id)

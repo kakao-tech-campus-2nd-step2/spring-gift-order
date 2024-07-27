@@ -3,13 +3,14 @@ package gift.service;
 import gift.entity.*;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.*;
-import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
@@ -69,19 +70,16 @@ public class OrderService {
         return orderRepository.findByUserId(user.getId());
     }
 
-    public void delete(Long orderId) {
+    public void delete(Long orderId, String email) {
+        User user = userService.findOne(email);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        if (user.getId() != order.getUser().getId()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+        }
         orderRepository.delete(order);
     }
 
-    public void sendToMe(HttpSession session, OrderDTO order) {
-        String kakaoAccessToken = (String) session.getAttribute("kakaoAccessToken");
-        boolean isSocialAccount = (boolean) session.getAttribute("isSocialAccount");
-
-        if (!isSocialAccount) {
-            return;
-        }
-
+    public void sendToMe(String kakaoAccessToken, OrderDTO order) {
         LinkedMultiValueMap<String, String> body = makeRequestBody(order);
 
         String response = client.post()
