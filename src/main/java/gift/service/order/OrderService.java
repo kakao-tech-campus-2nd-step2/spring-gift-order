@@ -87,12 +87,14 @@ public class OrderService {
 
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message());
         orderRepository.save(order);
-
-        sendMessage(orderRequest, user, gift, option);
         return OrderResponse.fromEntity(order);
     }
 
-    private void sendMessage(OrderRequest.Create orderRequest, User user, Gift gift, Option option) {
+    public void sendMessage(OrderRequest.Create orderRequest, User user, Long giftId) {
+        Gift gift = giftRepository.findById(giftId)
+                .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
+        Option option = optionRepository.findById(orderRequest.optionId())
+                .orElseThrow(() -> new NoSuchElementException("해당 옵션을 찾을 수 없습니다 id :  " + orderRequest.optionId()));
         KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
         kakaoToken = tokenManager.checkExpiredToken(kakaoToken);
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"

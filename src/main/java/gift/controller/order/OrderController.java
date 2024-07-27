@@ -25,6 +25,7 @@ public class OrderController {
                                                @PathVariable Long giftId,
                                                @Valid @RequestBody OrderRequest.Create orderRequest) {
         OrderResponse orderResponse = orderService.order(user.getId(), giftId, orderRequest);
+        orderService.sendMessage(orderRequest,user,giftId);
         return ResponseEntity.ok(orderResponse);
     }
 }
