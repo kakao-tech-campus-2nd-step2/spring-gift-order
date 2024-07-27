@@ -3,6 +3,8 @@ package gift.controller;
 import gift.domain.Wish;
 import gift.dto.WishDTO;
 import gift.service.WishService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/wishes")
+@Tag(name = "WishController", description = "위시 상품 관리 API")
 public class WishController {
 
     private final WishService wishService;
@@ -23,12 +26,15 @@ public class WishController {
     public WishController(WishService wishService) {
         this.wishService = wishService;
     }
+
+    @Operation(summary = "위시리스트 추가", description = "위시리스트에 상품을 추가합니다.")
     @PostMapping
     @ResponseBody
     public void addWish(@RequestBody WishDTO wishDTO) {
         wishService.addWish(wishDTO.getMemberId(), wishDTO.getProductName());
     }
 
+    @Operation(summary = "위시리스트 조회", description = "회원의 위시리스트를 조회합니다.")
     @GetMapping
     public ResponseEntity<List<WishDTO>> getWishes(@RequestParam Long memberId,
                                                    @RequestParam(defaultValue = "0") int page,
@@ -45,6 +51,7 @@ public class WishController {
         return new ResponseEntity<>(wishDTOList, HttpStatus.OK);
     }
 
+    @Operation(summary = "위시리스트 삭제", description = "위시리스트에서 상품을 삭제합니다.")
     @DeleteMapping("/remove")
     @ResponseBody
     public ResponseEntity<Void> removeWish(@RequestBody WishDTO wishDTO) {
