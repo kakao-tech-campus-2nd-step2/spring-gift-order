@@ -1,4 +1,4 @@
-package gift.api.option;
+package gift.api.option.repository;
 
 import gift.api.option.domain.Option;
 import jakarta.persistence.LockModeType;

@@ -1,11 +1,12 @@
-package gift.api.option;
+package gift.api.option.service;
 
 import gift.api.option.domain.Option;
 import gift.api.option.domain.Options;
 import gift.api.option.dto.OptionRequest;
 import gift.api.option.dto.OptionResponse;
-import gift.api.product.Product;
-import gift.api.product.ProductRepository;
+import gift.api.option.repository.OptionRepository;
+import gift.api.product.domain.Product;
+import gift.api.product.repository.ProductRepository;
 import gift.global.exception.NoSuchEntityException;
 import java.util.List;
 import java.util.stream.Collectors;

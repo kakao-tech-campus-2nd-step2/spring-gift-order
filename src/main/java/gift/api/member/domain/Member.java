@@ -1,4 +1,4 @@
-package gift.api.member;
+package gift.api.member.domain;
 
 import gift.api.member.enums.Role;
 import gift.global.BaseEntity;

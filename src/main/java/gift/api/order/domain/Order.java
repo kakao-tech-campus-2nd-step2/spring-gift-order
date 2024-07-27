@@ -1,4 +1,4 @@
-package gift.api.order;
+package gift.api.order.domain;
 
 import gift.api.option.domain.Option;
 import gift.global.BaseEntity;

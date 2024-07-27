@@ -5,15 +5,15 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE;
 
-import gift.api.member.Member;
-import gift.api.member.MemberDao;
+import gift.api.member.dao.MemberDao;
+import gift.api.member.domain.Member;
 import gift.api.member.dto.KakaoAccount;
 import gift.api.member.dto.TokenResponse;
 import gift.api.member.dto.UserInfoResponse;
 import gift.api.member.exception.EmailAgreementNeededException;
 import gift.api.member.exception.RegisterNeededException;
-import gift.api.order.MessageFailException;
 import gift.api.order.dto.MsgMeResponse;
+import gift.api.order.exception.MessageFailException;
 import gift.global.config.KakaoProperties;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;

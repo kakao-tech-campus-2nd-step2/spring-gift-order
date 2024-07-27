@@ -1,14 +1,15 @@
-package gift.api.wishlist;
+package gift.api.wishlist.service;
 
-import gift.api.member.Member;
-import gift.api.member.MemberDao;
-import gift.api.product.Product;
-import gift.api.product.ProductRepository;
+import gift.api.member.dao.MemberDao;
+import gift.api.member.domain.Member;
+import gift.api.product.domain.Product;
+import gift.api.product.repository.ProductRepository;
 import gift.api.wishlist.domain.Wish;
 import gift.api.wishlist.domain.WishId;
 import gift.api.wishlist.dto.WishAddUpdateRequest;
 import gift.api.wishlist.dto.WishDeleteRequest;
 import gift.api.wishlist.dto.WishResponse;
+import gift.api.wishlist.repository.WishRepository;
 import gift.global.exception.NoSuchEntityException;
 import java.util.Collections;
 import java.util.List;

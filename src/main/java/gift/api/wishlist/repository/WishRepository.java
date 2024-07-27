@@ -1,6 +1,6 @@
-package gift.api.wishlist;
+package gift.api.wishlist.repository;
 
-import gift.api.member.Member;
+import gift.api.member.domain.Member;
 import gift.api.wishlist.domain.Wish;
 import gift.api.wishlist.domain.WishId;
 import org.springframework.data.domain.Page;

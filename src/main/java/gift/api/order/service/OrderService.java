@@ -1,15 +1,17 @@
-package gift.api.order;
+package gift.api.order.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.api.member.service.KakaoService;
-import gift.api.option.OptionDao;
-import gift.api.option.OptionService;
+import gift.api.option.dao.OptionDao;
+import gift.api.option.service.OptionService;
+import gift.api.order.domain.Order;
 import gift.api.order.dto.OrderRequest;
 import gift.api.order.dto.OrderResponse;
 import gift.api.order.dto.TemplateObject;
-import gift.api.wishlist.WishService;
+import gift.api.order.repository.OrderRepository;
 import gift.api.wishlist.dto.WishDeleteRequest;
+import gift.api.wishlist.service.WishService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 

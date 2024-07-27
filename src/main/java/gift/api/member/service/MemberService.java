@@ -1,6 +1,6 @@
 package gift.api.member.service;
 
-import gift.api.member.MemberDao;
+import gift.api.member.dao.MemberDao;
 import gift.api.member.dto.MemberRequest;
 import gift.api.member.exception.EmailAlreadyExistsException;
 import gift.global.exception.ForbiddenMemberException;

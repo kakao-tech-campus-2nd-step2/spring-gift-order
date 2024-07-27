@@ -1,7 +1,7 @@
 package gift.api.order.dto;
 
 import gift.api.option.domain.Option;
-import gift.api.order.Order;
+import gift.api.order.domain.Order;
 
 public record OrderRequest(
     Long optionId,

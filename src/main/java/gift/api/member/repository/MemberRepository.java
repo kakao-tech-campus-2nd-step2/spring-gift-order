@@ -1,5 +1,6 @@
-package gift.api.member;
+package gift.api.member.repository;
 
+import gift.api.member.domain.Member;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

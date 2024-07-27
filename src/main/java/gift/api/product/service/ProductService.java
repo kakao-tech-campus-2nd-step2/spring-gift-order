@@ -1,9 +1,11 @@
-package gift.api.product;
+package gift.api.product.service;
 
 import gift.api.category.Category;
 import gift.api.category.CategoryRepository;
+import gift.api.product.domain.Product;
 import gift.api.product.dto.ProductRequest;
 import gift.api.product.dto.ProductResponse;
+import gift.api.product.repository.ProductRepository;
 import gift.global.exception.NoSuchEntityException;
 import java.util.Collections;
 import java.util.List;

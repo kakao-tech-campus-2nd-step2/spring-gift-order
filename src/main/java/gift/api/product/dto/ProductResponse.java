@@ -1,7 +1,7 @@
 package gift.api.product.dto;
 
 import gift.api.category.Category;
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 
 public record ProductResponse(
     Long id,

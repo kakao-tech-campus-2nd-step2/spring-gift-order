@@ -1,6 +1,7 @@
-package gift.api.option;
+package gift.api.option.dao;
 
 import gift.api.option.domain.Option;
+import gift.api.option.repository.OptionRepository;
 import gift.global.exception.NoSuchEntityException;
 import org.springframework.stereotype.Repository;
 

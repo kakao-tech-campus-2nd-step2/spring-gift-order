@@ -1,5 +1,7 @@
-package gift.api.member;
+package gift.api.member.dao;
 
+import gift.api.member.domain.Member;
+import gift.api.member.repository.MemberRepository;
 import gift.global.exception.NoSuchEntityException;
 import org.springframework.stereotype.Repository;
 

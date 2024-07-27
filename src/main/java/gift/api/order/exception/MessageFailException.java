@@ -1,4 +1,4 @@
-package gift.api.order;
+package gift.api.order.exception;
 
 import gift.global.exception.GlobalException;
 import org.springframework.http.HttpStatus;

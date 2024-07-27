@@ -1,7 +1,7 @@
 package gift.ui.admin;
 
-import gift.api.product.ProductService;
 import gift.api.product.dto.ProductRequest;
+import gift.api.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;

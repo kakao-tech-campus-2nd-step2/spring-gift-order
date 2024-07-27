@@ -1,7 +1,7 @@
 package gift.api.option.domain;
 
 import gift.api.option.exception.InvalidSubtractionException;
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 import gift.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

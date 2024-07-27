@@ -1,7 +1,8 @@
-package gift.api.order;
+package gift.api.order.controller;
 
 import gift.api.order.dto.OrderRequest;
 import gift.api.order.dto.OrderResponse;
+import gift.api.order.service.OrderService;
 import gift.global.resolver.LoginMember;
 import java.net.URI;
 import org.springframework.http.ResponseEntity;

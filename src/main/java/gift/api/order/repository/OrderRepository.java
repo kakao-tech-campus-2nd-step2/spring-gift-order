@@ -1,5 +1,6 @@
-package gift.api.order;
+package gift.api.order.repository;
 
+import gift.api.order.domain.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

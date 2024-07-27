@@ -1,6 +1,6 @@
 package gift.api.wishlist.dto;
 
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 import gift.api.wishlist.domain.Wish;
 
 public record WishResponse(

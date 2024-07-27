@@ -1,6 +1,6 @@
 package gift.api.order.dto;
 
-import gift.api.order.Order;
+import gift.api.order.domain.Order;
 import java.sql.Timestamp;
 
 public record OrderResponse(

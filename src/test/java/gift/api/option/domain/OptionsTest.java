@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 
 import gift.api.option.exception.InvalidNameException;
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

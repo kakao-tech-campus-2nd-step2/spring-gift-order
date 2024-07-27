@@ -1,7 +1,7 @@
 package gift.api.option.dto;
 
 import gift.api.option.domain.Option;
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
