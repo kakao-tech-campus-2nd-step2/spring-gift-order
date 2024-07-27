@@ -17,7 +17,9 @@ public class OptionController {
     public OptionController(OptionService optionService){
         this.optionService = optionService;
     }
-
+    /*
+     * 옵션 조회
+     */
     @GetMapping("/api/products/{product_id}/options")
     public ResponseEntity<Page<OptionResponse>> readOption(
             @PathVariable("product_id") Long product_id,
@@ -33,7 +35,9 @@ public class OptionController {
         Page<OptionResponse> oneProductOption = optionService.findOptionDESC(product_id, page, size, field);
         return new ResponseEntity<>(oneProductOption, HttpStatus.OK);
     }
-
+    /*
+     * 옵션 추가
+     */
     @PostMapping("/api/products/{product_id}/options")
     public ResponseEntity<Void> createOption(
             @PathVariable("product_id") Long product_id, @Valid @RequestBody OptionRequest optionRequest
@@ -42,7 +46,9 @@ public class OptionController {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
+    /*
+     * 옵션 수정
+     */
     @PutMapping("/api/products/{product_id}/options/{option_id}")
     public ResponseEntity<Void> updateOption(
             @PathVariable("option_id") Long option_id,
@@ -52,7 +58,9 @@ public class OptionController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /*
+     * 옵션 삭제
+     */
     @DeleteMapping("/api/products/{product_id}/options/{option_id}")
     public ResponseEntity<Void> deleteOption(
             @PathVariable("product_id") Long productId,

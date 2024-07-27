@@ -20,9 +20,7 @@ public class UserController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
     /*
-     * 로그인
-     * 입력 받은 user와 DB 내의 user의 userId로 생성한 token을 비교
-     * 성공시 : 200 OK 및 User 정보로 만든 Token 반환
+     * 로그인 ( 유저 정보 인증 )
      */
     @PostMapping("/login")
     public ResponseEntity<Token> giveToken(@RequestBody UserRequest user){
@@ -34,8 +32,7 @@ public class UserController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
     /*
-     * 회원가입
-     * 회원가입 성공시 : 201 Created
+     * 회원가입 ( 유저 추가 )
      */
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody UserRequest user){
@@ -46,7 +43,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
     /*
-     * 모든 User의 정보 가져오기
+     * 유저 조회
      */
     @GetMapping("/api/users")
     public ResponseEntity<Page<UserResponse>> readUsers(
@@ -64,7 +61,7 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     /*
-     * 유저 정보 수정하기
+     * 유저 수정
      */
     @PutMapping("/api/users/{id}")
     public ResponseEntity<Void> updateUsers(@PathVariable("id") Long id, @RequestBody UserRequest user){
@@ -80,7 +77,7 @@ public class UserController {
 
     }
     /*
-     * 유저 정보 삭제하기
+     * 유저 삭제
      */
     @DeleteMapping("/api/users/{id}")
     public ResponseEntity<Void> deleteUsers(@PathVariable("id") Long id){

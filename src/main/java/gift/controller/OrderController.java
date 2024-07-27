@@ -20,7 +20,9 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
-
+    /*
+     * 주문하기 ( 주문 추가 )
+     */
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> order(
             @RequestBody OrderRequest orderRequest,
