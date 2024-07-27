@@ -21,7 +21,6 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
-import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -65,6 +64,7 @@ class CategoryControllerTest {
                 .apply(documentationConfiguration(restDocumentation).snippets().withDefaults(httpRequest(), httpResponse(), requestBody(), responseBody()))
                 .build();
     }
+
     @Test
     @DisplayName("카테고리 추가")
     void addCategory() throws Exception {
@@ -103,8 +103,8 @@ class CategoryControllerTest {
     void getCategories() throws Exception {
         //Given
         List<CategoryResponse> categoryResponses = new ArrayList<>();
-        categoryResponses.add(new CategoryResponse(1L, "교환권", "색", "이미지주소", "설명"));
-        categoryResponses.add(new CategoryResponse(2L, "백화점", "색", "이미지주소", "설명"));
+        categoryResponses.add(new CategoryResponse(1L, "아이패드", "화이트", "pineappleipad.com", "아이패드 화이트"));
+        categoryResponses.add(new CategoryResponse(2L, "티셔츠", "회색", "image.com", "회색 티셔츠"));
 
         //When
         when(categoryService.getAllCategoryResponses()).thenReturn(categoryResponses);
@@ -138,7 +138,7 @@ class CategoryControllerTest {
         ConstraintDescriptions constraintDescriptions = new ConstraintDescriptions(UpdateCategoryRequest.class);
         List<String> id = constraintDescriptions.descriptionsForProperty("id");
         List<String> name = constraintDescriptions.descriptionsForProperty("name");
-        List<String> color= constraintDescriptions.descriptionsForProperty("color");
+        List<String> color = constraintDescriptions.descriptionsForProperty("color");
         List<String> imageUrl = constraintDescriptions.descriptionsForProperty("imageUrl");
 
         //When Then
@@ -155,7 +155,7 @@ class CategoryControllerTest {
                                 fieldWithPath("id").description("카테고리 ID").type(NUMBER),
                                 fieldWithPath("name").description("카테고리 이름").type(STRING),
                                 fieldWithPath("color").description("카테고리 색").type(STRING),
-                                fieldWithPath("imageUrl").description("카테고리 이미지 주소").type(STRING),
+                                fieldWithPath("imageUrl").description("카테고리 이미지주소").type(STRING),
                                 fieldWithPath("description").description("카테고리 설명").type(STRING).optional()
                         )
                 ));

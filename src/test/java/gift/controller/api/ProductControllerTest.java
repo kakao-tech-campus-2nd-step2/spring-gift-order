@@ -60,8 +60,8 @@ class ProductControllerTest {
     void getProducts() throws Exception {
         // Given
         List<ProductResponse> products = List.of(
-                new ProductResponse(1L, "Product 1", 100, "img", "Cloth"),
-                new ProductResponse(2L, "Product 2", 200, "img", "Food")
+                new ProductResponse(1L, "Product 1", 100, "img1.com", "Cloth"),
+                new ProductResponse(2L, "Product 2", 200, "img2.com", "Food")
         );
         Page<ProductResponse> page = new PageImpl<>(products);
         when(productService.getProductResponses(any(Pageable.class))).thenReturn(page);
@@ -83,12 +83,12 @@ class ProductControllerTest {
                                         fieldWithPath("first").description("이 페이지가 첫 페이지인지 여부를 나타내는 boolean 값"),
                                         fieldWithPath("last").description("이 페이지가 마지막 페이지인지 여부를 나타내는 boolean 값"),
                                         fieldWithPath("size").description("페이지당 요소 수"),
-                                        fieldWithPath("content[]").description("제품 목록"),
-                                        fieldWithPath("content[].id").description("제품의 고유 식별자"),
-                                        fieldWithPath("content[].name").description("제품의 이름"),
-                                        fieldWithPath("content[].price").description("제품의 가격"),
-                                        fieldWithPath("content[].imageUrl").description("제품 이미지의 URL"),
-                                        fieldWithPath("content[].categoryName").description("제품이 속한 카테고리"),
+                                        fieldWithPath("content[]").description("상품 목록"),
+                                        fieldWithPath("content[].id").description("상품의 ID"),
+                                        fieldWithPath("content[].name").description("상품의 이름"),
+                                        fieldWithPath("content[].price").description("상품의 가격"),
+                                        fieldWithPath("content[].imageUrl").description("상품 이미지의 URL"),
+                                        fieldWithPath("content[].categoryName").description("상품이 속한 카테고리"),
                                         fieldWithPath("number").description("현재 페이지 번호"),
                                         fieldWithPath("sort.empty").description("정렬이 비어 있는지 여부를 나타내는 boolean 값"),
                                         fieldWithPath("sort.sorted").description("결과가 정렬되어 있는지 여부를 나타내는 boolean 값"),
@@ -96,20 +96,16 @@ class ProductControllerTest {
                                         fieldWithPath("numberOfElements").description("현재 페이지의 요소 수"),
                                         fieldWithPath("pageable").description("페이지네이션 정보"),
                                         fieldWithPath("empty").description("페이지가 비어 있는지 여부를 나타내는 boolean 값")
-
                                 )
                         )
-
-
                 );
     }
-
 
     @Test
     @DisplayName("상품 추가")
     void addProduct() throws Exception {
         // Given
-        AddProductRequest addProductRequest = new AddProductRequest("Product1", 110, "img", 1L, List.of(new OptionRequest("option1", 100)));
+        AddProductRequest addProductRequest = new AddProductRequest("Product1", 110, "img.com", 1L, List.of(new OptionRequest("option1", 100)));
         AddedProductIdResponse addedProductIdResponse = new AddedProductIdResponse(1L);
 
         when(productService.addProduct(addProductRequest)).thenReturn(addedProductIdResponse);
@@ -129,11 +125,11 @@ class ProductControllerTest {
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 
                                 requestFields(
-                                        fieldWithPath("name").type(JsonFieldType.STRING).description("제품의 이름"),
-                                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("제품의 가격"),
-                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("제품 이미지의 URL"),
-                                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("제품이 속한 카테고리의 ID"),
-                                        fieldWithPath("options").type(JsonFieldType.ARRAY).description("제품의 옵션 목록"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("상품의 이름"),
+                                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("상품의 가격"),
+                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("상품 이미지의 URL"),
+                                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("상품이 속한 카테고리의 ID"),
+                                        fieldWithPath("options").type(JsonFieldType.ARRAY).description("상품의 옵션 목록"),
                                         fieldWithPath("options[].name").type(JsonFieldType.STRING).description("옵션의 이름"),
                                         fieldWithPath("options[].quantity").type(JsonFieldType.NUMBER).description("옵션의 값")
                                 ),
@@ -163,11 +159,11 @@ class ProductControllerTest {
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 
                                 requestFields(
-                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("제품의 고유 식별자"),
-                                        fieldWithPath("name").type(JsonFieldType.STRING).description("제품의 이름"),
-                                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("제품의 가격"),
-                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("제품 이미지의 URL"),
-                                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("제품이 속한 카테고리의 ID")
+                                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("상품의 ID"),
+                                        fieldWithPath("name").type(JsonFieldType.STRING).description("상품의 이름"),
+                                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("상품의 가격"),
+                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("상품 이미지의 URL"),
+                                        fieldWithPath("categoryId").type(JsonFieldType.NUMBER).description("상품이 속한 카테고리의 ID")
                                 )
                         )
                 );
@@ -223,7 +219,7 @@ class ProductControllerTest {
                                 ),
                                 responseFields(
                                         fieldWithPath("[]").type(JsonFieldType.ARRAY).description("OptionResponse 객체의 배열"),
-                                        fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("옵션의 고유 식별자"),
+                                        fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("옵션의 ID"),
                                         fieldWithPath("[].name").type(JsonFieldType.STRING).description("옵션의 이름"),
                                         fieldWithPath("[].quantity").type(JsonFieldType.NUMBER).description("옵션의 수량")
                                 )

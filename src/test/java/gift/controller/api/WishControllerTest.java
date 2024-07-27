@@ -130,22 +130,22 @@ class WishControllerTest {
                                                 .description("페이지당 요소 수"),
 
                                         fieldWithPath("content").type(JsonFieldType.ARRAY)
-                                                .description("제품 목록"),
+                                                .description("상품 목록"),
 
                                         fieldWithPath("content[].productId").type(JsonFieldType.NUMBER)
-                                                .description("제품의 고유 식별자"),
+                                                .description("상품의 ID"),
 
                                         fieldWithPath("content[].productName").type(JsonFieldType.STRING)
-                                                .description("제품의 이름"),
+                                                .description("상품의 이름"),
 
                                         fieldWithPath("content[].productPrice").type(JsonFieldType.NUMBER)
-                                                .description("제품의 가격"),
+                                                .description("상품의 가격"),
 
                                         fieldWithPath("content[].productImageUrl").type(JsonFieldType.STRING)
-                                                .description("제품 이미지의 URL"),
+                                                .description("상품 이미지의 URL"),
 
                                         fieldWithPath("content[].productAmount").type(JsonFieldType.NUMBER)
-                                                .description("제품의 수량"),
+                                                .description("상품의 수량"),
 
                                         fieldWithPath("number").type(JsonFieldType.NUMBER)
                                                 .description("현재 페이지 번호"),

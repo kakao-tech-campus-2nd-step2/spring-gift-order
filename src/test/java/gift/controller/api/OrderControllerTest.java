@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,7 +25,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -37,7 +35,6 @@ import static org.springframework.restdocs.http.HttpDocumentation.httpResponse;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +42,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class OrderControllerTest {
 
+    @MockBean
+    OptionService optionService;
+    @MockBean
+    KakaoApiService kakaoApiService;
+    @MockBean
+    WishService wishService;
     @MockBean
     private TokenService tokenService;
     @MockBean
@@ -56,12 +59,6 @@ class OrderControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OrderService orderService;
-    @MockBean
-    OptionService optionService;
-    @MockBean
-    KakaoApiService kakaoApiService;
-    @MockBean
-    WishService wishService;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext, RestDocumentationContextProvider restDocumentation) {
@@ -99,7 +96,7 @@ class OrderControllerTest {
                                         headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}\n로그인으로 받게되는 토큰").optional()
                                 ),
                                 requestFields(
-                                        fieldWithPath("optionId").description("주문할 상품의 옵션ID").type(JsonFieldType.NUMBER),
+                                        fieldWithPath("optionId").description("주문할 상품의 옵션 ID").type(JsonFieldType.NUMBER),
                                         fieldWithPath("quantity").description("주문할 상품의 수량").type(JsonFieldType.NUMBER),
                                         fieldWithPath("message").description("전달할 배송 메시지. 200자까지 입력 가능").type(JsonFieldType.STRING).optional()
                                 ),
