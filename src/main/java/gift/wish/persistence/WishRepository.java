@@ -15,4 +15,6 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 
     @Query("SELECT w FROM Wish w JOIN FETCH w.member JOIN FETCH w.product WHERE w.member.id = :memberId")
     Page<Wish> findWishesByUserIdWithMemberAndProduct(Long memberId, Pageable pageable);
+
+    Optional<Wish> findWishByMemberIdAndProductId(Long memberId, Long productId);
 }
