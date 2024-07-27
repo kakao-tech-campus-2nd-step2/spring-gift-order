@@ -44,7 +44,7 @@ public class Mapper {
     }
 
     public WishlistDto wishlistToDto(Wishlist wishlist) {
-        return new WishlistDto(wishlist.getUserId(), wishlist.getProductId(), wishlist.getCount(), 0, wishlist.getProductName(), wishlist.getPrice(), wishlist.getOption().getId());
+        return new WishlistDto(wishlist.getMemberId(), wishlist.getProductId(), wishlist.getCount(), 0, wishlist.getProductName(), wishlist.getPrice(), wishlist.getOption().getId());
     }
 
     public Category categoryDtoToEntity(CategoryDto categoryDto) {
