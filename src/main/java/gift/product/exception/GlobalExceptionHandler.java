@@ -84,7 +84,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public void handleBadRequestException(ResponseException ex, Model model) {
+    public void handleBadRequestException(RequestException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public void handleUnauthorizedException(UnauthorizedException ex, Model model) {
         model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
     }
 }

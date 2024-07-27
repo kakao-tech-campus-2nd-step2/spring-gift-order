@@ -2,6 +2,7 @@ package gift.product.service;
 
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 
+import gift.product.dto.CategoryRequestDTO;
 import gift.product.exception.InvalidIdException;
 import gift.product.model.Category;
 import gift.product.repository.CategoryRepository;
@@ -26,10 +27,10 @@ public class CategoryService {
         this.categoryValidation = categoryValidation;
     }
 
-    public void registerCategory(Category category) {
+    public Category registerCategory(Category category) {
         System.out.println("[CategoryService] registerCategory()");
         categoryValidation.registerCategory(category);
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     public void updateCategory(Category category) {
