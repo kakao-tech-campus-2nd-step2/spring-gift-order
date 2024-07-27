@@ -74,25 +74,4 @@ public class KaKaoService {
         return accessToken;
     }
 
-    private KaKaoUserDto getUserInfoWithToken(String accessToken) throws Exception {
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(
-            KAKAO_API_URI + "/v2/user/me",
-            HttpMethod.POST,
-            httpEntity,
-            String.class
-        );
-
-        JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObj = (JSONObject) jsonParser.parse(response.getBody());
-        long id = (long) jsonObj.get("id");
-
-        return new KaKaoUserDto(id);
-    }
 }
