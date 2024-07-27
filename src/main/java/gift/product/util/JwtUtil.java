@@ -1,6 +1,7 @@
 package gift.product.util;
 
 import static gift.product.exception.GlobalExceptionHandler.INVALID_TOKEN;
+import static gift.product.exception.GlobalExceptionHandler.NOT_FOUND_MEMBER;
 
 import gift.product.exception.InvalidIdException;
 import gift.product.model.Member;
@@ -91,7 +92,7 @@ public class JwtUtil {
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN))
                 .getId();
             return memberRepository.findBySnsMemberId(snsMemberId)
-                .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
+                .orElseThrow(() -> new InvalidIdException(NOT_FOUND_MEMBER));
         }
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));

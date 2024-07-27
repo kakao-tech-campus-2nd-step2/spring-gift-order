@@ -1,5 +1,6 @@
 package gift.product.exception;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.ValidationException;
 import java.sql.SQLException;
 import org.springframework.dao.DataAccessException;
@@ -23,6 +24,7 @@ public class GlobalExceptionHandler {
     // 유저 정보와 관련된 에러 메세지
     public static final String DUPLICATE_EMAIL = "이미 가입된 이메일입니다.";
     public static final String INVALID_INPUT = "이메일 또는 비밀번호를 잘못 입력하였습니다.";
+    public static final String NOT_FOUND_MEMBER = "유저 정보를 찾을 수 없습니다.";
     // 카테고리와 관련된 에러 메세지
     public static final String DUPLICATE_CATEGORY_NAME = "이미 존재하는 카테고리 입니다.";
     public static final String USING_CATEGORY = "카테고리를 제거하려면 해당 카테고리를 참조하는 상품이 없어야 합니다.";
@@ -35,7 +37,7 @@ public class GlobalExceptionHandler {
     public static final String CANNOT_SUBTRACT_ZERO_OR_NEGATIVE = "수량을 차감할 때는 1 이상의 양의 정수만 입력되어야 합니다.";
     public static final String SUBTRACT_EXCEED_QUANTITY = "차감하려는 수량이 상품 옵션의 잔여 수량을 초과하였습니다.";
     // 서버 응답과 관련된 에러 메세지
-    public static final String NOT_RECEIVE_RESPONSE = "서버로부터 받은 응답이 존재하지 않습니다.";
+    public static final String NOT_RECEIVE_RESPONSE = "Kakao 서버로부터 받은 응답이 존재하지 않습니다.";
     // 주문과 관련된 에러 메세지
     public static final String INVALID_ORDER_REQUEST = "주문하려는 상품의 ID, 수량을 정확하게 입력해주세요.";
     // API 요청 메세지와 관련된 메세지

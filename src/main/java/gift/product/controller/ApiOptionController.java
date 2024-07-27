@@ -3,7 +3,6 @@ package gift.product.controller;
 import static gift.product.exception.GlobalExceptionHandler.UNKNOWN_VALIDATION_ERROR;
 
 import gift.product.dto.OptionDTO;
-import gift.product.model.Category;
 import gift.product.model.Option;
 import gift.product.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;

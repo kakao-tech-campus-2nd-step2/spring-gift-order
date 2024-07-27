@@ -8,7 +8,8 @@ import static gift.product.intercepter.AuthInterceptor.BEARER_PREFIX;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.OrderDTO;
+import gift.product.dto.OrderRequestDTO;
+import gift.product.dto.OrderResponseDTO;
 import gift.product.exception.InvalidIdException;
 import gift.product.exception.RequestException;
 import gift.product.exception.ResponseException;
@@ -57,16 +58,19 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public Order orderProduct(String authorization, Long optionId, OrderDTO orderDTO) {
+    public OrderResponseDTO orderProduct(
+        String authorization,
+        OrderRequestDTO orderRequestDTO) {
         System.out.println("[OrderService] orderProduct()");
         Member orderer = jwtUtil.parsingToken(authorization);
-        Option option = optionRepository.findById(optionId)
+        Option option = optionRepository.findById(orderRequestDTO.getOptionId())
             .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-        option.subtractQuantity(orderDTO.getQuantity());
-        Order order = orderRepository.save(orderDTO.convertToDomain(option, orderer));
+        option.subtractQuantity(orderRequestDTO.getQuantity());
+        Order order = orderRequestDTO.convertToDomain(option, orderer);
+        orderRepository.save(order);
         if(orderer.getSnsMember() != null)
             sendToMe(order);
-        return order;
+        return new OrderResponseDTO(order);
     }
 
     public void sendToMe(Order order) {
