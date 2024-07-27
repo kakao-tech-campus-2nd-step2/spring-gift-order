@@ -50,7 +50,7 @@ class UserServiceTest {
     @Transactional
     void registerUserTest() {
         //given
-        UserRegisterRequest request = new UserRegisterRequest("user1@email.com", "1q2w3e4r!", null);
+        UserRegisterRequest request = new UserRegisterRequest("user1@email.com", "1q2w3e4r!", null, null);
         given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
         User user1 = new User(
             request.email(),
@@ -77,7 +77,7 @@ class UserServiceTest {
     @Transactional
     void alreadyExistUserRegistrationTest() {
         //given
-        UserRegisterRequest request = new UserRegisterRequest("user1@example.com", "password1", null);
+        UserRegisterRequest request = new UserRegisterRequest("user1@example.com", "password1", null, null);
         given(userRepository.findByEmail(request.email())).willReturn(
             Optional.of(new User("user1@example.com", "password1", null, null)));
 
@@ -92,7 +92,7 @@ class UserServiceTest {
     @Transactional
     void userLoginTest() {
         //given
-        UserLoginRequest loginRequest = new UserLoginRequest("user1@example.com", "password1");
+        UserLoginRequest loginRequest = new UserLoginRequest("user1@example.com", "password1", null);
         Set<UserRole> roles = new HashSet<>();
         User user1 = new User(
             loginRequest.email(),
@@ -120,7 +120,7 @@ class UserServiceTest {
     @Transactional
     void unknownUserLoginTest() {
         //given
-        UserLoginRequest request = new UserLoginRequest("user1@email.com", "1q2w3e4r!");
+        UserLoginRequest request = new UserLoginRequest("user1@email.com", "1q2w3e4r!", null);
         given(
             userRepository.findByEmailAndPassword(request.email(), request.password())).willReturn(
             Optional.empty());
@@ -135,7 +135,7 @@ class UserServiceTest {
     @Transactional
     void wrongPasswordLoginTest() {
         //given
-        UserLoginRequest request = new UserLoginRequest("user1@email.com", "1234");
+        UserLoginRequest request = new UserLoginRequest("user1@email.com", "1234", null);
         given(
             userRepository.findByEmailAndPassword(request.email(), request.password())).willReturn(
             Optional.empty());
