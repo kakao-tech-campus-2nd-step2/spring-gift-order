@@ -3,9 +3,12 @@ package gift.controller;
 
 import gift.dto.KakaoMember;
 import gift.dto.KakaoTokenResponseDto;
+import gift.model.Member;
+import gift.repository.MemberRepository;
 import gift.service.KakaoService;
 import gift.service.MemberService;
 import gift.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,11 +27,14 @@ public class KakaoController {
     private final JwtUtil jwtUtil;
     private final KakaoService kakaoService;
     private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
-    public KakaoController(KakaoService kakaoService, MemberService memberService) {
+    public KakaoController(KakaoService kakaoService, MemberService memberService,
+        MemberRepository memberRepository) {
         this.jwtUtil = new JwtUtil();
         this.kakaoService = kakaoService;
         this.memberService = memberService;
+        this.memberRepository = memberRepository;
     }
 
     @GetMapping("/authorize")
@@ -43,6 +49,12 @@ public class KakaoController {
         KakaoTokenResponseDto kakaoTokenResponseDto = kakaoService.getAccessTokenFromKakao(code);
         KakaoMember kakaoMember = kakaoService.getKakaoProfile(kakaoTokenResponseDto);
         String token = memberService.loginKakaoMember(kakaoMember);
+        Claims claims = jwtUtil.extractClaims(token.replace("Bearer ", ""));
+        Long memberId = Long.parseLong(claims.getSubject());
+        Member member = memberService.getMemberById(memberId);
+        member.setAccessToken(token);// jwt 토큰 멤버 DB에 저장
+        member.setKakaoToken(kakaoTokenResponseDto.getAccessToken());// 카카오에서 발급받은 엑세스 토큰도 멤버 DB에 저장
+        memberService.updateMember(member);
         return ResponseEntity.status(HttpStatus.CREATED)
             .header(HttpHeaders.AUTHORIZATION, token)
             .body(responseBody);
