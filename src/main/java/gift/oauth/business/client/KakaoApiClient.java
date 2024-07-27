@@ -28,28 +28,10 @@ public class KakaoApiClient implements OAuthApiClient {
     private final RestClient restClient;
     private final Logger log = LoggerFactory.getLogger(KakaoApiClient.class);
 
-    public KakaoApiClient() {
+    public KakaoApiClient(ClientHttpRequestFactory clientHttpRequestFactory) {
         this.restClient = RestClient.builder()
-            .requestFactory(getClientHttpRequestFactory())
+            .requestFactory(clientHttpRequestFactory)
             .build();
-    }
-
-    private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        var clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setConnectTimeout(3000);
-        clientHttpRequestFactory.setConnectionRequestTimeout(3000);
-
-        var connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(100);
-        connectionManager.setDefaultMaxPerRoute(10);
-
-        var httpClient = HttpClientBuilder.create()
-            .setConnectionManager(connectionManager)
-            .build();
-
-        clientHttpRequestFactory.setHttpClient(httpClient);
-
-        return clientHttpRequestFactory;
     }
 
     @Override
