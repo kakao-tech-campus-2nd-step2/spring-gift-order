@@ -134,7 +134,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void 존재하지_않는_상품_조회() {
+    void 실패_존재하지_않는_상품_조회() {
         //given
         given(productRepository.findById(any())).willReturn(Optional.empty());
 

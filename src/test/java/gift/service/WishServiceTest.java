@@ -81,7 +81,7 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_위시_항목_조회() {
+    void 실패_존재하지_않는_위시_항목_조회() {
         //given
         LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
@@ -92,7 +92,7 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_위시_항목_삭제() {
+    void 실패_존재하지_않는_위시_항목_삭제() {
         //given
         LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
@@ -103,7 +103,7 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_회원_정보로_위시리스트_추가_시도() {
+    void 실패_존재하지_않는_회원_정보로_위시리스트_추가_시도() {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
@@ -120,7 +120,7 @@ class WishServiceTest {
     }
 
     @Test
-    void 위시_리스트에_상품_중복_추가() {
+    void 실패_위시_리스트에_상품_중복_추가() {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);

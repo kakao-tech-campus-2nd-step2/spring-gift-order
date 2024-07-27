@@ -142,7 +142,7 @@ class OptionServiceTest {
     }
 
     @Test
-    void 존재하지_않는_상품에_대한_옵션_추가() {
+    void 실패_존재하지_않는_상품에_대한_옵션_추가() {
         //given
         given(optionRepository.existsByNameAndProductId("테스트옵션", -1L)).willReturn(false);
         given(productRepository.findById(-1L)).willReturn(Optional.empty());
@@ -154,7 +154,7 @@ class OptionServiceTest {
     }
 
     @Test
-    void 옵션의_대상을_존재하지_않는_상품으로_수정() {
+    void 실패_옵션의_대상을_존재하지_않는_상품으로_수정() {
         //given
         given(productRepository.findById(1L)).willReturn(Optional.empty());
 
@@ -165,7 +165,7 @@ class OptionServiceTest {
     }
 
     @Test
-    void 존재하지_않는_옵션_조회() {
+    void 실패_존재하지_않는_옵션_조회() {
         //given
         given(optionRepository.findById(any())).willReturn(Optional.empty());
 
@@ -176,7 +176,7 @@ class OptionServiceTest {
     }
 
     @Test
-    void 이미_존재하는_옵션_중복_추가() {
+    void 실패_이미_존재하는_옵션_중복_추가() {
         //given
         given(optionRepository.existsByNameAndProductId("테스트옵션중복명", 1L)).willReturn(true);
 

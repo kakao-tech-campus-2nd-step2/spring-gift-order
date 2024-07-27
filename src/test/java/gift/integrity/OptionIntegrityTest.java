@@ -154,7 +154,7 @@ class OptionIntegrityTest {
 
     @Order(6)
     @Test
-    void 옵션_이름이_50자를_초과했을_때() throws JsonProcessingException {
+    void 실패_옵션_이름이_50자를_초과했을_때() throws JsonProcessingException {
         //given
         String url = BASE_URL + port + "/api/options/insert";
         OptionDto optionDto = new OptionDto("테스트옵션".repeat(51), 1, 1L);
@@ -175,7 +175,7 @@ class OptionIntegrityTest {
 
     @Order(7)
     @Test
-    void 옵션_이름에_사용_불가능한_특수_문자를_입력했을_때() throws JsonProcessingException {
+    void 실패_옵션_이름에_사용_불가능한_특수_문자를_입력했을_때() throws JsonProcessingException {
         //given
         String url = BASE_URL + port + "/api/options/insert";
         OptionDto optionDto = new OptionDto("테스트옵션#", 1, 1L);
@@ -196,7 +196,7 @@ class OptionIntegrityTest {
 
     @Order(8)
     @Test
-    void 옵션_수량이_범위를_초과했을_때() throws JsonProcessingException {
+    void 실패_옵션_수량이_범위를_초과했을_때() throws JsonProcessingException {
         //given
         String url = BASE_URL + port + "/api/options/insert";
         OptionDto optionDto = new OptionDto("테스트옵션", 100_000_001, 1L);

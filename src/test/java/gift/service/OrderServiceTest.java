@@ -152,7 +152,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 옵션_수량보다_더_많이_차감() {
+    void 실패_옵션_수량보다_더_많이_차감() {
         //given
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
@@ -169,7 +169,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 존재하지_않는_주문_내역_조회() {
+    void 실패_존재하지_않는_주문_내역_조회() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         given(orderRepository.findByIdAndMemberId(1L, loginMemberIdDto.id())).willReturn(Optional.empty());
@@ -180,7 +180,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 주문_시_카카오톡_메시지_API_에러() {
+    void 실패_주문_시_카카오톡_메시지_API_에러() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         OrderDto orderDto = new OrderDto(1L, 2, "test_message");
@@ -213,7 +213,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 존재하지_않는_옵션에_대한_주문() {
+    void 실패_존재하지_않는_옵션에_대한_주문() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         OrderDto orderDto = new OrderDto(1L, 2, "test_message");
@@ -227,7 +227,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 존재하지_않는_회원_정보로_주문() {
+    void 실패_존재하지_않는_회원_정보로_주문() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         OrderDto orderDto = new OrderDto(1L, 2, "test_message");
@@ -246,7 +246,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 카카오_로그인을_하지_않은_회원이_주문_요청() {
+    void 실패_카카오_로그인을_하지_않은_회원이_주문_요청() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         OrderDto orderDto = new OrderDto(1L, 2, "test_message");
@@ -266,7 +266,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 주문_시_카카오톡_메시지_API_응답_결과_코드가_실패인_경우() {
+    void 실패_주문_시_카카오톡_메시지_API_응답_결과_코드가_실패인_경우() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         OrderDto orderDto = new OrderDto(1L, 2, "test_message");
@@ -300,7 +300,7 @@ class OrderServiceTest {
     }
 
     @Test
-    void 존재하지_않는_주문_내역_삭제() {
+    void 실패_존재하지_않는_주문_내역_삭제() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         given(orderRepository.existsById(1L)).willReturn(false);

@@ -129,7 +129,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 회원가입_중복() {
+    void 실패_회원가입_중복() {
         //given
         MemberDto memberDto = new MemberDto(EMAIL, PASSWORD);
         given(authRepository.existsByEmail(EMAIL)).willReturn(false);
@@ -205,7 +205,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 존재하지_않는_회원_로그인() {
+    void 실패_존재하지_않는_회원_로그인() {
         //given
         MemberDto memberDto = new MemberDto(EMAIL, PASSWORD);
         given(authRepository.existsByEmail(EMAIL)).willReturn(false);
@@ -216,7 +216,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 카카오_토큰_발급_API_에러() {
+    void 실패_카카오_토큰_발급_API_에러() {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
 
@@ -229,7 +229,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 카카오_사용자_정보_조회_API_에러() {
+    void 실패_카카오_사용자_정보_조회_API_에러() {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
@@ -242,7 +242,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void 카카오_사용자_연결_끊기_API_에러() {
+    void 실패_카카오_사용자_연결_끊기_API_에러() {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
