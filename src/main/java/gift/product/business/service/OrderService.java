@@ -2,6 +2,7 @@ package gift.product.business.service;
 
 import gift.global.domain.OAuthProvider;
 import gift.global.exception.custrom.NotFoundException;
+import gift.member.business.service.MemberService;
 import gift.member.business.service.WishlistService;
 import gift.member.persistence.repository.MemberRepository;
 import gift.oauth.business.client.KakaoApiClient;
@@ -19,18 +20,15 @@ public class OrderService {
     private final ProductService productService;
     private final WishlistService wishlistService;
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final KakaoApiClient kakaoApiClient;
 
     public OrderService(ProductService productService, WishlistService wishlistService,
-        OrderRepository orderRepository, ProductRepository productRepository,
-        MemberRepository memberRepository, KakaoApiClient kakaoApiClient) {
+        OrderRepository orderRepository, MemberService memberService, KakaoApiClient kakaoApiClient) {
         this.productService = productService;
         this.wishlistService = wishlistService;
         this.orderRepository = orderRepository;
-        this.productRepository = productRepository;
-        this.memberRepository = memberRepository;
+        this.memberService = memberService;
         this.kakaoApiClient = kakaoApiClient;
     }
 
@@ -47,8 +45,8 @@ public class OrderService {
         } catch (NotFoundException ignored) {
         }
 
-        var product = productRepository.getProductById(orderInCreate.productId());
-        var member = memberRepository.getMemberById(orderInCreate.memberId());
+        var product = productService.getProductById(orderInCreate.productId());
+        var member = memberService.getMemberById(orderInCreate.memberId());
         var order = orderInCreate.toOrder(product, member);
         var orderId = orderRepository.saveOrder(order);
 

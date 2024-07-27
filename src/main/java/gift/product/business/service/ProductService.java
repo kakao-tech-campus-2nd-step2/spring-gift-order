@@ -103,4 +103,8 @@ public class ProductService {
         productRepository.saveProduct(product);
     }
 
+    public Product getProductById(Long productId) {
+        return productRepository.getProductById(productId);
+    }
+
 }
