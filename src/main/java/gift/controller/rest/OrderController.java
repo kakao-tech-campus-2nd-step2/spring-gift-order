@@ -37,14 +37,18 @@ public class OrderController {
         String email = (String) session.getAttribute("email");
         Order order = orderService.save(email, orderDTO);
         // social account이면 카톡으로 전송
-        orderService.sendToMe(session, orderDTO);
+        String kakaoAccessToken = (String) session.getAttribute("kakaoAccessToken");
+        if (kakaoAccessToken != null) {
+            orderService.sendToMe(kakaoAccessToken, orderDTO);
+        }
         return ResponseEntity.ok().body(order);
     }
 
     // 처리된 주문 제거
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable Long id) {
-        orderService.delete(id);
+    public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable Long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        orderService.delete(id, email);
         return ResponseEntity.ok().body(responseUtility.makeResponse("Order deleted successfully"));
     }
 }

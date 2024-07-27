@@ -4,7 +4,6 @@ import gift.entity.UserDTO;
 import gift.service.UserService;
 import gift.util.ResponseUtility;
 import gift.util.UserUtility;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +30,10 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> signup(@RequestBody @Valid UserDTO form, HttpSession session) {
-        String accessToken = userService.signup(form);
-        session.setAttribute("email", form.getEmail());
-        session.setAttribute("accessToken", accessToken);
-        session.setAttribute("kakaoAccessToken", "");
-        session.setAttribute("isSocialAccount", false);
+    public ResponseEntity<Map<String, String>> signup(@RequestBody @Valid UserDTO userDTO, HttpSession session) {
+        String accessToken = userService.signup(userDTO);
+        session.setAttribute("email", userDTO.getEmail());
+        session.setAttribute("role", "USER");
         return ResponseEntity.ok().body(userUtility.accessTokenToObject(accessToken));
     }
 
@@ -44,16 +41,13 @@ public class UserController {
     public ResponseEntity<Map<String, String>> login(@RequestBody @Valid UserDTO form, HttpSession session) {
         String accessToken = userService.login(form);
         session.setAttribute("email", form.getEmail());
-        session.setAttribute("accessToken", accessToken);
-        session.setAttribute("kakaoAccessToken", "");
-        session.setAttribute("isSocialAccount", false);
+        session.setAttribute("role", userService.findOne(form.getEmail()).getRole());
         return ResponseEntity.ok().body(userUtility.accessTokenToObject(accessToken));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> logout(HttpSession session) {
         session.invalidate();
-        HttpSession newSession = request.getSession(true);
         return ResponseEntity.ok().body(responseUtility.makeResponse("logout successfully"));
     }
 
@@ -61,36 +55,27 @@ public class UserController {
     public ResponseEntity<Map<String, String>> kakaoLogin(@RequestBody Map<String, String> request, HttpSession session) {
         String code = request.get("code");
 
-        Map<String, String> response = userService.kakaoLogin(code);
+        String kakaoAccessToken = userService.kakaoLogin(code);
+        Map<String, String> response = userService.getKakaoProfile(kakaoAccessToken);
 
         session.setAttribute("email", response.get("email"));
-        session.setAttribute("accessToken", response.get("accessToken"));
-        session.setAttribute("kakaoAccessToken", response.get("kakaoAccessToken"));
-        session.setAttribute("isSocialAccount", true);
+        session.setAttribute("role", "USER");
+        session.setAttribute("kakaoAccessToken", kakaoAccessToken);
 
-        Map<String, String> data = new HashMap<>();
         return ResponseEntity
                 .ok()
-                .body(userUtility.accessTokenToObject(data.get("accessToken")));
+                .body(userUtility.accessTokenToObject(response.get("accessToken")));
     }
 
     @GetMapping("/me")
     public ResponseEntity<Map<String, String>> me(HttpSession session) {
         try {
             String email = (String) session.getAttribute("email");
-            String accessToken = (String) session.getAttribute("accessToken");
-            String kakaoAccessToken = (String) session.getAttribute("kakaoAccessToken");
-            boolean isSocialAccount = (Boolean) session.getAttribute("isSocialAccount");
+            String role = (String) session.getAttribute("role");
 
             Map<String, String> res = new HashMap<>();
             res.put("email", email);
-            res.put("accessToken", accessToken);
-            res.put("kakaoAccessToken", kakaoAccessToken);
-            if (isSocialAccount) {
-                res.put("isSocialAccount", "true");
-            } else {
-                res.put("isSocialAccount", "false");
-            }
+            res.put("role", role);
             return ResponseEntity.ok().body(res);
         } catch (Exception e) {
             Map<String, String> res = new HashMap<>();
