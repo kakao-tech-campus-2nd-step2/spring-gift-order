@@ -1,13 +1,9 @@
 package gift.controller;
 
-import static gift.util.JwtUtil.extractToken;
-
 import gift.domain.Product;
 import gift.domain.WishList;
-import gift.error.UnauthorizedException;
 import gift.service.WishListService;
 import gift.util.JwtUtil;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
