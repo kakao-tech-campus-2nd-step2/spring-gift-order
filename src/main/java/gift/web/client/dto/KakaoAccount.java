@@ -1,6 +1,7 @@
 package gift.web.client.dto;
 
 import gift.domain.Member;
+import gift.domain.constants.Platform;
 import gift.domain.vo.Email;
 
 public class KakaoAccount {
@@ -38,6 +39,7 @@ public class KakaoAccount {
         return new Member.Builder()
             .name(profile.getNickname())
             .email(Email.from(email))
+            .platform(Platform.KAKAO)
             .build();
     }
 }
