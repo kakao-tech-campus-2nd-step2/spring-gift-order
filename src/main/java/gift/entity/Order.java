@@ -2,6 +2,8 @@ package gift.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="orders")
 public class Order {
@@ -14,16 +16,23 @@ public class Order {
     @JoinColumn(name = "option_id")
     private Option option;
 
+    @Column(name = "quantity")
     private int quantity;
-    private String userName;
+
+    @Column(name = "order_date_time", nullable = false)
+    private LocalDateTime orderDateTime;
+
+    @Column(name = "message")
+    private String message;
 
     protected Order() {
     }
 
-    public Order(Option option, int quantity, String userName) {
+    public Order(Option option, int quantity, LocalDateTime orderDateTime, String message) {
         this.option = option;
         this.quantity = quantity;
-        this.userName = userName;
+        this.orderDateTime = orderDateTime;
+        this.message = message;
     }
 
     public Long getId() {
@@ -38,7 +47,11 @@ public class Order {
         return quantity;
     }
 
-    public String getUserName() {
-        return userName;
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

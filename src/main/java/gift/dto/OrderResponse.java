@@ -1,31 +1,39 @@
 package gift.dto;
 
+import java.time.LocalDateTime;
+
 public class OrderResponse {
     private final Long id;
-    private final String productName;
+    private final Long optionId;
     private final int quantity;
-    private final String userName;
+    private final LocalDateTime orderDateTime;
+    private final String message;
 
-    public OrderResponse(Long id, String productName, int quantity, String userName) {
+    public OrderResponse(Long id, Long optionId, int quantity, LocalDateTime orderDateTime, String message) {
         this.id = id;
-        this.productName = productName;
+        this.optionId = optionId;
         this.quantity = quantity;
-        this.userName = userName;
+        this.orderDateTime = orderDateTime;
+        this.message = message;
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getProductName() {
-        return productName;
+    public Long getOptionId() {
+        return optionId;
     }
 
     public int getQuantity() {
         return quantity;
     }
 
-    public String getUserName() {
-        return userName;
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

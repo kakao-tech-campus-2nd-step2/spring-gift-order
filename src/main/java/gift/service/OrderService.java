@@ -9,6 +9,8 @@ import gift.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class OrderService {
 
@@ -27,14 +29,18 @@ public class OrderService {
         Option option = optionRepository.findById(request.getOptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
-        Order order = new Order(option, request.getQuantity(), request.getMessage());
+        option.subtractQuantity(request.getQuantity()); // 옵션 수량 차감
+        optionRepository.save(option);
+
+        Order order = new Order(option, request.getQuantity(), LocalDateTime.now(), request.getMessage());
         orderRepository.save(order);
 
         OrderResponse response = new OrderResponse(
                 order.getId(),
-                option.getProduct().getName(),
+                option.getId(),
                 order.getQuantity(),
-                order.getUserName()
+                order.getOrderDateTime(),
+                order.getMessage()
         );
 
         kakaoService.sendKakaoMessage(response, accessToken);

@@ -18,8 +18,12 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request, @RequestHeader("Authorization") String accessToken) {
-        OrderResponse response = orderService.createOrder(request, accessToken);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
+        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String token = accessToken.substring(7); // "Bearer " 이후의 실제 토큰 값
+        OrderResponse orderResponse = orderService.createOrder(orderRequest, token);
+        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
 }

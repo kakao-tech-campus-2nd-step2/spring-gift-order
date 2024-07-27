@@ -1,5 +1,6 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.OrderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,9 +35,11 @@ public class KakaoService {
     private String messageUrl;
 
     private final RestTemplate kakaoRestTemplate;
+    private final ObjectMapper objectMapper;
 
     public KakaoService(RestTemplate kakaoRestTemplate) {
         this.kakaoRestTemplate = kakaoRestTemplate;
+        this.objectMapper = new ObjectMapper();
     }
 
     public String getAccessToken(String code) {
@@ -55,6 +58,7 @@ public class KakaoService {
 
         ResponseEntity<Map> response;
         try {
+            logger.info("Requesting access token with code: {}", code);
             response = kakaoRestTemplate.exchange(url, HttpMethod.POST, request, Map.class);
             logger.info("Access token response: {}", response);
         } catch (Exception e) {
@@ -63,35 +67,55 @@ public class KakaoService {
         }
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            return (String) response.getBody().get("access_token");
+            String accessToken = (String) response.getBody().get("access_token");
+            logger.info("Received access token: {}", accessToken);
+            return accessToken;
         } else {
             throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
         }
     }
 
     public void sendKakaoMessage(OrderResponse order, String accessToken) {
-        String message = String.format("User: %s\nProduct: %s\nQuantity: %d", order.getUserName(), order.getProductName(), order.getQuantity());
+        String message = String.format("OptionId: %d\nQuantity: %d\nOrder Date: %s\nMessage: %s",
+                order.getOptionId(), order.getQuantity(), order.getOrderDateTime().toString(), order.getMessage());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("message", message);
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", message);
+        templateObject.put("link", new HashMap<String, String>() {{
+            put("web_url", "http://www.example.com");
+            put("mobile_web_url", "http://www.example.com");
+        }});
 
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response;
         try {
-            response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
-            logger.info("Kakao message response: {}", response);
-        } catch (Exception e) {
-            logger.error("Failed to send Kakao message", e);
-            throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
-        }
+            String templateObjectJson = objectMapper.writeValueAsString(templateObject);
 
-        if (response.getStatusCode() != HttpStatus.OK) {
-            throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("template_object", templateObjectJson);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response;
+            try {
+                logger.info("Sending Kakao message with access token: {}", accessToken);
+                response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
+                logger.info("Kakao message response: {}", response);
+            } catch (Exception e) {
+                logger.error("Failed to send Kakao message", e);
+                throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
+            }
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                logger.error("Kakao message response body: {}", response.getBody());
+                throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to convert template object to JSON", e);
+            throw new RuntimeException("template_object를 JSON으로 변환하는 중 오류가 발생했습니다.", e);
         }
     }
 }
