@@ -20,6 +20,7 @@ public class KakaoMemberService {
   public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoApi kakaoApi) {
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;
     this.kakaoApi = kakaoApi;
+
   }
 
   public KakaoJwtToken getToken(String autuhorizationKey) {
@@ -28,6 +29,7 @@ public class KakaoMemberService {
 
     KakaoJwtToken kakaoJwtToken = kakaoApi.kakaoLoginApiPost(URL, API_KEY,autuhorizationKey);
     kakaoJwtTokenRepository.save(kakaoJwtToken);
+
     return kakaoJwtToken;
 
   }
