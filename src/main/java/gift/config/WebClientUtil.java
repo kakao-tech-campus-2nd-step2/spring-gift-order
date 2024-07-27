@@ -3,7 +3,7 @@ package gift.config;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.web.reactive.function.client.WebClient.Builder;
+
 public class WebClientUtil {
     private final WebClient.Builder webClientBuilder;
 

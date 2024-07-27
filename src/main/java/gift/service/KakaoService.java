@@ -9,6 +9,7 @@ import gift.model.member.KakaoProperties;
 import gift.model.member.Member;
 import gift.repository.MemberRepository;
 import io.netty.handler.codec.http.HttpHeaderValues;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,16 +19,12 @@ import java.util.Optional;
 
 @Service
 public class KakaoService {
-    private final KakaoProperties kakaoProperties;
-    private final WebClientUtil webClientUtil;
-    private final MemberRepository memberRepository;
-
-
-    public KakaoService(KakaoProperties kakaoProperties, WebClient.Builder webClientBuilder,MemberRepository memberRepository) {
-        this.kakaoProperties = kakaoProperties;
-        this.webClientUtil = new WebClientUtil(webClientBuilder);
-        this.memberRepository = memberRepository;
-    }
+    @Autowired
+    private KakaoProperties kakaoProperties;
+    @Autowired
+    private WebClientUtil webClientUtil;
+    @Autowired
+    private MemberRepository memberRepository;
 
     public String getAccessTokenFromKakao(String code) {
         WebClient webClient = webClientUtil.createWebClient(kakaoProperties.getKakaoAuthUrl());
