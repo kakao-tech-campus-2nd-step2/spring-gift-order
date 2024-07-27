@@ -3,6 +3,7 @@ package gift.service;
 import gift.config.KakaoProperties;
 import gift.entity.Member;
 import gift.repository.MemberRepository;
+import gift.util.JwtUtil;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,14 @@ public class KakaoAuthService {
     private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public KakaoAuthService(RestTemplateBuilder builder,  KakaoProperties kakaoProperties, MemberRepository memberRepository) {
+    public KakaoAuthService(RestTemplateBuilder builder,  KakaoProperties kakaoProperties, MemberRepository memberRepository, JwtUtil jwtUtil) {
         restTemplate = builder.build();
         this.kakaoProperties = kakaoProperties;
         this.memberRepository = memberRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public String getAccessToken(String code) {
@@ -55,11 +58,11 @@ public class KakaoAuthService {
         return responseBody.get("id").toString();
     }
 
-    public void registerKakaoMember(String kakaoUserId, String token) {
-        String memberEmail = kakaoUserId + "@kakao.com";
+    public String registerKakaoMember(String kakaoUserId, String token) {
+        String email = kakaoUserId + "@kakao.com";
         String password = "password";
-        Member member = new Member(memberEmail, password, token);
-        // 이미 존재하는지 확인
+        Member member = new Member(email, password, token);
         memberRepository.save(member);
+        return JwtUtil.generateToken(email);
     }
 }

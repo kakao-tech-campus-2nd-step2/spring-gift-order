@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.config.KakaoProperties;
 import gift.service.KakaoAuthService;
+import gift.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,13 @@ public class KakaoAuthController {
 
     private final KakaoProperties kakaoProperties;
     private final KakaoAuthService kakaoAuthService;
+    private final MemberService memberService;
 
     @Autowired
-    public KakaoAuthController(KakaoProperties kakaoProperties, KakaoAuthService kakaoAuthService) {
+    public KakaoAuthController(KakaoProperties kakaoProperties, KakaoAuthService kakaoAuthService, MemberService memberService) {
         this.kakaoProperties = kakaoProperties;
         this.kakaoAuthService = kakaoAuthService;
+        this.memberService = memberService;
     }
 
     @GetMapping("/kakao")
@@ -35,7 +38,7 @@ public class KakaoAuthController {
     public ResponseEntity<String> loginWithKakao(@RequestParam String code) {
         String token = kakaoAuthService.getAccessToken(code);
         String kakaoUserId = kakaoAuthService.getKakaoUserId(token);
-        kakaoAuthService.registerKakaoMember(kakaoUserId, token);
-        return new ResponseEntity<>(HttpStatus.OK);
+        String jwtToken = kakaoAuthService.registerKakaoMember(kakaoUserId, token);
+        return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 }
