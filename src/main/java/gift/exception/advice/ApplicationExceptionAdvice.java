@@ -39,7 +39,7 @@ public class ApplicationExceptionAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Map<String, String>> handleForbidden(ResponseStatusException e) {
+    public ResponseEntity<Map<String, String>> handleUnauthorized(ResponseStatusException e) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(responseUtility.makeResponse(e.getMessage()));
