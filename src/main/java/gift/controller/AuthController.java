@@ -30,7 +30,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/oauth/register")
+    @PostMapping("/api/register")
     public ResponseEntity<SuccessBody<UserResponseDTO>> signUp(
         @Valid @RequestBody UserSignupRequestDTO userSignupRequestDTO) {
         userService.join(userSignupRequestDTO);
@@ -38,7 +38,7 @@ public class AuthController {
         return ApiResponseGenerator.success(HttpStatus.CREATED, "회원가입에 성공했습니다.", userResponseDTO);
     }
 
-    @PostMapping("/api/oauth/login")
+    @PostMapping("/api/login")
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         User user = userService.findByEmail(userLoginRequestDTO);
