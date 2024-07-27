@@ -44,6 +44,10 @@ public class OrderController {
     public ResponseEntity<?> addOrder(@RequestHeader("Authorization") String token,@RequestBody Order order)
         throws JsonProcessingException {
         orderService.save(order);
+        Claims claims = jwtUtil.extractClaims(token.replace("Bearer ", ""));
+        Long memberId = Long.parseLong(claims.getSubject());
+        Member member = memberService.getMemberById(memberId);// 토큰에서 멤버 정보 추출
+        orderService.sendMessage(order, member);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .header(HttpHeaders.AUTHORIZATION, token)
