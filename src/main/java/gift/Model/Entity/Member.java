@@ -5,6 +5,8 @@ import gift.Model.Value.Email;
 import gift.Model.Value.Password;
 import jakarta.persistence.*;
 
+import java.util.Optional;
+
 @Entity
 public class Member {
 
@@ -27,17 +29,13 @@ public class Member {
     protected Member() {}
 
     public Member(Email email, Password password) {
-        this(email, password, null);
+        this.email = email;
+        this.password = password;
+        this.accessToken = null;
     }
 
     public Member(String email, String password) {
-        this(new Email(email), new Password(password), null);
-    }
-
-    public Member(Email email, Password password, AccessToken accessToken) {
-        this.email = email;
-        this.password = password;
-        this.accessToken = accessToken;
+        this(new Email(email), new Password(password));
     }
 
     public Long getId() {
@@ -52,8 +50,8 @@ public class Member {
         return password;
     }
 
-    public AccessToken getAccessToken() {
-        return accessToken;
+    public Optional<AccessToken>  getAccessToken() {
+        return Optional.ofNullable(accessToken);
     }
 
     public void update(Email email, Password password){
@@ -63,5 +61,9 @@ public class Member {
 
     public void update(String email, String password) {
         update(new Email(email), new Password(password));
+    }
+
+    public void updateAccessToken(String accessToken){
+        this.accessToken = new AccessToken(accessToken);
     }
 }
