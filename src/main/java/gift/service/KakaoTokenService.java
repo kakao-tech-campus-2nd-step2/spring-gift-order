@@ -18,14 +18,14 @@ public class KakaoTokenService {
     public void saveKakaoToken(String userEmail, String token) {
         Optional<KakaoToken> existingToken = kakaoTokenRepository.findByUserEmail(userEmail);
         if (existingToken.isPresent()) {
-            KakaoToken kakaoToken = existingToken.get();
-            kakaoToken.setToken(token);
+            KakaoToken kakaoToken = existingToken.get().withUpdatedToken(token);
             kakaoTokenRepository.save(kakaoToken);
         } else {
             KakaoToken kakaoToken = new KakaoToken(userEmail, token);
             kakaoTokenRepository.save(kakaoToken);
         }
     }
+
     public String getTokenByEmail(String email) {
         Optional<KakaoToken> kakaoToken = kakaoTokenRepository.findByUserEmail(email);
         return kakaoToken.map(KakaoToken::getToken).orElse(null);

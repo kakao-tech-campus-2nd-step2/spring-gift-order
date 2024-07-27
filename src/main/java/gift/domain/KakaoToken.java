@@ -31,15 +31,11 @@ public class KakaoToken {
         return userEmail;
     }
 
-    public void setUserEmail(String userId) {
-        this.userEmail = userId;
-    }
-
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public KakaoToken withUpdatedToken(String token) {
+        return new KakaoToken(this.userEmail, token);
     }
 }
