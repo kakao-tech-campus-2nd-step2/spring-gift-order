@@ -13,6 +13,7 @@ import gift.Util.KakaoProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -61,6 +62,7 @@ public class KakaoLoginService {
                 .toUriString();
     }
 
+    @Transactional
     public String loginOrRegisterUser(String oauthCode) {
         String kakaoAccessToken = getToken(oauthCode);
         String userEmail;
@@ -82,6 +84,7 @@ public class KakaoLoginService {
 
         Email email = new Email(userEmail);
         Member member = memberRepository.findByEmail(email).orElseGet(()->memberRepository.save(new Member(email, new Password("카카오 유저"))));
+        member.updateAccessToken(kakaoAccessToken);
         return jwtUtill.generateToken(member);
     }
 
