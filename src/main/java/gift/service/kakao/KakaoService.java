@@ -17,7 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
-import gift.util.JwtTokenUtil;  // Import JwtTokenUtil
+import gift.util.JwtTokenUtil;
 
 import java.net.URI;
 import java.util.HashMap;
