@@ -3,7 +3,7 @@ package gift.service;
 import gift.dto.KakaoTokenResponse;
 import gift.dto.KakaoUserProfile;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,13 +20,18 @@ public class KakaoOAuthService {
     private final RestTemplate restTemplate;
     private final Dotenv dotenv;
 
+    @Value("${kakao.api.tokenUrl}")
+    private String tokenUrl;
+
+    @Value("${kakao.api.userProfileUrl}")
+    private String userProfileUrl;
+
     public KakaoOAuthService(RestTemplate restTemplate, Dotenv dotenv) {
         this.restTemplate = restTemplate;
         this.dotenv = dotenv;
     }
 
     public String getAccessToken(String authorizationCode) {
-        String url = "https://kauth.kakao.com/oauth/token";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -40,20 +45,19 @@ public class KakaoOAuthService {
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
         ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(
-            url, HttpMethod.POST, request, KakaoTokenResponse.class);
+            tokenUrl, HttpMethod.POST, request, KakaoTokenResponse.class);
 
         return response.getBody().getAccessToken();
     }
 
     public KakaoUserProfile getUserProfile(String accessToken) {
-        String url = "https://kapi.kakao.com/v2/user/me";
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         ResponseEntity<KakaoUserProfile> response = restTemplate.exchange(
-            url, HttpMethod.GET, request, KakaoUserProfile.class);
+            userProfileUrl, HttpMethod.GET, request, KakaoUserProfile.class);
 
         return response.getBody();
     }
