@@ -3,19 +3,14 @@ package gift.product.dto;
 import gift.product.model.Category;
 import jakarta.validation.constraints.NotBlank;
 
-public class CategoryRequestDTO {
+public class CategoryDTO {
 
-    private Long id;
     @NotBlank(message = "카테고리 이름은 필수 입력사항입니다.")
     private String name;
 
-    public CategoryRequestDTO() {}
-    public CategoryRequestDTO(String name) {}
-    public CategoryRequestDTO(Long id, String name) {}
+    public CategoryDTO() {}
+    public CategoryDTO(String name) {}
 
-    public Long getId() {
-        return id;
-    }
     public String getName() {
         return name;
     }

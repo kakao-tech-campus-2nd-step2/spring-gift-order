@@ -1,6 +1,6 @@
 package gift.product.controller;
 
-import gift.product.dto.CategoryRequestDTO;
+import gift.product.dto.CategoryDTO;
 import gift.product.model.Category;
 import gift.product.service.CategoryService;
 import jakarta.validation.Valid;
@@ -37,19 +37,19 @@ public class AdminCategoryController {
     @GetMapping("/register")
     public String registerCategoryForm(Model model) {
         System.out.println("[AdminCategoryController] registerCategoryForm()");
-        model.addAttribute("categoryDTO", new CategoryRequestDTO());
+        model.addAttribute("categoryDTO", new CategoryDTO());
         return "category-form";
     }
 
     @PostMapping
-    public String registerCategory(@Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO, BindingResult bindingResult, Model model) {
+    public String registerCategory(@Valid @ModelAttribute CategoryDTO categoryDTO, BindingResult bindingResult, Model model) {
         System.out.println("[AdminCategoryController] registerCategory()");
         if(bindingResult.hasErrors()) {
-            System.out.println("[AdminCategoryController] registerCategory(): validation error: " + bindingResult.getAllErrors() + ", categoryDTO: " + categoryRequestDTO.getName());
-            model.addAttribute("categoryDTO", categoryRequestDTO);
+            System.out.println("[AdminCategoryController] registerCategory(): validation error: " + bindingResult.getAllErrors() + ", categoryDTO: " + categoryDTO.getName());
+            model.addAttribute("categoryDTO", categoryDTO);
             return "category-form";
         }
-        categoryService.registerCategory(categoryRequestDTO.convertToDomain());
+        categoryService.registerCategory(categoryDTO.convertToDomain());
         return "redirect:/admin/category";
     }
 
@@ -61,12 +61,12 @@ public class AdminCategoryController {
     }
 
     @PutMapping("/{id}")
-    public String updateCategory(@PathVariable Long id, @Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO, BindingResult bindingResult, Model model) {
+    public String updateCategory(@PathVariable Long id, @Valid @ModelAttribute CategoryDTO categoryDTO, BindingResult bindingResult, Model model) {
         System.out.println("[AdminCategoryController] editCategoryForm()");
         if(bindingResult.hasErrors()) {
-            model.addAttribute("categoryDTO", categoryRequestDTO);
+            model.addAttribute("categoryDTO", categoryDTO);
         }
-        categoryService.updateCategory(new Category(id, categoryRequestDTO.getName()));
+        categoryService.updateCategory(new Category(id, categoryDTO.getName()));
         return "redirect:/admin/category";
     }
 

@@ -4,7 +4,6 @@ import static gift.product.exception.GlobalExceptionHandler.DUPLICATE_CATEGORY_N
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 import static gift.product.exception.GlobalExceptionHandler.USING_CATEGORY;
 
-import gift.product.dto.CategoryRequestDTO;
 import gift.product.exception.DuplicateException;
 import gift.product.exception.InvalidIdException;
 import gift.product.model.Category;
