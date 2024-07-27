@@ -25,7 +25,7 @@ public class OrderRequest {
         private int quantity;
         private String message;
 
-        public Builder optionId (Long optionId) {
+        public Builder optionId(Long optionId) {
             this.optionId = optionId;
             return this;
         }

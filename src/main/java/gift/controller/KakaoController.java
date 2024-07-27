@@ -50,24 +50,9 @@ public class KakaoController {
         return "redirect:/home";
     }
 
-    @GetMapping("/myinfo")
-    public ResponseEntity<String> getMyInfo(@RequestHeader("Authorization") String accessToken) {
-        String apiUrl = "https://kapi.kakao.com/v2/user/me";
-        RestTemplate restTemplate = new RestTemplate();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
-        return response;
-    }
-
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest, accessToken);
-        kakaoService.sendKakaoMessage(orderResponse, accessToken);
         return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
     }
 }

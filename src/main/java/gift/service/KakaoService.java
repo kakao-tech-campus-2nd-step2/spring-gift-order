@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.dto.OrderResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,8 @@ import java.util.Map;
 
 @Service
 public class KakaoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(KakaoService.class);
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -27,14 +31,12 @@ public class KakaoService {
     private String apiUrl;
 
     @Value("${kakao.message-url}")
-    private String meaageUrl;
+    private String messageUrl;
 
-    private final KakaoProperties kakaoProperties;
     private final RestTemplate kakaoRestTemplate;
 
-    public KakaoService(RestTemplate kakaoRestTemplate, KakaoProperties kakaoProperties) {
+    public KakaoService(RestTemplate kakaoRestTemplate) {
         this.kakaoRestTemplate = kakaoRestTemplate;
-        this.kakaoProperties = kakaoProperties;
     }
 
     public String getAccessToken(String code) {
@@ -51,50 +53,44 @@ public class KakaoService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Map> response = null;
+        ResponseEntity<Map> response;
         try {
             response = kakaoRestTemplate.exchange(url, HttpMethod.POST, request, Map.class);
+            logger.info("Access token response: {}", response);
         } catch (Exception e) {
+            logger.error("Failed to get access token", e);
             throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.", e);
         }
 
-        if (response != null && response.getStatusCode() == HttpStatus.OK) {
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody != null) {
-                return (String) responseBody.get("access_token");
-            }
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return (String) response.getBody().get("access_token");
+        } else {
+            throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
         }
-        throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
     }
 
     public void sendKakaoMessage(OrderResponse order, String accessToken) {
-        String message = String.format("Order ID: %d\nQuantity: %d\nMessage: %s", order.getId(), order.getQuantity(), order.getMessage());
+        String message = String.format("User: %s\nProduct: %s\nQuantity: %d", order.getUserName(), order.getProductName(), order.getQuantity());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", message);
-        templateObject.put("link", Map.of("web_url", "http://example.com/orders/" + order.getId()));
-        templateObject.put("button_title", "View Order");
-
         Map<String, Object> body = new HashMap<>();
-        body.put("template_object", templateObject);
+        body.put("message", message);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = null;
+        ResponseEntity<String> response;
         try {
-            response = kakaoRestTemplate.postForEntity(meaageUrl, request, String.class);
+            response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
+            logger.info("Kakao message response: {}", response);
         } catch (Exception e) {
+            logger.error("Failed to send Kakao message", e);
             throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
         }
 
-        if (response == null) {
-            throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: null response");
-        } else if (response.getStatusCode() != HttpStatus.OK) {
+        if (response.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
         }
     }
