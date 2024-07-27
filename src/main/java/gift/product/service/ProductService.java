@@ -10,11 +10,8 @@ import gift.product.repository.CategoryRepository;
 import gift.product.repository.OptionRepository;
 import gift.product.repository.ProductRepository;
 import gift.product.validation.ProductValidation;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -38,37 +35,27 @@ public class ProductService {
         this.optionRepository = optionRepository;
     }
 
-    public void registerProduct(ProductDTO productDTO) {
+    public Product registerProduct(ProductDTO productDTO) {
         System.out.println("[ProductService] registerProduct()");
         productValidation.registerValidation(productDTO);
-        Product product = new Product(
-            productDTO.getName(),
-            productDTO.getPrice(),
-            productDTO.getImageUrl(),
-            categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
-        );
-        Product registerProduct = productRepository.save(product);
+        Product product = productRepository.save(productDTO.convertToDomain(categoryRepository));
+        registerDefaultOption(product);
+        return product;
+    }
+
+    private void registerDefaultOption(Product product) {
         Option option = new Option(
             product.getName(),
             0,
-            registerProduct
+            product
         );
         optionRepository.save(option);
     }
 
-    public void updateProduct(Long id, ProductDTO productDTO) {
+    public Product updateProduct(Long id, ProductDTO productDTO) {
         System.out.println("[ProductService] updateProduct()");
         productValidation.updateValidation(id, productDTO);
-        Product product = new Product(
-            id,
-            productDTO.getName(),
-            productDTO.getPrice(),
-            productDTO.getImageUrl(),
-            categoryRepository.findById(productDTO.getCategoryId())
-                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
-        );
-        productRepository.save(product);
+        return productRepository.save(productDTO.convertToDomain(id, categoryRepository));
     }
 
     public void deleteProduct(Long id) {
@@ -82,46 +69,19 @@ public class ProductService {
         System.out.println("[ProductService] getDTOById()");
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-        return convertToDTO(product);
+        return product.convertToDTO();
     }
 
-    public Page<ProductDTO> searchProducts(String keyword, Pageable pageable) {
-        return convertToDTOList(
-            productRepository.findByName(keyword, pageable),
-            pageable
-        );
+    public Page<Product> searchProducts(String keyword, Pageable pageable) {
+        return productRepository.findByName(keyword, pageable);
     }
 
-    public Page<ProductDTO> getAllProducts(Pageable pageable) {
-        return convertToDTOList(
-            productRepository.findAll(pageable),
-            pageable
-        );
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
     }
 
     public Product findById(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-    }
-
-    public ProductDTO convertToDTO(Product product) {
-        return new ProductDTO(
-            product.getId(),
-            product.getName(),
-            product.getPrice(),
-            product.getImageUrl(),
-            product.getCategory().getId()
-        );
-    }
-
-    public Page<ProductDTO> convertToDTOList(Page<Product> products, Pageable pageable) {
-        List<ProductDTO> productDTOs = products.stream()
-            .map(this::convertToDTO)
-            .collect(Collectors.toList());
-        return new PageImpl<>(
-            productDTOs,
-            pageable,
-            products.getTotalElements()
-        );
     }
 }

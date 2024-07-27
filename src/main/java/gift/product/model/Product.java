@@ -1,5 +1,6 @@
 package gift.product.model;
 
+import gift.product.dto.ProductDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
@@ -61,5 +62,15 @@ public class Product {
 
     public Category getCategory() {
         return category;
+    }
+
+    public ProductDTO convertToDTO() {
+        return new ProductDTO(
+            id,
+            name,
+            price,
+            imageUrl,
+            category.getId()
+        );
     }
 }

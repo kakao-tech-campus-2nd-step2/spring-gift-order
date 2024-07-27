@@ -106,7 +106,7 @@ public class ProductServiceTest {
             .thenReturn(productPage);
 
         // when
-        Page<ProductDTO> result = productService.getAllProducts(pageable);
+        Page<Product> result = productService.getAllProducts(pageable);
 
         // then
         assertEquals(1, result.getTotalElements());
