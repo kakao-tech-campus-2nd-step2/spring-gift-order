@@ -93,4 +93,10 @@ public class GlobalExceptionHandler {
     public void handleUnauthorizedException(UnauthorizedException ex, Model model) {
         model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidIdException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void handleInvalidIdException(InvalidIdException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
 }
