@@ -15,6 +15,10 @@ public class KakaoOauthConfigure {
 
     private String tokenURL;
 
+    private String userInfoFromAccessTokenURL;
+
+    private String messageSendURL;
+
 
     public String getClientId() {
         return clientId;
@@ -46,5 +50,21 @@ public class KakaoOauthConfigure {
 
     public void setTokenURL(String tokenURL) {
         this.tokenURL = tokenURL;
+    }
+
+    public String getUserInfoFromAccessTokenURL() {
+        return userInfoFromAccessTokenURL;
+    }
+
+    public void setUserInfoFromAccessTokenURL(String userInfoFromAccessTokenURL) {
+        this.userInfoFromAccessTokenURL = userInfoFromAccessTokenURL;
+    }
+
+    public String getMessageSendURL() {
+        return messageSendURL;
+    }
+
+    public void setMessageSendURL(String messageSendURL) {
+        this.messageSendURL = messageSendURL;
     }
 }

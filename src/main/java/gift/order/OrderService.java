@@ -4,13 +4,14 @@ import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import gift.exception.InvalidAccessTokenException;
+import gift.login.KakaoOauthConfigure;
 import gift.member.MemberService;
 import gift.option.OptionService;
 import gift.option.entity.Option;
 import gift.order.dto.CreateOrderRequestDTO;
 import gift.order.dto.CreateOrderResponseDTO;
-import gift.order.dto.KakaoUserInfoDTO;
 import gift.order.dto.DefaultMessageTemplate;
+import gift.order.dto.KakaoUserInfoDTO;
 import gift.wishlist.WishlistService;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,17 +27,20 @@ import org.springframework.web.client.RestClient;
 public class OrderService {
 
     private final RestClient restClient;
+    private final KakaoOauthConfigure kakaoOauthConfigure;
     private final OptionService optionService;
     private final WishlistService wishlistService;
     private final MemberService memberService;
 
     public OrderService(
         RestClient restClient,
+        KakaoOauthConfigure kakaoOauthConfigure,
         OptionService optionService,
         MemberService memberService,
         WishlistService wishlistService
     ) {
         this.restClient = restClient;
+        this.kakaoOauthConfigure = kakaoOauthConfigure;
         this.optionService = optionService;
         this.memberService = memberService;
         this.wishlistService = wishlistService;
@@ -69,7 +73,7 @@ public class OrderService {
 
     private String getEmailFromAccessToken(String accessToken) {
         return restClient.get()
-            .uri("https://kapi.kakao.com/v2/user/me?property_keys=[\"kakao_account.email\"]")
+            .uri(kakaoOauthConfigure.getUserInfoFromAccessTokenURL())
             .header("Authorization", accessToken)
             .accept(APPLICATION_FORM_URLENCODED)
             .exchange((request, response) -> {
@@ -84,7 +88,7 @@ public class OrderService {
 
     private void sendMessage(CreateOrderRequestDTO createOrderRequestDTO, String accessToken) {
         restClient.post()
-            .uri("https://kapi.kakao.com/v2/api/talk/memo/default/send")
+            .uri(kakaoOauthConfigure.getMessageSendURL())
             .header("Authorization", accessToken)
             .contentType(APPLICATION_FORM_URLENCODED)
             .body(generateMessageBody(createOrderRequestDTO))
