@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>주문하기</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("orderForm");
+      form.addEventListener("submit", submitOrderForm);
+    });
+
+    function submitOrderForm(event) {
+      event.preventDefault();
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+
+      const form = event.target;
+      const data = {
+        optionId: form.optionId.value,
+        quantity: form.quantity.value,
+        message: form.message.value
+      };
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.text(); // 텍스트로 응답을 먼저 받음
+        } else {
+          return response.text().then(text => {
+            try {
+              const json = JSON.parse(text); // JSON 파싱 시도
+              let errorMessage = "주문에 실패했습니다:\n";
+              for (const [field, message] of Object.entries(json)) {
+                errorMessage += `${field}: ${message}\n`;
+              }
+              throw new Error(errorMessage);
+            } catch {
+              throw new Error(text); // JSON 파싱 실패 시 원본 텍스트 그대로 사용
+            }
+          });
+        }
+      })
+      .then(message => {
+        alert(message);
+        window.location.href = '/admin/products';
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert(error.message);
+      });
+    }
+  </script>
+</head>
+<body>
+<h1>주문하기</h1>
+<form id="orderForm" th:action="@{/orders/{optionId}(optionId=${orderDTO.optionId})}"
+      th:object="${orderDTO}" method="post">
+  <div>
+    <label for="quantity">수량:</label>
+    <input type="number" id="quantity" th:field="*{quantity}" name="quantity"/>
+    <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" style="color:red;"></div>
+  </div>
+  <div>
+    <label for="message">메시지:</label>
+    <input type="text" id="message" th:field="*{message}" name="message"/>
+    <div th:if="${#fields.hasErrors('message')}" th:errors="*{message}" style="color:red;"></div>
+  </div>
+  <input type="hidden" name="optionId" th:value="${orderDTO.optionId}"/>
+  <div>
+    <button type="submit">주문</button>
+  </div>
+</form>
+</body>
+</html>

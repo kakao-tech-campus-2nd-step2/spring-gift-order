@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gift.dto.OptionDTO;
-import gift.dto.OptionSubtractQuantityDTO;
 import gift.model.Category;
 import gift.model.Option;
 import gift.model.Product;
@@ -131,8 +130,8 @@ class OptionServiceTest {
     @Test
     @Transactional
     void testSubtractQuantity() {
-        OptionSubtractQuantityDTO optionSubtractQuantityDTO = new OptionSubtractQuantityDTO(1L);
-        optionService.subtractQuantity(option.getId(), optionSubtractQuantityDTO);
+        Long optionSubtractQuantity = 1L;
+        optionService.subtractQuantity(option.getId(), optionSubtractQuantity);
         Option subtractedOption = optionService.findOptionById(option.getId());
         assertEquals(0L, subtractedOption.getQuantity());
     }
