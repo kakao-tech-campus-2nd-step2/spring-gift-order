@@ -58,6 +58,10 @@ public class Member {
         return email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public RegisterType getRegisterType() {
         return registerType;
     }
@@ -80,10 +84,10 @@ public class Member {
     }
 
     public boolean isRegisterTypeDefault() {
-        return this.registerType.isDefault();
+        return registerType.isDefault();
     }
 
     public boolean isRegisterTypeKakao() {
-        return this.registerType.isKakao();
+        return registerType.isKakao();
     }
 }

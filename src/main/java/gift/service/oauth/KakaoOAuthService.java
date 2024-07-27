@@ -34,9 +34,6 @@ public class KakaoOAuthService {
     private final JWTUtil jwtUtil;
     private final RestClient restClient;
 
-    @Value("${kakao.password}")
-    private String kakaoPassword;
-
     public KakaoOAuthService(
         KakaoApiClient kakaoApiClient,
         MemberService memberService,
@@ -82,13 +79,11 @@ public class KakaoOAuthService {
         try {
             MemberRegisterRequest registerRequest = new MemberRegisterRequest(
                 userResponse.email(),
-                kakaoPassword,
+                "KAKAO_LOGIN",
                 RegisterType.KAKAO
             );
-            System.out.println("회원가입 완료");
             return memberService.registerMember(registerRequest);
         } catch (EmailAlreadyUsedException e) {
-            System.out.println("로그인 완료");
             return memberService.loginKakaoMember(userResponse.email());
         }
     }

@@ -28,9 +28,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JWTUtil jwtUtil;
 
-    @Value("${kakao.password}")
-    private String kakaoPassword;
-
     public MemberService(MemberRepository memberRepository, JWTUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.jwtUtil = jwtUtil;
@@ -47,8 +44,14 @@ public class MemberService {
             memberRegisterRequest.registerType()
         );
         Member savedMember = memberRepository.save(member);
-
         String token = jwtUtil.generateToken(savedMember.getId(), member.getEmail());
+
+        if (!savedMember.isRegisterTypeDefault()) {
+            savedMember.update(
+                savedMember.getEmail(),
+                token
+            );
+        }
         return new MemberResponse(savedMember.getId(), savedMember.getEmail(), token, savedMember.getRegisterType());
     }
 
@@ -56,7 +59,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberLoginRequest.email())
             .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
 
-        if (member.isRegisterTypeDefault()) {
+        if (!member.isRegisterTypeDefault()) {
             throw new ForbiddenException(INVALID_REGISTER_TYPE);
         }
 
@@ -72,7 +75,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
 
-        if (member.isRegisterTypeKakao()) {
+        if (!member.isRegisterTypeKakao()) {
             throw new ForbiddenException(INVALID_REGISTER_TYPE);
         }
 
@@ -107,7 +110,7 @@ public class MemberService {
 
         String changedPassword = memberEditRequest.password();
         if (member.isRegisterTypeKakao()) {
-            changedPassword = kakaoPassword;
+            changedPassword = member.getPassword();
         }
 
         member.update(memberEditRequest.email(), changedPassword);
