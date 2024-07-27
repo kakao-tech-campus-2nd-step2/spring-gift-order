@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResponseException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
     public void handleDidNotGetResponseException(ResponseException ex, Model model) {
         model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
     }

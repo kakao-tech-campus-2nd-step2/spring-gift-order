@@ -7,6 +7,7 @@ import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 import static gift.product.exception.GlobalExceptionHandler.OVER_100MILLION;
 
 import gift.product.exception.DuplicateException;
+import gift.product.exception.InstanceValueException;
 import gift.product.exception.InvalidIdException;
 import gift.product.exception.LastOptionException;
 import gift.product.model.Option;
@@ -52,7 +53,7 @@ public class OptionValidation {
 
     private void validateOver100Million(int size) {
         if(size >= 99_999_999)
-            throw new RuntimeException(OVER_100MILLION);
+            throw new InstanceValueException(OVER_100MILLION);
     }
 
     private void validateDuplicateName(Collection<Option> options, Option option) {
@@ -63,7 +64,7 @@ public class OptionValidation {
 
     private void validateNegative(int quantity) {
         if(quantity < 0)
-            throw new IllegalArgumentException(LEAST_QUANTITY);
+            throw new InstanceValueException(LEAST_QUANTITY);
     }
 
     private void validateLastOption(int cnt) {

@@ -36,15 +36,7 @@ public class ApiCategoryController {
 
     @Operation(
         summary = "카테고리 등록",
-        description = "상품의 분류를 정하는 카테고리를 등록합니다.",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = {
-                @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = CategoryDTO.class)
-                )
-            }
-        )
+        description = "상품의 분류를 정하는 카테고리를 등록합니다."
     )
     @ApiResponses(value = {
         @ApiResponse(
@@ -77,22 +69,15 @@ public class ApiCategoryController {
 
     @Operation(
         summary = "카테고리 이름 수정",
-        description = "카테고리의 이름을 수정합니다.",
-        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = {
-                @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = CategoryDTO.class)
-                )
-            }
-        )
+        description = "카테고리의 이름을 수정합니다."
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "201",
             description = "카테고리 수정 성공",
             content = @Content(
-                mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = Category.class)
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = Category.class)
             )
         ),
         @ApiResponse(

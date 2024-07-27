@@ -3,15 +3,16 @@ package gift.product.dto;
 import gift.product.model.Option;
 import gift.product.model.Product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public class OptionDTO {
 
-    private Long id;
     @NotBlank
     private String name;
     @PositiveOrZero
     private int quantity;
+    @NotNull
     private Long productId;
 
     public OptionDTO() {
@@ -22,16 +23,6 @@ public class OptionDTO {
         this.name = name;
         this.quantity = quantity;
         this.productId = productId;
-    }
-
-    public OptionDTO(Long id, String name, int quantity) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
