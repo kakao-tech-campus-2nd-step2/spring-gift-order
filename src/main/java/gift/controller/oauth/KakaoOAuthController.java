@@ -1,5 +1,7 @@
 package gift.controller.oauth;
 
+import static gift.util.constants.auth.KakaoOAuthConstants.KAKAO_AUTH_URL;
+
 import gift.config.KakaoProperties;
 import gift.dto.member.MemberResponse;
 import gift.dto.oauth.KakaoScopeResponse;
@@ -42,7 +44,7 @@ public class KakaoOAuthController {
     @GetMapping
     public ResponseEntity<Void> kakaoLogin() {
         String kakaoAuthUrl =
-            "https://kauth.kakao.com/oauth/authorize?scope=talk_message,profile_nickname,account_email&response_type=code&redirect_uri="
+            KAKAO_AUTH_URL + "?scope=talk_message,profile_nickname,account_email&response_type=code&redirect_uri="
                 + kakaoProperties.redirectUrl() + "&client_id=" + kakaoProperties.clientId();
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(kakaoAuthUrl));
