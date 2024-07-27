@@ -2,12 +2,14 @@ package gift.Controller;
 
 import gift.Model.DTO.MemberDTO;
 import gift.Service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+@Tag(name = "로그인 API", description = "로그인과 관련된 API")
 @RestController
 public class LoginRestController {
     private final UserService userService;
