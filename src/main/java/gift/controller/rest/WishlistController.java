@@ -36,7 +36,7 @@ public class WishlistController {
         wishlistService.addWishlistProduct(email, form);
         return ResponseEntity
                 .ok()
-                .body(new MessageResponseDTO("Product added to wishlist successfully"));
+                .body(makeMessageResponse("Product added to wishlist successfully"));
     }
 
     @DeleteMapping(path = "/{id}")
@@ -45,6 +45,10 @@ public class WishlistController {
         wishlistService.deleteWishlist(email, id);
         return ResponseEntity
                 .ok()
-                .body(new MessageResponseDTO("Wishlist deleted successfully"));
+                .body(makeMessageResponse("Wishlist deleted successfully"));
+    }
+
+    private MessageResponseDTO makeMessageResponse(String message) {
+        return new MessageResponseDTO(message);
     }
 }

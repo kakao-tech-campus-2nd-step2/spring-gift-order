@@ -58,7 +58,7 @@ public class ProductController {
         productService.delete(id, email);
         return ResponseEntity
                 .ok()
-                .body(new MessageResponseDTO("Product deleted successfully"));
+                .body(makeMessageResponse("Product deleted successfully"));
     }
 
     // option
@@ -76,7 +76,7 @@ public class ProductController {
         productService.addProductOption(product_id, option_id, email);
         return ResponseEntity
                 .ok()
-                .body(new MessageResponseDTO("Option added successfully"));
+                .body(makeMessageResponse("Option added successfully"));
     }
 
     @DeleteMapping("/{product_id}/options/{option_id}")
@@ -87,6 +87,10 @@ public class ProductController {
         productService.deleteProductOption(product_id, option_id, email);
         return ResponseEntity
                 .ok()
-                .body(new MessageResponseDTO("Option deleted successfully"));
+                .body(makeMessageResponse("Option deleted successfully"));
+    }
+
+    private MessageResponseDTO makeMessageResponse(String message) {
+        return new MessageResponseDTO(message);
     }
 }

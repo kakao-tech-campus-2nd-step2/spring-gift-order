@@ -27,7 +27,7 @@ public class UserController {
         String accessToken = userService.signup(userDTO);
         session.setAttribute("email", userDTO.getEmail());
         session.setAttribute("role", "USER");
-        return ResponseEntity.ok().body(new AccessTokenResponseDTO(accessToken));
+        return ResponseEntity.ok().body(makeAccessTokenResponse(accessToken));
     }
 
     @PostMapping("/login")
@@ -35,7 +35,7 @@ public class UserController {
         String accessToken = userService.login(form);
         session.setAttribute("email", form.getEmail());
         session.setAttribute("role", userService.findOne(form.getEmail()).getRole());
-        return ResponseEntity.ok().body(new AccessTokenResponseDTO(accessToken));
+        return ResponseEntity.ok().body(makeAccessTokenResponse(accessToken));
     }
 
     @PostMapping("/logout")
@@ -55,7 +55,7 @@ public class UserController {
         session.setAttribute("role", "USER");
         session.setAttribute("kakaoAccessToken", kakaoAccessToken);
 
-        return ResponseEntity.ok().body(new AccessTokenResponseDTO(response.get("accessToken")));
+        return ResponseEntity.ok().body(makeAccessTokenResponse(response.get("accessToken")));
     }
 
     @GetMapping("/me")
@@ -65,5 +65,9 @@ public class UserController {
 
         UserResponseDTO res = new UserResponseDTO(email, role);
         return ResponseEntity.ok().body(res);
+    }
+
+    private AccessTokenResponseDTO makeAccessTokenResponse(String accessToken) {
+        return new AccessTokenResponseDTO(accessToken);
     }
 }
