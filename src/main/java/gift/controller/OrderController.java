@@ -43,6 +43,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> addOrder(@RequestHeader("Authorization") String token,@RequestBody Order order)
         throws JsonProcessingException {
+        orderService.save(order);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .header(HttpHeaders.AUTHORIZATION, token)

@@ -43,5 +43,10 @@ public class OrderService {
     }
 
     public Order save(Order order) {
+        if (!optionService.existsOptionById(order.getOptionId())){
+            throw new ProductNotFoundException("Option not found");
+        }
+        Option selectedOption = optionService.getOptionById(order.optionId).get();
+        optionService.subtractOption(selectedOption, order.quantity);
     }
 }
