@@ -1,6 +1,7 @@
 package gift.web.controller;
 
 import gift.service.kakaoAuth.KakaoAuthService;
+import gift.service.kakaoAuth.KakaoInfo;
 import gift.service.member.MemberService;
 import gift.web.dto.Token;
 import gift.web.jwt.JwtUtils;
@@ -36,6 +37,7 @@ public class LoginController {
         Token token = kakaoAuthService.receiveToken(code);
 
         System.out.println(token);
+        KakaoInfo kakaoInfo = kakaoAuthService.getMemberInfoFromKakaoServer(token);
 
         return "redirect:/";
     }
