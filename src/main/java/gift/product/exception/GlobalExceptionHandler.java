@@ -115,4 +115,10 @@ public class GlobalExceptionHandler {
     public void handleLastOptionException(LastOptionException ex, Model model) {
         model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
     }
+
+    @ExceptionHandler(InvalidValueException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public void handleInvalidValueException(InvalidValueException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
 }

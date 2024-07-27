@@ -7,8 +7,8 @@ import static gift.product.exception.GlobalExceptionHandler.PRODUCT_PRICE_NOT_PO
 import gift.product.dto.ProductDTO;
 import gift.product.exception.InstanceValueException;
 import gift.product.exception.InvalidIdException;
+import gift.product.exception.InvalidValueException;
 import gift.product.repository.CategoryRepository;
-import gift.product.repository.OptionRepository;
 import gift.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,17 +18,14 @@ public class ProductValidation {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final OptionRepository optionRepository;
 
     @Autowired
     public ProductValidation(
         ProductRepository productRepository,
-        CategoryRepository categoryRepository,
-        OptionRepository optionRepository
+        CategoryRepository categoryRepository
     ) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.optionRepository = optionRepository;
     }
 
     public void registerValidation(ProductDTO productDTO) {
@@ -51,7 +48,7 @@ public class ProductValidation {
 
     private void validateIncludeNameKakao(String name) {
         if(name.contains("카카오"))
-            throw new InstanceValueException(CONTAINS_PRODUCT_NAME_KAKAO);
+            throw new InvalidValueException(CONTAINS_PRODUCT_NAME_KAKAO);
     }
 
     private void validatePrice(int price) {

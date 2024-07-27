@@ -3,6 +3,7 @@ package gift.product.controller;
 import static gift.product.exception.GlobalExceptionHandler.UNKNOWN_VALIDATION_ERROR;
 
 import gift.product.dto.OptionDTO;
+import gift.product.dto.OrderResponseDTO;
 import gift.product.model.Option;
 import gift.product.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,13 +44,17 @@ public class ApiOptionController {
     }
 
     @Operation(
-        summary = "전체 옵션 목록",
-        description = "상품에 등록된 옵션을 목록을 출력합니다."
+        summary = "옵션 목록",
+        description = "특정 상품에 등록된 옵션 목록을 조회합니다."
     )
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
-            description = "옵션 목록 정상 출력"
+            description = "옵션 목록 정상 출력",
+            content = @Content(
+                mediaType = MediaType.APPLICATION_JSON_VALUE,
+                schema = @Schema(implementation = Page.class)
+            )
         ),
         @ApiResponse(
             responseCode = "401",
@@ -87,7 +92,7 @@ public class ApiOptionController {
         ),
         @ApiResponse(
             responseCode = "409",
-            description = "기등록된 옵션의 이름과 동일한 이름의 옵션의 등록을 시도한 경우"
+            description = "동일 상품 내 기등록된 옵션의 이름과 동일한 이름의 옵션의 등록을 시도한 경우"
         )
     })
     @PostMapping
@@ -165,6 +170,10 @@ public class ApiOptionController {
         @ApiResponse(
             responseCode = "401",
             description = "인증과 관련된 문제(인증 헤더 누락 또는 토큰 인증 실패)가 발생한 경우"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "상품에 마지막 남은 옵션의 삭제를 시도한 경우"
         ),
         @ApiResponse(
             responseCode = "404",
