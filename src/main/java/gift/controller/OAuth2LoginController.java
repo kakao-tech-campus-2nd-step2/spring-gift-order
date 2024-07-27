@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -42,7 +41,7 @@ public class OAuth2LoginController {
         return "kakaoLogin";
     }
 
-    @RequestMapping("/kakao/login/oauth2/code")
+    @GetMapping("/kakao/login/oauth2/code")
     @ResponseBody
     public ResponseEntity<OAuth2TokenResponse> getToken(HttpServletRequest request,
         HttpServletResponse response) {

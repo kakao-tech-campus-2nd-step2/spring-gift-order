@@ -41,6 +41,11 @@ public class OptionsService {
         return new ProductOptionsResponse(product, optionResponse);
     }
 
+    public Options getOption(Long id) {
+        return optionsRepository.findById(id)
+            .orElseThrow(NotFoundOptionsException::new);
+    }
+
     public ProductOptionsResponse getProductOption(Product product, Long optionId) {
         List<Options> options = List.of(optionsRepository.findById(optionId)
             .orElseThrow(NotFoundOptionsException::new));

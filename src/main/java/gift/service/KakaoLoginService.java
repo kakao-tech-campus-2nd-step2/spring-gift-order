@@ -23,18 +23,22 @@ import reactor.core.publisher.Mono;
 @Transactional(readOnly = true)
 public class KakaoLoginService implements OAuth2LoginService {
 
-    public static final String TOKEN_REQUEST_URI = "https://kauth.kakao.com/oauth/token";
-    public static final String MEMBER_INFO_REQUEST_URI = "https://kapi.kakao.com/v2/user/me";
-    public static final String AUTH_ERROR = "error";
-    public static final String AUTH_ERROR_DESCRIPTION = "error_description";
-
-    private final WebClient client;
-    private final OAuth2AccessTokenRepository accessTokenRepository;
+    @Value("${kakao.token-request-uri}")
+    public String TOKEN_REQUEST_URI = "";
+    @Value("${kakao.member-info-request-uri}")
+    public String MEMBER_INFO_REQUEST_URI = "";
+    @Value("${kakao.auth-error}")
+    public String AUTH_ERROR = "error";
+    @Value("${kakao.auth-error-description}")
+    public String AUTH_ERROR_DESCRIPTION = "error_description";
 
     @Value("${kakao.client-id}")
     private String clientId;
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
+
+    private final WebClient client;
+    private final OAuth2AccessTokenRepository accessTokenRepository;
 
     public KakaoLoginService(WebClient client,
         OAuth2AccessTokenRepository accessTokenRepository) {

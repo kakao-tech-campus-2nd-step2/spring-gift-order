@@ -21,27 +21,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderApiController {
 
     private final OrderService orderService;
-    private final KakaoMessageService kakaoMessageService;
 
-    public OrderApiController(OrderService orderService,
-        KakaoMessageService kakaoMessageService) {
+    public OrderApiController(OrderService orderService) {
         this.orderService = orderService;
-        this.kakaoMessageService = kakaoMessageService;
     }
 
     @CheckRole("ROLE_USER")
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> makeOrder(HttpServletRequest request, @RequestBody @Valid OrderRequest orderRequest,
-        BindingResult bindingResult) {
+    public ResponseEntity<OrderResponse> makeOrder(HttpServletRequest request,
+        @RequestBody @Valid OrderRequest orderRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InputException(bindingResult.getAllErrors());
         }
-        //주문 생성 및 수량 차감 처리
+        //주문 생성 및 수량 차감 처리, 이후 카카오톡 메시지 API 호출
         Long memberId = Long.valueOf(request.getAttribute("member_id").toString());
         OrderResponse dto = orderService.makeOrder(memberId, orderRequest.productId(),
             orderRequest.optionId(), orderRequest.quantity(), orderRequest.message());
-        //카카오톡 메시지 API 호출
-        kakaoMessageService.sendMessageToMe(memberId, orderRequest.message());
+
         return new ResponseEntity<>(dto, HttpStatus.OK);
 
     }
