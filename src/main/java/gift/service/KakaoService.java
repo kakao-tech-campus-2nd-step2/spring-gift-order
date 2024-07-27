@@ -108,18 +108,19 @@ public class KakaoService {
         ProductEntity productEntity = optionEntity.getProductEntity();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Map<String, Object> links = new HashMap<>();
-        links.put("web_url", "http://www.daum.net");
-        links.put("mobile_web_url", "http://m.daum.net");
+        Map<String, Object> links = getLinkMap();
+        Map<String, Object> content = getContentMap(productEntity, links);
+        Map<String, Object> itemContent = getItemContentMap(productEntity);
 
-        Map<String, Object> content = new HashMap<>();
-        content.put("title", "주문해 주셔서 감사합니다.");
-        content.put("description", productEntity.getCategoryEntity().getDescription());
-        content.put("image_url", productEntity.getImageUrl());
-        content.put("image_width", 640);
-        content.put("image_height", 640);
-        content.put("link", links);
+        Map<String, Object> message = new HashMap<>();
+        message.put("object_type", "feed");
+        message.put("content", content);
+        message.put("item_content", itemContent);
 
+        return objectMapper.writeValueAsString(message);
+    }
+
+    private static Map<String, Object> getItemContentMap(ProductEntity productEntity) {
         Map<String, Object> item = new HashMap<>();
         item.put("item", productEntity.getName());
         item.put("item_op", productEntity.getPrice());
@@ -128,13 +129,26 @@ public class KakaoService {
 
         Map<String, Object> itemContent = new HashMap<>();
         itemContent.put("items", items);
+        return itemContent;
+    }
 
-        Map<String, Object> message = new HashMap<>();
-        message.put("object_type", "feed");
-        message.put("content", content);
-        message.put("item_content", itemContent);
+    private static Map<String, Object> getLinkMap() {
+        Map<String, Object> links = new HashMap<>();
+        links.put("web_url", "http://www.daum.net");
+        links.put("mobile_web_url", "http://m.daum.net");
+        return links;
+    }
 
-        return objectMapper.writeValueAsString(message);
+    private static Map<String, Object> getContentMap(ProductEntity productEntity,
+        Map<String, Object> links) {
+        Map<String, Object> content = new HashMap<>();
+        content.put("title", "주문해 주셔서 감사합니다.");
+        content.put("description", productEntity.getCategoryEntity().getDescription());
+        content.put("image_url", productEntity.getImageUrl());
+        content.put("image_width", 640);
+        content.put("image_height", 640);
+        content.put("link", links);
+        return content;
     }
 
 }
