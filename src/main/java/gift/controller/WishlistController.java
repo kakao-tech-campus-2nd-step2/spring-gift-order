@@ -4,10 +4,9 @@ import gift.dto.WishResponse;
 import gift.entity.Member;
 import gift.entity.Product;
 import gift.entity.Wish;
+import gift.service.MemberService;
 import gift.service.WishlistService;
-import gift.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpSession;
+import gift.util.KakaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -24,29 +24,31 @@ import java.util.Map;
 public class WishlistController {
 
     private final WishlistService wishlistService;
-    private final JwtUtil jwtUtil;
+    private final KakaoUtil kakaoUtil;
+    private final MemberService memberService;
 
     @Autowired
-    public WishlistController(WishlistService wishlistService, JwtUtil jwtUtil) {
+    public WishlistController(WishlistService wishlistService, KakaoUtil kakaoUtil, MemberService memberService) {
         this.wishlistService = wishlistService;
-        this.jwtUtil = jwtUtil;
+        this.kakaoUtil = kakaoUtil;
+        this.memberService = memberService;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addItem(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> requestBody) {
-        Claims claims = jwtUtil.extractClaims(token.replace("Bearer ", ""));
-        Long memberId = Long.parseLong(claims.getSubject());
+    public ResponseEntity<?> addItem(HttpSession session, @RequestBody Map<String, Object> requestBody) {
+        String accessToken = (String) session.getAttribute("accessToken");
+        Map<String, Object> userInfo = kakaoUtil.getUserInfo(accessToken);
+        String kakaoId = String.valueOf(userInfo.get("id"));
+
+        Member member = memberService.findByKakaoId(kakaoId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
         Long productId = Long.valueOf(requestBody.get("productId").toString());
         int productNumber = Integer.parseInt(requestBody.get("productNumber").toString());
 
-        Member member = new Member();
-        member.setId(memberId);
-        Product product = new Product();
-        product.setId(productId);
-
         Wish wish = new Wish();
         wish.setMember(member);
+        Product product = new Product();
+        product.setId(productId);
         wish.setProduct(product);
         wish.setProductNumber(productNumber);
 
@@ -61,17 +63,27 @@ public class WishlistController {
                            @RequestParam(defaultValue = "id") String sortBy,
                            @RequestParam(defaultValue = "asc") String direction,
                            Model model) {
-        String token = (String) session.getAttribute("token");
-        if (token == null) {
+        String accessToken = (String) session.getAttribute("accessToken");
+        if (accessToken == null) {
             return "redirect:/members/login";
         }
 
-        Claims claims = jwtUtil.extractClaims(token);
-        Long memberId = Long.parseLong(claims.getSubject());
+        // KakaoUtil을 사용하여 사용자 정보 확인
+        Map<String, Object> userInfo = kakaoUtil.getUserInfo(accessToken);
+        if (userInfo == null || userInfo.get("id") == null) {
+            return "redirect:/members/login";
+        }
+
+        String kakaoId = String.valueOf(userInfo.get("id"));
+        Member member = memberService.findByKakaoId(kakaoId).orElse(null);
+
+        if (member == null) {
+            return "redirect:/members/login";
+        }
 
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        Page<WishResponse> wishPage = wishlistService.getWishesByMemberId(memberId, pageRequest);
+        Page<WishResponse> wishPage = wishlistService.getWishesByMemberId(member.getId(), pageRequest);
 
         model.addAttribute("wishPage", wishPage);
         model.addAttribute("currentPage", page);
