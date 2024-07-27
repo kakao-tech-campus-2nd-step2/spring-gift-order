@@ -56,9 +56,9 @@ public class OptionValidation {
             throw new InstanceValueException(OVER_100MILLION);
     }
 
-    private void validateDuplicateName(Collection<Option> options, Option option) {
+    private void validateDuplicateName(Collection<Option> options, Option newOption) {
         if(options.stream()
-            .anyMatch(optionName -> option.isSameName(option.getName())))
+            .anyMatch(option -> newOption.isSameName(option)))
             throw new DuplicateException(DUPLICATE_OPTION_NAME);
     }
 
