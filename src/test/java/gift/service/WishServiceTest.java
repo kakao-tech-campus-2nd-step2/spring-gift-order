@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.wish.WishDto;
 import gift.product.model.Category;
 import gift.product.model.Member;
@@ -57,8 +57,8 @@ class WishServiceTest {
 
         //when
         WishDto wishDto = new WishDto(1L);
-        LoginMember loginMember = new LoginMember(1L);
-        wishService.insertWish(wishDto, loginMember);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        wishService.insertWish(wishDto, loginMemberIdDto);
 
         //then
         then(wishRepository).should().save(any());
@@ -83,7 +83,7 @@ class WishServiceTest {
     @Test
     void 존재하지_않는_위시_항목_조회() {
         //given
-        LoginMember testMember = new LoginMember(1L);
+        LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
 
         //when, then
@@ -94,7 +94,7 @@ class WishServiceTest {
     @Test
     void 존재하지_않는_위시_항목_삭제() {
         //given
-        LoginMember testMember = new LoginMember(1L);
+        LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
 
         //when, then
@@ -111,11 +111,11 @@ class WishServiceTest {
         given(authRepository.findById(any())).willReturn(Optional.empty());
 
         WishDto wishDto = new WishDto(1L);
-        LoginMember loginMember = new LoginMember(-1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(-1L);
 
         //when, then
         assertThatThrownBy(
-            () -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(
+            () -> wishService.insertWish(wishDto, loginMemberIdDto)).isInstanceOf(
             NoSuchElementException.class);
     }
 
@@ -125,14 +125,14 @@ class WishServiceTest {
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         WishDto wishDto = new WishDto(1L);
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
 
         given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(wishRepository.existsByProductIdAndMemberId(product.getId(),
-            loginMember.id())).willReturn(true);
+            loginMemberIdDto.id())).willReturn(true);
 
         //when, then
-        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(
+        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMemberIdDto)).isInstanceOf(
             IllegalArgumentException.class);
     }
 }

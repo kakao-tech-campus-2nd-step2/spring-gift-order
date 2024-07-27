@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.KakaoMessage;
 import gift.product.dto.auth.Link;
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.order.OrderDto;
 import gift.product.exception.LoginFailedException;
 import gift.product.model.KakaoToken;
@@ -48,25 +48,25 @@ public class OrderService {
         this.kakaoTokenRepository = kakaoTokenRepository;
     }
 
-    public List<Order> getOrderAll(LoginMember loginMember) {
-        return orderRepository.findAllByMemberId(loginMember.id());
+    public List<Order> getOrderAll(LoginMemberIdDto loginMemberIdDto) {
+        return orderRepository.findAllByMemberId(loginMemberIdDto.id());
     }
 
-    public Order getOrder(Long id, LoginMember loginMember) {
-        return orderRepository.findByIdAndMemberId(id, loginMember.id())
+    public Order getOrder(Long id, LoginMemberIdDto loginMemberIdDto) {
+        return orderRepository.findByIdAndMemberId(id, loginMemberIdDto.id())
             .orElseThrow(() -> new NoSuchElementException("해당 ID의 주문 내역이 존재하지 않습니다."));
     }
 
     @Transactional
-    public Order doOrder(OrderDto orderDto, LoginMember loginMember, String externalApiUrl) {
-        Order order = processOrder(orderDto, loginMember);
+    public Order doOrder(OrderDto orderDto, LoginMemberIdDto loginMemberIdDto, String externalApiUrl) {
+        Order order = processOrder(orderDto, loginMemberIdDto);
         LinkedMultiValueMap<String, String> body = getRequestBody(
             orderDto);
 
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .header("Authorization", "Bearer " + getKakaoToken(loginMember).getAccessToken())
+            .header("Authorization", "Bearer " + getKakaoToken(loginMemberIdDto).getAccessToken())
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
@@ -79,9 +79,9 @@ public class OrderService {
     }
 
     @Transactional
-    public void deleteOrder(Long orderId, LoginMember loginMember) {
+    public void deleteOrder(Long orderId, LoginMemberIdDto loginMemberIdDto) {
         validateExistenceOrder(orderId);
-        orderRepository.deleteByIdAndMemberId(orderId, loginMember.id());
+        orderRepository.deleteByIdAndMemberId(orderId, loginMemberIdDto.id());
     }
 
     private Option getValidatedOption(Long optionId) {
@@ -129,23 +129,23 @@ public class OrderService {
         }
     }
 
-    private Order processOrder(OrderDto orderDto, LoginMember loginMember) {
+    private Order processOrder(OrderDto orderDto, LoginMemberIdDto loginMemberIdDto) {
         Option option = getValidatedOption(orderDto.optionId());
         Long productId = option.getProduct().getId();
-        validateExistenceMember(loginMember.id());
+        validateExistenceMember(loginMemberIdDto.id());
         option.subtract(orderDto.quantity());
         optionRepository.save(option);
 
-        if (wishRepository.existsByProductIdAndMemberId(productId, loginMember.id())) {
-            wishRepository.deleteByProductIdAndMemberId(productId, loginMember.id());
+        if (wishRepository.existsByProductIdAndMemberId(productId, loginMemberIdDto.id())) {
+            wishRepository.deleteByProductIdAndMemberId(productId, loginMemberIdDto.id());
         }
 
-        return orderRepository.save(new Order(orderDto.optionId(), loginMember.id(),
+        return orderRepository.save(new Order(orderDto.optionId(), loginMemberIdDto.id(),
             orderDto.quantity(), orderDto.message()));
     }
 
-    private KakaoToken getKakaoToken(LoginMember loginMember) {
-        return kakaoTokenRepository.findByMemberId(loginMember.id())
+    private KakaoToken getKakaoToken(LoginMemberIdDto loginMemberIdDto) {
+        return kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())
             .orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }

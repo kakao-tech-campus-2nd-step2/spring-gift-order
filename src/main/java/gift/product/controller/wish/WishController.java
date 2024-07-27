@@ -1,6 +1,6 @@
 package gift.product.controller.wish;
 
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.wish.WishDto;
 import gift.product.model.Wish;
 import gift.product.service.WishService;
@@ -34,8 +34,8 @@ public class WishController {
 
     @GetMapping
     public ResponseEntity<List<Wish>> getWishAll(HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        List<Wish> wishAll = wishService.getWishAll(loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        List<Wish> wishAll = wishService.getWishAll(loginMemberIdDto);
         return ResponseEntity.ok(wishAll);
     }
 
@@ -53,16 +53,16 @@ public class WishController {
     @GetMapping("/{id}")
     public ResponseEntity<Wish> getWish(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        Wish wish = wishService.getWish(id, loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        Wish wish = wishService.getWish(id, loginMemberIdDto);
         return ResponseEntity.ok(wish);
     }
 
     @PostMapping("/insert")
     public ResponseEntity<Wish> insertWish(@Valid @RequestBody WishDto wishDto,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        Wish responseWish = wishService.insertWish(wishDto, loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        Wish responseWish = wishService.insertWish(wishDto, loginMemberIdDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseWish);
     }
@@ -70,13 +70,13 @@ public class WishController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteWish(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        wishService.deleteWish(id, loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        wishService.deleteWish(id, loginMemberIdDto);
 
         return ResponseEntity.ok().build();
     }
 
-    private LoginMember getLoginMember(HttpServletRequest request) {
-        return new LoginMember((Long) request.getAttribute("id"));
+    private LoginMemberIdDto getLoginMember(HttpServletRequest request) {
+        return new LoginMemberIdDto((Long) request.getAttribute("id"));
     }
 }

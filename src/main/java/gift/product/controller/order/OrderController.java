@@ -1,6 +1,6 @@
 package gift.product.controller.order;
 
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.order.OrderDto;
 import gift.product.model.Order;
 import gift.product.service.OrderService;
@@ -29,8 +29,8 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<List<Order>> getOrderAll(HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        List<Order> orderAll = orderService.getOrderAll(loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        List<Order> orderAll = orderService.getOrderAll(loginMemberIdDto);
 
         return ResponseEntity.ok(orderAll);
     }
@@ -38,8 +38,8 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrder(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        Order order = orderService.getOrder(id, loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        Order order = orderService.getOrder(id, loginMemberIdDto);
 
         return ResponseEntity.ok(order);
     }
@@ -47,8 +47,8 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> doOrder(@RequestBody OrderDto orderDto,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        Order order = orderService.doOrder(orderDto, loginMember, KAKAO_SEND_MESSAGE_ME_URL);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        Order order = orderService.doOrder(orderDto, loginMemberIdDto, KAKAO_SEND_MESSAGE_ME_URL);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
@@ -56,13 +56,13 @@ public class OrderController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        orderService.deleteOrder(id, loginMember);
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        orderService.deleteOrder(id, loginMemberIdDto);
 
         return ResponseEntity.ok().build();
     }
 
-    private LoginMember getLoginMember(HttpServletRequest request) {
-        return new LoginMember((Long) request.getAttribute("id"));
+    private LoginMemberIdDto getLoginMember(HttpServletRequest request) {
+        return new LoginMemberIdDto((Long) request.getAttribute("id"));
     }
 }

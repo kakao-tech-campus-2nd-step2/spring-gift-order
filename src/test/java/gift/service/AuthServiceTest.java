@@ -10,7 +10,7 @@ import static org.mockito.BDDMockito.then;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.JwtResponse;
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
@@ -185,7 +185,7 @@ class AuthServiceTest {
         String responseBody = "{\"id\":\"" + testMemberId + "\"}";
         mockWebServer.enqueue(new MockResponse().setBody(responseBody));
 
-        LoginMember loginMember = new LoginMember(testMemberId);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(testMemberId);
         KakaoToken kakaoToken = new KakaoToken(1L,
             testMemberId,
             "test_oauth_access_token",
@@ -195,7 +195,7 @@ class AuthServiceTest {
 
         //when
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
-        Long id = authService.unlinkKakaoAccount(loginMember, mockUrl);
+        Long id = authService.unlinkKakaoAccount(loginMemberIdDto, mockUrl);
 
         //then
         assertThat(id).isEqualTo(testMemberId);
@@ -243,7 +243,7 @@ class AuthServiceTest {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         KakaoToken kakaoToken = new KakaoToken(1L,
             1L,
             "test_oauth_access_token",
@@ -252,7 +252,7 @@ class AuthServiceTest {
         given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
 
         //when, then
-        assertThatThrownBy(() -> authService.unlinkKakaoAccount(loginMember,
+        assertThatThrownBy(() -> authService.unlinkKakaoAccount(loginMemberIdDto,
             mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }

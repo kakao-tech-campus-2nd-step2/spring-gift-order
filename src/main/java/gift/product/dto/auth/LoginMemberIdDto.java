@@ -1,6 +1,6 @@
 package gift.product.dto.auth;
 
-public record LoginMember(
+public record LoginMemberIdDto(
     Long id
 ) {
 

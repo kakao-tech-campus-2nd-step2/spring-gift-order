@@ -1,6 +1,6 @@
 package gift.product.controller.wish;
 
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.wish.WishDto;
 import gift.product.model.Wish;
 import gift.product.service.WishService;
@@ -51,8 +51,8 @@ public class AdminWishController {
         return REDIRECT_ADMIN_WISHES;
     }
 
-    private LoginMember getLoginMember(HttpServletRequest request) {
-        return new LoginMember((Long) request.getAttribute("id"));
+    private LoginMemberIdDto getLoginMember(HttpServletRequest request) {
+        return new LoginMemberIdDto((Long) request.getAttribute("id"));
     }
 
 }

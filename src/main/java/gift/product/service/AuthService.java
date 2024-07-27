@@ -3,7 +3,7 @@ package gift.product.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.JwtResponse;
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
@@ -123,10 +123,10 @@ public class AuthService {
         }
     }
 
-    public long unlinkKakaoAccount(LoginMember loginMember, String externalApiUrl) {
+    public long unlinkKakaoAccount(LoginMemberIdDto loginMemberIdDto, String externalApiUrl) {
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(externalApiUrl))
-            .header("Authorization", "Bearer " + getKakaoToken(loginMember).getAccessToken())
+            .header("Authorization", "Bearer " + getKakaoToken(loginMemberIdDto).getAccessToken())
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
                 throw new LoginFailedException("카카오 유저 연결을 끊는 도중 에러가 발생하였습니다. 다시 시도해주세요.");
@@ -208,8 +208,8 @@ public class AuthService {
         return new JwtResponse(getAccessToken(member), getRefreshToken(member));
     }
 
-    private KakaoToken getKakaoToken(LoginMember loginMember) {
-        return kakaoTokenRepository.findByMemberId(loginMember.id())
+    private KakaoToken getKakaoToken(LoginMemberIdDto loginMemberIdDto) {
+        return kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())
             .orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }

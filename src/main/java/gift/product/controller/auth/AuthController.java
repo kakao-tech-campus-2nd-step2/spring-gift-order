@@ -1,7 +1,7 @@
 package gift.product.controller.auth;
 
 import gift.product.dto.auth.JwtResponse;
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.auth.MemberDto;
 import gift.product.dto.auth.OAuthJwt;
 import gift.product.dto.auth.RegisterSuccessResponse;
@@ -62,12 +62,12 @@ public class AuthController {
 
     @PostMapping("/members/login/kakao/unlink")
     public ResponseEntity<Long> unlinkKakaoAccount(HttpServletRequest request) {
-        LoginMember loginMember = getLoginMember(request);
-        return ResponseEntity.ok(authService.unlinkKakaoAccount(loginMember,
+        LoginMemberIdDto loginMemberIdDto = getLoginMember(request);
+        return ResponseEntity.ok(authService.unlinkKakaoAccount(loginMemberIdDto,
             KAKAO_UNLINK_USER_URL));
     }
 
-    private LoginMember getLoginMember(HttpServletRequest request) {
-        return new LoginMember((Long) request.getAttribute("id"));
+    private LoginMemberIdDto getLoginMember(HttpServletRequest request) {
+        return new LoginMemberIdDto((Long) request.getAttribute("id"));
     }
 }

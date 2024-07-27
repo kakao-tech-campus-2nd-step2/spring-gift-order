@@ -7,7 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.auth.LoginMember;
+import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.order.OrderDto;
 import gift.product.model.Category;
 import gift.product.model.KakaoToken;
@@ -79,34 +79,34 @@ class OrderServiceTest {
     @Test
     void 주문_전체_조회() {
         //given
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
 
         //when
-        orderService.getOrderAll(loginMember);
+        orderService.getOrderAll(loginMemberIdDto);
 
         //then
-        then(orderRepository).should().findAllByMemberId(loginMember.id());
+        then(orderRepository).should().findAllByMemberId(loginMemberIdDto.id());
     }
 
     @Test
     void 주문_조회() {
         //given
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         Order order = new Order(1L, 1L, 1, "test_message");
         given(orderRepository.findByIdAndMemberId(1L, 1L)).willReturn(Optional.of(order));
 
         //when
-        orderService.getOrder(1L, loginMember);
+        orderService.getOrder(1L, loginMemberIdDto);
 
         //then
-        then(orderRepository).should().findByIdAndMemberId(1L, loginMember.id());
+        then(orderRepository).should().findByIdAndMemberId(1L, loginMemberIdDto.id());
     }
 
     @Test
     void 주문() {
         //given
         OrderDto orderDto = new OrderDto(1L, 3, "test_message");
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         Order order = new Order(1L, orderDto.optionId(), 1L, 2, orderDto.message());
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
@@ -127,7 +127,7 @@ class OrderServiceTest {
 
         //when
         String mockUrl = mockWebServer.url("/v2/api/talk/memo/default/send").toString();
-        Order resultOrder = orderService.doOrder(orderDto, loginMember, mockUrl);
+        Order resultOrder = orderService.doOrder(orderDto, loginMemberIdDto, mockUrl);
 
         //then
         assertThat(resultOrder.getId()).isNotNull();
@@ -136,15 +136,15 @@ class OrderServiceTest {
     @Test
     void 주문_삭제() {
         //given
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         Order order = new Order(1L, 1L, 1, "test_message");
         given(orderRepository.existsById(1L)).willReturn(true);
 
         //when
-        orderService.deleteOrder(1L, loginMember);
+        orderService.deleteOrder(1L, loginMemberIdDto);
 
         //then
-        then(orderRepository).should().deleteByIdAndMemberId(1L, loginMember.id());
+        then(orderRepository).should().deleteByIdAndMemberId(1L, loginMemberIdDto.id());
     }
 
     @Test
@@ -154,13 +154,13 @@ class OrderServiceTest {
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 1, product);
         OrderDto orderDto = new OrderDto(1L, 999, "test_message");
-        LoginMember loginMember = new LoginMember(1L);
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         given(optionRepository.findById(1L)).willReturn(Optional.of(option));
         given(authRepository.existsById(any())).willReturn(true);
 
         //when, then
         assertThatThrownBy(
-            () -> orderService.doOrder(orderDto, loginMember, "test_url")).isInstanceOf(
+            () -> orderService.doOrder(orderDto, loginMemberIdDto, "test_url")).isInstanceOf(
             IllegalArgumentException.class);
     }
 }
