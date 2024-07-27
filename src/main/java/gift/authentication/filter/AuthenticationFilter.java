@@ -16,7 +16,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final List<String> ignorePaths = List.of("/api/login/oauth2/kakao");
+    private final List<String> ignorePaths = List.of(
+        "/api/members/login",
+        "/api/members/register",
+        "/api/login/oauth2/kakao");
     private final String AUTHORIZATION_HEADER = "Authorization";
     private final String BEARER = "Bearer ";
     private final JwtResolver jwtResolver;
