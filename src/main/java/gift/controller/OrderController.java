@@ -27,6 +27,6 @@ public class OrderController {
         @RequestAttribute("memberId") Long memberId
     ) {
         OrderResponse orderResponse = orderService.createOrder(orderRequest, memberId);
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 }
