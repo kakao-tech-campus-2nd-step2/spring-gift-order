@@ -9,24 +9,29 @@ import gift.util.KakaoProperties;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KakaoLoginService {
 
+    private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
     private final MemberService memberService;
     private final JwtProvider jwtProvider;
     private final KakaoTokenRepository kakaoTokenRepository;
 
-    private static String KAKAO_OAUTH_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static String KAKAO_PROFILE_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String KAKAO_OAUTH_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String KAKAO_PROFILE_URL = "https://kapi.kakao.com/v2/user/me";
 
     @Autowired
-    public KakaoLoginService(KakaoProperties kakaoProperties, MemberService memberService, JwtProvider jwtProvider, KakaoTokenRepository kakaoTokenRepository) {
+    public KakaoLoginService(RestTemplateBuilder restTemplateBuilder, KakaoProperties kakaoProperties,
+        MemberService memberService, JwtProvider jwtProvider, KakaoTokenRepository kakaoTokenRepository) {
+        this.restTemplate = restTemplateBuilder.build();
         this.kakaoProperties = kakaoProperties;
         this.memberService = memberService;
         this.jwtProvider = jwtProvider;
@@ -44,7 +49,7 @@ public class KakaoLoginService {
     }
 
     private KakaoTokenDTO getKakaoToken(String code) {
-        var client = RestClient.builder().build();
+        var client = RestClient.builder(restTemplate).build();
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
@@ -59,7 +64,7 @@ public class KakaoLoginService {
     }
 
     private KakaoProfileDTO getKakaoProfile(KakaoTokenDTO kakaoTokenDTO) {
-        var client = RestClient.builder().build();
+        var client = RestClient.builder(restTemplate).build();
         return client.get()
             .uri(URI.create(KAKAO_PROFILE_URL))
             .header("Authorization", "Bearer " + kakaoTokenDTO.access_token())
