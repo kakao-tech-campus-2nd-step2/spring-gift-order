@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -135,7 +136,7 @@ public class GlobalExceptionHandler {
             ex.getMessage());
         problemDetail.setType(URI.create("/errors/option-not-found"));
         problemDetail.setTitle("Option Not Found");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
 
     @ExceptionHandler(MinimumOptionException.class)
@@ -158,13 +159,33 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
     }
 
+    @ExceptionHandler(KakaoNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleKakaoApiException(
+        KakaoNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
+            ex.getMessage());
+        problemDetail.setType(URI.create("/errors/kakao-not-found"));
+        problemDetail.setTitle("Kakao Not Found");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
+    }
+
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<ProblemDetail> handleHttpClientErrorException(
         HttpClientErrorException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,
-            ex.getMessage());
-        problemDetail.setType(URI.create("/errors/kakao-api-exception"));
-        problemDetail.setTitle("Kakao API Exception");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(problemDetail);
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getStatusCode(),
+            ex.getResponseBodyAsString());
+        problemDetail.setType(URI.create("/errors/http-client-error"));
+        problemDetail.setTitle("HTTP Client Error");
+        return ResponseEntity.status(ex.getStatusCode()).body(problemDetail);
+    }
+
+    @ExceptionHandler(HttpServerErrorException.class)
+    public ResponseEntity<ProblemDetail> handleHttpServerErrorException(
+        HttpServerErrorException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(ex.getStatusCode(),
+            ex.getResponseBodyAsString());
+        problemDetail.setType(URI.create("/errors/http-server-error"));
+        problemDetail.setTitle("HTTP Server Error");
+        return ResponseEntity.status(ex.getStatusCode()).body(problemDetail);
     }
 }

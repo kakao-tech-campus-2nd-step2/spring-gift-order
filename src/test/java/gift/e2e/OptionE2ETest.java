@@ -155,7 +155,7 @@ class OptionE2ETest {
     }
 
     @Test
-    @DisplayName("옵션 수량 뺴기 테스트 및 뺄셈 후 남은 옵션 수량이 1개 이하일 경우 뺄셈 방지 테스트")
+    @DisplayName("옵션 수량 뺴기 테스트 및 뺄셈 후 남은 옵션 수량이 0개 미만일 경우 뺄셈 방지 테스트")
     void subtractOptionQuantityTest() throws Exception {
         OptionQuantityRequest optionQuantityRequest = new OptionQuantityRequest(200);
 
@@ -170,7 +170,7 @@ class OptionE2ETest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(optionQuantityRequest)))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.detail").value("옵션의 수량을 1개 이하로 남길 수 없습니다."));
+            .andExpect(jsonPath("$.detail").value("옵션에 해당하는 수량이 0개 미만이 될 수 없습니다."));
     }
 
     @Test

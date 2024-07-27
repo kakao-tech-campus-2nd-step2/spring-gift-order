@@ -9,6 +9,8 @@ public class KakaoProperties {
 
     private String clientId;
     private String redirectUri;
+    private String defaultPassword;
+    private String accessToken;
 
     public String getClientId() {
         return clientId;
@@ -24,5 +26,25 @@ public class KakaoProperties {
 
     public void setRedirectUri(String redirectUri) {
         this.redirectUri = redirectUri;
+    }
+
+    public String getDefaultPassword() {
+        return defaultPassword;
+    }
+
+    public void setDefaultPassword(String defaultPassword) {
+        this.defaultPassword = defaultPassword;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public boolean checkKakaoLogin() {
+        return !this.accessToken.equals("demoToken");
     }
 }

@@ -38,4 +38,34 @@ class WishTest {
         assertThat(wish.getProduct()).isEqualTo(product);
         assertThat(wish.getNumber()).isEqualTo(1);
     }
+
+    @Test
+    @DisplayName("subtractNumber 테스트")
+    void subtractNumberTest() {
+
+        assertThat(wish.getNumber()).isEqualTo(1);
+
+        wish.subtractNumber(1);
+
+        assertThat(wish.getNumber()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("sameProduct 테스트")
+    void sameProductTest() {
+        Wish newWish = new Wish(user, product, 3);
+
+        assertThat(newWish.sameProduct(product)).isTrue();
+    }
+
+    @Test
+    @DisplayName("checkLeftWishNumber 테스트")
+    void checkLeftWishNumberTest() {
+
+        assertThat(wish.checkLeftWishNumber()).isFalse();
+
+        wish.subtractNumber(1);
+
+        assertThat(wish.checkLeftWishNumber()).isTrue();
+    }
 }

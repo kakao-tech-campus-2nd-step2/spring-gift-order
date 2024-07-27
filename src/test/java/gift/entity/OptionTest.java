@@ -52,12 +52,12 @@ class OptionTest {
     }
 
     @Test
-    @DisplayName("subtractQuantity 결과가 1이하 일때 오류 방출 테스트")
+    @DisplayName("subtractQuantity 결과가 0미만 일때 오류 방출 테스트")
     void subtractQuantityErrorTest() {
 
-        assertThatThrownBy(() -> option.subtractQuantity(499))
+        assertThatThrownBy(() -> option.subtractQuantity(501))
             .isInstanceOf(MinimumOptionException.class)
-            .hasMessage("옵션의 수량을 1개 이하로 남길 수 없습니다.");
+            .hasMessage("옵션에 해당하는 수량이 0개 미만이 될 수 없습니다.");
     }
 
     @Test
