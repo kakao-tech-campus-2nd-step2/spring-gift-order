@@ -1,5 +1,6 @@
 package gift.config;
 
+import gift.exception.RestTemplateResponseErrorHandler;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ public class AppConfig {
         return new RestTemplateBuilder()
                 .setConnectTimeout(Duration.ofSeconds(3))
                 .setReadTimeout(Duration.ofSeconds(3))
+                .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
     }
 }
