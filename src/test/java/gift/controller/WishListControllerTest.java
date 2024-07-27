@@ -1,9 +1,9 @@
 package gift.controller;
 
-import gift.dto.LoginMemberToken;
-import gift.dto.MemberRequest;
+import gift.auth.dto.LoginMemberToken;
+import gift.member.dto.MemberRequest;
 import gift.dto.ProductDTO;
-import gift.dto.WishListRequest;
+import gift.wish.dto.WishListRequest;
 import java.util.HashMap;
 import java.util.Objects;
 import org.junit.jupiter.api.BeforeEach;
