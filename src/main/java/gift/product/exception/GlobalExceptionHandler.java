@@ -39,6 +39,7 @@ public class GlobalExceptionHandler {
     public static final String INVALID_ORDER_REQUEST = "주문하려는 상품의 ID, 수량을 정확하게 입력해주세요.";
     // API 요청 메세지와 관련된 메세지
     public static final String INVALID_HTTP_REQUEST = "서버로 보내는 HTTP 요청 메세지에 오류가 있습니다.";
+    public static final String UNKNOWN_VALIDATION_ERROR = "원인을 알 수 없는 검증 오류가 발생하였습니다.";
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

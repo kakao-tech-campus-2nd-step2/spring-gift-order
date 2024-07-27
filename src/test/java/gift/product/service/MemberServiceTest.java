@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gift.product.dto.MemberDTO;
+import gift.product.dto.TokenDTO;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
 import gift.product.util.JwtUtil;
@@ -55,10 +56,10 @@ public class MemberServiceTest {
             .thenReturn(expectedToken);
 
         //when
-        Map<String, String> response = memberService.signUp(memberDTO);
+        TokenDTO tokenDTO = memberService.signUp(memberDTO);
 
         //then
-        assertEquals(expectedToken, response.get("token"));
+        assertEquals(expectedToken, tokenDTO.getToken());
 
         verify(passwordEncoder).encode(eq(memberDTO.getPassword()));
         verify(memberRepository).save(any(Member.class));
@@ -74,10 +75,10 @@ public class MemberServiceTest {
             .thenReturn(expectedToken);
 
         //when
-        Map<String, String> response = memberService.login(memberDTO);
+        TokenDTO tokenDTO = memberService.login(memberDTO);
 
         //then
-        assertEquals(expectedToken, response.get("token"));
+        assertEquals(expectedToken, tokenDTO.getToken());
         verify(memberValidation).loginValidation(any(MemberDTO.class));
         verify(jwtUtil).generateToken(eq(memberDTO.getEmail()));
     }
