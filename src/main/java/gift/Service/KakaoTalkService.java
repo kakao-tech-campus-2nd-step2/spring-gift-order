@@ -45,6 +45,7 @@ public class KakaoTalkService {
                     .append("\n")
                     .append("옵션 이름 : ")
                     .append(option.getName())
+                    .append("\n")
                     .append("수량 : ")
                     .append(orderRequestDto.getQuantity())
                     .append("개\n\n");
@@ -52,11 +53,11 @@ public class KakaoTalkService {
 
         long totalPrice = orderRequestDtoList.stream()
                 .mapToLong(orderRequestDto -> {
-                        Option option = optionJpaRepository.findById(orderRequestDto.getOptionId()).orElseThrow();
-                        int price = option.getPrice();
-                        int quantity = orderRequestDto.getQuantity();
+                    Option option = optionJpaRepository.findById(orderRequestDto.getOptionId()).orElseThrow();
+                    int price = option.getPrice();
+                    int quantity = orderRequestDto.getQuantity();
 
-                        return price * quantity;
+                    return (long) price * quantity;
                 })
                 .sum();
 
@@ -67,21 +68,19 @@ public class KakaoTalkService {
         headers.add("Authorization", "Bearer " + token);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        Object textObject = new TextObject(
+        TextObject textObject = new TextObject(
                 "text",
                 message.toString(),
                 new Link("https://developers.kakao.com", "https://developers.kakao.com")
         );
 
-        // JSON 객체를 문자열로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonTextObject = objectMapper.writeValueAsString(textObject);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("template_object", jsonTextObject);
 
-
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                     "https://kapi.kakao.com/v2/api/talk/memo/default/send",
