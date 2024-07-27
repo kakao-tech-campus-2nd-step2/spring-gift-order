@@ -2,10 +2,8 @@ package gift.product.controller;
 
 import static gift.product.exception.GlobalExceptionHandler.UNKNOWN_VALIDATION_ERROR;
 
-import gift.product.dto.CategoryDTO;
 import gift.product.dto.MemberDTO;
 import gift.product.dto.TokenDTO;
-import gift.product.model.Category;
 import gift.product.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

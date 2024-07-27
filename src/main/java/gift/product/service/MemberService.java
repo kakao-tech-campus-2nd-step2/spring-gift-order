@@ -6,8 +6,6 @@ import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
 import gift.product.util.JwtUtil;
 import gift.product.validation.MemberValidation;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
