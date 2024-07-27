@@ -4,10 +4,14 @@ import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
 import gift.exception.FailedLoginException;
+import gift.exception.InvalidAccessTokenException;
 import gift.member.MemberService;
+import gift.order.dto.DefaultMessageTemplate;
 import java.net.URI;
+import java.util.Map;
 import java.util.Objects;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -67,4 +71,28 @@ public class KakaoOauthService {
         return body;
     }
 
+    public void sendMessage(String message, String accessToken) {
+        restClient.post()
+            .uri(kakaoOauthConfigure.getMessageSendURL())
+            .header("Authorization", accessToken)
+            .contentType(APPLICATION_FORM_URLENCODED)
+            .body(generateMessageBody(message))
+            .exchange((request, response) -> {
+                if (!response.getStatusCode().is2xxSuccessful()) {
+                    throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
+                }
+                return ResponseEntity.ok();
+            });
+    }
+
+    private LinkedMultiValueMap<String, String> generateMessageBody(String message) {
+        DefaultMessageTemplate defaultMessageTemplate = new DefaultMessageTemplate(
+            "text", message, Map.of(), "버튼"
+        );
+
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", defaultMessageTemplate.toJson());
+
+        return body;
+    }
 }
