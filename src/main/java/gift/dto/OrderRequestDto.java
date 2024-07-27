@@ -2,11 +2,11 @@ package gift.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class OrderRequestDto {
 
-    @NotEmpty(message = "옵션은 필수 입력 사항입니다.")
+    @NotNull(message = "옵션은 필수 입력 사항입니다.")
     private Long optionId;
 
     @Min(value = 1, message = "구매 수량은 최소 1개 이상이어야 합니다.")
