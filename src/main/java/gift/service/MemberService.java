@@ -3,14 +3,14 @@ package gift.service;
 import gift.domain.Member;
 import gift.dto.request.MemberRequest;
 import gift.dto.response.MemberResponse;
-import gift.exception.DuplicateMemberEmailException;
-import gift.exception.MemberNotFoundException;
+import gift.exception.customException.DuplicateMemberEmailException;
+import gift.exception.customException.MemberNotFoundException;
 import gift.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static gift.constants.Messages.MEMBER_EMAIL_ALREADY_EXISTS;
-import static gift.constants.Messages.NOT_FOUND_MEMBER;
+import static gift.exception.errorMessage.Messages.MEMBER_EMAIL_ALREADY_EXISTS;
+import static gift.exception.errorMessage.Messages.NOT_FOUND_MEMBER;
 
 @Service
 public class MemberService {
