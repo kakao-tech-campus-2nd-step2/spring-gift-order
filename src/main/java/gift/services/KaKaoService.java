@@ -1,7 +1,6 @@
 package gift.services;
 
 import gift.classes.Exceptions.AuthException;
-import gift.dto.KaKaoUserDto;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +41,6 @@ public class KaKaoService {
         }
 
         String accessToken = "";
-        String refreshToken = "";
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -68,7 +66,7 @@ public class KaKaoService {
             JSONObject jsonObj = (JSONObject) jsonParser.parse(response.getBody());
 
             accessToken = (String) jsonObj.get("access_token");
-            refreshToken = (String) jsonObj.get("refresh_token");
+            
         } catch (Exception e) {
             throw new AuthException("API call failed");
         }
