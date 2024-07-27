@@ -6,8 +6,8 @@ import gift.global.util.StringUtils;
 import gift.oauth.business.dto.KakaoOrderMessage;
 import gift.oauth.business.dto.OAuthParam;
 import gift.global.domain.OAuthProvider;
-import gift.oauth.business.dto.OauthInfo;
-import gift.oauth.business.dto.OauthToken;
+import gift.oauth.business.dto.OAuthInfo;
+import gift.oauth.business.dto.OAuthToken;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
@@ -58,7 +58,7 @@ public class KakaoApiClient implements OAuthApiClient {
     }
 
     @Override
-    public OauthToken.Common getOAuthToken(OAuthParam param) {
+    public OAuthToken.Common getOAuthToken(OAuthParam param) {
         var url = "https://kauth.kakao.com/oauth/token";
 
         var result =  restClient.post()
@@ -73,7 +73,7 @@ public class KakaoApiClient implements OAuthApiClient {
                     throw new RuntimeException("Failed to get access token from Kakao API.");
                 }
             )
-            .body(OauthToken.Kakao.class);
+            .body(OAuthToken.Kakao.class);
 
         log.info("Kakao response: {}", result);
 
@@ -97,7 +97,7 @@ public class KakaoApiClient implements OAuthApiClient {
                     throw new RuntimeException("Failed to get email from Kakao API.");
                 }
             )
-            .body(OauthInfo.Kakao.class);
+            .body(OAuthInfo.Kakao.class);
 
         return result.kakao_account().email();
     }

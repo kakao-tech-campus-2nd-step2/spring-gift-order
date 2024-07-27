@@ -2,7 +2,7 @@ package gift.oauth.business.dto;
 
 import java.time.ZonedDateTime;
 
-public class OauthInfo {
+public class OAuthInfo {
     public record Kakao(
         long id,
         ZonedDateTime connected_at,
