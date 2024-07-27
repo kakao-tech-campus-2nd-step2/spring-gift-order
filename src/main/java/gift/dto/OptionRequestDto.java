@@ -3,7 +3,9 @@ package gift.dto;
 import gift.validation.ValidName;
 import gift.vo.Option;
 import gift.vo.Product;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record OptionRequestDto(
     Long id,
@@ -16,7 +18,7 @@ public record OptionRequestDto(
     String name,
 
     @NotNull
-    @PositiveOrZero(message = "옵션 수량은 0개 이상이여야 합니다.")
+    @Positive(message = "옵션 수량은 1개 이상이여야 합니다.")
     int quantity
 ){
     public Option toOption (Product product) {
