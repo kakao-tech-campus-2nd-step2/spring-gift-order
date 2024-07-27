@@ -56,7 +56,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(memberLoginRequest.email())
             .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
 
-        if (member.getRegisterType() != RegisterType.DEFAULT) {
+        if (member.isRegisterTypeDefault()) {
             throw new ForbiddenException(INVALID_REGISTER_TYPE);
         }
 
@@ -72,7 +72,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new ForbiddenException(INVALID_CREDENTIALS));
 
-        if (member.getRegisterType() != RegisterType.KAKAO) {
+        if (member.isRegisterTypeKakao()) {
             throw new ForbiddenException(INVALID_REGISTER_TYPE);
         }
 
@@ -106,7 +106,7 @@ public class MemberService {
         }
 
         String changedPassword = memberEditRequest.password();
-        if (!member.isRegisterTypeDefault()) {
+        if (member.isRegisterTypeKakao()) {
             changedPassword = kakaoPassword;
         }
 

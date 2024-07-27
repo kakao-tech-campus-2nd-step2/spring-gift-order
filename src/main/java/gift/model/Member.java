@@ -80,6 +80,10 @@ public class Member {
     }
 
     public boolean isRegisterTypeDefault() {
-        return this.registerType == RegisterType.DEFAULT;
+        return this.registerType.isDefault();
+    }
+
+    public boolean isRegisterTypeKakao() {
+        return this.registerType.isKakao();
     }
 }
