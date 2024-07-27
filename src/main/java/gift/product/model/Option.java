@@ -60,8 +60,8 @@ public class Option {
         return product;
     }
 
-    public boolean isSameName(String name) {
-        return this.name.equals(name);
+    public boolean isSameName(Option option) {
+        return this.name.equals(option.getName());
     }
 
     public void subtractQuantity(int amountToSubtract) {
