@@ -1,6 +1,5 @@
 package gift.oauth.business.service;
 
-import gift.global.util.EncryptionUtils;
 import gift.member.business.dto.JwtToken;
 import gift.member.business.dto.MemberIn;
 import gift.member.business.service.MemberService;
