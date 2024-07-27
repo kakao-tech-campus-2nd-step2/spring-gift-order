@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
-public class Order extends BaseEntity {
+public class Orders extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "member_id", nullable = false)
@@ -25,9 +25,9 @@ public class Order extends BaseEntity {
     @Column(nullable = true)
     private String message;
 
-    public Order() {}
+    public Orders() {}
 
-    public Order(Member member, Option option, int quantity, LocalDateTime orderDateTime, String message) {
+    public Orders(Member member, Option option, int quantity, LocalDateTime orderDateTime, String message) {
         this.member = member;
         this.option = option;
         this.quantity = quantity;
