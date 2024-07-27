@@ -9,6 +9,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.when;
 
 import gift.product.domain.Category;
+import gift.product.exception.category.CategoryAlreadyExistException;
+import gift.product.exception.category.CategoryNotFoundException;
 import gift.product.persistence.CategoryRepository;
 import gift.product.service.command.CategoryCommand;
 import java.util.Optional;
@@ -55,7 +57,7 @@ class CategoryServiceTest {
 
         //then
         assertThatThrownBy(() -> categoryService.createCategory(categoryCommand))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CategoryAlreadyExistException.class);
     }
 
     @Test
@@ -88,7 +90,7 @@ class CategoryServiceTest {
 
         // then
         assertThatThrownBy(() -> categoryService.modifyCategory(1L, categoryCommand))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CategoryAlreadyExistException.class);
     }
 
     @Test
@@ -102,7 +104,7 @@ class CategoryServiceTest {
 
         // then
         assertThatThrownBy(() -> categoryService.modifyCategory(1L, categoryCommand))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CategoryNotFoundException.class);
     }
 
     @Test
