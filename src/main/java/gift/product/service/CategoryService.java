@@ -1,6 +1,8 @@
 package gift.product.service;
 
 import gift.product.domain.Category;
+import gift.product.exception.category.CategoryAlreadyExistException;
+import gift.product.exception.category.CategoryNotFoundException;
 import gift.product.persistence.CategoryRepository;
 import gift.product.service.command.CategoryCommand;
 import gift.product.service.dto.CategoryInfo;
@@ -29,7 +31,7 @@ public class CategoryService {
         checkDuplicatedCategoryName(categoryCommand.name());
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> CategoryNotFoundException.of(categoryId));
 
         category.modify(categoryCommand.name(), categoryCommand.color(), categoryCommand.imgUrl(),
                 categoryCommand.description());
@@ -37,13 +39,13 @@ public class CategoryService {
 
     private void checkDuplicatedCategoryName(String name) {
         categoryRepository.findByName(name).ifPresent(category -> {
-            throw new IllegalArgumentException("이미 존재하는 카테고리입니다.");
+            throw CategoryAlreadyExistException.of(name);
         });
     }
 
     public CategoryInfo getCategoryInfo(final Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> CategoryNotFoundException.of(categoryId));
 
         return CategoryInfo.from(category);
     }
@@ -56,7 +58,7 @@ public class CategoryService {
 
     public void deleteCategory(final Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리입니다."));
+                .orElseThrow(() -> CategoryNotFoundException.of(categoryId));
 
         categoryRepository.delete(category);
     }
