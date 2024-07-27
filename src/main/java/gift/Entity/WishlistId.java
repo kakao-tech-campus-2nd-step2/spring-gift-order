@@ -7,23 +7,23 @@ import java.io.Serializable;
 @Embeddable
 public class WishlistId implements Serializable {
 
-    private long userId;
+    private long memberId;
     private long productId;
 
     protected WishlistId() {
     }
 
-    public WishlistId(long userId, long productId) {
-        this.userId = userId;
+    public WishlistId(long memberId, long productId) {
+        this.memberId = memberId;
         this.productId = productId;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getMemberId() {
+        return memberId;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setMemberId(long memberId) {
+        this.memberId = memberId;
     }
 
     public long getProductId() {
