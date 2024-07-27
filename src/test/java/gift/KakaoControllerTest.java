@@ -26,6 +26,7 @@ public class KakaoControllerTest {
     @MockBean
     private KakaoService kakaoService;
 
+    // "/kakao/login" 엔드포인트에 GET 요청
     @Test
     public void testLogin() {
         String url = "http://localhost:" + port + "/kakao/login";
@@ -34,6 +35,7 @@ public class KakaoControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    // 유효한 코드로 카카오 로그인을 시도
     @Test
     public void testCallbackKakaoSuccess() {
         String code = "valid_code";
@@ -46,7 +48,8 @@ public class KakaoControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-
+    
+    // 회원을 찾을 수 없는 경우
     @Test
     public void testCallbackKakaoMemberNotFound() {
         String code = "valid_code";
