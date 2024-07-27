@@ -8,6 +8,7 @@ import gift.service.OrderService;
 import gift.value.KakaoString;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,9 @@ import java.io.IOException;
 
 @Controller
 public class KakaoController {
+
+    @Value("${kakao.api-key}")
+    private String apiKey;
 
     private final KakaoProperties kakaoProperties;
     private final KakaoService kakaoService;
@@ -52,7 +56,7 @@ public class KakaoController {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", accessToken);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -62,8 +66,8 @@ public class KakaoController {
 
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
-        OrderResponse orderResponse = orderService.createOrder(orderRequest);
-        kakaoService.sendKakaoMessage(orderResponse);
+        OrderResponse orderResponse = orderService.createOrder(orderRequest, accessToken);
+        kakaoService.sendKakaoMessage(orderResponse, accessToken);
         return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
     }
 }

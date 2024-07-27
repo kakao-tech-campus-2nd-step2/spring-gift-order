@@ -18,8 +18,8 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request, @RequestHeader("Authorization") String token) {
-        OrderResponse response = orderService.createOrder(request);
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest request, @RequestHeader("Authorization") String accessToken) {
+        OrderResponse response = orderService.createOrder(request, accessToken);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

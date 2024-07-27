@@ -64,11 +64,11 @@ public class KakaoService {
         throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
     }
 
-    public void sendKakaoMessage(OrderResponse order) {
+    public void sendKakaoMessage(OrderResponse order, String accessToken) {
         String message = String.format("Order ID: %d\nQuantity: %d\nMessage: %s", order.getId(), order.getQuantity(), order.getMessage());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiKey);
+        headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, Object> templateObject = new HashMap<>();
