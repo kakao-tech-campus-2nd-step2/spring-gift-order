@@ -73,12 +73,10 @@ public class OptionService {
         optionRepository.delete(option);
     }
 
-    public void subtract(long productId, long optionId, int subtractOptionQuantity) {
-        validateProductExists(productId);
-
+    public Option subtract(long optionId, int subtractOptionQuantity) {
         Option option = getOptionById(optionId);
         option.subtract(subtractOptionQuantity);
-        optionRepository.save(option);
+        return optionRepository.save(option);
     }
 
     private void validateProductExists(long productId) {

@@ -1,10 +1,13 @@
 package gift.login;
 
+import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
+import gift.exception.FailedLoginException;
+import gift.member.MemberService;
 import java.net.URI;
 import java.util.Objects;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -13,41 +16,46 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class OauthService {
 
-    private final RestClient restClient = RestClient.create();
-
+    private final RestClient restClient;
+    private final MemberService memberService;
     private final KakaoOauthConfigure kakaoOauthConfigure;
 
-    public OauthService(KakaoOauthConfigure kakaoOauthConfigure) {
+    public OauthService(
+        KakaoOauthConfigure kakaoOauthConfigure,
+        RestClient restClient,
+        MemberService memberService
+    ) {
         this.kakaoOauthConfigure = kakaoOauthConfigure;
+        this.restClient = restClient;
+        this.memberService = memberService;
     }
 
-    public URI loginKakao() {
-        ResponseEntity<String> response = restClient.get()
-            .uri(generateKakaoLoginURL())
-            .retrieve()
-            .toEntity(String.class);
-
-        return response.getHeaders().getLocation();
-    }
-
-    private String generateKakaoLoginURL() {
+    public URI getKakaoLoginURL() {
         return UriComponentsBuilder.fromHttpUrl(kakaoOauthConfigure.getAuthorizeCodeURL())
             .queryParam("client_id", kakaoOauthConfigure.getClientId())
             .queryParam("redirect_uri", kakaoOauthConfigure.getRedirectURL())
             .queryParam("response_type", "code")
-            .toUriString();
+            .build()
+            .toUri();
     }
 
     public String getTokenFromKakao(String code) {
-        KakaoTokenResponseDTO response = restClient.post()
+        KakaoTokenResponseDTO kakaoToken = restClient.post()
             .uri(kakaoOauthConfigure.getTokenURL())
             .contentType(APPLICATION_FORM_URLENCODED)
             .body(generateBodyToKakao(code))
             .retrieve()
-            .toEntity(KakaoTokenResponseDTO.class)
+            .onStatus(
+                HttpStatusCode::is4xxClientError,
+                (request, response) -> {
+                    throw new FailedLoginException(KAKAO_AUTHENTICATION_FAILED);
+                }
+            ).toEntity(KakaoTokenResponseDTO.class)
             .getBody();
 
-        return Objects.requireNonNull(response).getAccessToken();
+        memberService.registerIfNotExistsByIdToken(Objects.requireNonNull(kakaoToken).getIdToken());
+
+        return Objects.requireNonNull(kakaoToken).getAccessToken();
     }
 
     private LinkedMultiValueMap<String, String> generateBodyToKakao(String code) {
@@ -58,4 +66,5 @@ public class OauthService {
         body.add("redirect_uri", kakaoOauthConfigure.getRedirectURL());
         return body;
     }
+
 }

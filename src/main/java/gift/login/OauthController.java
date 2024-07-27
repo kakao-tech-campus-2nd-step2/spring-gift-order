@@ -21,7 +21,7 @@ public class OauthController {
     @GetMapping("/kakao/login")
     public ResponseEntity<Void> kakaoLogin() {
         return ResponseEntity.status(FOUND)
-            .location(oauthService.loginKakao())
+            .location(oauthService.getKakaoLoginURL())
             .build();
     }
 

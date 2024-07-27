@@ -1,6 +1,7 @@
 package gift.exceptionhandler;
 
 import gift.exception.FailedLoginException;
+import gift.exception.InvalidAccessTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(FailedLoginException.class)
     public String handleFailedLoginException(FailedLoginException exception) {
+        return exception.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(InvalidAccessTokenException.class)
+    public String handleInvalidAccessTokenException(InvalidAccessTokenException exception) {
         return exception.getMessage();
     }
 }

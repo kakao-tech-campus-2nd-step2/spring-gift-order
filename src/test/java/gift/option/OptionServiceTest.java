@@ -476,7 +476,6 @@ public class OptionServiceTest {
             assertAll(
                 () -> assertDoesNotThrow(
                     () -> optionService.subtract(
-                        productId,
                         optionId,
                         subtractOptionQuantity
                     )
@@ -499,30 +498,11 @@ public class OptionServiceTest {
             //then
             assertThatThrownBy(
                 () -> optionService.subtract(
-                    productId,
                     optionId,
                     subtractOptionQuantity
                 )
             ).isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(OPTION_SUBTRACT_NOT_ALLOWED_NEGATIVE_NUMBER);
-        }
-
-        @Test
-        @DisplayName("product not found error")
-        void productNotFoundError() {
-            //when
-            when(productRepository.existsById(productId))
-                .thenReturn(false);
-
-            //then
-            assertThatThrownBy(
-                () -> optionService.subtract(
-                    productId,
-                    optionId,
-                    subtractOptionQuantity
-                )
-            ).isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(PRODUCT_NOT_FOUND);
         }
 
         @Test
@@ -535,7 +515,6 @@ public class OptionServiceTest {
             //then
             assertThatThrownBy(
                 () -> optionService.subtract(
-                    productId,
                     optionId,
                     subtractOptionQuantity
                 )
@@ -552,7 +531,6 @@ public class OptionServiceTest {
             //then
             assertThatThrownBy(
                 () -> optionService.subtract(
-                    productId,
                     optionId,
                     subtractOptionQuantity
                 )

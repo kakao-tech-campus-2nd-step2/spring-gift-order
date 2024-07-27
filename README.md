@@ -2,81 +2,112 @@
 
 # 기능 요구 사항
 
-- 카카오 로그인을 통해 인가 코드를 받고, 인가 코드를 사용해 토큰을 받은 후 향후 카카오 API 사용을 준비한다.
+- 카카오톡 메시지 API를 사용하여 주문하기 기능을 구현한다.
 
-1. 카카오계정 로그인을 통해 인증 코드를 받는다.
-2. [토큰 받기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token)를 읽고 액세스
-   토큰을 추출한다.
-3. 앱 키, 인가 코드가 절대 유출되지 않도록 한다.
-4. (선택) 인가 코드를 받는 방법이 불편한 경우 카카오 로그인 화면을 구현한다.
+1. 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
+2. 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감된다.
+3. 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
+4. 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
+5. 메시지는 메시지 템플릿의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.
 
-- 실제 카카오 로그인은 아래 그림과 같이 진행된다.
-- 하지만 지금과 같이 클라이언트가 없는 상황에서는 아래와 같은 방법으로 인가 코드를 획득한다.
+- 아래 예시와 같이 HTTP 메시지를 주고받도록 구현한다.
+  ### Request
+  ```
+  POST /api/orders HTTP/1.1
+  Authorization: Bearer {token}
+  Content-Type: application/json
 
-1. 내 애플리케이션 > 앱 설정 > 앱 키로 이동하여 REST API 키를 복사한다.
-2. https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id={REST_API_KEY}에
-   접속하여 카카오톡 메시지 전송에 동의한다.
-3. http://localhost:8080/?code={AUTHORIZATION_CODE}에서 인가 코드를 추출한다.
-
-# 힌트
-
-## 애플리케이션 등록
-
-- 카카오 플랫폼 서비스를 이용하여 개발한 애플리케이션은 이름, 아이콘, 상품명, 서비스명, 회사명, 로고, 심벌 등에 카카오의 상표를 사용할 수 없으므로(제17조(상표 사용 시
-  의무 사항)), 아래와 같이 간단하게 작성해도 된다.
-    - 앱 이름: spring-gift
-    - 회사명: 본인의 이름
-    - 카테고리: 교육
-
-## 토큰 요청
-
-- [토큰 받기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token)에 따르면 아래와 같이
-  RequestEntity를 만들 수 있다.
-
-```
-var url = "https://kauth.kakao.com/oauth/token";
-var headers = new HttpHeaders();
-headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-var body = new LinkedMultiValueMap<String, String>();
-body.add("grant_type", "authorization_code");
-body.add("client_id", properties.clientId());
-body.add("redirect_uri", properties.redirectUri());
-body.add("code", authorizationCode);
-var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-```
-
-## 오류 처리
-
-- [레퍼런스](https://developers.kakao.com/docs/latest/ko/rest-api/reference)
-  와 [문제 해결](https://developers.kakao.com/docs/latest/ko/kakaologin/trouble-shooting)을 참고하여 발생할 수 있는
-  다양한 오류를 처리한다.
-- 예를 들어, 아래의 경우 카카오톡 메시지 전송에 동의하지 않았으므로 과제 진행 요구 사항의 안내에 따라 설정한다.
-  `403 Forbidden: "{"msg":"[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.","code":-3}"`
-- RestTemplate을 사용하는
-  경우 [Spring RestTemplate Error Handling](https://www.baeldung.com/spring-rest-template-error-handling)
-  를 참고한다.
-
-## HTTP Client
-
-- [REST Clients](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html)
-- 사용할 클라이언트를 선택할 때 어떤 기준을 사용해야 할까?
-- 클라이언트 인스턴스를 효과적으로 생성/관리하는 방법은 무엇인가?
-
-## 더 적절한 테스트 방법이 있을까?
-
-- 요청을 보내고 응답을 파싱하는 부분만 테스트하려면 어떻게 해야 할까?
-- 비즈니스 로직에 연결할 때 단위/통합 테스트는 어떻게 할까?
-
-## API 호출에 문제가 발생하면 어떻게 할까?
-
-- 응답 시간이 길면 어떻게 할까? 몇 초가 적당할까?
-- 오류 코드는 어떻게 처리해야 할까?
-- 응답 값을 파싱할 때 문제가 발생하면 어떻게 할까?
+  {
+    "optionId": 1,
+    "quantity": 2,
+    "message": "Please handle this order with care."
+  }
+  ```
+  ### Response
+  ```
+  HTTP/1.1 201 Created
+  Content-Type: application/json  
+  {
+    "id": 1,
+    "optionId": 1,
+    "quantity": 2,
+    "orderDateTime": "2024-07-21T10:00:00",
+    "message": "Please handle this order with care."
+  }
+  ```
 
 # 기능 구현 목록
 
-1. 카카오계정 로그인을 위한 로직을 구현한다.
-    1. 사용자는 `/api/oauth/kakao/login`로 접속해서 kakao 로그인을 진행한다.
-    2. `/api/oauth/kakao/token`경로로 인증 코드를 받아, 토큰을 발급하고 사용자에게 반환한다.
+## 유저 등록
 
-    - clientId와 같은 정보는 .env를 사용하여 숨긴다.
+- 사용자가 OAuth를 통해 로그인한 경우 해당 유저를 DB에 등록한다.
+    - 유저의 이메일은 id 토큰의 이메일 값을 사용한다.
+    - 유저의 패스워드는 id 토큰의 sub 값을 사용한다.
+- 이미 존재한다면, 위 과정을 생략한다.
+
+### 구현
+
+1. 사용자가 OAuth를 통해 로그인한다.
+2. 서버는 카카오톡 auth서버로 부터 토큰을 받는다.
+    - [카카오톡 토큰 받기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token)
+3. id 토큰의 email값을 통해 DB에 해당 유저가 존재하는지 확인한다.
+4. 존재하지 않는다면 email값과 sub값을 참조해 Member를 생성한다.
+5. 사용자에게 access token을 반환한다.
+
+## 주문
+
+- 사용자는 다음 요청을 통해 주문을 할 수 있다.
+
+### 기본정보
+
+| 메서드  |               URL                | 인증 방식  |
+|:----:|:--------------------------------:|:------:|
+| POST | http://localhost:8080/api/orders | 엑세스 토큰 |
+
+### 요청
+
+#### 해더
+
+|      이름       |                   설명                   | 필수 |
+|:-------------:|:--------------------------------------:|:--:|
+| Content-type  |     Content-type: application/json     | O  |
+| Authorization | Authorization : Bearer ${access_token} | O  |
+
+#### 본문
+
+|    이름    |   타입   |         설명          | 필수 |
+|:--------:|:------:|:-------------------:|:--:|
+| optionId |  long  | 구매하고자 하는 상품 옵션의 id값 | O  |
+| quantity |  int   | 구매하고자 하는 상품 옵션의 수량  | O  |
+| message  | String |  수령인에게 보내고자하는 메시지   | O  |
+
+### 응답
+
+#### HttpStatus
+
+- 정상 : `201 Created`
+- 엑세스 토큰이 검증 실패 : `403 Forbidden`
+- 해당 옵션이 존재하지 않는 경우 : `400 Bad request`
+- 구매하고자 하는 수량이 존재하는 수량보다 많은 경우 : `400 Bad request`
+
+#### 본문
+
+|      이름       |   타입   |        설명        | 필수 |
+|:-------------:|:------:|:----------------:|:--:|
+|      id       |  long  |   구매한 상품의 id값    | O  |
+|   optionId    |  long  |  구매된 상품 옵션의 id값  | O  |
+|   quantity    |  int   | 구매된 하는 상품 옵션의 수량 | O  |
+| orderDateTime |  Time  |      구매한 시각      | O  | 
+|    message    | String | 수령인에게 보내고자하는 메시지 | O  |
+
+### 구현
+
+1. 위 요청으로 입력이 들어오면 Access 토큰을 검증한다.
+    - [카카오톡 토큰 정보 보기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#get-token-info)
+    - 응답으로 `200 OK`가 발생하지 않으면 `403 Forbidden`를 반환한다.
+
+2. 상품 옵션과 해당 수량을 입력된 수만큼 차감한다.
+3. 위시리스트에 해당 상품이 존재한다면 해당 위시리스트를 삭제한다.
+4. 아래 경로를 통해 카카오톡 계정으로 메시지를 보낸다.
+    - [카카오톡 나에게 메시지 보내기](https://developers.kakao.com/docs/latest/ko/message/rest-api#default-template-msg)
+5. `201 Created`와 응답 본문의 내용을 사용자에게 반환한다.

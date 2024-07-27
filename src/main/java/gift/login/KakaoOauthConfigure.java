@@ -1,22 +1,20 @@
 package gift.login;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@ConfigurationProperties(prefix = "kakao")
 public class KakaoOauthConfigure {
 
-    @Value("${kakao.client-id}")
     private String clientId;
 
-    @Value("${kakao.redirect-url}")
     private String redirectURL;
 
-    @Value("${kakao.authorize-code-url}")
     private String authorizeCodeURL;
 
-    @Value("${kakao.token-url}")
     private String tokenURL;
+
 
     public String getClientId() {
         return clientId;
