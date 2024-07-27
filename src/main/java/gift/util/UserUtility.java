@@ -31,6 +31,7 @@ public class UserUtility {
     public String makeAccessToken(User user) {
         String accessToken = Jwts.builder()
                 .claim("email", user.getEmail())
+                .claim("role", user.getRole())
                 .signWith(getSecretKey())
                 .compact();
         return accessToken;
