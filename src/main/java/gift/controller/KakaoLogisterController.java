@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@PropertySource("classpath:application-secret.properties")
 @RequestMapping("/oauth/kakao")
 public class KakaoLogisterController {
     private final Logger logger = LoggerFactory.getLogger(KakaoLogisterController.class);
