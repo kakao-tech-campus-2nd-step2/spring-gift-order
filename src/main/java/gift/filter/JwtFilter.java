@@ -40,7 +40,16 @@ public class JwtFilter implements Filter {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;
             }
-            servletRequest.setAttribute("email", claims.get("email", String.class));
+
+            String email = claims.get("email", String.class);
+            String role = claims.get("role", String.class);
+            if (email == null || role == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                return;
+            }
+
+            servletRequest.setAttribute("email", email);
+            servletRequest.setAttribute("role", role);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);
