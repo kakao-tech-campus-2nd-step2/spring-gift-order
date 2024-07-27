@@ -1,4 +1,4 @@
-package gift.login;
+package gift.oauth;
 
 import static gift.exception.ErrorMessage.KAKAO_AUTHENTICATION_FAILED;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -14,13 +14,13 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class OauthService {
+public class KakaoOauthService {
 
     private final RestClient restClient;
     private final MemberService memberService;
     private final KakaoOauthConfigure kakaoOauthConfigure;
 
-    public OauthService(
+    public KakaoOauthService(
         KakaoOauthConfigure kakaoOauthConfigure,
         RestClient restClient,
         MemberService memberService
@@ -30,7 +30,7 @@ public class OauthService {
         this.memberService = memberService;
     }
 
-    public URI getKakaoLoginURL() {
+    public URI getLoginURL() {
         return UriComponentsBuilder.fromHttpUrl(kakaoOauthConfigure.getAuthorizeCodeURL())
             .queryParam("client_id", kakaoOauthConfigure.getClientId())
             .queryParam("redirect_uri", kakaoOauthConfigure.getRedirectURL())
@@ -39,11 +39,11 @@ public class OauthService {
             .toUri();
     }
 
-    public String getTokenFromKakao(String code) {
+    public String getToken(String code) {
         KakaoTokenResponseDTO kakaoToken = restClient.post()
             .uri(kakaoOauthConfigure.getTokenURL())
             .contentType(APPLICATION_FORM_URLENCODED)
-            .body(generateBodyToKakao(code))
+            .body(generateBody(code))
             .retrieve()
             .onStatus(
                 HttpStatusCode::is4xxClientError,
@@ -58,7 +58,7 @@ public class OauthService {
         return Objects.requireNonNull(kakaoToken).getAccessToken();
     }
 
-    private LinkedMultiValueMap<String, String> generateBodyToKakao(String code) {
+    private LinkedMultiValueMap<String, String> generateBody(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", code);
         body.add("grant_type", "authorization_code");

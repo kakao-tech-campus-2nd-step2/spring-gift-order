@@ -11,7 +11,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import gift.exception.FailedLoginException;
-import gift.login.KakaoOauthConfigure;
+import gift.oauth.KakaoOauthConfigure;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

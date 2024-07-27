@@ -1,4 +1,4 @@
-package gift.login;
+package gift.oauth;
 
 import static org.springframework.http.HttpStatus.FOUND;
 
@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/oauth")
 public class OauthController {
 
-    private final OauthService oauthService;
+    private final KakaoOauthService oauthService;
 
-    public OauthController(OauthService oauthService) {
+    public OauthController(KakaoOauthService oauthService) {
         this.oauthService = oauthService;
     }
 
     @GetMapping("/kakao/login")
     public ResponseEntity<Void> kakaoLogin() {
         return ResponseEntity.status(FOUND)
-            .location(oauthService.getKakaoLoginURL())
+            .location(oauthService.getLoginURL())
             .build();
     }
 
     @GetMapping("/kakao/token")
     public String getToken(@RequestParam String code) {
-        return oauthService.getTokenFromKakao(code);
+        return oauthService.getToken(code);
     }
 }
