@@ -17,10 +17,4 @@ public class OptionDao {
         return optionRepository.findById(id)
             .orElseThrow(() -> new NoSuchEntityException("option"));
     }
-
-    public Long findProductIdById(Long id) {
-        return findOptionById(id)
-            .getProduct()
-            .getId();
-    }
 }

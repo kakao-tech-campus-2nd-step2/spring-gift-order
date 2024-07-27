@@ -34,7 +34,7 @@ public class OrderService {
     public OrderResponse order(Long memberId, OrderRequest orderRequest) {
         optionService.subtract(orderRequest.optionId(), orderRequest.quantity());
         wishService.delete(memberId,
-            WishDeleteRequest.of(optionDao.findProductIdById(orderRequest.optionId())));
+            WishDeleteRequest.of(optionDao.findOptionById(orderRequest.optionId()).getProductId()));
         Order order = orderRepository.save(
             orderRequest.toEntity(optionDao.findOptionById(orderRequest.optionId()),
                 orderRequest.message()));
