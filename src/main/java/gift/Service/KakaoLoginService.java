@@ -73,7 +73,7 @@ public class KakaoLoginService {
 
     private LinkedMultiValueMap<String, String> generateBodyForKakaoToken(String oauthCode) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code1");
+        body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
         body.add("redirect_url", properties.redirectUrl());
         body.add("code", oauthCode);
