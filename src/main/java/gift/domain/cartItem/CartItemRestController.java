@@ -6,6 +6,7 @@ import gift.global.resolver.Login;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users/cart")
+@Tag(name = "CartItem", description = "CartItem API")
 public class CartItemRestController {
 
     private final CartItemService cartItemService;

@@ -5,6 +5,7 @@ import gift.domain.option.dto.OptionResponseDTO;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Option", description = "Option API")
 public class OptionRestController {
 
     private final OptionService optionService;

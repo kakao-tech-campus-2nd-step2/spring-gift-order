@@ -3,6 +3,7 @@ package gift.domain.category;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/categories")
+@Tag(name = "Category", description = "Category API")
 public class CategoryRestController {
 
     private final CategoryService categoryService;

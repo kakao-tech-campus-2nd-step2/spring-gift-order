@@ -3,6 +3,7 @@ package gift.domain.user;
 import gift.domain.user.dto.UserDTO;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User", description = "User API")
 public class UserRestController {
     private final UserService userService;
 

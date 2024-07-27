@@ -3,6 +3,7 @@ package gift.domain.product;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/products")
+@Tag(name = "Product", description = "Product API")
 public class ProductRestController {
 
     private final ProductService productService;

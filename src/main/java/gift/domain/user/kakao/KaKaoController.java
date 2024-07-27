@@ -4,6 +4,7 @@ import gift.domain.user.User;
 import gift.global.jwt.JwtProvider;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
 @RequestMapping("/api/users/oauth")
+@Tag(name = "KaKao", description = "KaKao API")
 public class KaKaoController {
     private final KaKaoService kaKaoService;
 
