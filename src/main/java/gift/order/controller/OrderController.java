@@ -1,5 +1,6 @@
 package gift.order.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.auth.domain.AuthInfo;
 import gift.global.exception.DomainValidationException;
 import gift.global.response.ErrorResponseDto;
@@ -37,7 +38,7 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SimpleResultResponseDto> createOrder(@Login AuthInfo authInfo, @RequestBody OrderRequestDto orderRequestDto) {
+    public ResponseEntity<SimpleResultResponseDto> createOrder(@Login AuthInfo authInfo, @RequestBody OrderRequestDto orderRequestDto) throws JsonProcessingException {
         orderService.createOrder(orderRequestDto.toOrderServiceDto(authInfo.memberId()));
         return ResponseHelper.createSimpleResponse(ResultCode.CREATE_OPTION_SUCCESS);
     }
