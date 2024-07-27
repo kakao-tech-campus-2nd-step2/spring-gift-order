@@ -3,7 +3,7 @@ package gift.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "kakao_tokens")
+@Table(name = "kakaoToken")
 public class KakaoToken {
 
     @Id

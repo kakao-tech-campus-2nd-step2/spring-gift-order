@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS option (
     CONSTRAINT unique_product_option UNIQUE (product_id, name)
     );
 
-CREATE TABLE IF NOT EXISTS kakao_tokens (
+CREATE TABLE IF NOT EXISTS kakaoToken (
                                             id BIGINT AUTO_INCREMENT PRIMARY KEY,
                                             userEmail VARCHAR(255) NOT NULL UNIQUE,
     token VARCHAR(255) NOT NULL
