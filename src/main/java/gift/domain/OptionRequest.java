@@ -10,6 +10,7 @@ public record OptionRequest(
         String name,
         @Min(1)
         @Max(1000000000)
-        Long quantity
+        Long quantity,
+        Long menuId
 ) {
 }

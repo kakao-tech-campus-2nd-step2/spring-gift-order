@@ -1,10 +1,6 @@
 package gift.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -15,10 +11,14 @@ public class Option {
     String name;
     Long quantity;
 
-    public Option(Long id, String name, Long quantity) {
+    @ManyToOne(cascade = CascadeType.ALL)
+    Menu menu;
+
+    public Option(Long id, String name, Long quantity,Menu menu) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
+        this.menu = menu;
     }
 
     public Option() {
@@ -35,6 +35,10 @@ public class Option {
 
     public Long getQuantity() {
         return quantity;
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
     public void subtract(Long subtractNumber) throws IllegalAccessException {

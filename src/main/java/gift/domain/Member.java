@@ -11,7 +11,10 @@ public class Member {
     @Id
     private String id;
 
-    @Column(name = "password", nullable = false)
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "password")
     private String password;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -20,14 +23,27 @@ public class Member {
     public Member() {
     }
 
-    public Member(String id, String password, List<WishList> wishList) {
+    public Member(String id, String password, String name,List<WishList> wishList) {
         this.id = id;
         this.password = password;
         this.wishList = wishList;
+        this.name = name;
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public String getId(){
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<WishList> getWishList() {
+        return wishList;
     }
 
     @Override
@@ -41,6 +57,10 @@ public class Member {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public void setWishList(List<WishList> wishLists) {
+        this.wishList = wishLists;
     }
 
 }
