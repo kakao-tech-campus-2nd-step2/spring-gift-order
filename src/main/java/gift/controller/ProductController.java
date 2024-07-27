@@ -79,5 +79,10 @@ public class ProductController {
         return "redirect:/view/products";
     }
 
+    @PostMapping("/order/{productId}")
+    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId) {
+        optionService.subtractOptionQuantity(optionId, quantity);
+        return ResponseEntity.ok().build();
+    }
 
 }
