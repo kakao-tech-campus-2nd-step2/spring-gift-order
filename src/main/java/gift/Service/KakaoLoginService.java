@@ -1,11 +1,17 @@
 package gift.Service;
 
+import gift.DTO.ResponseKaKaoUserInfo;
 import gift.DTO.ResponseKakaoTokenDTO;
 import gift.Exception.KaKaoBadRequestException;
 import gift.Exception.KaKaoServerErrorException;
+import gift.Model.Entity.Member;
+import gift.Model.Value.Email;
+import gift.Model.Value.Password;
+import gift.Repository.MemberRepository;
+import gift.Util.JwtUtil;
 import gift.Util.KakaoProperties;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,13 +26,18 @@ public class KakaoLoginService {
 
     private static final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String LOGIN_URI= "https://kauth.kakao.com/oauth/authorize";
+    private static final String GET_USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
 
     private final RestClient client;
     private final KakaoProperties properties;
+    private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtill;
 
-    public KakaoLoginService(RestClient client, KakaoProperties properties) {
+    public KakaoLoginService(RestClient client, KakaoProperties properties, MemberRepository memberRepository, JwtUtil jwtUtil) {
         this.client = client;
         this.properties = properties;
+        this.memberRepository = memberRepository;
+        this.jwtUtill=jwtUtil;
     }
 
     public URI requestLogin() {
@@ -50,7 +61,24 @@ public class KakaoLoginService {
                 .toUriString();
     }
 
-    public String getToken(String oauthCode){
+    public String loginOrRegisterUser(String oauthCode) {
+        String kakaoAccessToken = getToken(oauthCode);
+        String userEmail = client.post()
+                .uri(URI.create(GET_USER_INFO_URI))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "+kakaoAccessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .retrieve()
+                .toEntity(ResponseKaKaoUserInfo.class)
+                .getBody()
+                .getKakaoAccount()
+                .getEmail();
+
+        Email email = new Email(userEmail);
+        Member member = memberRepository.findByEmail(email).orElseGet(()->memberRepository.save(new Member(email, new Password("카카오 유저"))));
+        return jwtUtill.generateToken(member);
+    }
+
+    private String getToken(String oauthCode){
         String url = GENERATE_TOKEN_URL;
         LinkedMultiValueMap<String, String> body = generateBodyForKakaoToken(oauthCode);
         try {
