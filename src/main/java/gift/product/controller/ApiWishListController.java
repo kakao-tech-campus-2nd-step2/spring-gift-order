@@ -1,8 +1,9 @@
 package gift.product.controller;
 
-import gift.product.dto.ProductDTO;
+import gift.product.dto.WishRequestDTO;
+import gift.product.dto.WishResponseDTO;
 import gift.product.service.WishListService;
-import java.util.Map;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,32 +29,29 @@ public class ApiWishListController {
         this.wishListService = wishListService;
     }
 
-    @GetMapping()
-    public Page<ProductDTO> showProductList(
+    @GetMapping
+    public Page<WishResponseDTO> showProductList(
         @RequestHeader("Authorization") String authorization,
-        Pageable pageable
-    ) {
+        Pageable pageable) {
         System.out.println("[ApiWishListController] showProductList()");
-        return wishListService.getAllProducts(authorization, pageable);
+        return wishListService.getAllWishes(authorization, pageable);
     }
 
-    @PostMapping()
-    public ResponseEntity<String> registerWishProduct(
-            @RequestHeader("Authorization") String authorization,
-            @RequestBody Map<String, Long> requestBody
-    ) {
+    @PostMapping
+    public ResponseEntity<WishResponseDTO> registerWishProduct(
+        @RequestHeader("Authorization") String authorization,
+        @Valid @RequestBody WishRequestDTO wishRequestDTO) {
         System.out.println("[ApiWishListController] registerWishProduct()");
-        wishListService.registerWishProduct(authorization, requestBody);
-        return ResponseEntity.status(HttpStatus.CREATED).body("WishProduct registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(wishListService.registerWishProduct(authorization, wishRequestDTO));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteWishProduct(
-            @RequestHeader("Authorization") String authorization,
-            @PathVariable Long id
-    ) {
+        @RequestHeader("Authorization") String authorization,
+        @PathVariable Long id) {
         System.out.println("[ApiWishListController] deleteWishProduct()");
         wishListService.deleteWishProduct(authorization, id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("delete WishProduct successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

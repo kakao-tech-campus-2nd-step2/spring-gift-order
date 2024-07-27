@@ -1,17 +1,21 @@
 package gift.product.service;
 
-import gift.product.dto.ProductDTO;
+import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
+import static gift.product.exception.GlobalExceptionHandler.NO_PERMISSION;
+
+import gift.product.dto.WishRequestDTO;
+import gift.product.dto.WishResponseDTO;
+import gift.product.exception.InvalidIdException;
+import gift.product.exception.UnauthorizedException;
+import gift.product.model.Member;
 import gift.product.model.Product;
 import gift.product.model.Wish;
+import gift.product.repository.ProductRepository;
 import gift.product.repository.WishListRepository;
 import gift.product.util.JwtUtil;
-import gift.product.validation.WishListValidation;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,59 +23,41 @@ import org.springframework.stereotype.Service;
 public class WishListService {
     private final WishListRepository wishListRepository;
     private final JwtUtil jwtUtil;
-    private final WishListValidation wishListValidation;
+    private final ProductRepository productRepository;
 
     @Autowired
     public WishListService(
-            WishListRepository wishListRepository,
-            JwtUtil jwtUtil,
-            WishListValidation wishListValidation
+        WishListRepository wishListRepository,
+        JwtUtil jwtUtil,
+        ProductRepository productRepository
     ) {
         this.wishListRepository = wishListRepository;
         this.jwtUtil = jwtUtil;
-        this.wishListValidation = wishListValidation;
+        this.productRepository = productRepository;
     }
 
-    public Page<ProductDTO> getAllProducts(String authorization, Pageable pageable) {
+    public Page<WishResponseDTO> getAllWishes(String authorization, Pageable pageable) {
         System.out.println("[WishListService] getAllProducts()");
         Long memberId = jwtUtil.parsingToken(authorization).getId();
-        return  convertWishToProductDTOList(
-                wishListRepository.findAllByMemberId(memberId, pageable),
-                pageable
-        );
+        return wishListRepository.findAllByMemberId(memberId, pageable);
     }
 
-    public void registerWishProduct(String authorization, Map<String, Long> requestBody) {
+    public WishResponseDTO registerWishProduct(String authorization, WishRequestDTO wishRequestDTO) {
         System.out.println("[WishListService] registerWishProduct()");
-        Wish wish = wishListValidation.registerValidation(authorization, requestBody.get("productId"));
-        wishListRepository.save(wish);
+        Member member = jwtUtil.parsingToken(authorization);
+        Product product = productRepository.findById(wishRequestDTO.getProductId())
+            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
+        Wish wish = wishListRepository.save(wishRequestDTO.convertToDomain(member, product));
+        return new WishResponseDTO(wish.getId(), wish.getProduct());
     }
 
     public void deleteWishProduct(String authorization, Long id) {
         System.out.println("[WishListService] deleteWishProduct()");
-        wishListValidation.deleteValidation(authorization, id);
+        Member member = jwtUtil.parsingToken(authorization);
+        Wish wish = wishListRepository.findById(id)
+            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
+        if(!Objects.equals(wish.getMember(), member))
+            throw new UnauthorizedException(NO_PERMISSION);
         wishListRepository.deleteById(id);
     }
-
-    public Page<ProductDTO> convertWishToProductDTOList(Page<Wish> wishList, Pageable pageable) {
-        List<ProductDTO> productDTOs = wishList.stream()
-            .map(this::convertWishToProductDTO)
-            .collect(Collectors.toList());
-        return new PageImpl<>(
-            productDTOs,
-            pageable,
-            wishList.getTotalElements()
-        );
-    }
-
-    public ProductDTO convertWishToProductDTO(Wish wish) {
-        Product product = wish.getProduct();
-        return new ProductDTO(
-                product.getName(),
-                product.getPrice(),
-                product.getImageUrl(),
-                product.getCategory().getId()
-        );
-    }
-
 }
