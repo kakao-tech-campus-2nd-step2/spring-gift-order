@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoMemberService {
 
-  private KakaoJwtTokenRepository kakaoJwtTokenRepository;
-  private KakaoApi kakaoApi;
+  private static final String URL = "https://kauth.kakao.com/oauth/token";
   static Dotenv dotenv = Dotenv.configure().load();
   private static final String API_KEY = dotenv.get("API_KEY");
-  private static final String URL = "https://kauth.kakao.com/oauth/token";
+  private final KakaoJwtTokenRepository kakaoJwtTokenRepository;
+  private final KakaoApi kakaoApi;
 
   public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoApi kakaoApi) {
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;

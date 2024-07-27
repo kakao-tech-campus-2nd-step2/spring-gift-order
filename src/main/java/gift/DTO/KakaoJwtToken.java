@@ -21,9 +21,10 @@ public class KakaoJwtToken {
   private String scope;
   private int refreshTokenExpiresIn;
 
-  public KakaoJwtToken(Long id,String accessToken, String tokenType, String refreshToken, int expiresIn,
+  public KakaoJwtToken(Long id, String accessToken, String tokenType, String refreshToken,
+    int expiresIn,
     String scope, int refreshTokenExpiresIn) {
-    this.id=id;
+    this.id = id;
     this.accessToken = accessToken;
     this.tokenType = tokenType;
     this.refreshToken = refreshToken;

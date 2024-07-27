@@ -2,18 +2,19 @@ package gift.DTO;
 
 public class OrderDto {
 
-  private Long id;
-  private OptionDto optionDto;
-  private int quantity;
-  private String orderDateTime;
-  private String message;
+  private final Long id;
+  private final OptionDto optionDto;
+  private final int quantity;
+  private final String orderDateTime;
+  private final String message;
 
-  public OrderDto(Long id, OptionDto optionDto, int quantity, String orderDateTime, String message){
-    this.id=id;
-    this.optionDto=optionDto;
-    this.quantity=quantity;
-    this.orderDateTime=orderDateTime;
-    this.message=message;
+  public OrderDto(Long id, OptionDto optionDto, int quantity, String orderDateTime,
+    String message) {
+    this.id = id;
+    this.optionDto = optionDto;
+    this.quantity = quantity;
+    this.orderDateTime = orderDateTime;
+    this.message = message;
   }
 
   public Long getId() {

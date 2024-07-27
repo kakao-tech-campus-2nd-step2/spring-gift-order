@@ -16,13 +16,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService {
 
-  private OptionService optionService;
-  private ProductRepository productRepository;
-  private WishListService wishListService;
-  private KakaoJwtTokenRepository kakaoJwtTokenRepository;
-  private KakaoApi kakaoApi;
-
   private final String URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+  private final OptionService optionService;
+  private final ProductRepository productRepository;
+  private final WishListService wishListService;
+  private final KakaoJwtTokenRepository kakaoJwtTokenRepository;
+  private final KakaoApi kakaoApi;
 
   public OrderService(OptionService optionService, ProductRepository productRepository,
     WishListService wishListService, KakaoJwtTokenRepository kakaoJwtTokenRepository,
@@ -48,7 +47,7 @@ public class OrderService {
 
     KakaoJwtToken kakaoJwtToken = kakaoJwtTokenRepository.findById(1L)
       .orElseThrow(() -> new EmptyResultDataAccessException("해당 데이터가 없습니다", 1));
-    kakaoApi.kakaoSendMe(orderDto,kakaoJwtToken,URL);
+    kakaoApi.kakaoSendMe(orderDto, kakaoJwtToken, URL);
 
     return orderDto;
   }

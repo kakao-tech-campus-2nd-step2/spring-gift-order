@@ -13,7 +13,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.io.IOException;
 
 @Entity
 @Table
@@ -67,7 +66,7 @@ public class Option {
     return this.product;
   }
 
-  public void subtract(int amount)  {
+  public void subtract(int amount) {
     this.quantity -= amount;
   }
 }

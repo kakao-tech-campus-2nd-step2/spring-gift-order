@@ -1,6 +1,5 @@
 package gift.Controller;
 
-import gift.DTO.KakaoJwtToken;
 import gift.DTO.KakaoJwtTokenDto;
 import gift.Service.KakaoMemberService;
 import org.springframework.http.ResponseEntity;

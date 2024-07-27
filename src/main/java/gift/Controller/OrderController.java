@@ -13,14 +13,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-  private OrderService orderService;
+  private final OrderService orderService;
 
-  public OrderController(OrderService orderService){
-    this.orderService=orderService;
+  public OrderController(OrderService orderService) {
+    this.orderService = orderService;
   }
 
   @PostMapping
-  public ResponseEntity<OrderDto> orderOption(@RequestBody OrderDto orderDto) throws IllegalAccessException {
+  public ResponseEntity<OrderDto> orderOption(@RequestBody OrderDto orderDto)
+    throws IllegalAccessException {
     OrderDto orderdDto = orderService.orderOption(orderDto);
     var location = ServletUriComponentsBuilder.fromCurrentRequest()
       .path("/{id}")
