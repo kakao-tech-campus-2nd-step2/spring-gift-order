@@ -28,7 +28,7 @@ public class KakaoLoginController {
         return "redirect:" + loginUrl;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public String kakaoAccessToken(@RequestParam(value = "code") String authorizationCode,
         RedirectAttributes redirectAttributes) {
         if (authorizationCode != null) {
