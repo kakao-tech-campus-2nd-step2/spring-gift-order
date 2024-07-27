@@ -22,10 +22,10 @@ import org.springframework.web.client.RestClient;
 public class KakaoTokenService {
 
     @Value("${kakao-token-url}")
-    private String TOKEN_URL;
+    private String tokenUrl;
 
     @Value("${kakao-user-info-url}")
-    private String USER_INFO_URL;
+    private String userInfoUrl;
 
     @Value("${kakao-redirect-uri}")
     private String kakaoRedirectUri;
@@ -40,7 +40,7 @@ public class KakaoTokenService {
         try {
             var body = makeBody(clientId, kakaoRedirectUri, code);
             ResponseEntity<TokenResponseDTO> result = client.post()
-                    .uri(URI.create(TOKEN_URL)).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .uri(URI.create(tokenUrl)).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body).retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                         throw new BadRequestException("잘못된 요청으로 인한 오류입니다.\n" + response.getBody()
@@ -64,7 +64,7 @@ public class KakaoTokenService {
     public MemberDTO getUserInfo(String accessToken){
         try {
             ResponseEntity<KakaoUserInfoDTO> responseUserInfo = client.get()
-                    .uri(URI.create(USER_INFO_URL))
+                    .uri(URI.create(userInfoUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Content-type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8")
                     .retrieve()
