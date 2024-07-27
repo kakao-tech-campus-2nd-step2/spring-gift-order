@@ -16,13 +16,13 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionService optionService;
     private final WishService wishService;
-    private final KakaoMemberService kakaoMemberService;
+    private final KakaoService kakaoService;
 
-    public OrderService(OrderRepository orderRepository, OptionService optionService, WishService wishService, KakaoMemberService kakaoMemberService) {
+    public OrderService(OrderRepository orderRepository, OptionService optionService, WishService wishService, KakaoService kakaoService) {
         this.orderRepository = orderRepository;
         this.optionService = optionService;
         this.wishService = wishService;
-        this.kakaoMemberService = kakaoMemberService;
+        this.kakaoService = kakaoService;
     }
 
     @Transactional
@@ -36,7 +36,7 @@ public class OrderService {
         }
 
         String message = "옵션 id " + orderRequest.optionId() + " 상품이 주문되었습니다.";
-        kakaoMemberService.sendKakaoMessage(accessToken,message);
+        kakaoService.sendKakaoMessage(accessToken,message);
     }
 
 

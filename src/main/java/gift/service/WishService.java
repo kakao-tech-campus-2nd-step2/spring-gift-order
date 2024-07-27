@@ -7,8 +7,8 @@ import gift.dto.request.MemberRequest;
 import gift.dto.response.OptionResponse;
 import gift.dto.request.WishRequest;
 import gift.dto.response.WishResponse;
-import gift.exception.OptionAlreadyInWishlistException;
-import gift.exception.WishNotFoundException;
+import gift.exception.customException.OptionAlreadyInWishlistException;
+import gift.exception.customException.WishNotFoundException;
 import gift.repository.WishRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static gift.constants.Messages.NOT_FOUND_WISH;
-import static gift.constants.Messages.OPTION_ALREADY_IN_WISHLIST;
+import static gift.exception.errorMessage.Messages.NOT_FOUND_WISH;
+import static gift.exception.errorMessage.Messages.OPTION_ALREADY_IN_WISHLIST;
 
 @Service
 public class WishService {

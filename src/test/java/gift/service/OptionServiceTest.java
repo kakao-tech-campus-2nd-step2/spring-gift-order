@@ -1,23 +1,15 @@
 package gift.service;
 
-import gift.constants.Messages;
 import gift.domain.Option;
-import gift.dto.request.OrderRequest;
-import gift.exception.InsufficientQuantityException;
 import gift.repository.OptionRepository;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
 
 
 @ExtendWith(MockitoExtension.class)

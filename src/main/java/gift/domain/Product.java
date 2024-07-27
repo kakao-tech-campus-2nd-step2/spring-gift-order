@@ -1,7 +1,7 @@
 package gift.domain;
 
-import gift.constants.Messages;
-import gift.exception.ProductOptionRequiredException;
+import gift.exception.errorMessage.Messages;
+import gift.exception.customException.ProductOptionRequiredException;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
