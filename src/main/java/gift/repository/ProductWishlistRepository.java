@@ -14,7 +14,11 @@ import java.util.List;
 public interface ProductWishlistRepository extends JpaRepository<ProductWishlist, Long> {
     Page<ProductWishlist> findByWishlistId(Long id, Pageable pageable);
 
+    List<ProductWishlist> findByWishlistId(Long id);
+
     List<ProductWishlist> findByProductId(Long id);
+
+    List<ProductWishlist> findByProductIdAndWishlistId(Long productId, Long wishlistId);
 
     @Modifying
     @Transactional
