@@ -4,7 +4,6 @@ import gift.dto.ApiResponse;
 import gift.dto.ProductDto;
 import gift.exception.NonIntegerPriceException;
 import gift.exception.ProductNotFoundException;
-import gift.model.Category;
 import gift.model.HttpResult;
 import gift.model.Product;
 import gift.service.CategoryService;
@@ -44,7 +43,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/")
+    @GetMapping("/products")
     public String getProductList(@RequestParam(value = "page", defaultValue = "0") int page,
         Model model) {
         int pageSize = 10; // 한 페이지에 표시할 상품 개수
@@ -91,7 +90,6 @@ public class ProductController {
     public String showAddProductForm(Model model) {
         model.addAttribute("productDto", new ProductDto());
         model.addAttribute("categories", categoryService.getAllCategories());
-//        model.addAttribute("options", optionService.retreiveOptions());
         return "addproductform";
     }
 

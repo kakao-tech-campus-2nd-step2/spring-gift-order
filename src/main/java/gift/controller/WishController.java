@@ -4,6 +4,7 @@ import gift.annotation.LoginMember;
 import gift.model.Member;
 import gift.model.Wish;
 import gift.service.WishService;
+import java.awt.print.Pageable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
