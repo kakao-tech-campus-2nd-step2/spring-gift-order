@@ -1,4 +1,4 @@
-package gift.order.dto;
+package gift.oauth.dto;
 
 public class KakaoAccountDTO {
 

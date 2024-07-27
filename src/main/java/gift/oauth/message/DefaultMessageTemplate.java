@@ -1,4 +1,4 @@
-package gift.order.dto;
+package gift.oauth.message;
 
 import static gift.exception.ErrorMessage.JSON_CONVERT_FAILED;
 
