@@ -20,8 +20,6 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-
-@ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
 
     @InjectMocks
