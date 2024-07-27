@@ -26,6 +26,9 @@ public class KakaoService {
     @Value("${kakao.api-url}")
     private String apiUrl;
 
+    @Value("${kakao.message-url}")
+    private String meaageUrl;
+
     private final KakaoProperties kakaoProperties;
     private final RestTemplate kakaoRestTemplate;
 
@@ -84,7 +87,7 @@ public class KakaoService {
 
         ResponseEntity<String> response = null;
         try {
-            response = kakaoRestTemplate.postForEntity(apiUrl, request, String.class);
+            response = kakaoRestTemplate.postForEntity(meaageUrl, request, String.class);
         } catch (Exception e) {
             throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
         }
