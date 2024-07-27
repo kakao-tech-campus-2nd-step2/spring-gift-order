@@ -40,30 +40,14 @@ public class Wish {
         foreignKey = @ForeignKey(name = "fk_wishes_product_id_ref_products_id"))
     private Product product;
 
-    public Wish(User user, Product product) {
-        this(user, product, DEFAULT_QUANTITY);
-    }
-
     public Wish(User user, Product product, int quantity) {
-        if (isQuantityZero()) {
-            throw new CustomException(ErrorCode.INVALID_WISH_QUANTITY);
-        }
+        validateQuantity(quantity);
         this.user = user;
         this.product = product;
         this.quantity = quantity;
     }
 
     protected Wish() {
-    }
-
-    private Wish(Builder builder) {
-        this.quantity = builder.quantity;
-        this.user = builder.user;
-        this.product = builder.product;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public Long getId() {
@@ -90,31 +74,10 @@ public class Wish {
         return quantity <= 0;
     }
 
-    public static class Builder {
-
-        private Integer quantity;
-        private User user;
-        private Product product;
-
-        public Builder quantity(Integer quantity) {
-            this.quantity = quantity;
-            return this;
+    public void validateQuantity(Integer quantity) {
+        if (quantity <= 0) {
+            throw new CustomException(ErrorCode.INVALID_WISH_QUANTITY);
         }
-
-        public Builder user(User user) {
-            this.user = user;
-            return this;
-        }
-
-        public Builder product(Product product) {
-            this.product = product;
-            return this;
-        }
-
-        public Wish build() {
-            return new Wish(this);
-        }
-
     }
 
 }

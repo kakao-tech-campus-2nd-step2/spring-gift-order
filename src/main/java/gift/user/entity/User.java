@@ -23,6 +23,8 @@ import java.util.regex.Pattern;
 )
 public class User {
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(\\S+)$");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,18 +41,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Wish> wishes;
 
+    public User(String email, String password, Set<UserRole> userRoles) {
+        validateEmail(email);
+        this.email = email;
+        this.password = password;
+        this.userRoles = userRoles;
+    }
+
     protected User() {
-    }
-
-    private User(Builder builder) {
-        validateEmail(builder.email);
-        this.email = builder.email;
-        this.password = builder.password;
-        this.userRoles = builder.userRoles;
-    }
-
-    public static Builder builder() {
-        return new Builder();
     }
 
     public Long getId() {
@@ -70,36 +68,8 @@ public class User {
     }
 
     private void validateEmail(String email) {
-        final String EMAIL_REGEX = "^(.+)@(\\S+)$";
-        Pattern emailPattern = Pattern.compile(EMAIL_REGEX);
-        if (!emailPattern.matcher(email).matches()) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
             throw new CustomException(ErrorCode.INVALID_EMAIL);
-        }
-    }
-
-    public static class Builder {
-
-        private String email;
-        private String password;
-        private Set<UserRole> userRoles;
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder userRoles(Set<UserRole> userRoles) {
-            this.userRoles = userRoles;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
         }
     }
 

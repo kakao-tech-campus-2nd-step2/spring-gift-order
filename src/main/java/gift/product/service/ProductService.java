@@ -12,7 +12,6 @@ import gift.product.entity.Product;
 import gift.product.option.dto.request.CreateOptionRequest;
 import gift.product.option.service.OptionService;
 import gift.product.repository.ProductJpaRepository;
-import gift.util.mapper.ProductMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,14 +34,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductResponse> getAllProducts(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
-        return products.map(ProductMapper::toResponse);
+        return products.map(ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id) {
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-        return ProductMapper.toResponse(product);
+        return ProductResponse.from(product);
     }
 
     @Transactional
@@ -50,15 +49,22 @@ public class ProductService {
         Category category = categoryRepository.findById(request.categoryId())
             .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        Product product = productRepository.save(ProductMapper.toProduct(request, category));
+        Product product = new Product(
+            request.name(),
+            request.price(),
+            request.imageUrl(),
+            category
+        );
+
+        Product saved = productRepository.save(product);
 
         for (NewOption option : request.options()) {
-            CreateOptionRequest optionRequest = new CreateOptionRequest(product.getId(),
+            CreateOptionRequest optionRequest = new CreateOptionRequest(saved.getId(),
                 option.name(), option.quantity());
             optionService.createOption(optionRequest);
         }
 
-        return ProductMapper.toResponse(product);
+        return ProductResponse.from(saved);
     }
 
     @Transactional

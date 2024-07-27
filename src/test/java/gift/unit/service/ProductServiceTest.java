@@ -69,16 +69,13 @@ class ProductServiceTest {
         // given
         Pageable pageable = Pageable.unpaged();
         Category category = new Category("Category A");
-        List<Product> productList = List.of(Product.builder().name("Product A").price(1000)
-                .imageUrl("http://example.com/images/product_a.jpg").category(category).build(),
-            Product.builder().name("Product B").price(2000)
-                .imageUrl("http://example.com/images/product_b.jpg").category(category).build(),
-            Product.builder().name("Product C").price(3000)
-                .imageUrl("http://example.com/images/product_c.jpg").category(category).build(),
-            Product.builder().name("Product D").price(4000)
-                .imageUrl("http://example.com/images/product_d.jpg").category(category).build(),
-            Product.builder().name("Product E").price(5000)
-                .imageUrl("http://example.com/images/product_e.jpg").category(category).build());
+        List<Product> productList = List.of(
+            new Product("Product A", 1000, "http://example.com/images/product_a.jpg", category),
+            new Product("Product B", 2000, "http://example.com/images/product_b.jpg", category),
+            new Product("Product C", 3000, "http://example.com/images/product_c.jpg", category),
+            new Product("Product D", 4000, "http://example.com/images/product_d.jpg", category),
+            new Product("Product E", 5000, "http://example.com/images/product_e.jpg", category)
+        );
         Page<Product> productPage = new PageImpl<>(productList);
         given(productRepository.findAll(pageable)).willReturn(productPage);
 
@@ -109,9 +106,8 @@ class ProductServiceTest {
     @Transactional
     void getProductByIdTest() {
         // given
-        Product expected = Product.builder().name("Product B").price(2000)
-            .imageUrl("http://example.com/images/product_b.jpg").build();
-
+        Product expected = new Product("Product B", 2000, "http://example.com/images/product_b.jpg",
+            null);
         given(productRepository.findById(2L)).willReturn(Optional.of(expected));
 
         // when
@@ -133,11 +129,12 @@ class ProductServiceTest {
         CreateProductRequest request = new CreateProductRequest("Product A", 1000,
             "http://example.com/images/product_a.jpg", 1L, List.of(option));
         Category category = new Category("Category A", "#123456", "description", "image");
-        Product savedProduct = Product.builder().name("Product A").price(1000)
-            .imageUrl("http://example.com/images/product_a.jpg").category(category).build();
+        Product savedProduct = new Product("Product A", 1000,
+            "http://example.com/images/product_a.jpg", category);
         given(productRepository.save(any(Product.class))).willReturn(savedProduct);
         given(categoryRepository.findById(any(Long.class))).willReturn(Optional.of(category));
-        given(optionService.createOption(any())).willReturn(new OptionResponse(1L, "option 1", 100));
+        given(optionService.createOption(any())).willReturn(
+            new OptionResponse(1L, "option 1", 100));
 
         // when
         productService.createProduct(request);
@@ -153,8 +150,8 @@ class ProductServiceTest {
     void updateProductTest() {
         // given
         Category category1 = new Category("Category A", "#123456", "image", "");
-        Product product = Product.builder().name("Product A").price(1000)
-            .imageUrl("http://example.com/images/product_a.jpg").build();
+        Product product = new Product("Product A", 1000, "http://example.com/images/product_a.jpg",
+            null);
         UpdateProductRequest request = new UpdateProductRequest("product3", 30000, null, 1L);
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
         given(categoryRepository.findById(any(Long.class))).willReturn(Optional.of(category1));

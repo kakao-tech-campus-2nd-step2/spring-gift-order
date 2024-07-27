@@ -4,6 +4,7 @@
 ## 목차
 
 0. 이번 주차
+   1. [1단계(카카오 로그인)](#1단계카카오-로그인-요구사항)
 
 1. [1주차 - product](#1주차-과제-요구사항spring-gift-product)
    1. [1단계(상품 API)](#1단계상품-api-요구사항)
@@ -27,10 +28,151 @@
 
 ---
 
+## 1단계(카카오 로그인) 요구사항
+
+### 과제 진행 요구 사항
+
+- 카카오 API를 사용하기 위한 [애플리케이션을 등록](https://developers.kakao.com/docs/latest/ko/getting-started/quick-start#create)한다.
+- 등록한 후 아래 안내에 따라 설정한다.
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > **활성화 설정 ON** ([카카오 로그인 활성화 설정](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-activate))
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > **Redirect URI 등록 > `http://localhost:8080` 저장** ([Redirect URI 등록](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-redirect-uri))
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 동의항목 > 접근권한 > **카카오톡 메시지 전송 > 선택 동의** ([접근권한 동의항목](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#permission))
+
+### 기능 요구 사항
+
+카카오 로그인을 통해 인가 코드를 받고, 인가 코드를 사용해 토큰을 받은 후 향후 카카오 API 사용을 준비한다.
+
+- 카카오계정 로그인을 통해 인증 코드를 받는다.
+- [토큰 받기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token)를 읽고 액세스 토큰을 추출한다.
+- 앱 키, 인가 코드가 절대 유출되지 않도록 한다.
+  - 특히 시크릿 키는 GitHub나 클라이언트 코드 등 외부에서 볼 수 있는 곳에 추가하지 않는다.
+- (선택) 인가 코드를 받는 방법이 불편한 경우 카카오 로그인 화면을 구현한다.
+
+실제 카카오 로그인은 아래 그림과 같이 진행된다.
+
+![카카오로그인 프로세스](./images/kakaologin_sequence.png)
+
+하지만 지금과 같이 클라이언트가 없는 상황에서는 아래와 같은 방법으로 인가 코드를 획득한다.
+
+1. 내 애플리케이션 > 앱 설정 > 앱 키로 이동하여 REST API 키를 복사한다.
+2. https://kauth.kakao.com/oauth/authorize?scope=talk_message&response_type=code&redirect_uri=http://localhost:8080&client_id=`{REST_API_KEY}`에 접속하여 **카카오톡 메시지 전송**에 동의한다.
+3. http://localhost:8080/?code=`{AUTHORIZATION_CODE}`에서 인가 코드를 추출한다.
 
 
 
+### 힌트
 
+#### 애플리케이션 등록
+
+카카오 플랫폼 서비스를 이용하여 개발한 애플리케이션은 이름, 아이콘, 상품명, 서비스명, 회사명, 로고, 심벌 등에 카카오의 상표를 사용할 수 없으므로([제17조(상표 사용 시 의무 사항)](https://developers.kakao.com/terms/latest/ko/site-policies#trademark-requirement)), 아래와 같이 간단하게 작성해도 된다.
+
+- 앱 이름: `spring-gift`
+- 회사명: 본인의 이름
+- 카테고리: `교육`
+
+#### 토큰 요청
+
+[토큰 받기](https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-token)에 따르면 아래와 같이 `RequestEntity`를 만들 수 있다.
+
+```java
+var url = "https://kauth.kakao.com/oauth/token";
+var headers = new HttpHeaders();
+headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+var body = new LinkedMultiValueMap<String, String>();
+body.add("grant_type", "authorization_code");
+body.add("client_id", properties.clientId());
+body.add("redirect_uri", properties.redirectUri());
+body.add("code", authorizationCode);
+var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+```
+
+#### 오류 처리
+
+- [레퍼런스](https://developers.kakao.com/docs/latest/ko/rest-api/reference)와 [문제 해결](https://developers.kakao.com/docs/latest/ko/kakaologin/trouble-shooting)을 참고하여 발생할 수 있는 다양한 오류를 처리한다.
+- 예를 들어, 아래의 경우 카카오톡 메시지 전송에 동의하지 않았으므로 과제 진행 요구 사항의 안내에 따라 설정한다.
+
+```plaintext
+403 Forbidden: "{"msg":"[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.","code":-3}"
+```
+
+- `RestTemplate`을 사용하는 경우 [Spring RestTemplate Error Handling](https://www.baeldung.com/spring-rest-template-error-handling)를 참고한다.
+
+#### HTTP Client
+
+- [REST Clients](https://docs.spring.io/spring-framework/reference/integration/rest-clients.html)
+- 사용할 클라이언트를 선택할 때 어떤 기준을 사용해야 할까?
+- 클라이언트 인스턴스를 효과적으로 생성/관리하는 방법은 무엇인가?
+
+#### 더 적절한 테스트 방법이 있을까?
+
+- 요청을 보내고 응답을 파싱하는 부분만 테스트하려면 어떻게 해야 할까?
+- 비즈니스 로직에 연결할 때 단위/통합 테스트는 어떻게 할까?
+
+#### API 호출에 문제가 발생하면 어떻게 할까?
+
+- 응답 시간이 길면 어떻게 할까? 몇 초가 적당할까?
+- 오류 코드는 어떻게 처리해야 할까?
+- 응답 값을 파싱할 때 문제가 발생하면 어떻게 할까?
+
+
+
+### 1단계 기능 목록
+
+#### [기능 구현]
+
+- [ ] 클라이언트의 카카오 로그인 요청 처리
+
+- [x] 클라이언트의 요청을 `GET /oauth/authorize`로 redirect
+
+  * 이후 동의 등 로그인 과정은 API에서 처리
+  * 인가코드를 쿼리 파라미터로 포함한 리디렉션 url로 이동
+
+- [x] 리디렉션 uri에서 code 추출
+
+- [x] code를 포함한 request body를 만들어 token 발급 요청
+
+  ```http
+  POST https://kauth.kakao.com/oauth/token HTTP/1.1
+  Content-Type: application/x-www-form-urlencoded;charset=utf-8
+  
+  {
+    "grant_type": "authorization_code",
+    "client_id": "${REST-API-KEY}",
+    "redirect_uri": "${REDIRECT-URI}",
+    "code": validation code from oauth request
+  }
+  ```
+
+- [x] 발급된 토큰으로 사용자 정보 요청
+
+  ```http
+  GET https://kapi.kakao.com/v2/user/me?property_keys=[""] HTTP/1.1
+  Authorization: Bearer ${ACCESS_TOKEN}
+  ```
+  
+- [x] Response 데이터 처리
+
+  - [x] 최초 1회 회원가입 - 카카오 user id를 이용해 email로 만들어 User 테이블에 저장
+  - [x] 이후 로그인 - User 테이블에서 데이터 호출하여 대조
+
+- [x] 유저 정보를 바탕으로 jwt token 발급하여 클라이언트에 반환
+
+
+
+##### 리팩토링
+
+현재 코드 구현이 Controller - Client 연결로 되어있음
+
+- [x] Controller - Service - Client 구조로 리팩토링 필요
+
+
+
+#### [테스트]
+
+- [ ] 서비스 서버 기능 통합 테스트
+  * Kakao API를 mock객체로 주입하여 기능 테스트
+  * [ ] Kakao API에서 에러를 반환하는 경우
+  * [ ] Happy Case
 
 
 

@@ -42,11 +42,12 @@ class ProductJpaRepositoryTest {
     void findByIdTest() {
         // when
         final Product actual = productRepository.findById(1L).get();
-        Product expected = Product.builder()
-            .name("Product A")
-            .price(1000)
-            .imageUrl("http://example.com/images/product_a.jpg")
-            .build();
+        Product expected = new Product(
+            "Product A",
+            1000,
+            "http://example.com/images/product_a.jpg",
+            null
+        );
 
         // then
         assertThat(actual).isNotNull();
@@ -70,12 +71,12 @@ class ProductJpaRepositoryTest {
     void createTest() {
         // given
         Category category = categoryRepository.findById(1L).get();
-        Product newProduct = Product.builder()
-            .name("new product")
-            .price(10_000)
-            .imageUrl("http://example.com/images/product_new.jpg")
-            .category(category)
-            .build();
+        Product newProduct = new Product(
+            "new product",
+            10_000,
+            "http://example.com/images/product_new.jpg",
+            category
+        );
 
         // when
         final Product actual = productRepository.save(newProduct);

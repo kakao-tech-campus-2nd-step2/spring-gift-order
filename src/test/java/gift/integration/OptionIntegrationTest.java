@@ -115,12 +115,12 @@ public class OptionIntegrationTest {
     private void saveData() {
         Category category1 = new Category("Category 1", "#123456", "", "image");
         categoryRepository.save(category1);
-        Product product1 = Product.builder()
-            .name("Product1")
-            .price(1000)
-            .imageUrl("image")
-            .category(category1)
-            .build();
+        Product product1 = new Product(
+            "Product1",
+            1000,
+            "image",
+            category1
+        );
         productRepository.save(product1);
         Option option1 = new Option("Option 1", 29, product1);
         optionRepository.save(option1);

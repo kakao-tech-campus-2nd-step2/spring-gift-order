@@ -6,7 +6,6 @@ import gift.product.entity.Product;
 import gift.product.repository.ProductJpaRepository;
 import gift.user.entity.User;
 import gift.user.repository.UserJpaRepository;
-import gift.util.mapper.WishMapper;
 import gift.wish.dto.request.CreateWishRequest;
 import gift.wish.dto.request.UpdateWishRequest;
 import gift.wish.dto.response.WishResponse;
@@ -36,7 +35,7 @@ public class WishService {
     public Page<WishResponse> getWishes(Long userId, Pageable pageable) {
         Page<Wish> wishes = wishRepository.findByUserId(userId, pageable);
         validateWishPage(wishes);
-        return wishes.map(WishMapper::toResponse);
+        return wishes.map(WishResponse::from);
     }
 
     @Transactional
@@ -48,7 +47,7 @@ public class WishService {
 
         Wish wish = new Wish(user, product, request.quantity());
 
-        return WishMapper.toResponse(wishRepository.save(wish));
+        return WishResponse.from(wishRepository.save(wish));
     }
 
     @Transactional

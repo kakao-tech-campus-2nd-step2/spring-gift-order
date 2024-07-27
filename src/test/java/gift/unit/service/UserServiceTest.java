@@ -52,10 +52,11 @@ class UserServiceTest {
         //given
         UserRegisterRequest request = new UserRegisterRequest("user1@email.com", "1q2w3e4r!");
         given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
-        User user1 = User.builder()
-            .email(request.email())
-            .password(request.password())
-            .build();
+        User user1 = new User(
+            request.email(),
+            request.password(),
+            null
+        );
         List<String> roles = new ArrayList<>();
         given(userRepository.save(any(User.class))).willReturn(user1);
         given(jwtUtil.generateToken(null, user1.getEmail(), roles)).willReturn("token");
@@ -77,7 +78,7 @@ class UserServiceTest {
         //given
         UserRegisterRequest request = new UserRegisterRequest("user1@example.com", "password1");
         given(userRepository.findByEmail(request.email())).willReturn(
-            Optional.of(User.builder().email("user1@example.com").build()));
+            Optional.of(new User("user1@example.com", "password1", null)));
 
         //when&then
         assertThatThrownBy(() -> userService.registerUser(request))
@@ -92,11 +93,11 @@ class UserServiceTest {
         //given
         UserLoginRequest loginRequest = new UserLoginRequest("user1@example.com", "password1");
         Set<UserRole> roles = new HashSet<>();
-        User user1 = User.builder()
-            .email(loginRequest.email())
-            .password(loginRequest.password())
-            .userRoles(roles)
-            .build();
+        User user1 = new User(
+            loginRequest.email(),
+            loginRequest.password(),
+            roles
+        );
         List<String> rolesName = new ArrayList<>();
         given(userRepository.findByEmailAndPassword(loginRequest.email(), loginRequest.password()))
             .willReturn(Optional.of(user1));
@@ -148,10 +149,7 @@ class UserServiceTest {
     @DisplayName("get user by id test")
     void getUserByIdTest() {
         // given
-        User user1 = User.builder()
-            .email("user1@example.com")
-            .password("password1")
-            .build();
+        User user1 = new User("user1@example.com", "password1", null);
         given(userRepository.findById(1L)).willReturn(Optional.of(user1));
 
         // when

@@ -47,7 +47,7 @@ public class ProductViewController {
 
     @GetMapping("/new")
     public String newProduct(Model model) {
-        model.addAttribute("product", Product.builder().build());
+        model.addAttribute("product", new Product(null, null, null, null));
         model.addAttribute("categories", categoryService.getAllCategories());
         return "product_add_form";
     }

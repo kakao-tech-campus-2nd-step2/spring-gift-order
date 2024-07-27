@@ -24,10 +24,7 @@ class UserJpaRepositoryTest {
     @DisplayName("register user test")
     void registerUserTest() {
         // given
-        User user = User.builder()
-            .email("newuser@email.com")
-            .password("password")
-            .build();
+        User user = new User("newuser@email.com", "password", null);
 
         // when
         final User actual = userRepository.save(user);
@@ -43,9 +40,7 @@ class UserJpaRepositoryTest {
     void findByIdTest() {
         // when
         final User actual = userRepository.findById(2L).get();
-        User expected = User.builder()
-            .email("user2@example.com")
-            .build();
+        User expected = new User("user2@example.com", "password", null);
 
         // then
         assertThat(actual).isNotNull();

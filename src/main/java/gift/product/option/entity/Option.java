@@ -14,13 +14,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "options")
 public class Option {
+
+    private static final Pattern OPTION_NAME_PATTERN = Pattern.compile(
+        "^[\\w\\s()\\[\\]+\\-&/_]*$");
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,9 +84,7 @@ public class Option {
     }
 
     private void validateName(String name) {
-        Pattern pattern = Pattern.compile("^[\\w\\s()\\[\\]+\\-&/_]*$");
-        Matcher matcher = pattern.matcher(name);
-        if (!matcher.find() || name.length() > 50) {
+        if (!OPTION_NAME_PATTERN.matcher(name).matches() || name.length() > 50) {
             throw new CustomException(ErrorCode.INVALID_OPTION_NAME);
         }
     }

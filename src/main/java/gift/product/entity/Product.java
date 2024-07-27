@@ -1,5 +1,7 @@
 package gift.product.entity;
 
+import gift.exception.CustomException;
+import gift.exception.ErrorCode;
 import gift.product.category.entity.Category;
 import gift.product.dto.request.UpdateProductRequest;
 import gift.product.option.entity.Option;
@@ -49,20 +51,26 @@ public class Product {
     @Transient
     private Options options;
 
-    protected Product() {
-    }
-
-    private Product(Builder builder) {
-        this.name = builder.name;
-        this.price = builder.price;
-        this.imageUrl = builder.imageUrl;
-        this.category = builder.category;
-        this.optionSet = new HashSet<>(builder.options);
+    public Product(String name, Integer price, String imageUrl, Category category,
+        Set<Option> optionSet) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.optionSet = new HashSet<>(optionSet);
         this.options = new Options(this.optionSet);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public Product(String name, Integer price, String imageUrl, Category category) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.optionSet = new HashSet<>();
+        this.options = new Options(this.optionSet);
+    }
+
+    protected Product() {
     }
 
     public void edit(UpdateProductRequest request, Category category) {
@@ -77,6 +85,17 @@ public class Product {
         option.initProduct(this);
         this.options.addOption(option);
         this.optionSet.add(option);
+    }
+
+    public void editOption(Long optionId, String name, Integer quantity) {
+        Option option = this.optionSet.stream()
+            .filter(option1 -> option1.getId().equals(optionId))
+            .findFirst()
+            .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
+
+        Option temp = new Option(name, quantity, this);
+        this.options.validateNameDuplicate(temp);
+        option.edit(name, quantity);
     }
 
     public void removeOption(Option option) {
@@ -104,8 +123,8 @@ public class Product {
         return category.getName();
     }
 
-    public Set<Option> getOptions() {
-        return optionSet;
+    public Options getOptions() {
+        return options;
     }
 
     public void changeName(String name) {
@@ -115,49 +134,6 @@ public class Product {
     @PostLoad
     private void postLoad() {
         this.options = new Options(this.optionSet);
-    }
-
-    public static class Builder {
-
-        private String name;
-        private Integer price;
-        private String imageUrl;
-        private Category category;
-        private Set<Option> options = new HashSet<>();
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder price(Integer price) {
-            this.price = price;
-            return this;
-        }
-
-        public Builder imageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-            return this;
-        }
-
-        public Builder category(Category category) {
-            this.category = category;
-            return this;
-        }
-
-        public Builder options() {
-            this.options = new HashSet<>();
-            return this;
-        }
-
-        public Builder options(Set<Option> options) {
-            this.options = options;
-            return this;
-        }
-
-        public Product build() {
-            return new Product(this);
-        }
     }
 
 }

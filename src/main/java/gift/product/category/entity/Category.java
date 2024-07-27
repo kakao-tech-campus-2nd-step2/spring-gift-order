@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 )
 public class Category {
 
+    private static final Pattern COLOR_PATTERN = Pattern.compile("^#[0-9a-fA-F]{6}$");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -66,9 +68,7 @@ public class Category {
     }
 
     private void validateColor(String color) {
-        String colorRegex = "^#+[0-9a-fA-F]{6}$";
-        Pattern colorPattern = Pattern.compile(colorRegex);
-        if (!colorPattern.matcher(color).matches()) {
+        if (!COLOR_PATTERN.matcher(color).matches()) {
             throw new CustomException(ErrorCode.INVALID_COLOR);
         }
     }

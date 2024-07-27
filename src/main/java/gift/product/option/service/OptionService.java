@@ -7,10 +7,8 @@ import gift.product.option.dto.request.CreateOptionRequest;
 import gift.product.option.dto.request.UpdateOptionRequest;
 import gift.product.option.dto.response.OptionResponse;
 import gift.product.option.entity.Option;
-import gift.product.option.entity.Options;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.repository.ProductJpaRepository;
-import gift.util.mapper.OptionMapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,9 @@ public class OptionService {
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
         return product.getOptions()
+            .getSet()
             .stream()
-            .map(OptionMapper::toResponse)
+            .map(OptionResponse::from)
             .toList();
     }
 
@@ -47,20 +46,15 @@ public class OptionService {
         product.addOption(option);
         Option saved = optionRepository.save(option);
 
-        return OptionMapper.toResponse(saved);
+        return OptionResponse.from(saved);
     }
 
     @Transactional
     public void updateOption(Long productId, Long id, UpdateOptionRequest request) {
-        Option option = optionRepository.findById(id)
-            .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        Options options = optionRepository.findAllByProduct(product);
-        options.validate(request);
-
-        option.edit(request.name(), request.quantity());
+        product.editOption(id, request.name(), request.quantity());
     }
 
     @Transactional
