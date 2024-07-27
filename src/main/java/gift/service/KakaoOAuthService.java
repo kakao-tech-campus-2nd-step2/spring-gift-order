@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.domain.Order;
 import gift.dto.KakaoTokenResponse;
 import gift.dto.KakaoUserProfile;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -60,5 +61,27 @@ public class KakaoOAuthService {
             userProfileUrl, HttpMethod.GET, request, KakaoUserProfile.class);
 
         return response.getBody();
+    }
+
+    public void sendOrderMessageToMe(Order order) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(dotenv.get("KAKAO_ACCESS_TOKEN"));
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", generateTemplateObject(order));
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        if (response.getStatusCodeValue() != 200) {
+            throw new RuntimeException("Failed to send Kakao message: " + response.getBody());
+        }
+    }
+
+    private String generateTemplateObject(Order order) {
+        return String.format("{ \"object_type\": \"text\", \"text\": \"Order placed successfully: %s\", \"link\": {\"web_url\": \"https://yourwebsite.com/orders/%d\", \"mobile_web_url\": \"https://yourwebsite.com/orders/%d\"}, \"button_title\": \"View Order\" }",
+            order.getMessage(), order.getId(), order.getId());
     }
 }
