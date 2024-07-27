@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-@PropertySource("classpath:application-secret.properties")
 public class KakaoLogisterService {
     private final KakaoTokenService kakaoTokenService;
     private final MemberService memberService;
