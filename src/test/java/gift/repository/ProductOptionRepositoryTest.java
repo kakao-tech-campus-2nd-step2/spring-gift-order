@@ -46,7 +46,7 @@ public class ProductOptionRepositoryTest {
     void findByProductIdAndOptionId_존재x() {
         // given
         // when
-        Optional<ProductOption> expect = productOptionRepository.findByProductIdAndOptionId(product.getId(), option.getId()+1);
+        Optional<ProductOption> expect = productOptionRepository.findByProductIdAndOptionId(product.getId(), option.getId() + 1);
 
         // then
         assertThat(expect).isEmpty();

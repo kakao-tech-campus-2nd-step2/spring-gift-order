@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 public class WishlistRepositoryTest {
 
-    private String testEmail="test@naver.com";
+    private String testEmail = "test@naver.com";
     private Wishlist wishlist;
 
     @Autowired
