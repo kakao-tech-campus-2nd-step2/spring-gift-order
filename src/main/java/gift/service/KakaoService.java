@@ -1,10 +1,11 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.WebClientUtil;
 import gift.dto.KakaoInfoDto;
 import gift.dto.KakaoTokenResponseDto;
-import gift.dto.MemberDto;
-import gift.exception.ValueAlreadyExistsException;
 import gift.model.member.KakaoProperties;
 import gift.model.member.Member;
 import gift.repository.MemberRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.security.SecureRandom;
 import java.util.Optional;
@@ -38,15 +40,17 @@ public class KakaoService {
                         .queryParam("code", code)
                         .build(true))
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-                .retrieve();
+                .retrieve()
+                //TODO : Custom Exception
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")));
 
-        webClientUtil.handleErrorResponses(responseSpec);
         KakaoTokenResponseDto kakaoTokenResponseDto = responseSpec.bodyToMono(KakaoTokenResponseDto.class).block();
 
         return kakaoTokenResponseDto.accessToken();
     }
 
-    public KakaoInfoDto getUserInfo(String accessToken){
+    public KakaoInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
         WebClient webClient = webClientUtil.createWebClient(kakaoProperties.getUserInfoUrl());
 
         WebClient.ResponseSpec responseSpec = webClient.get()
@@ -55,22 +59,27 @@ public class KakaoService {
                         .path("/v2/user/me")
                         .build(true))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-                .retrieve();
+                .retrieve()
+                //TODO : Custom Exception
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")));
 
-        webClientUtil.handleErrorResponses(responseSpec);
-
-        KakaoInfoDto kakaoInfoDto = responseSpec.bodyToMono(KakaoInfoDto.class).block();
-        return kakaoInfoDto;
+        String responseBody = responseSpec.bodyToMono(String.class).block();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+        Long id = jsonNode.get("id").asLong();
+        JsonNode kakaoAccountNode = jsonNode.get("kakao_account");
+        String email = kakaoAccountNode.get("email").asText();
+        return new KakaoInfoDto(id,email);
     }
     public Member registerOrGetKakaoMember(String email){
         Optional<Member> kakaoMember = memberRepository.findByEmail(email);
         if(kakaoMember.isEmpty()){
             String tempPassword = new SecureRandom().toString();
             Member newKakaoMember = new Member(email,tempPassword,"member");
-            return memberRepository.save(newKakaoMember);
+            memberRepository.save(newKakaoMember);
         }
-        return kakaoMember.get();
+        return memberRepository.findByEmail(email).get();
     }
 
     public void kakaoDisconnect(String accessToken){
@@ -80,7 +89,9 @@ public class KakaoService {
                 .uri("/v1/user/logout")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
-                .retrieve();
-        webClientUtil.handleErrorResponses(responseSpec);
+                .retrieve()
+                //TODO : Custom Exception
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")));
     }
 }

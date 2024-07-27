@@ -11,8 +11,10 @@ import gift.model.wish.Wish;
 import gift.repository.OptionRepository;
 import gift.repository.WishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -71,9 +73,11 @@ public class OrderService {
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .bodyValue("template_object=" + orderRequestDto.message())
-                .retrieve();
+                .retrieve()
+                //TODO : Custom Exception
+                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
+                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")));
 
-        webClientUtil.handleErrorResponses(responseSpec);
         return responseSpec.bodyToMono(Integer.class).block();
     }
 }

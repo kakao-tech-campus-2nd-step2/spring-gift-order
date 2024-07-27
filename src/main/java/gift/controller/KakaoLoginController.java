@@ -1,5 +1,6 @@
 package gift.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.dto.KakaoInfoDto;
 import gift.model.member.KakaoProperties;
 import gift.model.member.Member;
@@ -35,11 +36,11 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<String> callback(@RequestParam("code") String code, HttpSession session) {
+    public ResponseEntity<String> callback(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
         KakaoInfoDto kakaoInfoDto = kakaoService.getUserInfo(accessToken);
-        String email = kakaoInfoDto.kakaoAccount().email();
+        String email = kakaoInfoDto.email();
         Member kakaoMember = kakaoService.registerOrGetKakaoMember(email);
 
         session.setAttribute("loginMember", kakaoMember);
