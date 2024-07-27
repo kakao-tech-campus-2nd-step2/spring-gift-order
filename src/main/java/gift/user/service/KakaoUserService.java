@@ -28,10 +28,10 @@ public class KakaoUserService {
         String password = "";
 
         if (!userRepository.existsByEmail(email)) {
-            userService.registerUser(new UserRegisterRequest(email, password, true));
+            userService.registerUser(new UserRegisterRequest(email, password, true, token));
         }
 
-        return userService.loginUser(new UserLoginRequest(email, password));
+        return userService.loginUser(new UserLoginRequest(email, password, token));
     }
 
 }

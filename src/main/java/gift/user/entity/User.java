@@ -39,6 +39,9 @@ public class User {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean isKakao;
 
+    @Column(nullable = true)
+    private String accessToken;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles;
 
@@ -70,6 +73,10 @@ public class User {
 
     public Set<Wish> getWishes() {
         return wishes;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void changePassword(String password) {
