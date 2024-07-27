@@ -1,7 +1,7 @@
 package gift.wish.exception;
 
 import gift.common.util.ApiResponse;
-import gift.product.exception.ProductNotFoundException;
+import gift.product.exception.product.ProductNotFoundException;
 import gift.wish.application.WishController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

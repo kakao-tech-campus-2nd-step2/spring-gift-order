@@ -1,6 +1,6 @@
 package gift.product.domain;
 
-import gift.product.exception.ProductNoConferredException;
+import gift.product.exception.product.ProductNoConferredException;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import gift.product.domain.Category;
 import gift.product.domain.Product;
-import gift.product.exception.ProductNotFoundException;
+import gift.product.exception.product.ProductNotFoundException;
 import gift.product.persistence.CategoryRepository;
 import gift.product.persistence.ProductOptionRepository;
 import gift.product.persistence.ProductRepository;

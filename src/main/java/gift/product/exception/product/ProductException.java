@@ -1,11 +1,11 @@
-package gift.product.exception;
+package gift.product.exception.product;
 
 import org.springframework.http.HttpStatus;
 
-public class ProductOptionException extends RuntimeException {
+public class ProductException extends RuntimeException {
     private final HttpStatus httpStatus;
 
-    public ProductOptionException(String message, HttpStatus httpStatus) {
+    public ProductException(String message, HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
     }
