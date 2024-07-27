@@ -21,4 +21,16 @@ public class MemberDao {
         return memberRepository.findById(id)
             .orElseThrow(() -> new NoSuchEntityException("member"));
     }
+
+    public Long saveMember(Member member) {
+        return memberRepository.save(member).getId();
+    }
+
+    public boolean hasMemberByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    public boolean hasMemberByEmailAndPassword(String email, String password) {
+        return memberRepository.existsByEmailAndPassword(email, password);
+    }
 }

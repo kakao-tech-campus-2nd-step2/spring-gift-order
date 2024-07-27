@@ -1,9 +1,8 @@
 package gift.api.member.controller;
 
-import gift.api.member.MemberService;
 import gift.api.member.dto.MemberRequest;
-import gift.api.member.dto.TokenResponse;
-import gift.api.member.dto.UserInfoResponse;
+import gift.api.member.service.KakaoService;
+import gift.api.member.service.MemberService;
 import gift.global.utils.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -21,9 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
+    private final KakaoService kakaoService;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, KakaoService kakaoService) {
         this.memberService = memberService;
+        this.kakaoService = kakaoService;
     }
 
     @PostMapping("/register")
@@ -42,10 +43,7 @@ public class MemberController {
 
     @GetMapping("/oauth/kakao")
     public ResponseEntity<Void> loginKakao(@RequestParam("code") String code) {
-        ResponseEntity<TokenResponse> tokenResponse = memberService.obtainToken(code);
-        ResponseEntity<UserInfoResponse> userInfoResponse = memberService.obtainUserInfo(tokenResponse);
-        memberService.saveKakaoToken(tokenResponse, userInfoResponse);
-        memberService.loginKakao(userInfoResponse);
+        kakaoService.login(code);
         return ResponseEntity.ok().build();
     }
 }
