@@ -74,6 +74,7 @@ public class MemberController {
     public ResponseEntity<?> login(@RequestBody @Valid MemberDTO memberDTO) {
         String token;
         try {
+            memberDTO.setAccountType("basic");
             memberService.login(memberDTO);
             token = jwtUtil.generateToken(memberDTO);
         } catch (RuntimeException e) {
