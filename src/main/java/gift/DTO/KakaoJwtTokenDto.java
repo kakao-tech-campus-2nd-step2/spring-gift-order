@@ -32,6 +32,7 @@ public class KakaoJwtTokenDto {
     this.refreshTokenExpiresIn = refreshTokenExpiresIn;
   }
 
+  public Long getId(){return this.id;}
 
   public String getAccessToken() {
     return accessToken;
