@@ -11,8 +11,6 @@ public class KakaoJwtTokenDto {
   private final String scope;
   private final int refreshTokenExpiresIn;
 
-
-
   public KakaoJwtTokenDto(String accessToken, String tokenType, String refreshToken, int expiresIn,
     String scope, int refreshTokenExpiresIn) {
     this.accessToken = accessToken;
