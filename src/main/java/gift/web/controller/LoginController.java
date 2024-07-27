@@ -2,9 +2,12 @@ package gift.web.controller;
 
 import gift.service.kakaoAuth.KakaoAuthService;
 import gift.service.member.MemberService;
+import gift.web.dto.Token;
 import gift.web.jwt.JwtUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 @Controller
 public class LoginController {
 
@@ -25,4 +28,16 @@ public class LoginController {
     public String kakaoAuthConnect() {
         return "redirect:" + kakaoAuthService.getKakaoAuthUrl();
     }
+
+
+    @GetMapping("/login/kakao-callback")
+    public String kakaoAuthCallback(@RequestParam String code) {
+        System.out.println(code);
+        Token token = kakaoAuthService.receiveToken(code);
+
+        System.out.println(token);
+
+        return "redirect:/";
+    }
+
 }
