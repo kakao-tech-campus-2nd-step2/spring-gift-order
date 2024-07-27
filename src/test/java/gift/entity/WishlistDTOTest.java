@@ -31,7 +31,7 @@ public class WishlistDTOTest {
     }
 
     @Test
-    void 존재하는_상품_테스트() {
+    void 위시리스트에_추가하고_싶은데_실제로_존재하는_상품인_경우() {
         // given
         given(productRepository.findById(any())).willReturn(Optional.of(new Product()));
 
@@ -43,7 +43,7 @@ public class WishlistDTOTest {
     }
 
     @Test
-    void 존재하지_않는_상품_테스트() {
+    void 위시리스트에_추가하고_싶은데_실제로_존재하지_않는_상품인_경우() {
         // given
         given(productRepository.findById(any())).willReturn(Optional.empty());
 
