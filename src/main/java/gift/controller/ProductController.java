@@ -81,9 +81,10 @@ public class ProductController {
     }
 
     @PostMapping("/order/{productId}")
-    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId) {
+    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId, @RequestParam("message") String message) {
         optionService.subtractOptionQuantity(optionId, quantity);
         wishlistService.deleteWishlistItem(email, productId);
+        System.out.println(message);
         return ResponseEntity.ok().build();
     }
 
