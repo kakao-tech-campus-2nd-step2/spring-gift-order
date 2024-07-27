@@ -26,13 +26,12 @@ content-type: application/json
 host: localhost:8080
 
 {
-  "email": "admin8@email.com",
-  "password": "passwrod"
+  "email": "3635099980문성민",
+  "password": "password"
 }
 ###
 POST /wishlist/add HTTP/1.1
-Authorization: Bearer POST /wishlist/add HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbjhAZW1haWwuY29tIiwiaWF0IjoxNzIwODgzMzE0LCJleHAiOjE3MjA4ODU3MTR9.ERJQn3ykzmwmY0CpFSlxO_uVwD6iIA_cfAOa-FFTjlo
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJwYXNzd29yZCIsImlhdCI6MTcyMTk4NTU5OSwiZXhwIjoxNzIxOTg3OTk5fQ.eNn6z-6tCjXbZPxT7oQ3VvtYsuKWZkksNddqL3gdTu8
 content-type: application/x-www-form-urlencoded
 host: localhost:8080
 
@@ -41,13 +40,12 @@ productId: 77
 
 ####
 POST /wishlist/add HTTP/1.1
-Authorization: Bearer POST /wishlist/add HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJhZG1pbjhAZW1haWwuY29tIiwiaWF0IjoxNzIwODg3NTA5LCJleHAiOjE3MjA4ODk5MDl9.VIuXdi9ZFQqsk9Pqnrg_07tdq1jibnmJq2slfllvvos
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJwYXNzd29yZCIsImlhdCI6MTcyMTk4NTU5OSwiZXhwIjoxNzIxOTg3OTk5fQ.eNn6z-6tCjXbZPxT7oQ3VvtYsuKWZkksNddqL3gdTu8
 content-type: application/json
 host: localhost:8080
 
 {
-  "productId": 78
+  "productId": 1
 }
 ####
 POST /wishlist/add HTTP/1.1
@@ -136,3 +134,12 @@ host: localhost:8080
   "optionName": "라지 사이즈"
 }
 ###
+POST http://localhost:8080/orders HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJwYXNzd29yZCIsImlhdCI6MTcyMjA3MTcyMywiZXhwIjoxNzIyMDc0MTIzfQ.X85Fk4ZB5LRsfpDIbmIgyzUIX_sm9oqfR468uqsWRsQ
+Content-Type: application/json
+
+{
+  "optionId": 1,
+  "quantity": 2,
+  "message": "Please handle this order with care."
+}
