@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class KakaoOauthLoginController {
+public class OauthLoginController {
 
     @Value("${oauth.kakao.api_key}")
     private String KAKAO_API_KEY;

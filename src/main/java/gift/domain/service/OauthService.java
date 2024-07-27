@@ -2,6 +2,8 @@ package gift.domain.service;
 
 import gift.domain.dto.response.OauthTokenResponse;
 import gift.domain.exception.unauthorized.TokenUnexpectedErrorException;
+import gift.global.WebConfig.Constants.Domain.Member.Type;
+import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,20 @@ public class OauthService {
     @Value("${oauth.kakao.redirect_uri}")
     private String KAKAO_REDIRECT_URI;
 
-    public OauthTokenResponse getOauthToken(String authorizationCode) {
+    private final RestClient restClient;
+
+    public OauthService() {
+        this.restClient = RestClient.builder().build();
+    }
+
+    public OauthTokenResponse getOauthToken(Type userType, String authorizationCode) {
+        if (Objects.requireNonNull(userType) == Type.KAKAO) {
+            return getKakaoOauthToken(authorizationCode);
+        }
+        throw new IllegalStateException();
+    }
+
+    private OauthTokenResponse getKakaoOauthToken(String authorizationCode) {
         try {
             var body = new LinkedMultiValueMap<String, String>();
             body.add("grant_type", "authorization_code");
@@ -25,7 +40,7 @@ public class OauthService {
             body.add("redirect_uri", KAKAO_REDIRECT_URI);
             body.add("code", authorizationCode);
 
-            return RestClient.builder().build()
+            return restClient
                 .post()
                 .uri("https://kauth.kakao.com/oauth/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
