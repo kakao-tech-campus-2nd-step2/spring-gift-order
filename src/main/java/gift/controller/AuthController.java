@@ -42,7 +42,7 @@ public class AuthController {
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         User user = userService.findByEmail(userLoginRequestDTO);
-        UserResponseDTO userResponseDTO = authService.login(user, userLoginRequestDTO);
+        UserResponseDTO userResponseDTO = authService.login(user, userLoginRequestDTO, null);
         return ApiResponseGenerator.success(HttpStatus.ACCEPTED, "로그인에 성공했습니다.", userResponseDTO);
     }
 
@@ -73,11 +73,11 @@ public class AuthController {
         Optional<User> user = userService.findByEmail(userEmail);
 
         UserResponseDTO userResponseDTO = user.map(existUser ->
-            authService.login(existUser, new UserLoginRequestDTO(userEmail, "kakao"))
+            authService.login(existUser, new UserLoginRequestDTO(userEmail, existUser.getPassword()), accessToken)
         ).orElseGet(() -> {
             User joinedUser = userService.join(
                 new UserSignupRequestDTO(userEmail, "kakao", Role.USER.getRole()));
-            return authService.login(joinedUser, new UserLoginRequestDTO(userEmail, "kakao"));
+            return authService.login(joinedUser, new UserLoginRequestDTO(userEmail, "kakao"), accessToken);
         });
 
         return ApiResponseGenerator.success(HttpStatus.OK, "jwt 토큰 발급 성공", userResponseDTO);
