@@ -123,7 +123,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleBadRequestException(KaKaoServerErrorException e) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotFoundException(OrderNotFoundException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", e.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 }
