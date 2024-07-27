@@ -1,0 +1,297 @@
+= Gift Service API Document
+:doctype: books
+:icons: front
+:toc: left
+:toc-title: Gift Service API Document
+:toclevels: 1
+:source-highlighter:
+:iconsdir: fas
+
+// :operation-request-fields-title: 본문(Body)
+// :operation-response-fields-title: 본문(Body)
+// :operation-http-request-title: 본문(Body)
+// :operation-http-response-title: 본문(Body)
+// operation::category-add[snippets='request-fields','response-fields','http-request','http-response']
+// You can refer to Section A in File 1 with this link: xref:product.adoc[Go to Section A in File 1].
+
+
+
+
+== 회원가입
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/members/register
+|NONE
+|===
+=== 요청
+operation::member-register[snippets='request-fields,request-body']
+=== 응답
+operation::member-register[snippets='response-fields,response-body']
+=== 예제
+operation::member-register[snippets='http-request,http-response']
+
+== 로그인
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/members/login
+|NONE
+|===
+=== 요청
+operation::member-login[snippets='request-fields,request-body']
+=== 응답
+operation::member-login[snippets='response-fields,response-body']
+=== 예제
+operation::member-login[snippets='http-request,http-response']
+'''
+
+== 상품 추가
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/api/products
+|NONE
+|===
+=== 요청
+operation::product-post[snippets='request-fields,request-body']
+=== 응답
+operation::product-post[snippets='response-fields,response-body']
+=== 예제
+operation::product-post[snippets='http-request,http-response']
+
+== 상품 조회
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|GET
+|/api/products
+|NONE
+|===
+=== 요청
+operation::product-get[snippets='request-body']
+=== 응답
+operation::product-get[snippets='response-fields,response-body']
+=== 예제
+operation::product-get[snippets='http-request,http-response']
+
+== 상품 수정
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|PUT
+|/api/products
+|NONE
+|===
+=== 요청
+operation::product-update[snippets='request-fields,request-body']
+=== 응답
+operation::product-update[snippets='response-body']
+=== 예제
+operation::product-update[snippets='http-request,http-response']
+
+== 상품 삭제
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|DELETE
+|/api/products
+|NONE
+|===
+=== 요청
+operation::product-delete[snippets='request-body']
+=== 응답
+operation::product-delete[snippets='response-body']
+=== 예제
+operation::product-delete[snippets='http-request,http-response']
+
+== 상품 옵션 조회
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|GET
+|/api/products/{id}/options
+|NONE
+|===
+=== 요청
+operation::product-option-get[snippets='request-body']
+=== 응답
+operation::product-option-get[snippets='response-fields,response-body']
+=== 예제
+operation::product-option-get[snippets='http-request,http-response']
+
+== 상품 옵션 추가
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/api/products/{id}/options
+|NONE
+|===
+=== 요청
+operation::product-option-add[snippets='request-fields,request-body']
+=== 응답
+operation::product-option-add[snippets='response-fields,response-body']
+=== 예제
+operation::product-option-add[snippets='http-request,http-response']
+
+'''
+== 카테고리 추가
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/api/categories
+|NONE
+|===
+=== 요청
+operation::category-add[snippets='request-fields,request-body']
+=== 응답
+operation::category-add[snippets='response-fields,response-body']
+=== 예제
+operation::category-add[snippets='http-request,http-response']
+
+== 카테고리 조회
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|GET
+|/api/categories
+|NONE
+|===
+=== 요청
+operation::category-get[snippets='request-body']
+=== 응답
+operation::category-get[snippets='response-fields,response-body']
+=== 예제
+operation::category-get[snippets='http-request,http-response']
+
+== 카테고리 수정
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|PUT
+|/api/categories
+|NONE
+|===
+=== 요청
+operation::category-update[snippets='request-body']
+=== 응답
+operation::category-update[snippets='response-body']
+=== 예제
+operation::category-update[snippets='http-request,http-response']
+
+== 카테고리 삭제
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|DELETE
+|/api/categories/{id}
+|NONE
+|===
+=== 요청
+operation::category-delete[snippets='path-parameters']
+=== 응답
+operation::category-delete[snippets='response-body']
+=== 예제
+operation::category-delete[snippets='http-request,http-response']
+
+'''
+
+== 위시 추가
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/api/wishlist
+|AccessToken
+|===
+=== 요청
+operation::wish-add[snippets='request-fields,request-body']
+=== 응답
+operation::wish-add[snippets='response-body']
+=== 예제
+operation::wish-add[snippets='http-request,http-response']
+
+== 위시 조회
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|GET
+|/api/wishlist
+|AccessToken
+|===
+=== 요청
+operation::wish-get[snippets='request-body']
+=== 응답
+operation::wish-get[snippets='response-fields,response-body']
+=== 예제
+operation::wish-get[snippets='http-request,http-response']
+
+== 위시 수정
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|PUT
+|/api/wishlist
+|AccessToken
+|===
+=== 요청
+operation::wish-update[snippets='request-fields,request-body']
+=== 응답
+operation::wish-update[snippets='response-body']
+=== 예제
+operation::wish-update[snippets='http-request,http-response']
+
+== 위시 삭제
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|DELETE
+|/api/wishlist/{id}
+|AccessToken
+|===
+=== 요청
+operation::wish-delete[snippets='request-body']
+=== 응답
+operation::wish-delete[snippets='response-body']
+=== 예제
+operation::wish-delete[snippets='http-request,http-response']
+
+'''
+
+== 상품 주문하기
+=== 기본정보
+|===
+|Method | URL |Authentication method
+
+|POST
+|/api/orders
+|AccessToken
+|===
+=== 요청
+operation::order-example[snippets='request-headers,request-fields,request-body']
+=== 응답
+operation::order-example[snippets='response-fields,response-body']
+=== 예제
+operation::order-example[snippets='http-request,http-response']
+'''
