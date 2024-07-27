@@ -58,7 +58,9 @@ public class ApiOptionController {
         )
     })
     @GetMapping
-    public Page<Option> getAllOptions(@PathVariable Long productId, Pageable pageable) {
+    public Page<Option> getAllOptions(
+        @PathVariable Long productId,
+        Pageable pageable) {
         System.out.println("[ApiOptionController] getAllOptions()");
         return optionService.getAllOptions(productId, pageable);
     }
@@ -101,9 +103,8 @@ public class ApiOptionController {
                 throw new ValidationException(fieldError.getDefaultMessage());
             throw new ValidationException(UNKNOWN_VALIDATION_ERROR);
         }
-        Option option = optionService.registerOption(productId, optionDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(option);
+            .body(optionService.registerOption(productId, optionDTO));
     }
 
     @Operation(
@@ -116,7 +117,7 @@ public class ApiOptionController {
             description = "옵션 수정 성공",
             content = @Content(
                 mediaType = MediaType.APPLICATION_JSON_VALUE,
-                schema = @Schema(implementation = Category.class)
+                schema = @Schema(implementation = Option.class)
             )
         ),
         @ApiResponse(
@@ -137,11 +138,20 @@ public class ApiOptionController {
         )
     })
     @PutMapping("/{id}")
-    public ResponseEntity<Option> updateOption(@PathVariable Long id, @RequestBody OptionDTO optionDTO) {
+    public ResponseEntity<Option> updateOption(
+        @PathVariable Long id,
+        @PathVariable Long productId,
+        @RequestBody OptionDTO optionDTO,
+        BindingResult bindingResult) {
         System.out.println("[ApiOptionController] updateOption()");
-        Option option = optionService.updateOption(id, optionDTO);
+        if (bindingResult.hasErrors()) {
+            FieldError fieldError = bindingResult.getFieldError();
+            if (fieldError != null)
+                throw new ValidationException(fieldError.getDefaultMessage());
+            throw new ValidationException(UNKNOWN_VALIDATION_ERROR);
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(option);
+            .body(optionService.updateOption(id, productId, optionDTO));
     }
 
     @Operation(
@@ -163,7 +173,9 @@ public class ApiOptionController {
         )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOption(@PathVariable Long id, @PathVariable Long productId) {
+    public ResponseEntity<Void> deleteOption(
+        @PathVariable Long id,
+        @PathVariable Long productId) {
         System.out.println("[ApiOptionController] deleteOption()");
         optionService.deleteOption(id, productId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

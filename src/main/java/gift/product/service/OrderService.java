@@ -3,6 +3,8 @@ package gift.product.service;
 import static gift.product.exception.GlobalExceptionHandler.INVALID_HTTP_REQUEST;
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 import static gift.product.exception.GlobalExceptionHandler.NOT_RECEIVE_RESPONSE;
+import static gift.product.intercepter.AuthInterceptor.AUTHORIZATION_HEADER;
+import static gift.product.intercepter.AuthInterceptor.BEARER_PREFIX;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +20,6 @@ import gift.product.repository.OrderRepository;
 import gift.product.util.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -56,66 +57,57 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-    public Map<String, Object> orderProduct(String authorization, OrderDTO orderDTO) {
+    public Order orderProduct(String authorization, Long optionId, OrderDTO orderDTO) {
         System.out.println("[OrderService] orderProduct()");
-        Member member = jwtUtil.parsingToken(authorization);
-        Option option = optionRepository.findById(orderDTO.getOptionId())
-            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID)
-        );
+        Member orderer = jwtUtil.parsingToken(authorization);
+        Option option = optionRepository.findById(optionId)
+            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
         option.subtractQuantity(orderDTO.getQuantity());
-        Order order = orderRepository.save(orderDTO.convert(optionRepository));
-        if(member.getSnsMember() != null) {
-            String kakaoAccessToken = member.getSnsMember().getAccessToken();
-            sendToMe(kakaoAccessToken, order);
-        }
-        return createResponse(order);
+        Order order = orderRepository.save(orderDTO.convertToDomain(option, orderer));
+        if(orderer.getSnsMember() != null)
+            sendToMe(order);
+        return order;
     }
 
-    private @NotNull Map<String, Object> createResponse(Order order) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", order.getId());
-        response.put("optionId", order.getOption().getId());
-        response.put("quantity", order.getQuantity());
-        response.put("orderDateTime", order.getOrderDateTime());
-        response.put("message", order.getMessage());
-        return response;
-    }
-
-    public void sendToMe(String accessToken, Order order) {
+    public void sendToMe(Order order) {
         System.out.println("[OrderService] sendToMe()");
-        var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         final var body = createBody(
-            "[ 주문 내역 ]\n"
-                + "옵션 명: " + order.getOption().getName() + "\n"
-                + "수량: " + order.getQuantity() + "\n"
-                + "메세지: " + order.getMessage()
-            );
-        postRequest(url, accessToken, body);
-    }
-
-    private void postRequest(String url, String accessToken, LinkedMultiValueMap<String, Object> body) {
-        client.post()
-            .uri(URI.create(url))
-            .header("Authorization", "Bearer " + accessToken)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .retrieve()
-            .toEntity(String.class);
+            "[ 주문 내역 ]"
+                + "\n옵션 명: " + order.getOption().getName()
+                + "\n수량: " + order.getQuantity()
+                + "\n메세지: " + order.getMessage());
+        String kakaoAccessToken = order.getOrderer().getSnsMember().getAccessToken();
+        postRequest(kakaoAccessToken, body);
     }
 
     private @NotNull LinkedMultiValueMap<String, Object> createBody(String message) {
         var body = new LinkedMultiValueMap<String, Object>();
         try {
-            String templateObject = objectMapper.writeValueAsString(Map.of(
-                "object_type", "text",
-                "text", message,
-                "link", Map.of()
+            body.add("template_object", objectMapper.writeValueAsString(
+                Map.of(
+                    "object_type", "text",
+                    "text", message,
+                    "link", Map.of(
+                        "web_url", "",
+                        "mobile_web_url", ""
+                    )
+                )
             ));
-            body.add("template_object", templateObject);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return body;
     }
 
+    private void postRequest(
+        String kakaoAccessToken,
+        LinkedMultiValueMap<String, Object> body) {
+        client.post()
+            .uri(URI.create("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
+            .header(AUTHORIZATION_HEADER, BEARER_PREFIX + kakaoAccessToken)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
+    }
 }

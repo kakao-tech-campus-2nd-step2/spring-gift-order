@@ -1,15 +1,18 @@
 package gift.product.controller;
 
-import static gift.product.exception.GlobalExceptionHandler.INVALID_ORDER_REQUEST;
+import static gift.product.exception.GlobalExceptionHandler.UNKNOWN_VALIDATION_ERROR;
 
 import gift.product.dto.OrderDTO;
+import gift.product.model.Order;
 import gift.product.service.OrderService;
 import jakarta.validation.Valid;
-import java.util.Map;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,15 +30,20 @@ public class ApiOrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping
-    public ResponseEntity<Map<String, Object>> orderProduct(
+    @PostMapping("/{optionId}")
+    public ResponseEntity<Order> orderProduct(
         @RequestHeader("Authorization") String authorization,
+        @PathVariable Long optionId,
         @Valid @RequestBody OrderDTO orderDTO,
         BindingResult bindingResult) {
         System.out.println("[ApiOrderController] orderProduct()");
-        if(bindingResult.hasErrors()) {
-            throw new IllegalArgumentException(INVALID_ORDER_REQUEST);
+        if (bindingResult.hasErrors()) {
+            FieldError fieldError = bindingResult.getFieldError();
+            if (fieldError != null)
+                throw new ValidationException(fieldError.getDefaultMessage());
+            throw new ValidationException(UNKNOWN_VALIDATION_ERROR);
         }
-        return new ResponseEntity<>(orderService.orderProduct(authorization, orderDTO), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(orderService.orderProduct(authorization, optionId, orderDTO));
     }
 }

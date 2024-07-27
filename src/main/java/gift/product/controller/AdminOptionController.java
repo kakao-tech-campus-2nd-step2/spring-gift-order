@@ -72,7 +72,7 @@ public class AdminOptionController {
             model.addAttribute("option", optionDTO);
             return "product-option-update-form";
         }
-        optionService.updateOption(optionId, optionDTO);
+        optionService.updateOption(optionId, productId, optionDTO);
         return "redirect:/admin/product/" + productId + "/option";
     }
 

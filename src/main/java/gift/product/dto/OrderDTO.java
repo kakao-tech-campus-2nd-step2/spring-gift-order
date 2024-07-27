@@ -1,33 +1,15 @@
 package gift.product.dto;
 
-import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
-
-import gift.product.exception.InvalidIdException;
+import gift.product.model.Member;
+import gift.product.model.Option;
 import gift.product.model.Order;
-import gift.product.repository.OptionRepository;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class OrderDTO {
-    @NotNull
-    private Long optionId;
+
     @Positive
     private int quantity;
     private String message;
-
-    public OrderDTO(Long optionId, int quantity, String message) {
-        this.optionId = optionId;
-        this.quantity = quantity;
-        this.message = message;
-    }
-
-    public Long getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Long optionId) {
-        this.optionId = optionId;
-    }
 
     public int getQuantity() {
         return quantity;
@@ -45,12 +27,12 @@ public class OrderDTO {
         this.message = message;
     }
 
-    public Order convert(OptionRepository optionRepository) {
+    public Order convertToDomain(Option option, Member orderer) {
         return new Order(
-            optionRepository.findById(optionId)
-                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID)),
+            option,
             quantity,
-            message
+            message,
+            orderer
         );
     }
 

@@ -39,19 +39,14 @@ public class OptionService {
 
     public Option registerOption(Long productId, OptionDTO optionDTO) {
         System.out.println("[OptionService] registerOption()");
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-        Option option = optionDTO.convertToDomain(product);
+        Option option = optionDTO.convertToDomain(productId, productRepository);
         optionValidation.register(option);
         return optionRepository.save(option);
     }
 
-    public Option updateOption(Long id, OptionDTO optionDTO) {
+    public Option updateOption(Long id, Long productId, OptionDTO optionDTO) {
         System.out.println("[OptionService] updateOption()");
-        Product product = optionRepository.findById(id)
-            .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
-            .getProduct();
-        Option option = optionDTO.convertToDomain(id, product);
+        Option option = optionDTO.convertToDomain(id, productId, productRepository);
         optionValidation.update(option);
         return optionRepository.save(option);
     }

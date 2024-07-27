@@ -32,15 +32,20 @@ public class Order {
     @Column(length = 200)
     private String message;
 
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member orderer;
+
     public Order() {
 
     }
 
-    public Order(Option option, int quantity, String message) {
+    public Order(Option option, int quantity, String message, Member orderer) {
         this.option = option;
         this.quantity = quantity;
         this.orderDateTime = LocalDateTime.now();
         this.message = message;
+        this.orderer = orderer;
     }
 
     public Long getId() {
@@ -62,5 +67,9 @@ public class Order {
 
     public String getMessage() {
         return message;
+    }
+
+    public Member getOrderer() {
+        return orderer;
     }
 }

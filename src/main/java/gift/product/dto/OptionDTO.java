@@ -1,9 +1,11 @@
 package gift.product.dto;
 
+import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
+
+import gift.product.exception.InvalidIdException;
 import gift.product.model.Option;
-import gift.product.model.Product;
+import gift.product.repository.ProductRepository;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 public class OptionDTO {
@@ -12,17 +14,14 @@ public class OptionDTO {
     private String name;
     @PositiveOrZero
     private int quantity;
-    @NotNull
-    private Long productId;
 
     public OptionDTO() {
 
     }
 
-    public OptionDTO(String name, int quantity, Long productId) {
+    public OptionDTO(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
-        this.productId = productId;
     }
 
     public String getName() {
@@ -41,24 +40,22 @@ public class OptionDTO {
         this.quantity = quantity;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public Option convertToDomain(Product product) {
+    public Option convertToDomain(Long productId, ProductRepository productRepository) {
         return new Option(
             name,
             quantity,
-            product
+            productRepository.findById(productId)
+                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
         );
     }
 
-    public Option convertToDomain(Long id, Product product) {
+    public Option convertToDomain(Long id, Long productId, ProductRepository productRepository) {
         return new Option(
             id,
             name,
             quantity,
-            product
+            productRepository.findById(productId)
+                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
         );
     }
 }

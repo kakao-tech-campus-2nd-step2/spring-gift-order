@@ -15,7 +15,8 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AuthInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
-    private static final String BEARER_PREFIX = "Bearer ";
+    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
 
     public AuthInterceptor(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
