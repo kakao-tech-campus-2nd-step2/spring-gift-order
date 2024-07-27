@@ -1,10 +1,10 @@
 package gift.product.service;
 
 import gift.product.domain.ProductOption;
-import gift.product.exception.ProductNotFoundException;
-import gift.product.exception.ProductOptionDuplicatedException;
-import gift.product.exception.ProductOptionNotDeletedException;
-import gift.product.exception.ProductOptionNotFoundException;
+import gift.product.exception.option.ProductOptionDuplicatedException;
+import gift.product.exception.option.ProductOptionNotDeletedException;
+import gift.product.exception.option.ProductOptionNotFoundException;
+import gift.product.exception.product.ProductNotFoundException;
 import gift.product.persistence.ProductOptionRepository;
 import gift.product.persistence.ProductRepository;
 import gift.product.service.command.ProductOptionCommand;
