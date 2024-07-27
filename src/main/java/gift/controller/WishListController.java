@@ -60,22 +60,6 @@ public class WishListController {
         return new ResponseEntity<>(wishList, HttpStatus.OK);
     }
     /*
-     * 위시리스트 수량 수정하기
-     * productId와 수량을 받아 위시리스트 내부 물품의 수량을 수정
-     * 성공 시 : 200, 성공
-     * 실패 시 : Exception Handler에서 처리
-     */
-    @PutMapping("api/wishes/{productId}")
-    public ResponseEntity<Void> updateWishProduct(
-            @PathVariable("productId") Long productId,
-            @AuthenticateMember UserResponse user
-    ){
-        Long id = user.getId();
-        wishListService.updateWishProduct(id, productId);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-    /*
      * 위시리스트 내용 삭제
      * email, productId를 받아 위시리스트에 상품을 추가
      * 성공 시 : 204, 성공
