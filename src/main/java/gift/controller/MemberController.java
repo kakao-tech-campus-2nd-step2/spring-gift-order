@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @PropertySource("classpath:application-secret.properties")
+@PropertySource("classpath:application-kakao-login.properties")
 @Validated
 @RequestMapping("/members")
 public class MemberController {

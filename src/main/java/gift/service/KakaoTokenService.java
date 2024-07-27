@@ -8,6 +8,7 @@ import gift.exception.InternalServerExceptions.InternalServerException;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +17,24 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
+@PropertySource("classpath:application-secret.properties")
+@PropertySource("classpath:application-kakao-login.properties")
 public class KakaoTokenService {
-    private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
-    private final RestClient client = RestClient.builder().build();
+    @Value("${kakao-token-url}")
+    private String TOKEN_URL;
+
+    @Value("${kakao-user-info-url}")
+    private String USER_INFO_URL;
 
     @Value("${kakao-redirect-uri}")
     private String kakaoRedirectUri;
 
     @Value("${kakao-rest-api-key}")
     private String clientId;
+
+    private final RestClient client = RestClient.builder().build();
+
 
     public String getAccessToken(String code){
         try {
@@ -40,7 +48,7 @@ public class KakaoTokenService {
                         );
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                        throw new InternalServerException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
                         .toString().replace("{", "").replace("}", "").trim()
                         );
                     }).toEntity(TokenResponseDTO.class);
@@ -66,7 +74,7 @@ public class KakaoTokenService {
                         );
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                        throw new InternalServerException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
                                 .toString().replace("{", "").replace("}", "").trim()
                         );
                     }).toEntity(KakaoUserInfoDTO.class);
