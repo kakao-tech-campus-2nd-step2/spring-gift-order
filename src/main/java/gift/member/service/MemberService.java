@@ -50,6 +50,11 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
+    public boolean checkUser(String username) {
+        return memberRepository.findByUsername(username).isPresent();
+    }
+
+    @Transactional(readOnly = true)
     public String getUsername(final Long userId) {
         var savedMember = memberRepository.findById(userId)
                 .orElseThrow(IllegalArgumentException::new);

@@ -2,7 +2,6 @@ package gift.auth.service.facade;
 
 import gift.auth.service.KakaoOAuthService;
 import gift.common.annotation.Facade;
-import gift.member.exception.MemberNotFoundException;
 import gift.member.service.MemberService;
 import gift.member.service.command.MemberInfoCommand;
 import gift.member.service.dto.MemberSignInInfo;
@@ -24,13 +23,12 @@ public class OAuthFacade {
         MemberInfoCommand memberInfo = new MemberInfoCommand(username.email(),
                 RandomStringUtils.randomAlphanumeric(10), true);
 
-        String token = null;
-        try {
-            token = memberService.signIn(memberInfo).token();
-        } catch (MemberNotFoundException e) {
-            token = memberService.signUp(memberInfo).token();
+        if (memberService.checkUser(username.email())) {
+            var token = memberService.signIn(memberInfo).token();
+            return MemberSignInInfo.of(token);
         }
-
+        
+        var token = memberService.signUp(memberInfo).token();
         return MemberSignInInfo.of(token);
     }
 }
