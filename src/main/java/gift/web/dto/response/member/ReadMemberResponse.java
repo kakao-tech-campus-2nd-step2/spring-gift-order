@@ -6,16 +6,18 @@ public class ReadMemberResponse {
 
     private Long id;
     private String email;
+    private String password;
     private String name;
 
-    private ReadMemberResponse(Long id, String email, String name) {
+    public ReadMemberResponse(Long id, String email, String password, String name) {
         this.id = id;
         this.email = email;
+        this.password = password;
         this.name = name;
     }
 
     public static ReadMemberResponse fromEntity(Member member) {
-        return new ReadMemberResponse(member.getId(), member.getEmail().getValue(),
+        return new ReadMemberResponse(member.getId(), member.getEmail().getValue(), member.getPassword().getValue(),
             member.getName());
     }
 
@@ -25,6 +27,10 @@ public class ReadMemberResponse {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getName() {
