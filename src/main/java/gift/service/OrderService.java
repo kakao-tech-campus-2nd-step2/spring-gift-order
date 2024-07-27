@@ -24,11 +24,13 @@ public class OrderService {
     private OptionService optionService;
     private WishListService wishListService;
     private KakaoApiService kakaoApiService;
+    private KakaoTokenService kakaoTokenService;
 
-    public OrderService(OrderRepository orderRepository, OptionService optionService, WishListService wishListService){
+    public OrderService(OrderRepository orderRepository, OptionService optionService, WishListService wishListService, KakaoTokenService kakaoTokenService){
         this.orderRepository = orderRepository;
         this.optionService = optionService;
         this.wishListService = wishListService;
+        this.kakaoTokenService = kakaoTokenService;
     }
     
     @Transactional
@@ -56,9 +58,11 @@ public class OrderService {
 
     @Transactional
     public void sendKakaoMessage(String token, OrderResponse orderResponse){
+
+        String kakaoToken = kakaoTokenService.findKakaoToken(token);
         
         Product product = optionService.findProductByOptionId(orderResponse.getOptionId());
-        MessageRequest messageRequest = new MessageRequest(token, orderResponse, product);
+        MessageRequest messageRequest = new MessageRequest(kakaoToken, orderResponse, product);
         MessageResponse messageResponse = kakaoApiService.sendMessage(messageRequest);
         if(messageResponse.getCode() != 0){
             throw new CustomException("fail to send message", HttpStatus.BAD_REQUEST);

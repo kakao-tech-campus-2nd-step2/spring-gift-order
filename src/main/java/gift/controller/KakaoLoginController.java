@@ -12,16 +12,19 @@ import gift.dto.KakaoProperties;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.service.KakaoApiService;
+import gift.service.KakaoTokenService;
 
 @Controller
 public class KakaoLoginController {
 
-    private KakaoProperties kakaoProperties;
-    private KakaoApiService kakaoApiService;
+    private final KakaoProperties kakaoProperties;
+    private final KakaoApiService kakaoApiService;
+    private final KakaoTokenService kakaoTokenService; 
 
-    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoApiService kakaoApiService){
+    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoApiService kakaoApiService, KakaoTokenService kakaoTokenService){
         this.kakaoProperties = kakaoProperties;
         this.kakaoApiService = kakaoApiService;
+        this.kakaoTokenService = kakaoTokenService;
     }
 
     @GetMapping("/login")
@@ -37,6 +40,9 @@ public class KakaoLoginController {
         KakaoTokenResponse response = kakaoApiService.getToken(code);
 
         KakaoUserInfoResponse kakaoUserInfoResponse = kakaoApiService.getUserInfo(response.getAccessToken());
+        
+        //temporary
+        kakaoTokenService.saveKakaoToken(kakaoUserInfoResponse.getId() + "@kakao.com", response.getAccessToken());
         
         return new ResponseEntity<>(response.getAccessToken(), HttpStatus.OK);
     }
