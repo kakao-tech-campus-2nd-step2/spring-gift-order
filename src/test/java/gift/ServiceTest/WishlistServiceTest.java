@@ -37,13 +37,13 @@ public class WishlistServiceTest {
     @Test
     public void testGetWishlist() {
         // given
-        long userId = 1;
+        long memberId = 1;
 
         // when
-        wishlistService.getWishlist(userId);
+        wishlistService.getWishlist(memberId);
 
         // then
-        verify(wishlistJpaRepository, times(1)).findByIdUserId(userId);
+        verify(wishlistJpaRepository, times(1)).findByIdMemberId(memberId);
     }
 
     @Test

@@ -11,7 +11,6 @@ import gift.Service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.BDDAssumptions.given;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -68,7 +66,7 @@ public class WishlistRepositoryTest {
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
 
-        assertThat(savedwishlist.getUserId()).isEqualTo(wishlist.getUserId());
+        assertThat(savedwishlist.getMemberId()).isEqualTo(wishlist.getMemberId());
         assertThat(savedwishlist.getProductId()).isEqualTo(wishlist.getProductId());
         assertThat(savedwishlist.getCount()).isEqualTo(wishlist.getCount());
         assertThat(savedwishlist.getPrice()).isEqualTo(wishlist.getPrice());
@@ -81,7 +79,7 @@ public class WishlistRepositoryTest {
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
 
-        assertThat(savedwishlist.getUserId()).isEqualTo(wishlist.getUserId());
+        assertThat(savedwishlist.getMemberId()).isEqualTo(wishlist.getMemberId());
         assertThat(savedwishlist.getProductId()).isEqualTo(wishlist.getProductId());
         assertThat(savedwishlist.getCount()).isEqualTo(wishlist.getCount());
         assertThat(savedwishlist.getPrice()).isEqualTo(wishlist.getPrice());
@@ -112,7 +110,7 @@ public class WishlistRepositoryTest {
 
         wishlistJpaRepository.delete(savedwishlist);
 
-        Optional<Wishlist> foundWishlist = wishlistJpaRepository.findByWishlistId(savedwishlist.getUserId(), savedwishlist.getProductId());
+        Optional<Wishlist> foundWishlist = wishlistJpaRepository.findByWishlistId(savedwishlist.getMemberId(), savedwishlist.getProductId());
 
         assertThat(foundWishlist).isEmpty();
 
@@ -146,9 +144,9 @@ public class WishlistRepositoryTest {
 
         wishlistJpaRepository.save(updateWishlist);
 
-        Optional<Wishlist> foundWishlistOptional = wishlistJpaRepository.findByWishlistId(updateWishlist.getUserId(), updateWishlist.getProductId());
+        Optional<Wishlist> foundWishlistOptional = wishlistJpaRepository.findByWishlistId(updateWishlist.getMemberId(), updateWishlist.getProductId());
         Wishlist foundWishlist = foundWishlistOptional.get();
-        assertThat(foundWishlist.getUserId()).isEqualTo(updateWishlist.getUserId());
+        assertThat(foundWishlist.getMemberId()).isEqualTo(updateWishlist.getMemberId());
         assertThat(foundWishlist.getProductId()).isEqualTo(updateWishlist.getProductId());
         assertThat(foundWishlist.getCount()).isEqualTo(updateWishlist.getCount());
         assertThat(foundWishlist.getProductName()).isEqualTo(updateWishlist.getProductName());

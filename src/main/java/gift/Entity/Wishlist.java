@@ -12,8 +12,8 @@ public class Wishlist {
     private WishlistId id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
-    @MapsId("userId")
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @MapsId("memberId")
+    @JoinColumn(name = "memberId", referencedColumnName = "memberId")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
@@ -50,12 +50,12 @@ public class Wishlist {
         this.id = id;
     }
 
-    public long getUserId() {
-        return id.getUserId();
+    public long getMemberId() {
+        return id.getMemberId();
     }
 
-    public void setUserId(long userId) {
-        id.setUserId(userId);
+    public void setMemberId(long memberId) {
+        id.setMemberId(memberId);
     }
 
     public long getProductId() {
