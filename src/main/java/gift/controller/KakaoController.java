@@ -1,8 +1,7 @@
 package gift.controller;
 
 import gift.config.KakaoProperties;
-import gift.service.KakaoAuthService;
-import gift.service.MemberService;
+import gift.service.KakaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +13,15 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/oauth")
-public class KakaoAuthController {
+public class KakaoController {
 
     private final KakaoProperties kakaoProperties;
-    private final KakaoAuthService kakaoAuthService;
-    private final MemberService memberService;
+    private final KakaoService kakaoService;
 
     @Autowired
-    public KakaoAuthController(KakaoProperties kakaoProperties, KakaoAuthService kakaoAuthService, MemberService memberService) {
+    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService) {
         this.kakaoProperties = kakaoProperties;
-        this.kakaoAuthService = kakaoAuthService;
-        this.memberService = memberService;
+        this.kakaoService = kakaoService;
     }
 
     @GetMapping("/kakao")
@@ -36,9 +33,9 @@ public class KakaoAuthController {
 
     @GetMapping("/kakao/callback")
     public ResponseEntity<String> loginWithKakao(@RequestParam String code) {
-        String token = kakaoAuthService.getAccessToken(code);
-        String kakaoUserId = kakaoAuthService.getKakaoUserId(token);
-        String jwtToken = kakaoAuthService.registerKakaoMember(kakaoUserId, token);
+        String token = kakaoService.getAccessToken(code);
+        String kakaoUserId = kakaoService.getKakaoUserId(token);
+        String jwtToken = kakaoService.registerKakaoMember(kakaoUserId, token);
         return new ResponseEntity<>(jwtToken, HttpStatus.OK);
     }
 }
