@@ -20,7 +20,7 @@ public class Product extends BaseEntity{
             foreignKey = @ForeignKey(name = "fk_product_category_id_ref_category_id"),
             nullable = false)
     private Category category;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(
             name = "product_id",
             foreignKey = @ForeignKey(name = "fk_option_product_id_ref_product_id"),
