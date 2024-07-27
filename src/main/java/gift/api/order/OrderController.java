@@ -23,7 +23,6 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> order(@LoginMember Long memberId, @RequestBody OrderRequest orderRequest) {
         OrderResponse orderResponse = orderService.order(memberId, orderRequest);
-        orderService.sendMessage(memberId, orderRequest);
         return ResponseEntity.created(URI.create("/api/orders")).body(orderResponse);
     }
 }
