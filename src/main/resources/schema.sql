@@ -42,6 +42,17 @@ create table if not exists wish (
     FOREIGN KEY (product_id)    REFERENCES product(id)
 );
 
+create table if not exists orders (
+    id              BIGINT          not null AUTO_INCREMENT,
+    option_id       BIGINT          not null,
+    quantity        INTEGER         not null,
+    message         VARCHAR(255),
+    order_date_time TIMESTAMP       not null,
+    PRIMARY KEY (id),
+    FOREIGN KEY (option_id)         REFERENCES option(id)
+);
+
+
 alter table member
     add constraint uk_member unique (email);
 
