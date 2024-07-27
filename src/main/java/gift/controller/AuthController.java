@@ -73,7 +73,7 @@ public class AuthController {
         Optional<User> user = userService.findByEmail(userEmail);
 
         UserResponseDTO userResponseDTO = user.map(existUser ->
-            authService.login(existUser, new UserLoginRequestDTO(userEmail, "kakao"))
+            authService.login(existUser, new UserLoginRequestDTO(userEmail, existUser.getPassword()))
         ).orElseGet(() -> {
             User joinedUser = userService.join(
                 new UserSignupRequestDTO(userEmail, "kakao", Role.USER.getRole()));
