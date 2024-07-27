@@ -3,11 +3,13 @@ package gift.service.kakao;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.product.option.ProductOption;
 import gift.domain.user.User;
 import gift.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -130,5 +132,35 @@ public class KakaoService {
         }
 
         return userInfo;
+    }
+
+    @Transactional
+    public Map<String, Object> createOrder(User user, String accessToken, OrderRequest orderRequest) {
+        ProductOption productOption = productOptionRepository.findById(orderRequest.getOptionId())
+                .orElseThrow(() -> new IllegalArgumentException("Option not found"));
+
+        // Subtract quantity from product option
+        productOption.subtract(orderRequest.getQuantity());
+        productOptionRepository.save(productOption);
+
+        // Delete wish if exists
+        wishRepository.findByUserIdAndProductIdAndIsDeletedFalse(user.getId(), productOption.getProduct().getId())
+                .ifPresent(wish -> {
+                    wish.setIsDeleted(true);
+                    wishRepository.save(wish);
+                });
+
+        // Send Kakao message
+        sendKakaoMessage(user, accessToken, orderRequest.getMessage(), productOption.getName(), orderRequest.getQuantity());
+
+        // Return response
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", 1);  // This should be replaced with the actual order ID
+        response.put("optionId", orderRequest.getOptionId());
+        response.put("quantity", orderRequest.getQuantity());
+        response.put("orderDateTime", "2024-07-21T10:00:00");  // This should be replaced with the actual order date/time
+        response.put("message", orderRequest.getMessage());
+
+        return response;
     }
 }
