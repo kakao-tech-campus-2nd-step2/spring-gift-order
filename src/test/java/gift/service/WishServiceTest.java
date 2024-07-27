@@ -34,7 +34,8 @@ class WishServiceTest {
     @BeforeEach
     void setUp() {
         member = new Member("test@email.com", "testPassword");
-        wish = new Wish(new Product("product", 10000, "image.jpg"), member);
+        product = new Product("product", 10000, "image.jpg");
+        wish = new Wish(product, member);
         wish.setId(1L);
     }
 
@@ -61,7 +62,7 @@ class WishServiceTest {
         when(wishRepository.save(wish)).thenReturn(wish);
 
         // when
-        var addedWish = wishService.addWish(wish);
+        var addedWish = wishService.addWish(product.getId(),member);
 
         // then
         assertThat(addedWish).isEqualTo(wish);

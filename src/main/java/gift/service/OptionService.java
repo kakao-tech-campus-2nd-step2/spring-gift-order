@@ -74,6 +74,9 @@ public class OptionService {
     public boolean updateOptionQuantity(Long id, int quantity) {
         var option = optionRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("존재 하지 않는 옵션입니다."));
+        if(option.getQuantity() < quantity){
+            throw new IllegalArgumentException("재고가 부족합니다.");
+        }
         option.subtract(quantity);
         return true;
     }

@@ -1,5 +1,6 @@
 package gift.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,7 @@ public class Wish {
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @JsonIgnore
     private Product product;
 
     @ManyToOne
@@ -75,8 +77,13 @@ public class Wish {
             wish.member);
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(product, member);
+    }
+
+    public Product getProduct() {
+        return product;
     }
 }

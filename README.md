@@ -1,6 +1,6 @@
 # spring-gift-order
 
-- [x] 카카오 authorization code 받기
-- [x] 카카오 access token 받기
-- [x] access token 암호화
-- [x] memberRepoistory에 카카오 회원 저장 구현
+- [x] 카카오 나에게 메세지 보내기 기능 구현(예제 메시지로 일단 전송)
+- [X] 주문과 메세지 연동
+- [X] 옵션에서 수량 감소
+- [X] 위시 리스트에 있는 경우 위시 리스트에서 삭제

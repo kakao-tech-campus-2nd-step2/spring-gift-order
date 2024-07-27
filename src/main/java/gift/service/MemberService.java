@@ -82,6 +82,26 @@ public class MemberService {
 
     }
 
+    public Optional<String> loginOrRegisterKakaoUser(Long kakaoId, String kakaoEmail) {
+        Optional<Member> existingMember = memberRepository.findByKakaoId(String.valueOf(kakaoId));
+
+        Member member;
+        if (existingMember.isPresent()) {
+            member = existingMember.get();
+        } else {
+            member = new Member(kakaoEmail, String.valueOf(kakaoId), String.valueOf(kakaoId));
+            member = memberRepository.save(member);
+        }
+
+        String token = Jwts.builder()
+            .subject(member.getId().toString())
+            .claim("email", member.getEmail())
+            .claim("kakaoId", member.getKakaoId())
+            .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+            .compact();
+
+        return Optional.of(token);
+    }
 
     public Optional<String> login(String email, String password) {
         Optional<Member> memberOptional = memberRepository.findByEmail(
@@ -115,6 +135,10 @@ public class MemberService {
         return Optional.empty();
     }
 
+    public Optional<String> checkKakaoToken(String token) {
+        return null;
+    }
+
 
 
     public Optional<Member> findById(Long id) {
@@ -145,6 +169,8 @@ public class MemberService {
                 kakaoTokenRequest,
                 String.class
             );
+        System.out.println(response);
+
         return response;
     }
 
@@ -166,6 +192,12 @@ public class MemberService {
         var objectMapper = new ObjectMapper();
         var jsonNode = objectMapper.readTree(responseBody);
         return jsonNode.get("access_token").asText();
+    }
+
+    public String getClientId(String responseBody) throws JsonProcessingException {
+        var objectMapper = new ObjectMapper();
+        var jsonNode = objectMapper.readTree(responseBody);
+        return jsonNode.get("id_token").asText();
     }
 
 }
