@@ -21,7 +21,7 @@ public class UserController {
     }
     /*
      * 로그인
-     * 입력 받은 user와 DB 내의 user의 email로 생성한 token을 비교
+     * 입력 받은 user와 DB 내의 user의 userId로 생성한 token을 비교
      * 성공시 : 200 OK 및 User 정보로 만든 Token 반환
      */
     @PostMapping("/login")
