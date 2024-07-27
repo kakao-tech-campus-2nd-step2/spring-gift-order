@@ -3,6 +3,7 @@ package gift;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
+import gift.DTO.KakaoJwtTokenDto;
 import gift.DTO.OrderDto;
 import gift.Exception.UnauthorizedException;
 import org.springframework.http.HttpEntity;
@@ -20,7 +21,7 @@ public class KakaoApi {
   RestClient restClient = RestClient.builder().build();
   private RestTemplate restTemplate;
 
-  public KakaoJwtToken kakaoLoginApiPost(String url,String API_KEY, String autuhorizationKey) {
+  public KakaoJwtTokenDto kakaoLoginApiPost(String url,String API_KEY, String autuhorizationKey) {
     var body = new LinkedMultiValueMap<String, String>();
 
     body.add("grant_type", "authorization_code");
@@ -45,11 +46,11 @@ public class KakaoApi {
       String scope = jsonNode.get("scope").asText();
       int refreshTokenExpiresIn = jsonNode.get("refresh_token_expires_in").asInt();
 
-      KakaoJwtToken kakaoJwtToken = new KakaoJwtToken(accessToken, tokenType, refreshToken,
+      KakaoJwtTokenDto kakaoJwtTokenDto = new KakaoJwtTokenDto(1L,accessToken, tokenType, refreshToken,
         expiresIn, scope,
         refreshTokenExpiresIn);
 
-      return kakaoJwtToken;
+      return kakaoJwtTokenDto;
 
     } catch (Exception e) {
       throw new UnauthorizedException(

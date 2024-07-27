@@ -1,12 +1,11 @@
 package gift.Service;
 
 import gift.DTO.KakaoJwtToken;
+import gift.DTO.KakaoJwtTokenDto;
 import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import io.github.cdimascio.dotenv.Dotenv;
-import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 
 @Service
 public class KakaoMemberService {
@@ -23,14 +22,15 @@ public class KakaoMemberService {
 
   }
 
-  public KakaoJwtToken getToken(String autuhorizationKey) {
-
-
-
-    KakaoJwtToken kakaoJwtToken = kakaoApi.kakaoLoginApiPost(URL, API_KEY,autuhorizationKey);
+  public KakaoJwtTokenDto getToken(String autuhorizationKey) {
+    KakaoJwtTokenDto kakaoJwtTokenDto = kakaoApi.kakaoLoginApiPost(URL, API_KEY, autuhorizationKey);
+    KakaoJwtToken kakaoJwtToken = new KakaoJwtToken(kakaoJwtTokenDto.getAccessToken(),
+      kakaoJwtTokenDto.getTokenType(), kakaoJwtTokenDto.getRefreshToken(),
+      kakaoJwtTokenDto.getExpiresIn(), kakaoJwtTokenDto.getScope(),
+      kakaoJwtTokenDto.getRefreshTokenExpiresIn());
     kakaoJwtTokenRepository.save(kakaoJwtToken);
 
-    return kakaoJwtToken;
+    return kakaoJwtTokenDto;
 
   }
 }
