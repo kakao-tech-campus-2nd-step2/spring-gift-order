@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 @Tag(name = "카테고리 관리", description = "상품 카테고리 관리를 위한 API")
-@SecurityRequirement(name = "bearerAuth")
 public interface CategorySpecification {
 
     @Operation(summary = "모든 카테고리 조회", description = "모든 카테고리를 조회합니다.",
