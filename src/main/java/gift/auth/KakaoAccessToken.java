@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 public record KakaoAccessToken (
     String tokenType,
     String accessToken,
-    String idToken,
     Integer expiresIn,
     String refreshToken,
     Integer refreshTokenExpiresIn,

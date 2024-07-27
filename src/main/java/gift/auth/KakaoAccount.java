@@ -1,5 +1,12 @@
 package gift.auth;
 
-public record KakaoAccount(String email) {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+//public record KakaoAccount(String email) {
+//
+//}
+public record KakaoAccount(
+    @JsonProperty("email")
+    String email
+) {
 }
