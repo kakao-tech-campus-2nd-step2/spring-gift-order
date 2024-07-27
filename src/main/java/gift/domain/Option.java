@@ -1,8 +1,8 @@
 package gift.domain;
 
-import gift.constants.Messages;
-import gift.exception.CannotDeleteLastOptionException;
-import gift.exception.InsufficientQuantityException;
+import gift.exception.errorMessage.Messages;
+import gift.exception.customException.CannotDeleteLastOptionException;
+import gift.exception.customException.InsufficientQuantityException;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
