@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 
 import java.io.IOException;
 
@@ -22,8 +21,6 @@ import static org.mockito.Mockito.mock;
 @SpringBootTest
 public class AdminFilterTest {
 
-    private String adminToken;
-    private String userToken;
     private AdminFilter adminFilter;
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -33,8 +30,6 @@ public class AdminFilterTest {
     private UserUtility userUtility;
     @Value("${spring.var.token-prefix}")
     private String tokenPrefix;
-    @Autowired
-    private FilterRegistrationBean jwtFilter;
 
     @BeforeEach
     public void setUp() {
@@ -42,11 +37,6 @@ public class AdminFilterTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
-
-        User admin = new User("admin@naver.com", "admin");
-        admin.setRole("ADMIN");
-        adminToken = userUtility.makeAccessToken(admin);
-        userToken = userUtility.makeAccessToken(new User("test@naver.com", "test"));
     }
 
     @Test
@@ -64,6 +54,9 @@ public class AdminFilterTest {
     @Test
     void admin_토큰_필터_테스트() throws ServletException, IOException {
         // given
+        User admin = new User("admin@naver.com", "admin");
+        admin.setRole("ADMIN");
+        String adminToken = userUtility.makeAccessToken(admin);
         given(request.getHeader("Authorization")).willReturn(tokenPrefix + adminToken);
 
         // when
@@ -76,6 +69,7 @@ public class AdminFilterTest {
     @Test
     void user_토큰_필터_테스트() throws ServletException, IOException {
         // given
+        String userToken = userUtility.makeAccessToken(new User("test@naver.com", "test"));
         given(request.getHeader("Authorization")).willReturn(tokenPrefix + userToken);
 
         // when
