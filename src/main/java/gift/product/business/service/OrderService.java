@@ -4,13 +4,11 @@ import gift.global.domain.OAuthProvider;
 import gift.global.exception.custrom.NotFoundException;
 import gift.member.business.service.MemberService;
 import gift.member.business.service.WishlistService;
-import gift.member.persistence.repository.MemberRepository;
-import gift.oauth.business.client.KakaoApiClient;
-import gift.oauth.business.dto.KakaoOrderMessage;
+import gift.product.business.dto.KakaoOrderMessage;
+import gift.product.business.client.KakaoMessageClient;
 import gift.product.business.dto.OptionIn;
 import gift.product.business.dto.OrderIn;
 import gift.product.persistence.repository.OrderRepository;
-import gift.product.persistence.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,15 +19,15 @@ public class OrderService {
     private final WishlistService wishlistService;
     private final OrderRepository orderRepository;
     private final MemberService memberService;
-    private final KakaoApiClient kakaoApiClient;
+    private final KakaoMessageClient kakaoMessageClient;
 
     public OrderService(ProductService productService, WishlistService wishlistService,
-        OrderRepository orderRepository, MemberService memberService, KakaoApiClient kakaoApiClient) {
+        OrderRepository orderRepository, MemberService memberService, KakaoMessageClient kakaoMessageClient) {
         this.productService = productService;
         this.wishlistService = wishlistService;
         this.orderRepository = orderRepository;
         this.memberService = memberService;
-        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoMessageClient = kakaoMessageClient;
     }
 
     @Transactional
@@ -57,7 +55,7 @@ public class OrderService {
                 "localhost",
                 product.getPrice()
             );
-            kakaoApiClient.sendOrderMessage(accessToken, kakaoOrderMessage);
+            kakaoMessageClient.sendOrderMessage(accessToken, kakaoOrderMessage);
         }
 
         return orderId;

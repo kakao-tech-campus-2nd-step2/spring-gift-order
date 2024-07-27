@@ -1,4 +1,4 @@
-package gift.oauth.business.dto;
+package gift.product.business.dto;
 
 public class KakaoOrderMessage {
         public record Link(
