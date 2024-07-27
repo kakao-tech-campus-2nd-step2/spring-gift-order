@@ -1,7 +1,5 @@
 package gift.member.entity;
 
-import gift.global.error.CustomException;
-import gift.global.error.ErrorCode;
 import gift.member.dto.KakaoTokenInfo;
 import gift.member.dto.MemberDto;
 import gift.wishlist.entity.Wish;
@@ -83,8 +81,8 @@ public class Member {
         kakaoTokenInfo.update(tokenInfo);
     }
 
-    public boolean isKakaoTokenInfoNull() {
-        return kakaoTokenInfo == null;
+    public boolean isKakaoTokenInfoNotNull() {
+        return kakaoTokenInfo != null;
     }
 
     public boolean isTokenExpired(LocalDateTime localDateTime) {

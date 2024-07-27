@@ -20,6 +20,9 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final KakaoClient kakaoClient;
 
+    private static final String KAKAO_EMAIL_PREFIX = "kakao_user";
+    private static final String KAKAO_EMAIL_SUFFIX = "@kakao.com";
+
     public AuthService(MemberRepository memberRepository,
                        JwtUtil jwtUtil,
                        KakaoClient kakaoClient) {
@@ -45,7 +48,7 @@ public class AuthService {
     public AuthResponse authenticate(String code) {
         KakaoTokenResponse tokenResponse = kakaoClient.getTokenResponse(code);
         Long kakaoUserId = kakaoClient.getUserId(tokenResponse.accessToken());
-        String email = "kakao_user" + kakaoUserId + "@kakao.com";
+        String email = KAKAO_EMAIL_PREFIX + kakaoUserId + KAKAO_EMAIL_SUFFIX;
 
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
