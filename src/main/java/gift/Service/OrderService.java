@@ -5,14 +5,17 @@ import gift.DTO.ResponseOrderDTO;
 import gift.Exception.OptionNotFoundException;
 import gift.Exception.OrderNotFoundException;
 import gift.Model.Entity.*;
+import gift.Model.Value.AccessToken;
 import gift.Repository.OptionRepository;
 import gift.Repository.OrderRepository;
 import gift.Repository.WishRepository;
+import gift.Util.KakaoUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -21,12 +24,14 @@ public class OrderService {
     private final WishRepository wishRepository;
     private final OptionRepository optionRepository;
     private final OrderRepository orderRepository;
+    private final KakaoUtil kakaoUtil;
 
-    public OrderService(OptionService optionService, WishRepository wishRepository, OptionRepository optionRepository, OrderRepository orderRepository) {
+    public OrderService(OptionService optionService, WishRepository wishRepository, OptionRepository optionRepository, OrderRepository orderRepository, KakaoUtil kakaoUtil) {
         this.optionService = optionService;
         this.wishRepository = wishRepository;
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
+        this.kakaoUtil = kakaoUtil;
     }
 
     @Transactional
@@ -45,6 +50,12 @@ public class OrderService {
         Order order = orderRepository.save(
                 new Order(option, member, requestOrderDTO.quantity(), LocalDateTime.now(), requestOrderDTO.message())
         );
+
+
+        Optional<AccessToken> accessToken = member.getAccessToken();
+        if(accessToken.isPresent()){
+            kakaoUtil.sendMessageToMe(accessToken.get(), requestOrderDTO.message());
+        }
 
         return ResponseOrderDTO.of(order);
     }

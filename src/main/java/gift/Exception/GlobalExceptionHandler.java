@@ -132,4 +132,11 @@ public class GlobalExceptionHandler {
         errors.put("error", e.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(JsonRunTimeException.class)
+    public ResponseEntity<Map<String, String>> handleJsonRunTimeException(JsonRunTimeException e) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", e.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
 }
