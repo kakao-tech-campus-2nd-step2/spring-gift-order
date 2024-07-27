@@ -20,7 +20,7 @@ class MemberTest {
         Option option = new Option("옵션1", 10);
         product = new Product("상품1", 1000, "http://product1", category, option);
         member = new Member("a@a.com","1234");
-        wish = new Wish(member,product,1);
+        wish = new Wish(member,option,1);
     }
 
     @Test
