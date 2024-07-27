@@ -26,6 +26,11 @@ public class Order {
     public Order() {
     }
 
+    public Order(Member member, String recipientMessage) {
+        this.member = member;
+        this.recipientMessage = recipientMessage;
+    }
+
     public Long getId() {
         return id;
     }
