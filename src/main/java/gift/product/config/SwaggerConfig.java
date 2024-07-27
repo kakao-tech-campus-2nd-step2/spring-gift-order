@@ -7,7 +7,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import java.util.Arrays;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,12 +19,12 @@ public class SwaggerConfig {
                 addList("Bearer Authentication"))
             .components(new Components().addSecuritySchemes
                 ("Bearer Authentication", createAPIKeyScheme()))
-            .info(new Info().title("My REST API")
-                .description("Some custom description of API.")
-                .version("1.0").contact(new Contact().name("Sallo Szrajbman")
-                    .email( "www.baeldung.com").url("salloszraj@gmail.com"))
-                .license(new License().name("License of API")
-                    .url("API license URL")));
+            .info(new Info().title("카카오 선물하기 API 문서")
+                .description("카카오 테크 캠퍼스 2기 강원대 BE_고승현")
+                .version("1.0").contact(new Contact().name("Seunghyun KO")
+                    .email( "chris00825@naver.com").url("https://github.com/chris0825"))
+                .license(new License().name("MIT License")
+                    .url("https://opensource.org/license/mit")));
     }
 
     private SecurityScheme createAPIKeyScheme() {
