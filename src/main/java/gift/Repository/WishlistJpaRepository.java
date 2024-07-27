@@ -14,11 +14,13 @@ import java.util.Optional;
 
 public interface WishlistJpaRepository extends JpaRepository<Wishlist, WishlistId> {
 
-    List<Wishlist> findByIdUserId(long userId);
+    List<Wishlist> findByIdMemberId(long memberId);
 
-    @Query("SELECT w FROM Wishlist w WHERE w.id.userId = :userId AND w.id.productId = :productId")
-    Optional<Wishlist> findByWishlistId(@Param("userId") long userId, @Param("productId") long productId);
+    @Query("SELECT w FROM Wishlist w WHERE w.id.memberId = :memberId AND w.id.productId = :productId")
+    Optional<Wishlist> findByWishlistId(@Param("memberId") long memberId, @Param("productId") long productId);
 
     Page<Wishlist> findByMember(Member member, Pageable pageable);
+
+    void deleteByIdMemberId(long memberId);
 
 }

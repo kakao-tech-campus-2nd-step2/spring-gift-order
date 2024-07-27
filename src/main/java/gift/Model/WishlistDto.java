@@ -7,17 +7,19 @@ public class WishlistDto {
     private int quantity;//뺄 개수
     private String productName;
     private int price;
+    private long optionId;
 
     public WishlistDto() {
     }
 
-    public WishlistDto(long userId, long productId, int count, int quantity, String productName, int price) {
+    public WishlistDto(long userId, long productId, int count, int quantity, String productName, int price, long optionId) {
         this.userId = userId;
         this.productId = productId;
         this.count = count;
         this.quantity = quantity;
         this.productName = productName;
         this.price = price;
+        this.optionId = optionId;
     }
 
     public long getUserId() {
@@ -66,5 +68,13 @@ public class WishlistDto {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public long getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(long optionId) {
+        this.optionId = optionId;
     }
 }

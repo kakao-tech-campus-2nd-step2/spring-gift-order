@@ -1,11 +1,15 @@
 package gift.Controller;
 
+import gift.Annotation.LoginMemberResolver;
+import gift.Model.MemberDto;
 import gift.Model.OptionDto;
+import gift.Model.OrderRequestDto;
+import gift.Service.KakaoTalkService;
 import gift.Service.OptionService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +20,12 @@ import java.util.List;
 public class OptionController {
 
     private final OptionService optionService;
+    private final KakaoTalkService kakaoTalkService;
 
     @Autowired
-    public OptionController(OptionService optionService) {
+    public OptionController(OptionService optionService, KakaoTalkService kakaoTalkService) {
         this.optionService = optionService;
+        this.kakaoTalkService = kakaoTalkService;
     }
 
     @GetMapping("/api/products/options/{productId}")
@@ -79,5 +85,36 @@ public class OptionController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error deleting option");
         }
+    }
+
+    @PostMapping("/option/purchase")
+    public ResponseEntity<String> purchaseWishlist(@LoginMemberResolver MemberDto memberDto, @RequestBody List<OrderRequestDto> orderRequestDtoList, HttpServletRequest request) {
+        for (OrderRequestDto orderRequestDto : orderRequestDtoList) {
+            orderRequestDto.setMemberId(memberDto.getId());
+        }
+        optionService.subtractOption(orderRequestDtoList);
+
+        //카카오 토큰 가져오기
+        String token = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        //토큰으로 메시지 보내기
+        if (token != null) { //
+            try {
+                kakaoTalkService.sendMessageToMe(token, orderRequestDtoList);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Error sending message");
+            }
+        }
+
+        return ResponseEntity.ok("Purchase successful");
     }
 }

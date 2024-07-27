@@ -2,10 +2,7 @@ package gift.Mapper;
 
 import gift.Entity.*;
 import gift.Model.*;
-import gift.Service.CategoryService;
-import gift.Service.ProductService;
-import gift.Service.MemberService;
-import gift.Service.WishlistService;
+import gift.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -19,13 +16,15 @@ public class Mapper {
     private final MemberService memberService;
     private final WishlistService wishlistService;
     private final CategoryService categoryService;
+    private final OptionService optionService;
 
     @Autowired
-    public Mapper(@Lazy ProductService productService, @Lazy MemberService memberService, @Lazy WishlistService wishListService, @Lazy CategoryService categoryService) {
+    public Mapper(@Lazy ProductService productService, @Lazy MemberService memberService, @Lazy WishlistService wishListService, @Lazy CategoryService categoryService, @Lazy OptionService optionService) {
         this.productService = productService;
         this.memberService = memberService;
         this.wishlistService = wishListService;
         this.categoryService = categoryService;
+        this.optionService = optionService;
     }
 
 
@@ -37,13 +36,15 @@ public class Mapper {
         ProductDto productDto = productDtoOptional.get();
         productDto.setCategoryId(productDtoOptional.get().getCategoryId());
 
+        OptionDto optionDto = optionService.getOptionById(wishlistDto.getOptionId());
+
         WishlistId id = new WishlistId(memberDto.getId(), productDto.getId());
-        return new Wishlist(id, memberDtoToEntity(memberDto), productDtoToEntity(productDto), wishlistDto.getProductName(), wishlistDto.getCount(), wishlistDto.getPrice());
+        return new Wishlist(id, memberDtoToEntity(memberDto), productDtoToEntity(productDto), wishlistDto.getProductName(), wishlistDto.getCount(), wishlistDto.getPrice(), optionDtoToEntity(optionDto));
 
     }
 
     public WishlistDto wishlistToDto(Wishlist wishlist) {
-        return new WishlistDto(wishlist.getUserId(), wishlist.getProductId(), wishlist.getCount(), 0, wishlist.getProductName(), wishlist.getPrice());
+        return new WishlistDto(wishlist.getMemberId(), wishlist.getProductId(), wishlist.getCount(), 0, wishlist.getProductName(), wishlist.getPrice(), wishlist.getOption().getId());
     }
 
     public Category categoryDtoToEntity(CategoryDto categoryDto) {
