@@ -5,6 +5,7 @@ import gift.DTO.ResponseOrderDTO;
 import gift.Model.Entity.Member;
 import gift.Service.OrderService;
 import gift.annotation.ValidUser;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseOrderDTO> createOrder(@ValidUser Member member, @RequestBody RequestOrderDTO requestOrderDTO){
+    public ResponseEntity<ResponseOrderDTO> createOrder(@ValidUser Member member, @Valid @RequestBody RequestOrderDTO requestOrderDTO){
         ResponseOrderDTO response =orderService.createOrder(member, requestOrderDTO);
         return ResponseEntity.created(URI.create("api/orders/"+response.getId())).body(response);
     }
