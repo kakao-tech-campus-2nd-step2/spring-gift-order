@@ -14,9 +14,6 @@
 // operation::category-add[snippets='request-fields','response-fields','http-request','http-response']
 // You can refer to Section A in File 1 with this link: xref:product.adoc[Go to Section A in File 1].
 
-
-
-
 == 회원가입
 === 기본정보
 |===
@@ -26,6 +23,8 @@
 |/members/register
 |NONE
 |===
+**설명**: 새로운 사용자가 회원가입을 위해 이메일과 비밀번호를 제출하여 계정을 생성합니다. 성공적으로 가입하면 액세스 토큰을 받게 됩니다.
+
 === 요청
 operation::member-register[snippets='request-fields,request-body']
 === 응답
@@ -42,13 +41,14 @@ operation::member-register[snippets='http-request,http-response']
 |/members/login
 |NONE
 |===
+**설명**: 기존 사용자가 이메일과 비밀번호를 제출하여 로그인을 시도합니다. 성공적으로 로그인하면 액세스 토큰을 받게 됩니다.
+
 === 요청
 operation::member-login[snippets='request-fields,request-body']
 === 응답
 operation::member-login[snippets='response-fields,response-body']
 === 예제
 operation::member-login[snippets='http-request,http-response']
-'''
 
 == 상품 추가
 === 기본정보
@@ -59,6 +59,8 @@ operation::member-login[snippets='http-request,http-response']
 |/api/products
 |NONE
 |===
+**설명**: 새로운 상품을 추가합니다. 이름, 가격, 이미지 URL, 카테고리 ID, 옵션 목록을 포함합니다. 추가된 상품의 ID를 반환합니다.
+
 === 요청
 operation::product-post[snippets='request-fields,request-body']
 === 응답
@@ -75,6 +77,8 @@ operation::product-post[snippets='http-request,http-response']
 |/api/products
 |NONE
 |===
+**설명**: 모든 상품 목록을 페이지네이션 형태로 조회합니다. 각 상품의 ID, 이름, 가격, 이미지 URL, 카테고리 이름 등을 포함합니다.
+
 === 요청
 operation::product-get[snippets='request-body']
 === 응답
@@ -91,6 +95,8 @@ operation::product-get[snippets='http-request,http-response']
 |/api/products
 |NONE
 |===
+**설명**: 기존 상품의 정보를 수정합니다. 수정할 상품의 ID와 새로운 정보를 제출합니다.
+
 === 요청
 operation::product-update[snippets='request-fields,request-body']
 === 응답
@@ -107,8 +113,10 @@ operation::product-update[snippets='http-request,http-response']
 |/api/products/{id}
 |NONE
 |===
+**설명**: 특정 상품을 삭제합니다. 상품의 ID를 URL 경로에 포함하여 요청합니다.
+
 === 요청
-operation::product-delete[snippets='request-body']
+operation::product-delete[snippets='path-parameters']
 === 응답
 operation::product-delete[snippets='response-body']
 === 예제
@@ -123,8 +131,10 @@ operation::product-delete[snippets='http-request,http-response']
 |/api/products/{id}/options
 |NONE
 |===
+**설명**: 특정 상품의 옵션 목록을 조회합니다. 각 옵션의 ID, 이름, 수량 등을 반환합니다.
+
 === 요청
-operation::product-option-get[snippets='request-body']
+operation::product-option-get[snippets='path-parameters']
 === 응답
 operation::product-option-get[snippets='response-fields,response-body']
 === 예제
@@ -139,14 +149,15 @@ operation::product-option-get[snippets='http-request,http-response']
 |/api/products/{id}/options
 |NONE
 |===
+**설명**: 특정 상품에 새로운 옵션을 추가합니다. 옵션의 이름과 수량을 포함합니다.
+
 === 요청
-operation::product-option-add[snippets='request-fields,request-body']
+operation::product-option-add[snippets='path-parameters,request-fields,request-body']
 === 응답
 operation::product-option-add[snippets='response-fields,response-body']
 === 예제
 operation::product-option-add[snippets='http-request,http-response']
 
-'''
 == 카테고리 추가
 === 기본정보
 |===
@@ -156,6 +167,8 @@ operation::product-option-add[snippets='http-request,http-response']
 |/api/categories
 |NONE
 |===
+**설명**: 새로운 카테고리를 추가합니다. 이름, 색깔, 이미지 URL, 설명 등을 포함합니다. 생성된 카테고리의 ID를 반환합니다.
+
 === 요청
 operation::category-add[snippets='request-fields,request-body']
 === 응답
@@ -172,6 +185,8 @@ operation::category-add[snippets='http-request,http-response']
 |/api/categories
 |NONE
 |===
+**설명**: 모든 카테고리 목록을 조회합니다. 각 카테고리의 ID, 이름, 색깔, 이미지 URL, 설명 등을 반환합니다.
+
 === 요청
 operation::category-get[snippets='request-body']
 === 응답
@@ -188,6 +203,8 @@ operation::category-get[snippets='http-request,http-response']
 |/api/categories
 |NONE
 |===
+**설명**: 기존 카테고리의 정보를 수정합니다. 수정할 카테고리의 ID와 새로운 정보를 제출합니다.
+
 === 요청
 operation::category-update[snippets='request-body']
 === 응답
@@ -204,14 +221,14 @@ operation::category-update[snippets='http-request,http-response']
 |/api/categories/{id}
 |NONE
 |===
+**설명**: 특정 카테고리를 삭제합니다. 카테고리의 ID를 URL 경로에 포함하여 요청합니다.
+
 === 요청
 operation::category-delete[snippets='path-parameters']
 === 응답
 operation::category-delete[snippets='response-body']
 === 예제
 operation::category-delete[snippets='http-request,http-response']
-
-'''
 
 == 위시 추가
 === 기본정보
@@ -222,6 +239,8 @@ operation::category-delete[snippets='http-request,http-response']
 |/api/wishlist
 |AccessToken
 |===
+**설명**: 특정 상품을 위시리스트에 추가합니다. 상품의 ID와 수량을 제출합니다.
+
 === 요청
 operation::wish-add[snippets='request-fields,request-body']
 === 응답
@@ -238,6 +257,8 @@ operation::wish-add[snippets='http-request,http-response']
 |/api/wishlist
 |AccessToken
 |===
+**설명**: 사용자의 위시리스트를 조회합니다. 각 위시 항목의 상품 ID, 이름, 가격, 이미지 URL, 수량 등을 반환합니다.
+
 === 요청
 operation::wish-get[snippets='request-body']
 === 응답
@@ -254,6 +275,8 @@ operation::wish-get[snippets='http-request,http-response']
 |/api/wishlist
 |AccessToken
 |===
+**설명**: 위시리스트에 있는 특정 상품의 수량을 수정합니다. 수정할 상품의 ID와 새로운 수량을 제출합니다.
+
 === 요청
 operation::wish-update[snippets='request-fields,request-body']
 === 응답
@@ -270,14 +293,14 @@ operation::wish-update[snippets='http-request,http-response']
 |/api/wishlist/{id}
 |AccessToken
 |===
+**설명**: 위시리스트에서 특정 상품을 삭제합니다. 상품의 ID를 URL 경로에 포함하여 요청합니다.
+
 === 요청
-operation::wish-delete[snippets='request-body']
+operation::wish-delete[snippets='path-parameters']
 === 응답
 operation::wish-delete[snippets='response-body']
 === 예제
 operation::wish-delete[snippets='http-request,http-response']
-
-'''
 
 == 상품 주문하기
 === 기본정보
@@ -288,10 +311,11 @@ operation::wish-delete[snippets='http-request,http-response']
 |/api/orders
 |AccessToken
 |===
+**설명**: 특정 상품의 옵션을 주문합니다. 옵션 ID, 수량, 배송 메시지를 포함합니다. 주문 번호, 주문된 옵션 ID, 수량, 주문 일시, 배송 메시지를 반환합니다.
+
 === 요청
 operation::order-example[snippets='request-headers,request-fields,request-body']
 === 응답
 operation::order-example[snippets='response-fields,response-body']
 === 예제
 operation::order-example[snippets='http-request,http-response']
-'''

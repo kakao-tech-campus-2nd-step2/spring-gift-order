@@ -152,7 +152,7 @@ operation::product-option-get[snippets='http-request,http-response']
 **설명**: 특정 상품에 새로운 옵션을 추가합니다. 옵션의 이름과 수량을 포함합니다.
 
 === 요청
-operation::product-option-add[snippets='request-fields,request-body']
+operation::product-option-add[snippets='path-parameters,request-fields,request-body']
 === 응답
 operation::product-option-add[snippets='response-fields,response-body']
 === 예제
@@ -311,7 +311,6 @@ operation::wish-delete[snippets='http-request,http-response']
 |/api/orders
 |AccessToken
 |===
-
 **설명**: 특정 상품의 옵션을 주문합니다. 옵션 ID, 수량, 배송 메시지를 포함합니다. 주문 번호, 주문된 옵션 ID, 수량, 주문 일시, 배송 메시지를 반환합니다.
 
 === 요청
