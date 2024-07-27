@@ -116,16 +116,17 @@ public class OrderService {
     }
 
     private void checkApiResultCode(ResponseEntity<String> response) {
+        int resultCode = -1;
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.getBody());
-            int resultCode = rootNode.path("result_code").asInt();
-
-            if (resultCode != 0) {
-                throw new LoginFailedException("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
-            }
+            resultCode = rootNode.path("result_code").asInt();
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+
+        if (resultCode != 0) {
+            throw new LoginFailedException("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
         }
     }
 
