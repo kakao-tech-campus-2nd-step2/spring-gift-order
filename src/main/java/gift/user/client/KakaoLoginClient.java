@@ -1,8 +1,11 @@
 package gift.user.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.config.KakaoProperties;
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
-import gift.config.KakaoProperties;
+import gift.order.dto.KakaoMessageRequestBody;
 import gift.user.dto.response.KakaoTokenResponse;
 import gift.user.dto.response.KakaoUserInfoResponse;
 import org.springframework.http.HttpStatusCode;
@@ -17,10 +20,13 @@ public class KakaoLoginClient {
     private final RestClient restClient;
 
     private final KakaoProperties properties;
+    private final ObjectMapper objectMapper;
 
-    public KakaoLoginClient(RestClient restClient, KakaoProperties properties) {
+    public KakaoLoginClient(RestClient restClient, KakaoProperties properties,
+        ObjectMapper objectMapper) {
         this.restClient = restClient;
         this.properties = properties;
+        this.objectMapper = objectMapper;
     }
 
     public KakaoTokenResponse getKakaoTokenResponse(String code) {
@@ -52,6 +58,24 @@ public class KakaoLoginClient {
                 throw new CustomException(ErrorCode.KAKAO_LOGIN_ERROR);
             })
             .body(KakaoUserInfoResponse.class);
+    }
+
+    public void sendMessage(String token, KakaoMessageRequestBody requestBody)
+        throws JsonProcessingException {
+        var url = properties.messageUrl();
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_id", requestBody.templateId());
+        body.add("template_args", objectMapper.writeValueAsString(requestBody.templateArgs()));
+        restClient.post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header("Authorization", "Bearer " + token)
+            .body(body)
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                throw new CustomException(ErrorCode.KAKAO_LOGIN_ERROR);
+            })
+            .body(String.class);
     }
 
 }
