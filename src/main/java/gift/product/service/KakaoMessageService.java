@@ -3,7 +3,6 @@ package gift.product.service;
 import gift.config.KakaoMessageConfig;
 import gift.product.service.command.BuyProductMessageCommand;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 
 @Service
 public class KakaoMessageService {
@@ -13,16 +12,18 @@ public class KakaoMessageService {
         this.kakaoMessageConfig = kakaoMessageConfig;
     }
 
-    public boolean sendBuyProductMessage(BuyProductMessageCommand buyProductMessageCommand) {
+    public void sendBuyProductMessage(BuyProductMessageCommand buyProductMessageCommand) {
         var client = kakaoMessageConfig.createMessageSendClient(buyProductMessageCommand.accessToken());
-        var body = new LinkedMultiValueMap<>();
+        var body = buyProductMessageCommand.toKakaoMessageTemplate();
 
         var response = client
                 .post()
-                .body((buyProductMessageCommand.toKakaoMessageTemplate()))
+                .body(body)
                 .retrieve()
                 .toEntity(String.class);
 
-        return true;
+        if (response.getStatusCode().isError()) {
+            throw new IllegalArgumentException("Message 전송에 실패했습니다.");
+        }
     }
 }
