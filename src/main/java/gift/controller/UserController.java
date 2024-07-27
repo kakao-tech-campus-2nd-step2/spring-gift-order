@@ -3,6 +3,7 @@ package gift.controller;
 import gift.DTO.Token;
 import gift.DTO.User.UserRequest;
 import gift.DTO.User.UserResponse;
+import gift.security.AuthenticateMember;
 import gift.security.JwtTokenProvider;
 import gift.service.UserService;
 import org.springframework.data.domain.Page;
@@ -64,7 +65,11 @@ public class UserController {
      * 유저 수정
      */
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<Void> updateUsers(@PathVariable("id") Long id, @RequestBody UserRequest user){
+    public ResponseEntity<Void> updateUsers(
+            @PathVariable("id") Long id,
+            @RequestBody UserRequest user,
+            @AuthenticateMember UserResponse userRes
+    ){
         if(!id.equals(userService.findByUserId(user.getUserId()).getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -80,7 +85,10 @@ public class UserController {
      * 유저 삭제
      */
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<Void> deleteUsers(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteUsers(
+            @PathVariable("id") Long id,
+            @AuthenticateMember UserResponse user
+    ){
         userService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

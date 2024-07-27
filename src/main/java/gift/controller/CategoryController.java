@@ -2,6 +2,8 @@ package gift.controller;
 
 import gift.DTO.Category.CategoryRequest;
 import gift.DTO.Category.CategoryResponse;
+import gift.DTO.User.UserResponse;
+import gift.security.AuthenticateMember;
 import gift.service.CategoryService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -36,7 +38,10 @@ public class CategoryController {
      * 카테고리 추가
      */
     @PostMapping("/api/categories")
-    public ResponseEntity<Void> createCategory(@RequestBody CategoryRequest categoryRequest){
+    public ResponseEntity<Void> createCategory(
+            @RequestBody CategoryRequest categoryRequest,
+            @AuthenticateMember UserResponse user
+    ){
         categoryService.save(categoryRequest);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -46,7 +51,9 @@ public class CategoryController {
      */
     @PutMapping("/api/categories/{category_id}")
     public ResponseEntity<Void> updateCategory(
-            @PathVariable Long category_id, @RequestBody CategoryRequest categoryRequest
+            @PathVariable Long category_id,
+            @RequestBody CategoryRequest categoryRequest,
+            @AuthenticateMember UserResponse user
     ){
         categoryService.update(category_id, categoryRequest);
 
@@ -56,7 +63,10 @@ public class CategoryController {
      * 카테고리 삭제
      */
     @DeleteMapping("/api/categories/{category_id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long category_id){
+    public ResponseEntity<Void> deleteCategory(
+            @PathVariable Long category_id,
+            @AuthenticateMember UserResponse user
+    ){
         categoryService.delete(category_id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

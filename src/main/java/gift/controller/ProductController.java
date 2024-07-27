@@ -7,6 +7,8 @@ package gift.controller;
 
 import gift.DTO.Product.ProductRequest;
 import gift.DTO.Product.ProductResponse;
+import gift.DTO.User.UserResponse;
+import gift.security.AuthenticateMember;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -45,25 +47,34 @@ public class ProductController {
      * 상품 추가
      */
     @PostMapping("/api/products")
-    public ResponseEntity<Void> createProduct(@Valid @RequestBody ProductRequest product){
+    public ResponseEntity<Void> createProduct(
+            @Valid @RequestBody ProductRequest product,
+            @AuthenticateMember UserResponse user
+    ){
         productService.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    /*
-     * 상품 삭제
-     */
-    @DeleteMapping("/api/products/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long id){
-        productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
     /*
      * 상품 수정
      */
     @PutMapping("/api/products/{productId}")
-    public ResponseEntity<Void> updateProduct(@PathVariable("productId") Long id, @Valid @RequestBody ProductRequest product){
+    public ResponseEntity<Void> updateProduct(
+            @PathVariable("productId") Long id,
+            @Valid @RequestBody ProductRequest product,
+            @AuthenticateMember UserResponse user
+    ){
         productService.updateProduct(product, id);
         return new ResponseEntity<>((HttpStatus.NO_CONTENT));
+    }
+    /*
+     * 상품 삭제
+     */
+    @DeleteMapping("/api/products/{productId}")
+    public ResponseEntity<Void> deleteProduct(
+            @PathVariable("productId") Long id,
+            @AuthenticateMember UserResponse user
+    ) {
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
