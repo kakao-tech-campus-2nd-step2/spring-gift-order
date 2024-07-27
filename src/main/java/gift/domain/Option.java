@@ -24,8 +24,6 @@ public class Option {
     @JoinColumn(name = "product_id")
     private Product product;
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orders = new ArrayList<>();
-    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
     protected Option() {
@@ -75,26 +73,6 @@ public class Option {
         while(iterator.hasNext()) {
             Wish wish = iterator.next();
             wish.setOption(null);
-            iterator.remove();
-        }
-    }
-
-    public void addOrder(Order order) {
-        this.orders.add(order);
-        order.setOption(this);
-    }
-
-    public void removeOrder(Order order) {
-        order.setOption(null);
-        this.orders.remove(order);
-    }
-
-    public void removeOrders() {
-        Iterator<Order> iterator = orders.iterator();
-
-        while(iterator.hasNext()){
-            Order order = iterator.next();
-            order.setOption(null);
             iterator.remove();
         }
     }
