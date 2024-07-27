@@ -25,7 +25,7 @@ public class KaKaoController {
      * 카카오 로그인 페이지로 이동
      */
     @GetMapping("/kakao/login")
-    public RedirectView LoginPage(){
+    public RedirectView LoginPage() {
         return new RedirectView(kaKaoService.buildLoginPageUrl());
     }
 
@@ -37,7 +37,7 @@ public class KaKaoController {
         @RequestParam(value = "code", required = false) String authorizedCode
     ) {
         KaKaoToken kaKaoToken = kaKaoService.getKaKaoToken(authorizedCode);
-        User findUser = kaKaoService.findUserByKaKaoAccessToken(kaKaoToken.accessToken());
+        User findUser = kaKaoService.loginOrRegister(kaKaoToken);
 
         String jwt = JwtProvider.generateToken(findUser);
         return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "카카오 로그인 성공", jwt);

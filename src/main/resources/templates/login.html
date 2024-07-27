@@ -88,6 +88,27 @@
     // 카카오 로그인 페이지로 리다이렉트
     window.location.href = '/api/users/oauth/kakao/login';
   });
+
+  // 페이지 로드 시 code 파라미터를 추출하여 JWT 발급 요청
+  window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+
+    if (code) {
+      axios.get(`/api/users/oauth/kakao?code=${code}`)
+      .then(function (response) {
+        const jwt = response.headers['authorization'].split(' ')[1];
+        document.cookie = "jwt=" + jwt + "; Path=/";
+        alert('카카오 로그인에 성공했습니다.');
+        // 로그인 성공 후 홈 페이지로 이동
+        window.location.href = "/";
+      })
+      .catch(function (error) {
+        console.error('Error:', error);
+        alert('카카오 로그인에 실패했습니다.');
+      });
+    }
+  };
 </script>
 </body>
 </html>

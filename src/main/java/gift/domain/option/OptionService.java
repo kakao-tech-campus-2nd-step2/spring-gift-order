@@ -88,12 +88,13 @@ public class OptionService {
 
     // 상품 옵션 수량 차감
     @Transactional
-    public void decreaseOptionQuantity(Long productId, Long optionId, Long quantity) {
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotFoundException(productId));
+    public void decreaseOptionQuantity(Long optionId, Long quantity) {
         // 비관적 락 적용
         Option option = optionRepository.findByIdForUpdate(optionId)
             .orElseThrow(() -> new OptionNotFoundException(optionId));
+
+        Product product = productRepository.findById(option.getProduct().getId())
+            .orElseThrow(() -> new ProductNotFoundException(option.getProduct().getId()));
 
         if (option.getQuantity() < quantity || quantity <= 0) {
             throw new BusinessException(ErrorCode.BAD_REQUEST, "차감할 수량의 값이 올바르지 않습니다.");
@@ -102,7 +103,7 @@ public class OptionService {
         if (Objects.equals(option.getQuantity(), quantity)) {
             // 상품에 옵션이 1개밖에 없을 때 - 옵션, 해당 옵션의 상품 모두 삭제
             if (product.hasOneOption()) {
-                productRepository.deleteById(productId); // Cascade 로 옵션도 삭제됨
+                productRepository.deleteById(option.getProduct().getId()); // Cascade 로 옵션도 삭제됨
                 return;
             }
             // 상품에 옵션이 2개 이상일 때 - 옵션 삭제

@@ -4,6 +4,8 @@ import gift.domain.cartItem.CartItem;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.category.Category;
 import gift.domain.category.JpaCategoryRepository;
+import gift.domain.option.JpaOptionRepository;
+import gift.domain.option.Option;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
 import gift.domain.user.JpaUserRepository;
@@ -21,18 +23,21 @@ public class DataLoader {
     private final JpaUserRepository jpaUserRepository;
     private final JpaCategoryRepository jpaCategoryRepository;
     private final JpaCartItemRepository jpaCartItemRepository;
+    private final JpaOptionRepository jpaOptionRepository;
 
     @Autowired
     public DataLoader(
         JpaProductRepository jpaProductRepository,
         JpaUserRepository jpaUserRepository,
         JpaCartItemRepository jpaCartItemRepository,
-        JpaCategoryRepository jpaCategoryRepository
+        JpaCategoryRepository jpaCategoryRepository,
+        JpaOptionRepository jpaOptionRepository
     ) {
         this.jpaProductRepository = jpaProductRepository;
         this.jpaUserRepository = jpaUserRepository;
         this.jpaCartItemRepository = jpaCartItemRepository;
         this.jpaCategoryRepository = jpaCategoryRepository;
+        this.jpaOptionRepository = jpaOptionRepository;
     }
 
     @PostConstruct
@@ -62,7 +67,10 @@ public class DataLoader {
                 1000 + (i * 10),
                 "https://example.com/dummy" + (i + 1) + ".jpg"
             );
-            jpaProductRepository.save(dummyProduct);
+            Product savedProduct = jpaProductRepository.save(dummyProduct);
+
+            // dummy Option data
+            jpaOptionRepository.save(new Option("option" + (i + 1), 2L, savedProduct));
         }
 
         // User

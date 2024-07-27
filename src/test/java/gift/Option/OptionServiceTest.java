@@ -126,7 +126,7 @@ public class OptionServiceTest {
     @Description("옵션 수량 차감 성공")
     void testDecreaseQuantitySuccess() {
         // when
-        optionService.decreaseOptionQuantity(product.getId(), option1.getId(), 50L);
+        optionService.decreaseOptionQuantity(option1.getId(), 50L);
         flushAndClear();
 
         Product findProduct = productRepository.findById(product.getId()).get();
@@ -142,10 +142,10 @@ public class OptionServiceTest {
         // when, then
         // 음수 수량 차감
         assertThrows(BusinessException.class,
-            () -> optionService.decreaseOptionQuantity(product.getId(), option1.getId(), -50L));
+            () -> optionService.decreaseOptionQuantity(option1.getId(), -50L));
         // 현재 수량보다 더 큰 수량 차감
         assertThrows(BusinessException.class,
-            () -> optionService.decreaseOptionQuantity(product.getId(), option1.getId(), 150L));
+            () -> optionService.decreaseOptionQuantity(option1.getId(), 150L));
     }
 
     void clear() {
