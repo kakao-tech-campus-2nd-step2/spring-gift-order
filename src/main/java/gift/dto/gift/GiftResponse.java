@@ -8,17 +8,17 @@ import java.util.List;
 
 public class GiftResponse {
 
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private int price;
+    private final int price;
 
-    private String imageUrl;
+    private final String imageUrl;
 
-    private CategoryResponse category;
+    private final CategoryResponse category;
 
-    private List<OptionResponse> options;
+    private final List<OptionResponse> options;
 
 
     public GiftResponse(Long id, String name, int price, String imageUrl, CategoryResponse category, List<OptionResponse> options) {

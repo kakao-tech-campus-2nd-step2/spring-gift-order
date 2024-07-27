@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class WishService {
 
-    private WishRepository wishRepository;
-    private UserRepository userRepository;
-    private GiftRepository giftRepository;
+    private final WishRepository wishRepository;
+    private final UserRepository userRepository;
+    private final GiftRepository giftRepository;
 
     @Autowired
     public WishService(WishRepository wishRepository, UserRepository userRepository, GiftRepository giftRepository) {

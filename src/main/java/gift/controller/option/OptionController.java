@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/gifts")
 public class OptionController {
 
-    private OptionService optionService;
+    private final OptionService optionService;
 
     @Autowired
     public OptionController(OptionService optionService) {

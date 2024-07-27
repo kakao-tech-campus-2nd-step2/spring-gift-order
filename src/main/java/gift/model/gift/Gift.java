@@ -2,7 +2,6 @@ package gift.model.gift;
 
 import gift.model.category.Category;
 import gift.model.option.Option;
-import gift.model.wish.Wish;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -32,8 +31,6 @@ public class Gift {
     @NotNull
     private Category category;
 
-    @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
-    private List<Wish> wishes = new ArrayList<>();
 
     @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL)
     private List<Option> options = new ArrayList<>();

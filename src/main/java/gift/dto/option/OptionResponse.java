@@ -4,11 +4,11 @@ import gift.model.option.Option;
 
 public class OptionResponse {
 
-    private Long id;
+    private final Long id;
 
-    private String name;
+    private final String name;
 
-    private int quantity;
+    private final int quantity;
 
     public OptionResponse(Long id, String name, int quantity) {
         this.id = id;

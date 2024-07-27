@@ -1,5 +1,6 @@
 package gift.service.user;
 
+import gift.dto.user.UserRequest;
 import gift.exception.InvalidUserException;
 import gift.exception.UserAlreadyExistException;
 import gift.model.user.User;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
@@ -20,15 +21,17 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public void register(User user) {
-        userRepository.findByEmail(user.getEmail()).ifPresent(existUser -> {
+    public void register(UserRequest.Create userRequest) {
+        userRepository.findByEmail(userRequest.email()).ifPresent(existUser -> {
             throw new UserAlreadyExistException(existUser.getEmail() + "은 이미 존재하는 이메일입니다.");
         });
+        User user = userRequest.toEntity();
         userRepository.save(user);
     }
 
-    public String login(String email, String password) {
-        User user = userRepository.findByEmailAndPassword(email, password).orElseThrow(() -> new InvalidUserException("이메일 혹은 패스워드가 유효하지 않습니다."));
+    public String login(UserRequest.Check userRequest) {
+        User user = userRepository.findByEmailAndPassword(userRequest.email(), userRequest.password()).orElseThrow(() -> new InvalidUserException("이메일 혹은 패스워드가 유효하지 않습니다."));
+        user.isDefaultLogin();
         String token = jwtUtil.generateJWT(user);
         return token;
     }

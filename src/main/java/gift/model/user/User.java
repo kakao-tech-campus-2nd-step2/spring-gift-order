@@ -1,5 +1,7 @@
 package gift.model.user;
 
+import gift.common.enums.LoginType;
+import gift.exception.InvalidUserException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,21 +19,23 @@ public class User {
     @NotNull
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private LoginType loginType;
+
 
     public User() {
     }
 
-    public User(String email, String password) {
+    public User(String email, String password, LoginType loginType) {
         this.email = email;
         this.password = password;
+        this.loginType = loginType;
     }
+
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getEmail() {
@@ -40,6 +44,22 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public LoginType getLoginType() {
+        return loginType;
+    }
+
+    public void checkLoginType(LoginType loginType) {
+        if (this.loginType != loginType) {
+            throw new InvalidUserException("카카오 서비스를 이용할 수 없는 유저입니다.");
+        }
+    }
+
+    public void isDefaultLogin(){
+        if(this.loginType != LoginType.DEFAULT){
+            throw new InvalidUserException("일반 로그인을 할 수 없습니다.(소셜 로그인 유저)");
+        }
     }
 
 }

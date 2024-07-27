@@ -3,6 +3,7 @@ package gift.model.option;
 import gift.model.gift.Gift;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "gift_option")
@@ -24,6 +25,7 @@ public class Option {
     private Gift gift;
 
     @Version
+    @ColumnDefault("0")
     private Integer version;
 
     protected Option() {

@@ -3,11 +3,11 @@ package gift.dto.paging;
 import java.util.List;
 
 public class PagingResponse<T> {
-    private List<T> content;
-    private int page;
-    private int size;
-    private long totalElements;
-    private int totalPages;
+    private final List<T> content;
+    private final int page;
+    private final int size;
+    private final long totalElements;
+    private final int totalPages;
 
     public PagingResponse(int page, List<T> content, int size, long totalElements, int totalPages) {
         this.page = page;

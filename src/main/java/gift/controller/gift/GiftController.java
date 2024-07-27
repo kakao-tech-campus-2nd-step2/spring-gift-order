@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/gifts")
 public class GiftController {
 
-    private GiftService giftService;
-    private OptionService optionService;
+    private final GiftService giftService;
+    private final OptionService optionService;
 
     @Autowired
     public GiftController(GiftService giftService, OptionService optionService) {
