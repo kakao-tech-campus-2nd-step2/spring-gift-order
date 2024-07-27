@@ -8,6 +8,6 @@ public class MessageFailException extends GlobalException {
     public static final String MESSAGE = "Fail to send message.";
 
     public MessageFailException() {
-        super(MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR);
+        super(MESSAGE, HttpStatus.BAD_GATEWAY);
     }
 }

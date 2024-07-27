@@ -1,5 +1,6 @@
 package gift.api.order.dto;
 
+import gift.api.order.Order;
 import java.sql.Timestamp;
 
 public record OrderResponse(
@@ -10,11 +11,11 @@ public record OrderResponse(
     String message
 ) {
 
-    public static OrderResponse of(Long id,
-                                Long optionId,
-                                Integer quantity,
-                                Timestamp orderDateTime,
-                                String message) {
-        return new OrderResponse(id, optionId, quantity, orderDateTime, message);
+    public static OrderResponse of(Order order) {
+        return new OrderResponse(order.getId(),
+            order.getOption().getId(),
+            order.getOption().getQuantity(),
+            order.getOrderDateTime(),
+            order.getMessage());
     }
 }

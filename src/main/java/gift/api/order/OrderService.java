@@ -1,5 +1,7 @@
 package gift.api.order;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.api.member.MemberDao;
 import gift.api.option.OptionDao;
 import gift.api.option.OptionService;
@@ -27,7 +29,8 @@ public class OrderService {
     private final KakaoProperties properties;
     private final RestClient restClient;
 
-    public OrderService(OrderRepository orderRepository, MemberDao memberDao, OptionService optionService,
+    public OrderService(OrderRepository orderRepository, MemberDao memberDao,
+        OptionService optionService,
         OptionDao optionDao, WishService wishService, KakaoProperties properties) {
 
         this.orderRepository = orderRepository;
@@ -46,17 +49,14 @@ public class OrderService {
         Order order = orderRepository.save(
             orderRequest.toEntity(optionDao.findOptionById(orderRequest.optionId()),
                 orderRequest.message()));
-        return OrderResponse.of(order.getId(),
-                                order.getOption().getId(),
-                                order.getOption().getQuantity(),
-                                order.getOrderDateTime(),
-                                order.getMessage());
+        return OrderResponse.of(order);
     }
 
     public void sendMessage(Long memberId, OrderRequest orderRequest) {
         MsgMeResponse msgMeResponse = restClient.post()
             .uri(properties.url().defaultTemplateMsgMe())
-            .header(HttpHeaders.AUTHORIZATION, "Bearer " + memberDao.findMemberById(memberId).getKakaoAccessToken())
+            .header(HttpHeaders.AUTHORIZATION,
+                "Bearer " + memberDao.findMemberById(memberId).getKakaoAccessToken())
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
             .body(createBody(orderRequest))
             .retrieve()
@@ -68,8 +68,12 @@ public class OrderService {
     }
 
     private LinkedMultiValueMap<Object, Object> createBody(OrderRequest orderRequest) {
-        var body = new LinkedMultiValueMap<>();
-        body.add("template_object", TemplateObject.of(orderRequest.message(), "", "", "바로 확인"));
+        LinkedMultiValueMap<Object, Object> body = new LinkedMultiValueMap<>();
+        TemplateObject templateObject = TemplateObject.of(orderRequest.message(), "", "", "바로 확인");
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            body.add("template_object", objectMapper.writeValueAsString(templateObject));
+        } catch (JsonProcessingException ignored) {}
         return body;
     }
 }
