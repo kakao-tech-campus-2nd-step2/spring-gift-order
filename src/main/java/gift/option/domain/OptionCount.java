@@ -26,12 +26,12 @@ public class OptionCount {
         this.optionCountValue = optionCountValue;
     }
 
+    @JsonValue
     public Long getOptionCountValue() {
         return optionCountValue;
     }
 
     @Override
-    @JsonValue
     public String toString() {
         return Long.toString(optionCountValue);
     }

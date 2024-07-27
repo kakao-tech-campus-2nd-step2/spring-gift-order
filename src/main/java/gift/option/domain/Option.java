@@ -66,9 +66,8 @@ public class Option {
         return Objects.hash(id);
     }
 
-    public void subtract(OptionCount count) {
+    public void subtract(Long quantity) {
         Long stock = this.count.getOptionCountValue();
-        Long quantity = count.getOptionCountValue();
         if (stock < quantity) {
             throw new OptionNotEnoughException();
         }

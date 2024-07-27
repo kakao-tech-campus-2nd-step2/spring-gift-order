@@ -1,7 +1,7 @@
 package gift.order.domain;
 
-import gift.order.exception.OptionNotEnoughException;
-import gift.product.domain.Product;
+import gift.member.domain.Member;
+import gift.option.domain.Option;
 import jakarta.persistence.*;
 import org.hibernate.Hibernate;
 
@@ -14,38 +14,47 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Embedded
-    private OptionName name;
+    private OrderCount count;
     @Embedded
-    private OptionCount count;
+    private OrderMessage message;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private Product product;
+    private Option option;
 
     // JDBC 에서 엔티티 클래스를 인스턴스화할 때 반드시 기본 생성자와 파라미터 생성자가 필요하다
     public Order() {
     }
 
-    public Order(Long id, OptionName name, OptionCount count, Product product) {
+    public Order(Long id, OrderCount count, OrderMessage message, Member member, Option option) {
         this.id = id;
-        this.name = name;
         this.count = count;
-        this.product = product;
+        this.message = message;
+        this.member = member;
+        this.option = option;
     }
+
 
     public Long getId() {
         return id;
     }
 
-    public OptionName getName() {
-        return name;
+    public OrderMessage getMessage() {
+        return message;
     }
 
-    public OptionCount getCount() {
+    public OrderCount getCount() {
         return count;
     }
 
-    public Product getProduct() {
-        return product;
+    public Member getMember() {
+        return member;
+    }
+
+    public Option getOption() {
+        return option;
     }
 
     public boolean checkNew() {
@@ -64,14 +73,5 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public void subtract(OptionCount count) {
-        Long stock = this.count.getOptionCountValue();
-        Long quantity = count.getOptionCountValue();
-        if (stock < quantity) {
-            throw new OptionNotEnoughException();
-        }
-        this.count = new OptionCount(stock - quantity);
     }
 }

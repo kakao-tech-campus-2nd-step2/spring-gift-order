@@ -1,12 +1,13 @@
 package gift.order;
 
+import gift.member.domain.Member;
+import gift.option.domain.Option;
 import gift.order.domain.Order;
-import gift.order.domain.OptionCount;
-import gift.order.domain.OptionName;
-import gift.product.domain.Product;
+import gift.order.domain.OrderCount;
+import gift.order.domain.OrderMessage;
 
-public record OrderServiceDto(Long id, OptionName name, OptionCount count, Long productId) {
-    public Order toOrder(Product product) {
-        return new Order(id, name, count, product);
+public record OrderServiceDto(Long id, OrderCount count, OrderMessage message, Long memberId, Long optionId) {
+    public Order toOrder(Member member, Option option) {
+        return new Order(id, count, message, member, option);
     }
 }

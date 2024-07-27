@@ -1,23 +1,28 @@
 package gift.order.service;
 
+import gift.member.domain.Member;
+import gift.member.service.MemberService;
+import gift.option.domain.Option;
+import gift.option.service.OptionService;
 import gift.order.OrderListResponseDto;
 import gift.order.OrderResponseDto;
 import gift.order.OrderServiceDto;
 import gift.order.domain.Order;
 import gift.order.exception.OrderNotFoundException;
 import gift.order.repository.OrderRepository;
-import gift.product.domain.Product;
-import gift.product.service.ProductService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final ProductService productService;
+    private final MemberService memberService;
+    private final OptionService optionService;
 
-    public OrderService(OrderRepository orderRepository, ProductService productService) {
+    public OrderService(OrderRepository orderRepository, MemberService memberService, OptionService optionService) {
         this.orderRepository = orderRepository;
-        this.productService = productService;
+        this.memberService = memberService;
+        this.optionService = optionService;
     }
 
     public OrderListResponseDto getAllOrders() {
@@ -29,15 +34,19 @@ public class OrderService {
                 .orElseThrow(OrderNotFoundException::new));
     }
 
+    @Transactional
     public Order createOrder(OrderServiceDto orderServiceDto) {
-        Product product = productService.getProductById(orderServiceDto.productId());
-        return orderRepository.save(orderServiceDto.toOrder(product));
+        Member member = memberService.getMemberById(orderServiceDto.memberId());
+        Option option = optionService.getOptionById(orderServiceDto.optionId());
+        option.subtract(orderServiceDto.count().getOrderCountValue());
+        return orderRepository.save(orderServiceDto.toOrder(member, option));
     }
 
     public Order updateOrder(OrderServiceDto orderServiceDto) {
         validateOrderExists(orderServiceDto.id());
-        Product product = productService.getProductById(orderServiceDto.productId());
-        return orderRepository.save(orderServiceDto.toOrder(product));
+        Member member = memberService.getMemberById(orderServiceDto.memberId());
+        Option option = optionService.getOptionById(orderServiceDto.optionId());
+        return orderRepository.save(orderServiceDto.toOrder(member, option));
     }
 
     public void deleteOrder(Long id) {

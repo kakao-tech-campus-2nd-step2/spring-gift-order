@@ -30,10 +30,11 @@ CREATE TABLE options
 
 CREATE TABLE orders
 (
-    id         BIGINT AUTO_INCREMENT NOT NULL,
-    product_id BIGINT                NULL,
-    name       VARCHAR(255)          NULL,
-    count      BIGINT                NULL,
+    id        BIGINT AUTO_INCREMENT NOT NULL,
+    member_id BIGINT                NULL,
+    option_id BIGINT                NULL,
+    count     BIGINT                NULL,
+    message   VARCHAR(255)          NULL,
     CONSTRAINT pk_orders PRIMARY KEY (id)
 );
 
@@ -65,14 +66,14 @@ ALTER TABLE members
 ALTER TABLE options
     ADD CONSTRAINT uc_options_name UNIQUE (name);
 
-ALTER TABLE orders
-    ADD CONSTRAINT uc_orders_name UNIQUE (name);
-
 ALTER TABLE options
     ADD CONSTRAINT FK_OPTIONS_ON_PRODUCT FOREIGN KEY (product_id) REFERENCES products (id);
 
 ALTER TABLE orders
-    ADD CONSTRAINT FK_ORDERS_ON_PRODUCT FOREIGN KEY (product_id) REFERENCES products (id);
+    ADD CONSTRAINT FK_ORDERS_ON_MEMBER FOREIGN KEY (member_id) REFERENCES members (id);
+
+ALTER TABLE orders
+    ADD CONSTRAINT FK_ORDERS_ON_OPTION FOREIGN KEY (option_id) REFERENCES options (id);
 
 ALTER TABLE products
     ADD CONSTRAINT FK_PRODUCTS_ON_CATEGORY FOREIGN KEY (category_id) REFERENCES categories (id);

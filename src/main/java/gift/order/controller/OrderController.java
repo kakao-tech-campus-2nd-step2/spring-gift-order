@@ -1,10 +1,12 @@
 package gift.order.controller;
 
+import gift.auth.domain.AuthInfo;
 import gift.global.exception.DomainValidationException;
 import gift.global.response.ErrorResponseDto;
 import gift.global.response.ResultCode;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import gift.global.security.Login;
 import gift.global.utils.ResponseHelper;
 import gift.order.OrderListResponseDto;
 import gift.order.OrderRequestDto;
@@ -35,8 +37,8 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<SimpleResultResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto) {
-        orderService.createOrder(orderRequestDto.toOrderServiceDto());
+    public ResponseEntity<SimpleResultResponseDto> createOrder(@Login AuthInfo authInfo, @RequestBody OrderRequestDto orderRequestDto) {
+        orderService.createOrder(orderRequestDto.toOrderServiceDto(authInfo.memberId()));
         return ResponseHelper.createSimpleResponse(ResultCode.CREATE_OPTION_SUCCESS);
     }
 

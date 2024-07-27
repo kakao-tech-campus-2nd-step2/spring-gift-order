@@ -1,14 +1,14 @@
 package gift.order;
 
-import gift.order.domain.OptionCount;
-import gift.order.domain.OptionName;
+import gift.order.domain.OrderCount;
+import gift.order.domain.OrderMessage;
 
-public record OrderRequestDto(OptionName name, OptionCount count, Long productId) {
-    public OrderServiceDto toOrderServiceDto() {
-        return new OrderServiceDto(null, name, count, productId);
+public record OrderRequestDto(OrderCount count, OrderMessage message, Long optionId) {
+    public OrderServiceDto toOrderServiceDto(Long memberId) {
+        return new OrderServiceDto(null, count, message, memberId, optionId);
     }
 
-    public OrderServiceDto toOrderServiceDto(Long id) {
-        return new OrderServiceDto(id, name, count, productId);
+    public OrderServiceDto toOrderServiceDto(Long id, Long memberId) {
+        return new OrderServiceDto(id, count, message, memberId, optionId);
     }
 }

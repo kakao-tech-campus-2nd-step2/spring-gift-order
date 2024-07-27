@@ -36,7 +36,7 @@ public class OptionController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResultResponseDto<OptionResponseDto>> getOptionById(@PathVariable(name = "id") Long id) {
-        OptionResponseDto optionResponseDto = optionService.getOptionById(id);
+        OptionResponseDto optionResponseDto = optionService.getOptionResponseDtoById(id);
         return ResponseHelper.createResponse(ResultCode.GET_OPTION_BY_ID_SUCCESS, optionResponseDto);
     }
 

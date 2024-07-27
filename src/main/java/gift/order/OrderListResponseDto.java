@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public record OrderListResponseDto(List<OrderResponseDto> orderResponseDtos) {
     public static OrderListResponseDto orderListToOptionListResponseDto(List<Order> orders) {
         List<OrderResponseDto> newOrderResponseDtos = orders.stream()
-                .map(option -> new OrderResponseDto(option.getId(), option.getName(), option.getCount(), option.getProduct().getId()))
+                .map(order -> new OrderResponseDto(order.getId(), order.getCount(), order.getMessage(), order.getOption().getId()))
                 .collect(Collectors.toList());
 
         return new OrderListResponseDto(newOrderResponseDtos);

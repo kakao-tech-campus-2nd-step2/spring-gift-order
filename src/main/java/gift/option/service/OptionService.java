@@ -29,9 +29,13 @@ public class OptionService {
         return OptionListResponseDto.optionListToOptionListResponseDto(optionRepository.findByProductId(productId));
     }
 
-    public OptionResponseDto getOptionById(Long id) {
-        return OptionResponseDto.optionToOptionResponseDto(optionRepository.findById(id)
-                .orElseThrow(OptionNotFoundException::new));
+    public OptionResponseDto getOptionResponseDtoById(Long id) {
+        return OptionResponseDto.optionToOptionResponseDto(getOptionById(id));
+    }
+
+    public Option getOptionById(Long id) {
+        return optionRepository.findById(id)
+                .orElseThrow(OptionNotFoundException::new);
     }
 
     public Option createOption(OptionServiceDto optionServiceDto) {
