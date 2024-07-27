@@ -50,7 +50,7 @@ public class OptionService {
     }
 
     public OptionResponseDto fromEntity(Option option) {
-        return new OptionResponseDto(option.getId(),option.getName(),option.getQuantity(),option.getProduct().getId());
+        return new OptionResponseDto(option.getId(), option.getName(), option.getQuantity(), option.getProduct().getId());
     }
 
     public boolean checkValidOptionName(String optionName, Product product) {
@@ -71,10 +71,7 @@ public class OptionService {
     }
 
     public boolean checkNameLength(String name, int maxLen, int minLen) {
-        if (name.length() <= maxLen && name.length() >= minLen) {
-            return true;
-        }
-        return false;
+        return name.length() <= maxLen && name.length() >= minLen;
     }
 
     private boolean checkNameRedundancy(String optionName, Product product) {

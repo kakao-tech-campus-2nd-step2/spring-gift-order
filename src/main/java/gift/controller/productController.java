@@ -35,22 +35,22 @@ public class productController {
                 productRequestDto.getPrice(),
                 productRequestDto.getUrl()
         );
-        return new ResponseEntity<>(productResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(productResponseDto, HttpStatus.OK);
     }
 
     @GetMapping("")
     public ResponseEntity<List<ProductResponseDto>> getAll() {
-        return new ResponseEntity<>(productService.getAllAndMakeProductResponseDto(),HttpStatus.OK);
+        return new ResponseEntity<>(productService.getAllAndMakeProductResponseDto(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getOneById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(productService.getProductResponseDtoById(id),HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProductResponseDtoById(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> update(@PathVariable("id") Long id, @RequestBody ProductRequestDto productRequestDto) {
-        if (productService.update(id, productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getUrl())){
+        if (productService.update(id, productRequestDto.getName(), productRequestDto.getPrice(), productRequestDto.getUrl())) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -69,6 +69,6 @@ public class productController {
 
     @GetMapping("/products")
     public ResponseEntity<Page<ProductResponseDto>> getProducts(Pageable pageable) {
-        return new ResponseEntity<>(productService.getProducts(pageable),HttpStatus.OK);
+        return new ResponseEntity<>(productService.getProducts(pageable), HttpStatus.OK);
     }
 }

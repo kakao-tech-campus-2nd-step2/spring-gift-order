@@ -30,12 +30,12 @@ public class WishController {
     @PostMapping()
     public ResponseEntity<WishResponseDto> save(@RequestBody WishRequestDto wishRequestDto) {
         WishResponseDto wishResponseDto = wishService.save(wishRequestDto.getProductId(), wishRequestDto.getTokenValue());
-        return new ResponseEntity<>(wishResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(wishResponseDto, HttpStatus.OK);
     }
 
     @GetMapping()
     public ResponseEntity<List<WishResponseDto>> getAll(@RequestParam("Token") String token) {
-        return new ResponseEntity<>(wishService.getAll(token),HttpStatus.OK);
+        return new ResponseEntity<>(wishService.getAll(token), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -48,7 +48,7 @@ public class WishController {
 
     @GetMapping("/wishes")
     public ResponseEntity<Page<WishResponseDto>> getWishes(Pageable pageable) {
-        return new ResponseEntity<>(wishService.getWishes(pageable),HttpStatus.OK);
+        return new ResponseEntity<>(wishService.getWishes(pageable), HttpStatus.OK);
     }
 
 }

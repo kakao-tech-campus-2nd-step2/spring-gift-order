@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.entity.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,16 +12,13 @@ import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.net.URI;
 
 @Service
 public class ExternalAPIService {
 
-    String kakaoOauthAuthorizeUrl= "https://kauth.kakao.com/oauth/authorize";
+    String kakaoOauthAuthorizeUrl = "https://kauth.kakao.com/oauth/authorize";
     String kakaoOauthTokenUrl = "https://kauth.kakao.com/oauth/token";
     Properties properties;
     private static final Logger logger = LoggerFactory.getLogger(ExternalAPIService.class);
@@ -28,7 +27,7 @@ public class ExternalAPIService {
     private final RestTemplate client = new RestTemplateBuilder().build();
 
     public void handleKakaoRedirect(String location) {
-        
+
         URI uri = URI.create(location);
         var query = uri.getQuery();
         String[] params = query.split("&");
@@ -53,13 +52,13 @@ public class ExternalAPIService {
 
     public void getKakaoAuthorize() {
         var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var body = new LinkedMultiValueMap<String,String>();
-        body.add("response_type","code");
-        body.add("client_id",properties.getClientId());
-        body.add("redirect_uri",properties.getRedirectUri());
-        body.add("state","state");
-        var request =new RequestEntity<>(body,headers, HttpMethod.GET, URI.create(kakaoOauthAuthorizeUrl));
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("response_type", "code");
+        body.add("client_id", properties.getClientId());
+        body.add("redirect_uri", properties.getRedirectUri());
+        body.add("state", "state");
+        var request = new RequestEntity<>(body, headers, HttpMethod.GET, URI.create(kakaoOauthAuthorizeUrl));
         var response = client.exchange(request, String.class);
 
         if (response.getStatusCode() == HttpStatus.FOUND) {
@@ -71,12 +70,12 @@ public class ExternalAPIService {
     public void getKakaoToken(String code) {
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var body = new LinkedMultiValueMap<String,String>();
-        body.add("grant_type","authorization_code");
-        body.add("client_id",properties.getClientId());
-        body.add("redirect_uri",properties.getRedirectUri());
-        body.add("code",code);
-        var request =new RequestEntity<>(body,headers, HttpMethod.POST, URI.create(kakaoOauthTokenUrl));
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", properties.getClientId());
+        body.add("redirect_uri", properties.getRedirectUri());
+        body.add("code", code);
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(kakaoOauthTokenUrl));
         var response = client.exchange(request, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {

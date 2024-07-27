@@ -43,13 +43,13 @@ public class ProductService {
 
     public boolean update(Long id, String name, Integer price, String url) {
         Product actualProduct = productRepository.findById(id).orElseThrow(() -> new RuntimeException("상품을 찾지 못했습니다."));
-        Product newProduct = new Product(id,name,price,url,actualProduct.getCategory(),actualProduct.getOptions());
+        Product newProduct = new Product(id, name, price, url, actualProduct.getCategory(), actualProduct.getOptions());
         productRepository.save(newProduct);
         return true;
     }
 
     public void delete(Long id) {
-        if(productRepository.findById(id).isPresent()) {
+        if (productRepository.findById(id).isPresent()) {
             Product product = productRepository.findById(id).get();
             productRepository.delete(product);
         }

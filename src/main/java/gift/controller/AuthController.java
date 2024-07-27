@@ -40,13 +40,13 @@ public class AuthController {
     @PostMapping("/save")
     public ResponseEntity<MemberResponseDto> save(@ModelAttribute MemberRequestDto memberRequestDto) {
         MemberResponseDto memberResponseDto = memberService.save(memberRequestDto.getEmail(), memberRequestDto.getPassword());
-        return new ResponseEntity<>(memberResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(memberResponseDto, HttpStatus.OK);
     }
 
     @PostMapping("/user/login")
     public ResponseEntity<String> login(@ModelAttribute MemberRequestDto memberRequestDto) throws AuthenticationException {
         if (memberService.login(memberRequestDto.getEmail(), memberRequestDto.getPassword())) {
-            return new ResponseEntity<>(memberService.generateTokenFrom(memberRequestDto.getEmail()),HttpStatus.OK);
+            return new ResponseEntity<>(memberService.generateTokenFrom(memberRequestDto.getEmail()), HttpStatus.OK);
         }
         throw new AuthenticationException("로그인 실패");
     }

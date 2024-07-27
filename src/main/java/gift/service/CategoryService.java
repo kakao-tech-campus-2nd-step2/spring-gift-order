@@ -21,8 +21,9 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+
     public List<CategoryResponseDto> getAllCategoryResponseDto() {
-        return  getAllCategories().stream().map(this::fromEntity).toList();
+        return getAllCategories().stream().map(this::fromEntity).toList();
     }
 
     public Category getCategoryByName(String categoryName) {
