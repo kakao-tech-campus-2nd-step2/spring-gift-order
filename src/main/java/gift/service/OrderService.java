@@ -48,5 +48,6 @@ public class OrderService {
         }
         Option selectedOption = optionService.getOptionById(order.optionId).get();
         optionService.subtractOption(selectedOption, order.quantity);
+        wishlistService.deleteById(selectedOption.getProduct().getId());
     }
 }
