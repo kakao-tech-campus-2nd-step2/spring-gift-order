@@ -22,7 +22,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AdminAuthController {
 
-    private final String REDIRECT_ADMIN_LOGIN_PROCESSING = "redirect:/admin/login/process";
+    public static final String ACCESS_TOKEN = "accessToken";
+    public static final String REFRESH_TOKEN = "refreshToken";
+    private static final String REDIRECT_ADMIN_LOGIN_PROCESSING = "redirect:/admin/login/process";
     private final AuthService authService;
 
     public AdminAuthController(AuthService authService) {
@@ -37,25 +39,25 @@ public class AdminAuthController {
     @PostMapping("/login")
     public String login(MemberDto memberDto, RedirectAttributes redirectAttributes) {
         JwtResponse jwtResponse = authService.login(memberDto);
-        redirectAttributes.addAttribute("accessToken", jwtResponse.accessToken());
-        redirectAttributes.addAttribute("refreshToken", jwtResponse.refreshToken());
+        redirectAttributes.addAttribute(ACCESS_TOKEN, jwtResponse.accessToken());
+        redirectAttributes.addAttribute(REFRESH_TOKEN, jwtResponse.refreshToken());
 
         return REDIRECT_ADMIN_LOGIN_PROCESSING;
     }
 
     @GetMapping("/login/process")
-    public String loginProcess(@RequestParam("accessToken") String accessToken,
-        @RequestParam("refreshToken") String refreshToken,
+    public String loginProcess(@RequestParam(ACCESS_TOKEN) String accessToken,
+        @RequestParam(REFRESH_TOKEN) String refreshToken,
         Model model) {
-        model.addAttribute("accessToken", accessToken);
-        model.addAttribute("refreshToken", refreshToken);
+        model.addAttribute(ACCESS_TOKEN, accessToken);
+        model.addAttribute(REFRESH_TOKEN, refreshToken);
 
         return "admin/loginProcess";
     }
 
     @PostMapping("login/process")
     @ResponseBody
-    public ResponseEntity<Void> loginSuccess(@RequestParam("accessToken") String accessToken,
+    public ResponseEntity<Void> loginSuccess(@RequestParam(ACCESS_TOKEN) String accessToken,
         HttpServletResponse response) {
         addAccessTokenCookieInResponse(accessToken, response);
 
@@ -66,7 +68,7 @@ public class AdminAuthController {
 
     private void addAccessTokenCookieInResponse(String accessToken,
         HttpServletResponse response) {
-        Cookie cookie = new Cookie("accessToken", accessToken);
+        Cookie cookie = new Cookie(ACCESS_TOKEN, accessToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);

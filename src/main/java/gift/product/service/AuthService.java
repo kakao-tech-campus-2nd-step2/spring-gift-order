@@ -36,7 +36,7 @@ public class AuthService {
     private final KakaoTokenRepository kakaoTokenRepository;
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient = RestClient.builder().build();
-    private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
+    private static final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 

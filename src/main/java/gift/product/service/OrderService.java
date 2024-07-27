@@ -34,7 +34,7 @@ public class OrderService {
     private final AuthRepository authRepository;
     private final KakaoTokenRepository kakaoTokenRepository;
     private final RestClient restClient = RestClient.builder().build();
-    private final String LINK_URL = "http://localhost:8080";
+    private static final String LINK_URL = "http://localhost:8080";
 
     public OrderService(OrderRepository orderRepository,
         WishRepository wishRepository,

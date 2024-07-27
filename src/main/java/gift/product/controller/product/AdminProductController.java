@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class AdminProductController {
 
-    private final String REDIRECT_ADMIN_PRODUCTS = "redirect:/admin/products";
+    private static final String REDIRECT_ADMIN_PRODUCTS = "redirect:/admin/products";
     private final ProductService productService;
 
     public AdminProductController(ProductService productService) {
