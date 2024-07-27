@@ -18,17 +18,12 @@ public class Wishlist {
     private Product product;
 
 
-
-    private String optionName;
-
     public Wishlist(){
 
     }
-    public Wishlist(Member member, Product product, String optionName){
+    public Wishlist(Member member, Product product){
         this.member = member;
         this.product = product;
-        this.optionName = optionName;
-
     }
 
     public Long getId() {
@@ -55,13 +50,5 @@ public class Wishlist {
         this.product = product;
     }
 
-
-    public String getOptionName(){
-        return optionName;
-    }
-
-    public void setOptionName(String optionName) {
-        this.optionName = optionName;
-    }
 
 }

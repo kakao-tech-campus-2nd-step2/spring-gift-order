@@ -100,24 +100,13 @@
                     $('.add-to-wishlist').click(function() {
                         const productId = $(this).data('id');
                         const email = getEmailFromToken();
-
-                        const selectedOptionId = $(this).siblings('.option-select').val();
-                        const selectedOptionQuantity = selectedOption.data('quantity');
-                        if (!selectedOptionId) {
-                            alert('Please select an option.');
-                            return;
-                        }
-
-
                         if (!email) return;
 
                         $.ajax({
-                            url: `/api/products/order/${productId}`,
+                            url: `/api/wishlist/${productId}`,
                             method: 'POST',
                             data: {
-                                email: email,
-                                optionId: selectedOptionId,
-                                quantity: selectedOptionQuantity
+                                email: email
                             },
                             success: function() {
                                 alert('Product added to wishlist!');
