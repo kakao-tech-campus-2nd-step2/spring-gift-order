@@ -30,7 +30,7 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/api/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<SuccessBody<UserResponseDTO>> signUp(
         @Valid @RequestBody UserSignupRequestDTO userSignupRequestDTO) {
         userService.join(userSignupRequestDTO);
@@ -38,7 +38,7 @@ public class AuthController {
         return ApiResponseGenerator.success(HttpStatus.CREATED, "회원가입에 성공했습니다.", userResponseDTO);
     }
 
-    @PostMapping("/api/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         User user = userService.findByEmail(userLoginRequestDTO);
@@ -64,7 +64,7 @@ public class AuthController {
         return ApiResponseGenerator.success(HttpStatus.OK, "인가 코드 추출 성공", code);
     }
 
-    @PostMapping("/api/oauth/kakao/login")
+    @PostMapping("/api/oauth/login")
     public ResponseEntity<SuccessBody<UserResponseDTO>> kakaoLogin(
         @RequestParam("code") String code
     ) {
