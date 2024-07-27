@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+class OrderServiceTest {
 
     @InjectMocks
     private OrderService orderService;
@@ -41,9 +41,6 @@ public class OrderServiceTest {
     private ProductService productService;
 
     @Mock
-    private WishRepository wishRepository;
-
-    @Mock
     private KakaoService kakaoService;
 
     private Member member;
@@ -53,7 +50,7 @@ public class OrderServiceTest {
     private OrderRequest orderRequest;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         member = new Member(1L, "test@example.com", "password");
         product = new Product(1L, "Test Product", 1000L, "http://example.com/image.png", new Category("Test Category", "Red", "http://example.com/image.png", "Description"));
         option = new Option();
@@ -71,7 +68,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 성공 테스트")
-    public void testPlaceOrder_Success() throws Exception {
+    void testPlaceOrder_Success() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(product);
         when(productService.getOptionById(any(Long.class))).thenReturn(option);
@@ -88,7 +85,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 멤버 찾기 실패")
-    public void testPlaceOrder_MemberNotFound() throws Exception {
+    void testPlaceOrder_MemberNotFound() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> {
@@ -103,7 +100,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 상품 찾기 실패")
-    public void testPlaceOrder_ProductNotFound() throws Exception {
+    void testPlaceOrder_ProductNotFound() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(null);
 
@@ -120,7 +117,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 옵션이 상품에 없음")
-    public void testPlaceOrder_OptionDoesNotBelongToProduct() throws Exception {
+    void testPlaceOrder_OptionDoesNotBelongToProduct() throws Exception {
         Option otherOption = new Option();
         otherOption.setId(2L);
         otherOption.setName("Other Option");
