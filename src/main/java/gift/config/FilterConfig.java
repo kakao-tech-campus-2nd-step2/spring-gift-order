@@ -23,14 +23,25 @@ public class FilterConfig {
         this.userRepository = userRepository;
     }
 
+    private static final String[] JWT_URL_PATTERNS = {
+            "/api/products/*",
+            "/api/orders/*",
+            "/api/wishlists/*",
+            "/api/users/me"
+    };
+
+    private static final String[] ADMIN_URL_PATTERNS = {
+            "/admin/*",
+            "/api/categories/*"
+    };
+
     @Bean
     public FilterRegistrationBean<JwtFilter> jwtFilter() {
         FilterRegistrationBean<JwtFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new JwtFilter(tokenPrefix, userUtility));
-        registrationBean.addUrlPatterns("/api/products/*");
-        registrationBean.addUrlPatterns("/api/orders/*");
-        registrationBean.addUrlPatterns("/api/wishlists/*");
-        registrationBean.addUrlPatterns("/api/users/me");
+        for (String url : JWT_URL_PATTERNS) {
+            registrationBean.addUrlPatterns(url);
+        }
         return registrationBean;
     }
 
@@ -38,8 +49,9 @@ public class FilterConfig {
     public FilterRegistrationBean<AdminFilter> adminFilter() {
         FilterRegistrationBean<AdminFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new AdminFilter(tokenPrefix, userUtility));
-        registrationBean.addUrlPatterns("/admin/*");
-        registrationBean.addUrlPatterns("/api/categories/*");
+        for (String url : ADMIN_URL_PATTERNS) {
+            registrationBean.addUrlPatterns(url);
+        }
         return registrationBean;
     }
 }
