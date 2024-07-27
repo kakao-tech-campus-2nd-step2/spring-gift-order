@@ -10,14 +10,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class KakaoMsgService {
 
 
-    public void sendMsg(OrderRequest orderRequest) {
-
-        String accessToken = "";
+    public void sendMsg(String token, OrderRequest orderRequest) {
 
         WebClient webClient = WebClient.create();
 
         webClient.post().uri("https://kapi.kakao.com/v2/api/talk/memo/default/send")
-            .header("Authorization", "Bearer " + accessToken)
+            .header("Authorization", "Bearer " + token)
             .header("Content-Type", "application/x-www-form-urlencoded").bodyValue(
                 "template_object={\"object_type\":\"text\",\"text\":\"" + orderRequest.getMsg()
                 +"\",\"link\":{\"web_url\":\"http://localhost:8080\",\"mobile_web_url\":\"http://localhost:8080\"}}")

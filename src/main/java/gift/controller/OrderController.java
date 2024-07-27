@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.argumentResolver.KakaoMember;
 import gift.dto.OrderRequest;
 import gift.service.KakaoMsgService;
 import gift.service.OrderService;
@@ -23,9 +24,9 @@ public class OrderController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<Void> createOrder(@KakaoMember String token, @RequestBody OrderRequest orderRequest) {
         orderService.create(orderRequest);
-        kakaoMsgService.sendMsg(orderRequest);
+        kakaoMsgService.sendMsg(token,orderRequest);
 
         return ResponseEntity.ok().build();
     }

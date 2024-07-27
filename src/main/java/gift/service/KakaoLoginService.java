@@ -38,41 +38,37 @@ public class KakaoLoginService {
 
     private final AuthenticationTool authenticationTool;
 
-    public KakaoLoginService(JpaMemberRepository jpaMemberRepository, AuthenticationTool authenticationTool) {
+    public KakaoLoginService(JpaMemberRepository jpaMemberRepository,
+        AuthenticationTool authenticationTool) {
         this.jpaMemberRepository = jpaMemberRepository;
         this.authenticationTool = authenticationTool;
     }
 
     public String getConnectionUrl() {
-        return "https://kauth.kakao.com/oauth/authorize?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&response_type=code";
+        return "https://kauth.kakao.com/oauth/authorize?client_id=" + clientId + "&redirect_uri="
+            + redirectUri + "&response_type=code";
     }
 
     public String getToken(String code) {
         WebClient webClient = WebClient.create();
 
-        MultiValueMap<String,String> body = new LinkedMultiValueMap<>();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
-        return webClient.post()
-            .uri("https://kauth.kakao.com/oauth")
+        return webClient.post().uri("https://kauth.kakao.com/oauth")
             .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-            .body(BodyInserters.fromValue(body))
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+            .body(BodyInserters.fromValue(body)).retrieve().bodyToMono(String.class).block();
     }
 
     public LoginMemberToken getKakaoUser(String token) {
-        try{
+        try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(token);
             String accessToken = jsonNode.get("access_token").asText();
-            return null;
-            //Member member = jpaMemberRepository.findByEmail(email).orElseThrow(() -> new GiftUnauthorizedException("등록되지 않은 회원입니다."));
-            //return new LoginMemberToken(authenticationTool.makeToken(member));
+            return new LoginMemberToken(accessToken);
 
         } catch (Exception e) {
             Arrays.stream(e.getStackTrace()).forEach(System.out::println);
