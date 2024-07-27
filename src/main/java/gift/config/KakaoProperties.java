@@ -7,7 +7,12 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @ConfigurationProperties("kakao")
 public record KakaoProperties(
     String clientId,
-    String redirectUrl
+    String redirectUrl,
+    String authUrl,
+    String tokenUrl
 ) {
-
+    public String generateLoginUrl() {
+        return String.format("%s?response_type=code&client_id=%s&redirect_uri=%s",
+            authUrl, clientId, redirectUrl);
+    }
 }

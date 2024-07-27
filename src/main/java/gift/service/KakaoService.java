@@ -20,14 +20,11 @@ public class KakaoService {
     }
 
     public String generateKakaoLoginUrl() {
-        String clientId = kakaoProperties.clientId();
-        String redirectUrl = kakaoProperties.redirectUrl();
-        String loginUrl = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUrl;
-        return loginUrl;
+        return kakaoProperties.generateLoginUrl();
     }
 
     public String getAccessToken(String authorizationCode) {
-        String url = "https://kauth.kakao.com/oauth/token";
+        String url = kakaoProperties.tokenUrl();
         final LinkedMultiValueMap<String, String> body = createBody(authorizationCode);
         ResponseEntity<KakaoAccessTokenDTO> response = restClient.post()
             .uri(URI.create(url))
