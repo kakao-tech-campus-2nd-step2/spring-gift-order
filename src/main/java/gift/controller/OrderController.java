@@ -1,11 +1,14 @@
 package gift.controller;
 
-import gift.exception.ProductNotFoundException;
-import gift.model.Option;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import gift.model.Member;
 import gift.model.Order;
+import gift.service.MemberService;
 import gift.service.OptionService;
+import gift.service.OrderService;
 import gift.service.WishlistService;
-import java.time.LocalDateTime;
+import gift.util.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,30 +20,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/orders")
 public class OrderController {
+    private final JwtUtil jwtUtil;
+    private final MemberService memberService;
 
     @Autowired
     private final OptionService optionService;
 
     @Autowired
     private final WishlistService wishlistService;
+    @Autowired
+    private OrderService orderService;
 
-    public OrderController(OptionService optionService, WishlistService wishlistService) {
+    public OrderController(OptionService optionService, MemberService memberService, WishlistService wishlistService) {
         this.optionService = optionService;
         this.wishlistService = wishlistService;
+        this.memberService = memberService;
+        this.jwtUtil = new JwtUtil();
     }
 
-    @PostMapping("/orders")
-    public ResponseEntity<?> addOrder(@RequestHeader("Authorization") String token,@RequestBody Order order) {
-        if (!optionService.existsOptionById(order.getOptionId())){
-            throw new ProductNotFoundException("Option not found");
-        }
-        Option selectedOption = optionService.getOptionById(order.optionId).get();
-        optionService.subtractOption(selectedOption, order.quantity);
-        wishlistService.deleteById(selectedOption.getProduct().getId());
-        LocalDateTime dateTime = LocalDateTime.now();
-        order.setOrderDateTime(dateTime);
+    @PostMapping
+    public ResponseEntity<?> addOrder(@RequestHeader("Authorization") String token,@RequestBody Order order)
+        throws JsonProcessingException {
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .header(HttpHeaders.AUTHORIZATION, token)
