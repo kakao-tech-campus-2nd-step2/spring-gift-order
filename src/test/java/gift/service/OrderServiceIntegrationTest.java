@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.entity.*;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,10 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Transactional
 public class OrderServiceIntegrationTest {
+
+    private HttpSession session;
 
     @Autowired
     private WishlistService wishlistService;
@@ -29,6 +34,10 @@ public class OrderServiceIntegrationTest {
     @Test
     void orderSaveTest() {
         // given
+        // setup
+        session = mock(HttpSession.class);
+        when(session.getAttribute("email")).thenReturn("test@gmail.com");
+
         // 회원가입
         String testEmail = "test@gmail.com";
         userService.signup(new UserDTO(testEmail, "test"));
@@ -46,7 +55,7 @@ public class OrderServiceIntegrationTest {
         wishlistService.addWishlistProduct(testEmail, new WishlistDTO(product.getId()));
 
         // when
-        orderService.save(testEmail, new OrderDTO(product.getId(), option.getId(), 30, "test msg"));
+        orderService.save(session, new OrderDTO(product.getId(), option.getId(), 30, "test msg"));
 
         // then
         // 옵션 quantity 차감 확인
