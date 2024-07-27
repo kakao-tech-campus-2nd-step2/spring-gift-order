@@ -29,4 +29,4 @@
 
 api 명세
 
-- [ ] swagger 사용해 api 명세서 작성
+- [x] swagger 사용해 api 명세서 작성
