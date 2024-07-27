@@ -33,10 +33,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> addOrder(HttpServletRequest request, @Valid @RequestBody Order order) throws JsonProcessingException {
-        String token = extractToken(request);
-        Claims claims = jwtUtil.extractAllClaims(token);
-        Number id = (Number) claims.get("id");
-        Long memberId = id.longValue();
+        Long memberId = jwtUtil.extractMemberId(request);
         Order addedOrder = orderService.addOrder(memberId, order);
         kakaoService.sendOrderMessage(memberId, order);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedOrder);

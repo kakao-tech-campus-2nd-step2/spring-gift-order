@@ -31,10 +31,8 @@ public class WishListController {
 
     @GetMapping
     public ResponseEntity<?> getWishListItems(HttpServletRequest request) {
-        String token = extractToken(request);
-        Claims claims = jwtUtil.extractAllClaims(token);
-        Number memberId = (Number) claims.get("id");
-        List<WishList> wishLists = wishListService.getWishListItems(memberId.longValue());
+        Long memberId = jwtUtil.extractMemberId(request);
+        List<WishList> wishLists = wishListService.getWishListItems(memberId);
         return ResponseEntity.ok(wishLists);
     }
 
@@ -44,10 +42,8 @@ public class WishListController {
         @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
         @RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
 
-        String token = extractToken(request);
-        Claims claims = jwtUtil.extractAllClaims(token);
-        Number memberId = (Number) claims.get("id");
-        Page<WishList> wishLists = wishListService.getWishListItems(memberId.longValue(), page, size);
+        Long memberId = jwtUtil.extractMemberId(request);
+        Page<WishList> wishLists = wishListService.getWishListItems(memberId, page, size);
         return ResponseEntity.ok(wishLists);
     }
 
@@ -55,10 +51,8 @@ public class WishListController {
     @Transactional
     public ResponseEntity<?> addWishListItem(HttpServletRequest request,
         @Valid @RequestBody Product product) {
-        String token = extractToken(request);
-        Claims claims = jwtUtil.extractAllClaims(token);
-        Number memberId = (Number) claims.get("id");
-        WishList wishList = new WishList(memberId.longValue(), product.getId());
+        Long memberId = jwtUtil.extractMemberId(request);
+        WishList wishList = new WishList(memberId, product.getId());
         wishListService.addWishListItem(wishList);
         return ResponseEntity.status(HttpStatus.CREATED).body("Product added to wishlist");
     }
