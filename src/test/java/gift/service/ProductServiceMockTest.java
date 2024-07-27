@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
-public class ProductServiceTest {
+public class ProductServiceMockTest {
 
     @MockBean
     private ProductOptionRepository productOptionRepository;
@@ -48,39 +48,4 @@ public class ProductServiceTest {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> productService.deleteProductOption(product.getId(), user.getId(), "test@naver.com"));
     }
-
-//    @Test
-//    @DisplayName("product가 삭제되었을 때 product_wishlist에서 해당 행이 삭제되어야 함")
-//    void productDeleteCascadeWishlistTest() {
-//        // given
-//        String testEmail = "test@gmail.com";
-//        Category category = categoryService.save(new CategoryDTO("test", "#test", "test.com", ""));
-//        Product product = productService.save(new ProductDTO("test", 123, "test.com", category.getId()));
-//        wishlistService.addWishlistProduct(testEmail, new WishlistDTO(product.getId()));
-//
-//        // when
-//        productService.delete(product.getId());
-//
-//        // then
-//        Page<Product> products = wishlistService.getWishlistProducts(testEmail, PageRequest.of(0, 10));
-//        assertThat(products).hasSize(0);
-//    }
-//
-//    @Test
-//    @DisplayName("특정 product를 wishlist에 담은 유저의 수 확인 테스트")
-//    void productWishlistCheckTest() {
-//        // given
-//        String testEmail1 = "test1@gmail.com";
-//        String testEmail2 = "test2@gmail.com";
-//        Category category = categoryService.save(new CategoryDTO("test", "#test", "test.com", ""));
-//        Product product = productService.save(new ProductDTO("test", 123, "test.com", category.getId()));
-//
-//        // when
-//        wishlistService.addWishlistProduct(testEmail1, new WishlistDTO(product.getId()));
-//        wishlistService.addWishlistProduct(testEmail2, new WishlistDTO(product.getId()));
-//
-//        // then
-//        List<Wishlist> wishlists = productService.getProductWishlist(product.getId());
-//        assertThat(wishlists).hasSize(2);
-//    }
 }

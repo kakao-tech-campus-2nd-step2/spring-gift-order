@@ -4,7 +4,6 @@ import gift.entity.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -30,29 +29,33 @@ public class OrderServiceIntegrationTest {
     @Test
     void orderSaveTest() {
         // given
+        // 회원가입
         String testEmail = "test@gmail.com";
         userService.signup(new UserDTO(testEmail, "test"));
 
-        Product product1 = productService.save(new ProductDTO("test1", 123, "test.com", 1L));
-        Product product2 = productService.save(new ProductDTO("test2", 123, "test.com", 1L));
+        // 상품
+        Product product = productService.save(new ProductDTO("test1", 123, "test.com", 1L), testEmail);
 
-        wishlistService.addWishlistProduct(testEmail, new WishlistDTO(product1.getId()));
-        wishlistService.addWishlistProduct(testEmail, new WishlistDTO(product2.getId()));
+        // 옵션
+        Option option = optionService.save(new OptionDTO("abc", 100), testEmail);
 
-        List<Product> products = wishlistService.getWishlistProducts(testEmail, PageRequest.of(0, 10)).getContent();
-        Option option = optionService.save(new OptionDTO("abc", 100));
-        productService.addProductOption(product1.getId(), option.getId());
+        // 상품에 옵션 추가
+        productService.addProductOption(product.getId(), option.getId(), testEmail);
+
+        // 위시리스트에 추가
+        wishlistService.addWishlistProduct(testEmail, new WishlistDTO(product.getId()));
 
         // when
-        orderService.save(testEmail, new OrderDTO(product1.getId(), option.getId(), 30, "test msg"));
+        orderService.save(testEmail, new OrderDTO(product.getId(), option.getId(), 30, "test msg"));
 
         // then
         // 옵션 quantity 차감 확인
         Option expectOption = optionService.findById(option.getId());
         assertThat(expectOption.getQuantity()).isEqualTo(70);
+
         // wishlist에서 삭제 확인
-        List<Product> expectProducts = wishlistService.getWishlistProducts(testEmail, PageRequest.of(0, 10)).getContent();
-        assertThat(expectProducts.size()).isEqualTo(1);
+        List<Product> expectProducts = wishlistService.getWishlistProducts(testEmail);
+        assertThat(expectProducts.size()).isEqualTo(0);
     }
 
 

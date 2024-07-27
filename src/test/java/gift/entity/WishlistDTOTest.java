@@ -1,2 +1,56 @@
-package gift.entity;public class WishlistDTOTest {
+package gift.entity;
+
+import gift.repository.ProductRepository;
+import jakarta.validation.Validator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
+@SpringBootTest
+public class WishlistDTOTest {
+
+    private WishlistDTO wishlist;
+    private Optional<Product> product;
+
+    @Autowired
+    private Validator validator;
+    @MockBean
+    private ProductRepository productRepository;
+
+    @BeforeEach
+    void setUp() {
+        wishlist = new WishlistDTO(1L);
+    }
+
+    @Test
+    void 존재하는_상품_테스트() {
+        // given
+        given(productRepository.findById(any())).willReturn(Optional.of(new Product()));
+
+        // when
+        var validate = validator.validate(wishlist);
+
+        // then
+        assertThat(validate).isEmpty();
+    }
+
+    @Test
+    void 존재하지_않는_상품_테스트() {
+        // given
+        given(productRepository.findById(any())).willReturn(Optional.empty());
+
+        // when
+        var validate = validator.validate(wishlist);
+
+        // then
+        assertThat(validate).isNotEmpty();
+    }
 }

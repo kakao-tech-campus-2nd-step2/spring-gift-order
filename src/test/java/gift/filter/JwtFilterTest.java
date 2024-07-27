@@ -1,5 +1,6 @@
 package gift.filter;
 
+import gift.entity.User;
 import gift.util.UserUtility;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,8 +18,8 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 public class JwtFilterTest {
-    private String validToken = "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRlc3QxQG5hdmVyLmNvbSJ9.-9C8Mmec3xwhwzcFer-S3MDbGXJcI0P2YQZFdHIdF_U";
 
+    private String validToken;
     private JwtFilter jwtFilter;
     private HttpServletRequest request;
     private HttpServletResponse response;
@@ -35,14 +36,14 @@ public class JwtFilterTest {
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
+        validToken = userUtility.makeAccessToken(new User("test@naver.com", "test"));
     }
 
     @Test
     void doFilterWithoutTokenTest() throws ServletException, IOException {
         // given
-        when(request.getHeader("Authorization")).thenReturn(null);
-
         // when
+        when(request.getHeader("Authorization")).thenReturn(null);
         jwtFilter.doFilter(request, response, filterChain);
 
         // then
@@ -52,9 +53,8 @@ public class JwtFilterTest {
     @Test
     void doFilterWithValidTokenTest() throws ServletException, IOException {
         // given
-        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken);
-
         // when
+        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken);
         jwtFilter.doFilter(request, response, filterChain);
 
         // then
@@ -64,9 +64,8 @@ public class JwtFilterTest {
     @Test
     void doFilterWithInvalidTokenTest() throws ServletException, IOException {
         // given
-        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken + "invalid");
-
         // when
+        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken + "invalid");
         jwtFilter.doFilter(request, response, filterChain);
 
         // then
