@@ -1,4 +1,4 @@
-package gift.controller;
+package gift.controller.login;
 
 import gift.auth.JwtService;
 import gift.request.JoinRequest;

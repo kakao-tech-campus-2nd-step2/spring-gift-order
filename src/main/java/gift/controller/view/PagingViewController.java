@@ -1,4 +1,4 @@
-package gift.controller;
+package gift.controller.view;
 
 import static gift.paging.PagingService.PRODUCTS_PER_PAGE;
 import static gift.paging.PagingService.SHOWING_PAGE_COUNT;

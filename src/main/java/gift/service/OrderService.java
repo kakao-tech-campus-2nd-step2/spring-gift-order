@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.exception.option.NotFoundOptionsException;
+import gift.exception.order.NotFoundOrderException;
 import gift.model.Options;
 import gift.model.Order;
 import gift.repository.OptionsRepository;
@@ -25,6 +26,13 @@ public class OrderService {
         this.optionsService = optionsService;
         this.wishRepository = wishRepository;
         this.kakaoMessageService = kakaoMessageService;
+    }
+
+    public OrderResponse getOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(NotFoundOrderException::new);
+        return OrderResponse.createOrderResponse(order.getId(), order.getOptions().getId(),
+            order.getQuantity(), order.getCreatedAt(), order.getMessage());
     }
 
     public OrderResponse makeOrder(Long memberId, Long productId, Long optionId, Integer quantity, String message) {
