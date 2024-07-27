@@ -1,26 +1,27 @@
 package gift.controller;
 
-import gift.dto.MemberRequest;
-import gift.dto.MemberResponse;
 import gift.service.MemberService;
-import gift.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
+import gift.util.KakaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.servlet.http.HttpSession;
+import java.util.Map;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/members")
 public class MemberController {
 
+    private static final Logger logger = Logger.getLogger(MemberController.class.getName());
+
     private final MemberService memberService;
-    private final JwtUtil jwtUtil;
+    private final KakaoUtil kakaoUtil;
 
     @Value("${kakao.javascript-id}")
     private String kakaoJavaScriptKey;
@@ -29,78 +30,40 @@ public class MemberController {
     private String redirectUri;
 
     @Autowired
-    public MemberController(MemberService memberService, JwtUtil jwtUtil) {
+    public MemberController(MemberService memberService, KakaoUtil kakaoUtil) {
         this.memberService = memberService;
-        this.jwtUtil = jwtUtil;
+        this.kakaoUtil = kakaoUtil;
     }
 
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("kakaoJavaScriptKey", kakaoJavaScriptKey);
         model.addAttribute("redirectUri", redirectUri);
-        model.addAttribute("memberRequest", new MemberRequest("", ""));
         return "login";
     }
 
-    @PostMapping("/login")
-    public String login(@Valid @ModelAttribute MemberRequest memberRequest, BindingResult bindingResult, Model model, HttpSession session) {
-        if (bindingResult.hasErrors()) {
-            return "login";
-        }
-        try {
-            String token = memberService.authenticate(memberRequest);
-            session.setAttribute("token", token);
-            return "redirect:/wishes/items";
-        } catch (IllegalArgumentException e) {
-            return "redirect:/members/login?error";
-        }
-    }
-
-    @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("memberRequest", new MemberRequest("", ""));
-        return "register";
-    }
-
-    @PostMapping("/register")
-    public String register(@Valid @ModelAttribute MemberRequest memberRequest, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            return "register";
-        }
-        try {
-            String token = memberService.register(memberRequest);
-            return "redirect:/members/login?registerSuccess";
-        } catch (IllegalArgumentException e) {
-            bindingResult.reject("error.register", e.getMessage());
-            return "register";
-        }
-    }
-
-    @GetMapping("/validate-token")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
-        try {
-            Claims claims = jwtUtil.extractClaims(token.replace("Bearer ", ""));
-            Long memberId = Long.parseLong(claims.getSubject());
-            return ResponseEntity.ok("Token is valid for member ID: " + memberId);
-        } catch (Exception e) {
-            return ResponseEntity.status(403).body("Invalid token");
-        }
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> getMemberById(@PathVariable Long id) {
-        MemberResponse memberResponse = memberService.findById(id);
-        return ResponseEntity.ok(memberResponse);
-    }
-
     @GetMapping("/oauth/kakao")
-    public String oauthKakao(@RequestParam("code") String code, HttpSession session, Model model) {
-        try {
-            String token = memberService.kakaoLogin(code);
-            session.setAttribute("token", token);
-            return "redirect:/wishes/items";
-        } catch (Exception e) {
-            return "redirect:/members/login?error";
-        }
+    public String oauthKakao(@RequestParam String code, HttpSession session) {
+        Map<String, Object> tokenResponse = kakaoUtil.getAccessToken(code);
+        String accessToken = (String) tokenResponse.get("access_token");
+
+        Map<String, Object> userInfo = kakaoUtil.getUserInfo(accessToken);
+        String kakaoId = String.valueOf(userInfo.get("id"));
+        String nickname = (String) ((Map<String, Object>) userInfo.get("properties")).get("nickname");
+
+        memberService.registerOrUpdateMember(kakaoId, nickname);
+        session.setAttribute("accessToken", accessToken);
+        session.setAttribute("kakaoId", kakaoId);
+
+        // 세션에 저장된 값을 로그로 출력
+        logger.info("AccessToken: " + session.getAttribute("accessToken"));
+
+        return "redirect:/wishes/items";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/members/login";
     }
 }
