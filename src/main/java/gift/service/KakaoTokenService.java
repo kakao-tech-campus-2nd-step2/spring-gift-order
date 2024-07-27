@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +26,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
+@PropertySource("classpath:application-kakao-login.properties")
 public class KakaoTokenService {
-    private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
-    private static final String ORDER_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
-    private final RestClient client = RestClient.builder().build();
+    @Value("${kakao-token-url}")
+    private String tokenUrl;
+
+    @Value("${kakao-user-info-url}")
+    private String userInfoUrl;
+
+    @Value("${kakao-order-URL}")
+    private String orderUrl;
 
     @Value("${kakao-redirect-uri}")
     private String kakaoRedirectUri;
@@ -38,11 +44,13 @@ public class KakaoTokenService {
     @Value("${kakao-rest-api-key}")
     private String clientId;
 
+    private final RestClient client = RestClient.builder().build();
+
     public String getAccessToken(String code){
         try {
             var body = makeBody(clientId, kakaoRedirectUri, code);
             ResponseEntity<TokenResponseDTO> result = client.post()
-                    .uri(URI.create(TOKEN_URL)).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .uri(URI.create(tokenUrl)).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body).retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                         throw new BadRequestException("잘못된 요청으로 인한 오류입니다.\n" + response.getBody()
@@ -66,7 +74,7 @@ public class KakaoTokenService {
     public MemberDTO getUserInfo(String accessToken){
         try {
             ResponseEntity<KakaoUserInfoDTO> responseUserInfo = client.get()
-                    .uri(URI.create(USER_INFO_URL))
+                    .uri(URI.create(userInfoUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Content-type", MediaType.APPLICATION_FORM_URLENCODED_VALUE + ";charset=UTF-8")
                     .retrieve()
@@ -100,7 +108,7 @@ public class KakaoTokenService {
             body.add("template_object", mapper.writeValueAsString(makeOrderMsgDTO(optionInfo, message)));
 
             ResponseEntity<KakaoMsgResponseDTO> responseUserInfo = client.post()
-                    .uri(URI.create(ORDER_URL))
+                    .uri(URI.create(orderUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                     .body(body).retrieve().onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
