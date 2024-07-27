@@ -1,10 +1,5 @@
 package gift.product.dto;
 
-import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
-
-import gift.product.exception.InvalidIdException;
-import gift.product.model.Order;
-import gift.product.repository.OptionRepository;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -44,14 +39,4 @@ public class OrderDTO {
     public void setMessage(String message) {
         this.message = message;
     }
-
-    public Order convert(OptionRepository optionRepository) {
-        return new Order(
-            optionRepository.findById(optionId)
-                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID)),
-            quantity,
-            message
-        );
-    }
-
 }
