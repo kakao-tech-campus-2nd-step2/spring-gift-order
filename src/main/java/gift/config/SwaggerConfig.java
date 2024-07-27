@@ -10,22 +10,26 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
+    private static final String SECURITY_SCHEME_NAME = "jwt";
+
     @Bean
     public OpenAPI openAPI() {
-        String jwt = "JWT";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
-        Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-            .name(jwt)
-            .type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-        );
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(
+            SECURITY_SCHEME_NAME);
+        Components components = new Components()
+            .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
+                .name(SECURITY_SCHEME_NAME)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+            );
         return new OpenAPI()
-            .components(new Components())
+            .components(components)
             .info(apiInfo())
-            .addSecurityItem(securityRequirement)
-            .components(components);
+            .addSecurityItem(securityRequirement);
     }
+
     private Info apiInfo() {
         return new Info()
             .title("Spring Gift") // API의 제목
