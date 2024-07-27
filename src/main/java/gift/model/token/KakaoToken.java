@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class KakaoToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,6 +45,9 @@ public class KakaoToken {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void updateTokens(String refreshToken, String accessToken) {

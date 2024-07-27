@@ -15,6 +15,7 @@ import gift.repository.token.KakaoTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
 import gift.util.AuthUtil;
+import gift.util.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -40,6 +41,9 @@ public class OrderService {
     private final KakaoTokenRepository kakaoTokenRepository;
 
     private final AuthUtil authUtil;
+
+    @Autowired
+    private TokenManager tokenManager;
 
     @Autowired
     public OrderService(OptionRepository optionRepository,
@@ -90,12 +94,14 @@ public class OrderService {
 
     private void sendMessage(OrderRequest.Create orderRequest, User user, Gift gift, Option option) {
         KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
+        kakaoToken = tokenManager.checkExpiredToken(kakaoToken);
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
         authUtil.sendMessage(kakaoToken.getAccessToken(), message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {
+
         if (!gift.hasOption(optionId)) {
             throw new NoSuchElementException("해당 상품에 해당 옵션이 없습니다!");
         }
