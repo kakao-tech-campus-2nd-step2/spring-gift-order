@@ -1,5 +1,6 @@
 package gift.Model.Entity;
 
+import gift.Model.Value.AccessToken;
 import gift.Model.Value.Email;
 import gift.Model.Value.Password;
 import jakarta.persistence.*;
@@ -19,16 +20,24 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "password", nullable = false))
     private Password password;
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "access_token"))
+    private AccessToken accessToken;
+
     protected Member() {}
 
     public Member(Email email, Password password) {
-        this.email = email;
-        this.password = password;
+        this(email, password, null);
     }
 
     public Member(String email, String password) {
-        this.email = new Email(email);
-        this.password = new Password(password);
+        this(new Email(email), new Password(password), null);
+    }
+
+    public Member(Email email, Password password, AccessToken accessToken) {
+        this.email = email;
+        this.password = password;
+        this.accessToken = accessToken;
     }
 
     public Long getId() {
@@ -41,6 +50,10 @@ public class Member {
 
     public Password getPassword() {
         return password;
+    }
+
+    public AccessToken getAccessToken() {
+        return accessToken;
     }
 
     public void update(Email email, Password password){
