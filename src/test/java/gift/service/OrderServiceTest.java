@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.then;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.order.OrderDto;
+import gift.product.exception.LoginFailedException;
 import gift.product.model.Category;
 import gift.product.model.KakaoToken;
 import gift.product.model.Option;
@@ -21,6 +22,7 @@ import gift.product.repository.OrderRepository;
 import gift.product.repository.WishRepository;
 import gift.product.service.OrderService;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -39,6 +41,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @SuppressWarnings("NonAsciiCharacters")
 class OrderServiceTest {
 
+    public static final String TEST_OAUTH_ACCESS_TOKEN = "test_oauth_access_token";
+    public static final String TEST_OAUTH_REFRESH_TOKEN = "test_oauth_refresh_token";
     MockWebServer mockWebServer;
     ObjectMapper objectMapper;
 
@@ -113,8 +117,8 @@ class OrderServiceTest {
         Option option = new Option(1L, "테스트옵션", 5, product);
         KakaoToken kakaoToken = new KakaoToken(1L,
             loginMemberIdDto.id(),
-            "test_oauth_access_token",
-            "test_oauth_refresh_token");
+            TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
 
         String resultCode = "{\"result_code\":0}";
         mockWebServer.enqueue(new MockResponse().setBody(resultCode));
@@ -162,5 +166,147 @@ class OrderServiceTest {
         assertThatThrownBy(
             () -> orderService.doOrder(orderDto, loginMemberIdDto, "test_url")).isInstanceOf(
             IllegalArgumentException.class);
+    }
+
+    @Test
+    void 존재하지_않는_주문_내역_조회() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        given(orderRepository.findByIdAndMemberId(1L, loginMemberIdDto.id())).willReturn(Optional.empty());
+
+        //when, then
+        assertThatThrownBy(() -> orderService.getOrder(1L, loginMemberIdDto)).isInstanceOf(
+            NoSuchElementException.class);
+    }
+
+    @Test
+    void 주문_시_카카오톡_메시지_API_에러() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        OrderDto orderDto = new OrderDto(1L, 2, "test_message");
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1000, "테스트주소", category);
+        Option option = new Option(1L, "테스트옵션", 5, product);
+        Order order = new Order(1L,
+            option.getId(),
+            loginMemberIdDto.id(),
+            orderDto.quantity(),
+            orderDto.message());
+        KakaoToken kakaoToken = new KakaoToken(1L,
+            TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
+
+        mockWebServer.enqueue(new MockResponse().setResponseCode(400));
+        String mockUrl = mockWebServer.url("/v2/api/talk/memo/default/send").toString();
+
+        given(optionRepository.findById(orderDto.optionId())).willReturn(Optional.of(option));
+        given(authRepository.existsById(loginMemberIdDto.id())).willReturn(true);
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            loginMemberIdDto.id())).willReturn(false);
+        given(orderRepository.save(any())).willReturn(order);
+        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.of(
+            kakaoToken));
+
+        //when, then
+        assertThatThrownBy(() -> orderService.doOrder(orderDto, loginMemberIdDto, mockUrl)).isInstanceOf(
+            LoginFailedException.class).hasMessage("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+    }
+
+    @Test
+    void 존재하지_않는_옵션에_대한_주문() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        OrderDto orderDto = new OrderDto(1L, 2, "test_message");
+        given(optionRepository.findById(orderDto.optionId())).willReturn(Optional.empty());
+
+        //when, then
+        assertThatThrownBy(() -> orderService.doOrder(orderDto,
+            loginMemberIdDto,
+            "test_url")).isInstanceOf(
+            NoSuchElementException.class).hasMessage("해당 ID의 옵션이 존재하지 않습니다.");
+    }
+
+    @Test
+    void 존재하지_않는_회원_정보로_주문() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        OrderDto orderDto = new OrderDto(1L, 2, "test_message");
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1000, "테스트주소", category);
+        Option option = new Option(1L, "테스트옵션", 5, product);
+
+        given(optionRepository.findById(orderDto.optionId())).willReturn(Optional.of(option));
+        given(authRepository.existsById(loginMemberIdDto.id())).willReturn(false);
+
+        //when, then
+        assertThatThrownBy(() -> orderService.doOrder(orderDto,
+            loginMemberIdDto,
+            "test_url")).isInstanceOf(
+            NoSuchElementException.class).hasMessage("해당 ID의 회원이 존재하지 않습니다.");
+    }
+
+    @Test
+    void 카카오_로그인을_하지_않은_회원이_주문_요청() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        OrderDto orderDto = new OrderDto(1L, 2, "test_message");
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1000, "테스트주소", category);
+        Option option = new Option(1L, "테스트옵션", 5, product);
+
+        given(optionRepository.findById(orderDto.optionId())).willReturn(Optional.of(option));
+        given(authRepository.existsById(loginMemberIdDto.id())).willReturn(true);
+        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.empty());
+
+        //when, then
+        assertThatThrownBy(() -> orderService.doOrder(orderDto,
+            loginMemberIdDto,
+            "test_url")).isInstanceOf(
+            NoSuchElementException.class).hasMessage("카카오 계정 로그인을 수행한 후 다시 시도해주세요.");
+    }
+
+    @Test
+    void 주문_시_카카오톡_메시지_API_응답_결과_코드가_실패인_경우() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        OrderDto orderDto = new OrderDto(1L, 2, "test_message");
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1000, "테스트주소", category);
+        Option option = new Option(1L, "테스트옵션", 5, product);
+        Order order = new Order(1L,
+            option.getId(),
+            loginMemberIdDto.id(),
+            orderDto.quantity(),
+            orderDto.message());
+        KakaoToken kakaoToken = new KakaoToken(1L,
+            TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
+
+        String resultCode = "{\"result_code\":1}";
+        mockWebServer.enqueue(new MockResponse().setBody(resultCode));
+        String mockUrl = mockWebServer.url("/v2/api/talk/memo/default/send").toString();
+
+        given(optionRepository.findById(orderDto.optionId())).willReturn(Optional.of(option));
+        given(authRepository.existsById(loginMemberIdDto.id())).willReturn(true);
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            loginMemberIdDto.id())).willReturn(false);
+        given(orderRepository.save(any())).willReturn(order);
+        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.of(
+            kakaoToken));
+
+        //when, then
+        assertThatThrownBy(() -> orderService.doOrder(orderDto, loginMemberIdDto, mockUrl)).isInstanceOf(
+            LoginFailedException.class).hasMessage("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+    }
+
+    @Test
+    void 존재하지_않는_주문_내역_삭제() {
+        //given
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        given(orderRepository.existsById(1L)).willReturn(false);
+
+        //when, then
+        assertThatThrownBy(() -> orderService.deleteOrder(1L, loginMemberIdDto)).isInstanceOf(
+            NoSuchElementException.class);
     }
 }
