@@ -15,6 +15,7 @@ import gift.order.domain.Order;
 import gift.order.dto.TemplateObject;
 import gift.order.exception.OrderNotFoundException;
 import gift.order.repository.OrderRepository;
+import gift.wish.repository.WishRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -38,14 +39,16 @@ public class OrderService {
     private static final String MESSAGE_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
     private static final String WEB_URL = "https://developers.kakao.com";
     private static final String MOBILE_WEB_URL = "https://developers.kakao.com";
+    private final WishRepository wishRepository;
 
-    public OrderService(OrderRepository orderRepository, MemberService memberService, OptionService optionService, MemberRepository memberRepository, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public OrderService(OrderRepository orderRepository, MemberService memberService, OptionService optionService, MemberRepository memberRepository, RestTemplate restTemplate, ObjectMapper objectMapper, WishRepository wishRepository) {
         this.orderRepository = orderRepository;
         this.memberService = memberService;
         this.optionService = optionService;
         this.memberRepository = memberRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.wishRepository = wishRepository;
     }
 
     public OrderListResponseDto getAllOrders() {
@@ -62,6 +65,7 @@ public class OrderService {
         Member member = memberService.getMemberById(orderServiceDto.memberId());
         Option option = optionService.getOptionById(orderServiceDto.optionId());
         option.subtract(orderServiceDto.count().getOrderCountValue());
+        wishRepository.deleteByMemberAndProduct(member, option.getProduct());
         sendMessage(orderServiceDto.memberId(), orderServiceDto.message().getOrderMessageValue());
         return orderRepository.save(orderServiceDto.toOrder(member, option));
     }

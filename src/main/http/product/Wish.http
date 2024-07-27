@@ -1,6 +1,6 @@
 ### get wish list
 GET http://localhost:8080/api/wishes/all
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJfaWQiOjEsIm1lbWJlcl90eXBlIjoiVVNFUiIsImlhdCI6MTcyMDY3NTM1MiwiZXhwIjo0NjA1NTgwOTc4fQ.wkX4AiHs8ucCfYpWQMxduNUmX9IQWu16b64HWO3p4x0jorEWp9LjeRxDh2cRIgbi6eqnwTUzzpZGexX3ZPYVmA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJfaWQiOjQsIm1lbWJlcl90eXBlIjoiVVNFUiIsImlhdCI6MTcyMjA5NzA5MCwiZXhwIjo0NjA3MDAyNzE2fQ.tNIlnVJ6qx4LaCOoRY1O3G81yDVCZnJJxvF2b-yjOc3GcuItK_LEz-wlCY9pbSdOs2kt_EcIxhqbh5dxiSiLkQ
 Content-Type: application/json
 
 ### get wish list
@@ -16,12 +16,12 @@ Content-Type: application/json
 
 ### create wish
 POST http://localhost:8080/api/wishes
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJfaWQiOjEsIm1lbWJlcl90eXBlIjoiVVNFUiIsImlhdCI6MTcyMDY3NTM1MiwiZXhwIjo0NjA1NTgwOTc4fQ.wkX4AiHs8ucCfYpWQMxduNUmX9IQWu16b64HWO3p4x0jorEWp9LjeRxDh2cRIgbi6eqnwTUzzpZGexX3ZPYVmA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJfaWQiOjQsIm1lbWJlcl90eXBlIjoiVVNFUiIsImlhdCI6MTcyMjA5NzA5MCwiZXhwIjo0NjA3MDAyNzE2fQ.tNIlnVJ6qx4LaCOoRY1O3G81yDVCZnJJxvF2b-yjOc3GcuItK_LEz-wlCY9pbSdOs2kt_EcIxhqbh5dxiSiLkQ
 Content-Type: application/json
 
 {
   "memberId": 1,
-  "productId": 2,
+  "productId": 1,
   "productCount": 5
 }
 
