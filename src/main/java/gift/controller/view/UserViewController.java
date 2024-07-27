@@ -2,12 +2,20 @@ package gift.controller.view;
 
 import gift.service.OrderService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class UserViewController {
+
+    @Value("${kakao.client-id}")
+    private String clientId;
+    @Value(("${kakao.redirect-url}"))
+    private String redirectUrl;
+    @Value(("${kakao.response-type}"))
+    private String responseType;
 
     private final OrderService orderService;
 
@@ -16,12 +24,18 @@ public class UserViewController {
     }
 
     @GetMapping("/signup")
-    public String signup() {
+    public String signup(Model model) {
+        model.addAttribute("clientId", clientId);
+        model.addAttribute("redirectUrl", redirectUrl);
+        model.addAttribute("responseType", responseType);
         return "signup";
     }
 
     @GetMapping("/login")
-    public String login() {
+    public String login(Model model) {
+        model.addAttribute("clientId", clientId);
+        model.addAttribute("redirectUrl", redirectUrl);
+        model.addAttribute("responseType", responseType);
         return "login";
     }
 

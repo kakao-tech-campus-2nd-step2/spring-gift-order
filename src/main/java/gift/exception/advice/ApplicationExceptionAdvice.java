@@ -1,7 +1,7 @@
 package gift.exception.advice;
 
+import gift.entity.MessageResponseDTO;
 import gift.exception.ResourceNotFoundException;
-import gift.util.ResponseUtility;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,46 +10,38 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.security.sasl.AuthenticationException;
-import java.util.Map;
 
 @RestControllerAdvice
 public class ApplicationExceptionAdvice {
 
-    private final ResponseUtility responseUtility;
-
-    public ApplicationExceptionAdvice(ResponseUtility responseUtility) {
-        this.responseUtility = responseUtility;
-    }
-
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Map<String, String>> handleNotFound(ResourceNotFoundException e) {
+    public ResponseEntity<MessageResponseDTO> handleNotFound(ResourceNotFoundException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(responseUtility.makeResponse(e.getMessage()));
+                .body(new MessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleBadRequest(IllegalArgumentException e) {
+    public ResponseEntity<MessageResponseDTO> handleBadRequest(IllegalArgumentException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(responseUtility.makeResponse(e.getMessage()));
+                .body(new MessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<Map<String, String>> handleUnauthorized(ResponseStatusException e) {
+    public ResponseEntity<MessageResponseDTO> handleUnauthorized(ResponseStatusException e) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(responseUtility.makeResponse(e.getMessage()));
+                .body(new MessageResponseDTO(e.getMessage()));
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseEntity<Map<String, String>> handleConflict(ResponseStatusException e) {
+    public ResponseEntity<MessageResponseDTO> handleConflict(ResponseStatusException e) {
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(responseUtility.makeResponse(e.getMessage()));
+                .status(e.getStatusCode())
+                .body(new MessageResponseDTO(e.getMessage()));
     }
 }

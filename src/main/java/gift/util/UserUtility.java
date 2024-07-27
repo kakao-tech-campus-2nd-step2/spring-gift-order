@@ -37,12 +37,6 @@ public class UserUtility {
         return accessToken;
     }
 
-    public Map<String, String> accessTokenToObject(String accessToken) {
-        Map<String, String> obj = new HashMap<>();
-        obj.put("accessToken", accessToken);
-        return obj;
-    }
-
     public Claims tokenParser(String accessToken) {
         try {
             Jws<Claims> jwt;

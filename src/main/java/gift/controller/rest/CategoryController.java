@@ -2,26 +2,21 @@ package gift.controller.rest;
 
 import gift.entity.Category;
 import gift.entity.CategoryDTO;
+import gift.entity.MessageResponseDTO;
 import gift.service.CategoryService;
-import gift.util.ResponseUtility;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final ResponseUtility responseUtility;
 
-    @Autowired
-    public CategoryController(CategoryService categoryService, ResponseUtility responseUtility) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.responseUtility = responseUtility;
     }
 
     @GetMapping()
@@ -48,10 +43,10 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<MessageResponseDTO> deleteCategory(@PathVariable Long id) {
         categoryService.delete(id);
         return ResponseEntity
                 .ok()
-                .body(responseUtility.makeResponse("deleted successfully"));
+                .body(new MessageResponseDTO("deleted successfully"));
     }
 }

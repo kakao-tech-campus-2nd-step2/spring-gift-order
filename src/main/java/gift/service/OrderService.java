@@ -3,6 +3,7 @@ package gift.service;
 import gift.entity.*;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.*;
+import jakarta.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,15 +43,17 @@ public class OrderService {
         this.userService = userService;
     }
 
-    public Order save(String email, OrderDTO orderDTO) {
-        ProductOption result = productOptionRepository
+    public Order save(HttpSession session, OrderDTO orderDTO) {
+        String email = (String) session.getAttribute("email");
+
+        ProductOption productOption = productOptionRepository
                 .findByProductIdAndOptionId(orderDTO.getProductId(), orderDTO.getOptionId())
                 .orElseThrow(() -> new ResourceNotFoundException("Illegal order"));
 
         User user = userService.findOne(email);
 
         // 해당 옵션 수량 차감
-        Option option = result.getOption();
+        Option option = productOption.getOption();
         optionService.subtract(option.getId(), orderDTO.getQuantity());
 
         // 위시리스트에 있으면 삭제
@@ -62,7 +65,15 @@ public class OrderService {
         Order order = new Order(orderDTO);
         order.setUser(user);
 
-        return orderRepository.save(order);
+        Order result = orderRepository.save(order);
+
+        // 카톡 나에게 전송
+        String kakaoAccessToken = (String) session.getAttribute("kakaoAccessToken");
+        if (kakaoAccessToken != null) {
+            sendToMe(kakaoAccessToken, orderDTO);
+        }
+
+        return result;
     }
 
     public List<Order> findAll(String email) {
