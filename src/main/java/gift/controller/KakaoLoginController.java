@@ -1,8 +1,10 @@
 package gift.controller;
 
+import gift.exception.MemberNotFoundException;
 import gift.service.KakaoService;
 import gift.util.KakaoProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +30,23 @@ public class KakaoLoginController {
 
     @GetMapping("/kakao/oauth2/callback")
     public String callbackKakao(@RequestParam String code, Model model) {
-        String accessToken = kakaoService.getKakaoAccessToken(code);
-        model.addAttribute("accessToken", accessToken);
-        return "kakaoLoginSuccess";
+
+        try {
+            String accessToken = kakaoService.login(code);
+            model.addAttribute("accessToken", accessToken);
+            return "home";
+        } catch (MemberNotFoundException e) {
+            return "register";
+        }
+
     }
 
     @GetMapping("/kakao/loginSuccess")
     public String loginSuccess() {
         return "kakaoLoginSuccess";
     }
+
+
+
+
 }
