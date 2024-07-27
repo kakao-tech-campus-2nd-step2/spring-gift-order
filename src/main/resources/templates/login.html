@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login Form</title>
     <link rel="stylesheet" href="https://unpkg.com/mvp.css">
@@ -19,7 +19,7 @@
 <a id="kakao-login">Kakao Login &rarr;</a>
 <div id="message"></div>
 
-<script>
+<script th:inline="javascript">
     const userUrl = "http://localhost:8080/api/users";
 
     const loginForm = document.getElementById('loginForm');
@@ -28,9 +28,9 @@
     const kakaoButton = document.getElementById('kakao-login')
 
     const kakaoParams = {
-        client_id: "7e91870429d8d9503459b3e9a78892cb",
-        redirect_uri: "http://localhost:8080/kakao",
-        response_type: "code",
+        client_id: [[${clientId}]],
+        redirect_uri: [[${redirectUrl}]],
+        response_type: [[${responseType}]],
     }
     const paramK = new URLSearchParams(kakaoParams).toString();
 
