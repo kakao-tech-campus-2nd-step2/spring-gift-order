@@ -55,9 +55,9 @@ public class UserService {
     }
 
     public UserDTO findPassword(String email) {
+        System.out.println(email);
         UserInfo byEmail = userInfoRepository.findByEmail(email).orElseThrow(
             () -> new UserNotFoundException("User NOT FOUND"));
-
         return new UserDTO(byEmail.getPassword(), byEmail.getEmail());
     }
 

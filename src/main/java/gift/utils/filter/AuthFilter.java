@@ -39,8 +39,11 @@ public class AuthFilter implements Filter {
         if (path.equals("/api/user/login") || path.equals("/api/user/register") || path.startsWith("/user")
             || path.startsWith("/h2-console") || path.equals("/api/oauth/authorize")
             || path.equals("/api/oauth/token")
-            || path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")
-            || path.startsWith("/swagger-resources") || path.equals("/swagger-ui.html")) {
+            || path.equals("/swagger-ui.html") // 변경
+            || path.startsWith("/swagger-ui")
+            || path.startsWith("/api-docs") // 추가
+            || path.startsWith("/v3/api-docs")
+            || path.startsWith("/swagger-resources")) {
             filterChain.doFilter(request, response);
             return;
         }
