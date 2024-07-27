@@ -3,8 +3,11 @@ package gift.service.kakao;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.order.OrderRequest;
 import gift.domain.product.option.ProductOption;
 import gift.domain.user.User;
+import gift.repository.product.option.ProductOptionRepository;
+import gift.repository.wish.WishRepository;
 import gift.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,15 +30,23 @@ public class KakaoService {
     private final ObjectMapper objectMapper;
     private final KakaoProperties kakaoProperties;
     private final UserService userService;
-    private final JwtTokenUtil jwtTokenUtil;  // Add JwtTokenUtil field
+    private final ProductOptionRepository productOptionRepository;
+    private final WishRepository wishRepository;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public KakaoService(KakaoProperties kakaoProperties, UserService userService, JwtTokenUtil jwtTokenUtil) {
+    public KakaoService(KakaoProperties kakaoProperties,
+                        UserService userService,
+                        ProductOptionRepository productOptionRepository,
+                        WishRepository wishRepository,
+                        JwtTokenUtil jwtTokenUtil) {
         this.client = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
         this.kakaoProperties = kakaoProperties;
         this.userService = userService;
-        this.jwtTokenUtil = jwtTokenUtil;  // Initialize JwtTokenUtil
+        this.productOptionRepository = productOptionRepository;
+        this.wishRepository = wishRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
 
@@ -134,6 +145,7 @@ public class KakaoService {
         return userInfo;
     }
 
+
     @Transactional
     public Map<String, Object> createOrder(User user, String accessToken, OrderRequest orderRequest) {
         ProductOption productOption = productOptionRepository.findById(orderRequest.getOptionId())
@@ -162,5 +174,39 @@ public class KakaoService {
         response.put("message", orderRequest.getMessage());
 
         return response;
+    }
+
+    private void sendKakaoMessage(User user, String accessToken, String message, String optionName, Long quantity) {
+        String reqURL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("template_object", createTemplateObject(user, message, optionName, quantity));
+
+        try {
+            client.post()
+                    .uri(URI.create(reqURL))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+        } catch (RestClientResponseException e) {
+            throw new RuntimeException("Failed to send Kakao message", e);
+        }
+    }
+
+    private String createTemplateObject(User user, String message, String optionName, Long quantity) {
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", String.format("Order received: %s\nOption: %s\nQuantity: %d\nMessage: %s",
+                user.getEmail(), optionName, quantity, message));
+        templateObject.put("link", Map.of("web_url", "http://your-web-url.com"));
+        //"web_url" 키에 해당하는 웹 URL을 지정하여 사용자가 메시지에서 클릭할 수 있는 링크를 제공
+
+        try {
+            return objectMapper.writeValueAsString(templateObject);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create template object", e);
+        }
     }
 }
