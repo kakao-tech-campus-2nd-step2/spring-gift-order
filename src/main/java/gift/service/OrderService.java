@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.config.WebClientUtil;
 import gift.dto.OrderRequestDto;
+import gift.dto.OrderResponseDto;
 import gift.exception.ValueNotFoundException;
 import gift.model.member.KakaoProperties;
 import gift.model.product.Option;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -29,7 +31,7 @@ public class OrderService {
         this.webClientUtil = new WebClientUtil(webClientBuilder);
     }
 
-    public void requestOrder(OrderRequestDto orderRequestDto, String accessToken){
+    public OrderResponseDto requestOrder(OrderRequestDto orderRequestDto, String accessToken){
         Option option = optionRepository.findById(orderRequestDto.optionId()).
                 orElseThrow(() -> new ValueNotFoundException("Option not exists in Database"));
         if(option.isProductNotEnough(orderRequestDto.quantity())){
@@ -43,11 +45,20 @@ public class OrderService {
         if(wish.isPresent()){
             wishRepository.delete(wish.get());
         }
+
         int resultCode = sendOrderConfirmationMessage(orderRequestDto,accessToken);
         if(resultCode != 0){
             throw new RuntimeException("Kakao Server Error");
         }
+        OrderResponseDto responseDto = new OrderResponseDto(
+                1,
+                orderRequestDto.optionId(),
+                orderRequestDto.quantity(),
+                LocalDateTime.now(),
+                orderRequestDto.message()
+        );
 
+        return responseDto;
     }
     public int sendOrderConfirmationMessage(OrderRequestDto orderRequestDto, String accessToken){
         WebClient webClient = webClientUtil.createWebClient(kakaoProperties.getUserInfoUrl());
