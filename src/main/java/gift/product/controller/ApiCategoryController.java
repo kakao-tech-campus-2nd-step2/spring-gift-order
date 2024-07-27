@@ -80,7 +80,7 @@ public class ApiCategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
         System.out.println("[CategoryController] updateCategory()");
-        Category category = categoryService.updateCategory(new Category(id, categoryDTO.getName()));
+        Category category = categoryService.updateCategory(categoryDTO.convertToDomain(id));
         return ResponseEntity.status(HttpStatus.CREATED).body(category);
     }
 

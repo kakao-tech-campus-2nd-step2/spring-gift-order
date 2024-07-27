@@ -9,15 +9,22 @@ public class CategoryDTO {
     private String name;
 
     public CategoryDTO() {}
+
     public CategoryDTO(String name) {}
 
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Category convertToDomain() {
         return new Category(this.name);
+    }
+
+    public Category convertToDomain(Long id) {
+        return new Category(id, this.name);
     }
 }
