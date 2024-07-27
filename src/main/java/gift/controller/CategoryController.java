@@ -3,6 +3,8 @@ package gift.controller;
 import gift.dto.CategoryDTO;
 import gift.dto.PageRequestDTO;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/categories")
 @Validated
+@Tag(name = "Category Management", description = "APIs for managing categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -33,6 +36,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "Get all categories", description = "This API retrieves all categories with pagination.")
     public String allCategories(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") @Min(1) @Max(30) int size,
@@ -53,12 +57,14 @@ public class CategoryController {
     }
 
     @GetMapping("/add")
+    @Operation(summary = "Get add category form", description = "This API returns the form to add a new category.")
     public String addCategoryForm(Model model) {
         model.addAttribute("category", new CategoryDTO());
         return "Add_category";
     }
 
     @PostMapping
+    @Operation(summary = "Add a new category", description = "This API adds a new category.")
     public String addCategory(@Valid @ModelAttribute("category") CategoryDTO categoryDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "Add_category";
@@ -68,6 +74,7 @@ public class CategoryController {
     }
 
     @GetMapping("/edit/{id}")
+    @Operation(summary = "Get edit category form", description = "This API returns the form to edit an existing category.")
     public String editCategoryForm(@PathVariable Long id, Model model) {
         Optional<CategoryDTO> categoryDTO = categoryService.findCategoryById(id);
         if (categoryDTO.isEmpty()) {
@@ -78,6 +85,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing category", description = "This API updates an existing category.")
     public String updateCategory(@Valid @ModelAttribute("category") CategoryDTO categoryDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "Edit_category";
@@ -87,6 +95,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a category", description = "This API deletes an existing category.")
     public String deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return "redirect:/admin/categories";

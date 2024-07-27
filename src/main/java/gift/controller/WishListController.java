@@ -3,6 +3,8 @@ package gift.controller;
 import gift.dto.PageRequestDTO;
 import gift.dto.WishListDTO;
 import gift.service.WishListService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/wishlist")
 @Validated
+@Tag(name = "WishList Management", description = "APIs for managing wishlists")
 public class WishListController {
 
     private final WishListService wishListService;
@@ -31,6 +34,7 @@ public class WishListController {
     }
 
     @GetMapping
+    @Operation(summary = "View wishlist", description = "This API retrieves the wishlist with pagination.")
     public String viewWishList(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") @Min(1) @Max(30) int size,
@@ -57,12 +61,14 @@ public class WishListController {
     }
 
     @GetMapping("/add")
+    @Operation(summary = "Show add product form", description = "This API returns the form to add a new product to the wishlist.")
     public String showAddProductForm(Model model) {
         model.addAttribute("productId", new Long(0));
         return "add_product_to_wishlist";
     }
 
     @PostMapping("/add")
+    @Operation(summary = "Add a product to wishlist", description = "This API adds a new product to the wishlist.")
     public String addProductToWishList(@RequestBody Map<String, Long> payload, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         Long productId = payload.get("productId");
@@ -71,6 +77,7 @@ public class WishListController {
     }
 
     @DeleteMapping("/remove/{productId}")
+    @Operation(summary = "Remove a product from wishlist", description = "This API removes a product from the wishlist.")
     public String removeProductFromWishList(@PathVariable Long productId, HttpServletRequest request) {
         String email = (String) request.getAttribute("email");
         wishListService.removeProductFromWishList(email, productId);

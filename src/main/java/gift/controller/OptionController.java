@@ -3,6 +3,8 @@ package gift.controller;
 import gift.dto.OptionDTO;
 import gift.dto.PageRequestDTO;
 import gift.service.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 @RequestMapping("/admin/options")
 @Validated
+@Tag(name = "Option Management", description = "APIs for managing options")
 public class OptionController {
 
     private final OptionService optionService;
@@ -33,6 +36,7 @@ public class OptionController {
     }
 
     @GetMapping
+    @Operation(summary = "Get all options", description = "This API retrieves all options with pagination.")
     public String allOptions(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") @Min(1) @Max(30) int size,
@@ -53,12 +57,14 @@ public class OptionController {
     }
 
     @GetMapping("/add")
+    @Operation(summary = "Get add option form", description = "This API returns the form to add a new option.")
     public String addOptionForm(Model model) {
         model.addAttribute("option", new OptionDTO());
         return "Add_option";
     }
 
     @PostMapping
+    @Operation(summary = "Add a new option", description = "This API adds a new option.")
     public String addOption(@Valid @ModelAttribute("option") OptionDTO optionDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "Add_option";
@@ -68,6 +74,7 @@ public class OptionController {
     }
 
     @GetMapping("/edit/{id}")
+    @Operation(summary = "Get edit option form", description = "This API returns the form to edit an existing option.")
     public String editOptionForm(@PathVariable Long id, Model model) {
         Optional<OptionDTO> optionDTO = optionService.findOptionById(id);
         if (optionDTO.isEmpty()) {
@@ -78,6 +85,7 @@ public class OptionController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing option", description = "This API updates an existing option.")
     public String updateOption(@Valid @ModelAttribute("option") OptionDTO optionDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return "Edit_option";
@@ -87,6 +95,7 @@ public class OptionController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an option", description = "This API deletes an existing option.")
     public String deleteOption(@PathVariable Long id) {
         optionService.deleteOption(id);
         return "redirect:/admin/options";

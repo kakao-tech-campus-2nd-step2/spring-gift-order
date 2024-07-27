@@ -2,6 +2,8 @@ package gift.controller;
 
 import gift.dto.UserDTO;
 import gift.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/users")
+@Tag(name = "User Management", description = "APIs for user management")
 public class UserController {
 
     private final UserService userService;
@@ -27,12 +30,14 @@ public class UserController {
     }
 
     @GetMapping("/register")
+    @Operation(summary = "Show registration form", description = "This API returns the registration form.")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new UserDTO());
         return "Register";
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user", description = "This API registers a new user.")
     public String register(@Valid @ModelAttribute UserDTO userDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", userDTO);
@@ -43,6 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/login")
+    @Operation(summary = "Show login form", description = "This API returns the login form.")
     public String showLoginForm(Model model) {
         model.addAttribute("user", new UserDTO());
         return "Login";
@@ -50,6 +56,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ResponseBody
+    @Operation(summary = "User login", description = "This API handles user login and returns a token if successful.")
     public ResponseEntity<Map<String, Object>> login(@ModelAttribute UserDTO userDTO) {
         String token = userService.login(userDTO.getEmail(), userDTO.getPassword());
         Map<String, Object> response = new HashMap<>();
