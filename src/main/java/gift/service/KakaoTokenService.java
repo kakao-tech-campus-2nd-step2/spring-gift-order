@@ -58,7 +58,7 @@ public class KakaoTokenService {
                         );
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                        throw new InternalServerException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
                         .toString().replace("{", "").replace("}", "").trim()
                         );
                     }).toEntity(TokenResponseDTO.class);
@@ -84,7 +84,7 @@ public class KakaoTokenService {
                         );
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                        throw new InternalServerException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
                                 .toString().replace("{", "").replace("}", "").trim()
                         );
                     }).toEntity(KakaoUserInfoDTO.class);
@@ -107,7 +107,7 @@ public class KakaoTokenService {
             ObjectMapper mapper = new ObjectMapper();
             body.add("template_object", mapper.writeValueAsString(makeOrderMsgDTO(optionInfo, message)));
 
-            ResponseEntity<KakaoMsgResponseDTO> responseUserInfo = client.post()
+            client.post()
                     .uri(URI.create(orderUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .header("Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -117,7 +117,7 @@ public class KakaoTokenService {
                         );
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                        throw new BadRequestException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
+                        throw new InternalServerException("서버에서 오류가 발생하였습니다.\n" + response.getBody()
                                 .toString().replace("{", "").replace("}", "").trim()
                         );
                     }).toEntity(KakaoMsgResponseDTO.class);
