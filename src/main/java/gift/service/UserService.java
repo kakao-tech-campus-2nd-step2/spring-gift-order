@@ -128,10 +128,10 @@ public class UserService {
         User user = userRepository.findByEmail(email).get();
         String accessToken = userUtility.makeAccessToken(user);
 
-        Map<String, String> response = new HashMap<>();
-        response.put("email", email);
-        response.put("accessToken", accessToken);
+        Map<String, String> result = new HashMap<>();
+        result.put("email", email);
+        result.put("accessToken", accessToken);
 
-        return response;
+        return result;
     }
 }
