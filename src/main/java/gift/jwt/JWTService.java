@@ -1,5 +1,7 @@
 package gift.jwt;
 
+import gift.user.KakaoUser;
+import gift.user.KakaoUserDTO;
 import gift.user.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -28,7 +30,20 @@ public class JWTService {
                 .issuedAt(now).expiration(createExpiredDate(now))
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .compact();
-        }
+    }
+
+    public String generateAccessToken(KakaoUserDTO kakaoUser){
+        Date now = new Date();
+        String encodeString = String.valueOf(kakaoUser.getId()).repeat(5);
+        secretKey = Base64.getEncoder().encodeToString(encodeString.getBytes(StandardCharsets.UTF_8));
+        return Jwts.builder()
+                .subject(kakaoUser.getId().toString())
+                .claim("accessToken", kakaoUser.getAccessToken())
+                .claim("refreshToken", kakaoUser.getRefreshToken())
+                .issuedAt(now).expiration(createExpiredDate(now))
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                .compact();
+    }
 
 
     private Date createExpiredDate(Date now) {
@@ -44,6 +59,18 @@ public class JWTService {
             return null;
         }
     }
+
+    public boolean isKakaoUser(String jwt){
+        String tokenFromHeader = getTokenFromHeader(jwt);
+        try{
+            Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(tokenFromHeader).getPayload().get("accessToken").toString();
+            return true;
+        }
+        catch (SignatureException e){
+            return false;
+        }
+    }
+
     public String getTokenFromHeader(String header) {
         return header.split(" ")[1];
     }

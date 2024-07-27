@@ -2,6 +2,9 @@ package gift.kakaoLogin;
 
 import gift.exception.ErrorCode;
 import gift.exception.KakaoException;
+import gift.user.KakaoUser;
+import gift.user.KakaoUserRepository;
+import gift.user.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +18,8 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class KakaoLoginService {
@@ -25,13 +29,15 @@ public class KakaoLoginService {
     @Value("${kakao.redirect-url}")
     private String REDIRECT_URI;
     private final RestClient kakaoRestClient;
+    private final KakaoUserRepository kakaoUserRepository;
     private static final Logger log = LoggerFactory.getLogger(KakaoLoginService.class);
 
-    public KakaoLoginService(RestClient kakaoRestClient) {
+    public KakaoLoginService(RestClient kakaoRestClient, KakaoUserRepository kakaoUserRepository) {
         this.kakaoRestClient = kakaoRestClient;
+        this.kakaoUserRepository = kakaoUserRepository;
     }
 
-    public String login(String code){
+    public KakaoResponse login(String code){
         var url = "https://kauth.kakao.com/oauth/token";
 
         LinkedMultiValueMap<String, String> body = createBody(code);
@@ -48,8 +54,23 @@ public class KakaoLoginService {
                 }))
                 .toEntity(KakaoResponse.class);
 
-        return response.getBody().getAccess_token();
+        return response.getBody();
     }
+
+
+    public Long getUserInfo(String accessToken){
+        var url = "https://kapi.kakao.com/v2/user/me";
+
+        ResponseEntity<KakaoUserInfoResponse> response = kakaoRestClient.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .toEntity(KakaoUserInfoResponse.class);
+
+        return Objects.requireNonNull(response.getBody()).getId();
+    }
+
 
     private static ErrorCode getKauthErrorCode(ClientHttpResponse response) throws IOException {
         if(!response.getHeaders().containsKey("WWW-Authenticate")){

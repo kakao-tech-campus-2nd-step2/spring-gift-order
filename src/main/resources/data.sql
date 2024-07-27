@@ -110,10 +110,11 @@ values (3,
         '이미지URL3.....');
 
 
-INSERT INTO USERS (email, nickname, password)
+INSERT INTO USERS (email, nickname, password, user_type)
 values ('yoonsu0325@gmail.com',
         'yoonsu0325',
-        'thisIsPassword1234');
+        'thisIsPassword1234',
+        'normal_user');
 
 INSERT INTO OPTIONS (name, quantity, product_id)
 values ('Tall',

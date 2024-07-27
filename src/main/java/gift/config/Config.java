@@ -34,6 +34,6 @@ public class Config implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        //resolvers.add(new LoginUserArgumentResolver(userService, jwtService));
+        resolvers.add(new LoginUserArgumentResolver(userService, jwtService));
     }
 }

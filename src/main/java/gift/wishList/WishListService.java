@@ -3,8 +3,13 @@ package gift.wishList;
 import gift.option.Option;
 import gift.option.OptionRepository;
 import gift.product.Product;
+import gift.user.IntegratedUser;
+import gift.user.KakaoUser;
 import gift.user.User;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,11 +27,16 @@ public class WishListService {
         this.optionRepository = optionRepository;
     }
 
-    public WishListResponse addWish(WishListRequest wishListDTO, User user) {
+    public WishListResponse addWish(WishListRequest wishListDTO, IntegratedUser user) {
         Option option = optionRepository.findById(wishListDTO.getOptionID()).orElseThrow();
         Product product = option.getProduct();
-
-        Optional<WishList> exist = wishListRepository.findByUserAndOptionId(user, option.getId());
+        Optional<WishList> exist = Optional.empty();
+        if(user instanceof User){
+            exist = wishListRepository.findByUserAndOptionId((User) user, option.getId());
+        }
+        if(user instanceof KakaoUser){
+            exist = wishListRepository.findByKakaouserAndOptionId((KakaoUser) user, option.getId());
+        }
         if(exist.isPresent()){
             return updateCount(new CountDTO(wishListDTO.count + exist.get().getCount()), exist.get().getId());
         }
@@ -46,27 +56,55 @@ public class WishListService {
         return wishListDTOS;
     }
 
+    public List<WishListResponse> findByIntegratedUser(IntegratedUser user) {
+        if(user instanceof User) return findByUser((User) user);
+        if(user instanceof KakaoUser) return findByKakaoUser((KakaoUser) user);
+        return null;
+    }
+
+    public List<WishListResponse> findByKakaoUser(KakaoUser kakaoUser) {
+        List<WishList> wishLists = wishListRepository.findByKakaouser(kakaoUser);
+        List<WishListResponse> wishListDTOS = new ArrayList<>();
+        wishLists.forEach((wishList -> wishListDTOS.add(new WishListResponse(wishList))));
+        return wishListDTOS;
+    }
+
     public WishListResponse updateCount(CountDTO count, Long id) {
         WishList wishList = wishListRepository.findById(id).orElseThrow();
         wishList.setCount(count.getCount());
         return new WishListResponse(wishList);
     }
 
-    public void deleteByID(Long id) {
+    public Optional<WishList> findByKakaoUserAndOptionID(Long optionID, KakaoUser kakaoUser){
+        return wishListRepository.findByKakaouserAndOptionId(kakaoUser, optionID);
+    }
+
+    public void deleteByID(Long id, IntegratedUser user) {
         WishList wishList = wishListRepository.findById(id).orElseThrow();
-        wishList.getUser().removeWishList(wishList);
+        if(user instanceof User){
+            wishList.getUser().removeWishList(wishList);
+        }
+        if(user instanceof KakaoUser){
+            wishList.getKakaouser().removeWishList(wishList);
+        }
+
         wishList.getOption().removeWishList(wishList);
         wishListRepository.deleteById(id);
     }
 
-    public Page<WishListResponse> getWishListsPages(int pageNum, int size, User user, String sortBy, String sortDirection) {
+    public Page<WishListResponse> getWishListsPages(int pageNum, int size, IntegratedUser user, String sortBy, String sortDirection) {
         Pageable pageable = PageRequest.of(pageNum, size, Sort.by(Sort.Order.asc(sortBy)));
         if (Objects.equals(sortDirection, "desc")) {
             pageable = PageRequest.of(pageNum, size, Sort.by(Sort.Order.desc(sortBy)));
         }
 
-        Page<WishList> wishLists = wishListRepository.findByUser(user, pageable);
-        return wishLists.map(WishListResponse::new);
+        if(user instanceof User) {
+            wishListRepository.findByUser((User) user, pageable).map(WishListResponse::new);
+        }
+        if(user instanceof KakaoUser) {
+            wishListRepository.findByKakaouser((KakaoUser) user, pageable).map(WishListResponse::new);
+        }
+        return null;
 
     }
 }

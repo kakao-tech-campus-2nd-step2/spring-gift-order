@@ -1,16 +1,20 @@
 package gift.user;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final KakaoUserRepository kakaoUserRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, KakaoUserRepository kakaoUserRepository) {
         this.userRepository = userRepository;
+        this.kakaoUserRepository = kakaoUserRepository;
     }
 
     public User registerUser(UserDTO userDTO) {
@@ -19,7 +23,32 @@ public class UserService {
                 new User(
                         userDTO.getEmail(),
                         userDTO.getPassword(),
-                        userDTO.getNickname()));
+                        userDTO.getNickname(),
+                        UserType.NORMAL_USER));
+    }
+
+    public KakaoUser registerKakaoUser(KakaoUserDTO kakaoUserDTO) {
+        User user = new User(null, null, null, UserType.KAKAO_USER);
+        userRepository.save(user);
+        KakaoUser kakaoUser = new KakaoUser(
+                kakaoUserDTO.getId(),
+                kakaoUserDTO.getAccessToken(),
+                kakaoUserDTO.getRefreshToken()
+        );
+        kakaoUser.setUser(user);
+        return kakaoUserRepository.save(kakaoUser);
+    }
+
+    public Optional<KakaoUser> findByKakaoSocialID(Long id){
+        return kakaoUserRepository.findById(id);
+    }
+
+    @Transactional
+    public KakaoUser updateKakaoUserToken(KakaoUserDTO kakaoUserDTO){
+        KakaoUser kakaoUser = findByKakaoSocialID(kakaoUserDTO.getId()).orElseThrow();
+        kakaoUser.setAccessToken(kakaoUser.accessToken);
+        kakaoUser.setRefreshToken(kakaoUser.refreshToken);
+        return kakaoUser;
     }
 
     public boolean validateUser(LoginDTO loginDTO) {
@@ -34,6 +63,11 @@ public class UserService {
 
     public User getUserById(Long id){
         return userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+    }
+
+    public KakaoUser getKakaoUserById(Long id){
+        return kakaoUserRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
     }
 
