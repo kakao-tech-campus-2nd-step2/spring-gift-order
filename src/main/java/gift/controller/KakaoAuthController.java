@@ -32,8 +32,10 @@ public class KakaoAuthController {
     }
 
     @GetMapping("/kakao/callback")
-    public ResponseEntity<String> getAccessToken(@RequestParam String code) {
+    public ResponseEntity<String> loginWithKakao(@RequestParam String code) {
         String token = kakaoAuthService.getAccessToken(code);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        String kakaoUserId = kakaoAuthService.getKakaoUserId(token);
+        kakaoAuthService.registerKakaoMember(kakaoUserId, token);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
