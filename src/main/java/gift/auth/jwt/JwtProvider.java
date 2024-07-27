@@ -1,6 +1,5 @@
 package gift.auth.jwt;
 
-import gift.auth.dto.Token;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import gift.exception.InvalidAuthException;
@@ -28,13 +27,13 @@ public class JwtProvider {
         this.secretKey = Keys.hmacShaKeyFor(key.getBytes());
     }
 
-    public Token generateToken(User user) {
+    public JwtToken generateToken(User user) {
 
         long now = (new Date()).getTime();
 
         Date accessTokenExpiresIn = new Date(now + ACCESSTOKEN_EXPIRATION_TIME);
 
-        return new Token(Jwts.builder()
+        return new JwtToken(Jwts.builder()
             .subject(user.getId().toString())
             .claim("name", user.getName())
             .claim("email", user.getEmail())

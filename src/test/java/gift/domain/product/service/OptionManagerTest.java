@@ -29,10 +29,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class OptionServiceTest {
+class OptionManagerTest {
 
     @Autowired
-    private OptionService optionService;
+    private OptionManager optionManager;
 
     @MockBean
     private OptionJpaRepository optionJpaRepository;
@@ -59,7 +59,7 @@ class OptionServiceTest {
         given(optionJpaRepository.save(any(Option.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // when
-        optionService.create(product, optionRequestDtos);
+        optionManager.create(product, optionRequestDtos);
 
         // then
         assertEquals(optionRequestDtos.size(), product.getOptions().size());
@@ -76,7 +76,7 @@ class OptionServiceTest {
         given(optionJpaRepository.save(any(Option.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // when & then
-        assertThrows(DuplicateOptionNameException.class, () -> optionService.create(product, List.of(optionRequestDto)));
+        assertThrows(DuplicateOptionNameException.class, () -> optionManager.create(product, List.of(optionRequestDto)));
     }
 
     @Test
@@ -88,7 +88,7 @@ class OptionServiceTest {
         given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
 
         // when
-        List<OptionResponse> actual = optionService.readAll(1L);
+        List<OptionResponse> actual = optionManager.readAll(1L);
 
         // then
         assertAll(
@@ -110,7 +110,7 @@ class OptionServiceTest {
         given(optionJpaRepository.save(any(Option.class))).willAnswer(invocation -> invocation.getArgument(0));
 
         // when
-        optionService.update(product, List.of(optionUpdateDto));
+        optionManager.update(product, List.of(optionUpdateDto));
 
         // then
         assertEquals(1, product.getOptions().size());
@@ -129,6 +129,6 @@ class OptionServiceTest {
         doNothing().when(optionJpaRepository).deleteAll(any());
 
         // when & then
-        assertThrows(DuplicateOptionNameException.class, () -> optionService.update(product, optionUpdateDtos));
+        assertThrows(DuplicateOptionNameException.class, () -> optionManager.update(product, optionUpdateDtos));
     }
 }

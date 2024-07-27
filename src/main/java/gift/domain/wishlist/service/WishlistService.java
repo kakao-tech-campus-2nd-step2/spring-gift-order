@@ -54,12 +54,4 @@ public class WishlistService {
     public void deleteAllByUserId(User user) {
         wishlistJpaRepository.deleteAllByUserId(user.getId());
     }
-
-    public void deleteAllByProductId(long productId) {
-        wishlistJpaRepository.deleteAllByProductId(productId);
-    }
-
-    public void deleteOrderedWishItem(User user, Product product) {
-        wishlistJpaRepository.deleteByUserAndProduct(user, product);
-    }
 }

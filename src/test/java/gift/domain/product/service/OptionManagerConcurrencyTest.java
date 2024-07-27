@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class OptionServiceConcurrencyTest {
+public class OptionManagerConcurrencyTest {
 
     @Autowired
-    private OptionService optionService;
+    private OptionManager optionManager;
 
     @Autowired
     private CategoryJpaRepository categoryJpaRepository;
@@ -50,7 +50,7 @@ public class OptionServiceConcurrencyTest {
         for (int i = 0; i < threadCount; i++) {
             executorService.submit(() -> {
                 try {
-                    optionService.subtractQuantity(savedOption.getId(), 1);
+                    optionManager.subtractQuantity(savedOption.getId(), 1);
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

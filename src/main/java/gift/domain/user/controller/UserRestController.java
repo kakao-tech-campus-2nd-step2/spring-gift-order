@@ -1,6 +1,6 @@
 package gift.domain.user.controller;
 
-import gift.auth.dto.Token;
+import gift.auth.jwt.JwtToken;
 import gift.domain.user.dto.UserRequest;
 import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.service.UserService;
@@ -25,18 +25,18 @@ public class UserRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Token> create(@RequestBody @Valid UserRequest userRequest) {
+    public ResponseEntity<JwtToken> create(@RequestBody @Valid UserRequest userRequest) {
         try {
-            Token token = userService.signUp(userRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(token);
+            JwtToken jwtToken = userService.signUp(userRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
         } catch (DuplicateKeyException e) {
             throw new DuplicateEmailException("error.duplicate.key.email");
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Token> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
-        Token token = userService.login(userLoginRequest);
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+    public ResponseEntity<JwtToken> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        JwtToken jwtToken = userService.login(userLoginRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
     }
 }

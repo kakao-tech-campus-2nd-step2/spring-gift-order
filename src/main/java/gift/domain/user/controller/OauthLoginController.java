@@ -1,7 +1,7 @@
 package gift.domain.user.controller;
 
-import gift.auth.dto.Token;
-import gift.domain.user.service.KakaoLoginService;
+import gift.auth.jwt.JwtToken;
+import gift.domain.user.service.KakaoLoginManager;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.HttpStatus;
@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/oauth/login")
 public class OauthLoginController {
 
-    private final KakaoLoginService kakaoLoginService;
+    private final KakaoLoginManager kakaoLoginManager;
 
-    public OauthLoginController(KakaoLoginService kakaoLoginService) {
-        this.kakaoLoginService = kakaoLoginService;
+    public OauthLoginController(KakaoLoginManager kakaoLoginManager) {
+        this.kakaoLoginManager = kakaoLoginManager;
     }
 
     @GetMapping("/kakao")
     public void getAuthCodeUrl(HttpServletResponse response) throws IOException {
-        response.sendRedirect(kakaoLoginService.getAuthCodeUrl());
+        response.sendRedirect(kakaoLoginManager.getAuthCodeUrl());
     }
 
     @GetMapping("/kakao/callback")
-    public ResponseEntity<Token> login(@RequestParam("code") String code) {
-        Token token = kakaoLoginService.login(code);
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+    public ResponseEntity<JwtToken> login(@RequestParam("code") String code) {
+        JwtToken jwtToken = kakaoLoginManager.login(code);
+        return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
     }
 }

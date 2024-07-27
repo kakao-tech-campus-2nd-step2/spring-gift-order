@@ -1,7 +1,7 @@
 package gift.domain.user.service;
 
 import gift.auth.AuthProvider;
-import gift.auth.dto.Token;
+import gift.auth.jwt.JwtToken;
 import gift.domain.user.dto.UserResponse;
 import gift.domain.user.repository.UserJpaRepository;
 import gift.domain.user.dto.UserRequest;
@@ -23,14 +23,14 @@ public class UserService {
         this.jwtProvider = jwtProvider;
     }
 
-    public Token signUp(UserRequest userRequest) {
+    public JwtToken signUp(UserRequest userRequest) {
         User user = userRequest.toUser();
         User savedUser = userJpaRepository.save(user);
         
         return jwtProvider.generateToken(savedUser);
     }
 
-    public Token login(UserLoginRequest userLoginRequest) {
+    public JwtToken login(UserLoginRequest userLoginRequest) {
         User user = userJpaRepository.findByEmail(userLoginRequest.email())
             .orElseThrow(() -> new InvalidUserInfoException("error.invalid.userinfo.email"));
 
@@ -45,8 +45,8 @@ public class UserService {
         return jwtProvider.generateToken(user);
     }
 
-    public Role verifyRole(Token token) {
-        return jwtProvider.getAuthorization(token.token());
+    public Role verifyRole(JwtToken jwtToken) {
+        return jwtProvider.getAuthorization(jwtToken.token());
     }
 
     public UserResponse readByEmail(String email) {

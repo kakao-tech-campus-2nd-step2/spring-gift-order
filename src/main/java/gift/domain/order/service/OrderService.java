@@ -6,10 +6,12 @@ import gift.domain.order.entity.Order;
 import gift.domain.order.repository.OrderJpaRepository;
 import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
-import gift.domain.product.service.ProductService;
+import gift.domain.product.repository.ProductJpaRepository;
+import gift.domain.product.service.OptionManager;
 import gift.domain.user.entity.User;
-import gift.domain.wishlist.service.WishlistService;
-import java.util.Map.Entry;
+import gift.domain.wishlist.repository.WishlistJpaRepository;
+import gift.exception.InvalidOptionInfoException;
+import gift.exception.InvalidProductInfoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,27 +19,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderJpaRepository orderJpaRepository;
-    private final ProductService productService;
-    private final WishlistService wishlistService;
+    private final ProductJpaRepository productJpaRepository;
+    private final OptionManager optionManager;
+    private final WishlistJpaRepository wishlistJpaRepository;
 
     public OrderService(
         OrderJpaRepository orderJpaRepository,
-        ProductService productService,
-        WishlistService wishlistService
+        ProductJpaRepository productJpaRepository,
+        OptionManager optionManager,
+        WishlistJpaRepository wishlistJpaRepository
     ) {
         this.orderJpaRepository = orderJpaRepository;
-        this.productService = productService;
-        this.wishlistService = wishlistService;
+        this.productJpaRepository = productJpaRepository;
+        this.optionManager = optionManager;
+        this.wishlistJpaRepository = wishlistJpaRepository;
     }
 
     @Transactional
     public OrderResponse create(OrderRequest orderRequest, User user) {
-        Entry<Product, Option> item = productService.buy(
-            orderRequest.productId(), orderRequest.optionId(), orderRequest.quantity()
-        );
-        Product product = item.getKey();
-        Option option = item.getValue();
-        wishlistService.deleteOrderedWishItem(user, product);
+        Long productId = orderRequest.productId();
+        Long optionId = orderRequest.optionId();
+        int quantity = orderRequest.quantity();
+
+        Product product = productJpaRepository.findById(productId)
+            .orElseThrow(() -> new InvalidProductInfoException("error.invalid.product.id"));
+
+        if (!product.hasOption(optionId)) {
+            throw new InvalidOptionInfoException("error.invalid.option.id");
+        }
+        Option option = optionManager.subtractQuantity(optionId, quantity);
+
+        wishlistJpaRepository.deleteByUserAndProduct(user, product);
 
         Order order = orderRequest.toOrder(user, product, option);
         Order savedOrder = orderJpaRepository.save(order);

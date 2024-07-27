@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class KakaoLoginServiceTest {
 
     @Autowired
-    private KakaoLoginService kakaoLoginService;
+    private KakaoLoginManager kakaoLoginManager;
 
     @MockBean
     private KakaoApiProvider kakaoApiProvider;
@@ -24,7 +24,7 @@ class KakaoLoginServiceTest {
 //    @DisplayName("카카오 로그인 서비스 테스트 - 새로운 사용자")
 //    void login_new_user() {
 //        // given
-//        Token expected = new Token("testToken");
+//        JwtToken expected = new JwtToken("testToken");
 //        UserResponse userResponse = new UserResponse(null, "testUser", "test@test.com", "test123", null);
 //        KakaoToken kakaoToken = new KakaoToken(null, "testAccessToken", null, null, null);
 //        KakaoUserInfo testUserInfo =
@@ -42,7 +42,7 @@ class KakaoLoginServiceTest {
 //        given(userService.login(any(UserLoginRequest.class))).willReturn(expected);
 //
 //        // when
-//        Token actual = kakaoLoginService.login("testCode");
+//        JwtToken actual = kakaoLoginService.login("testCode");
 //
 //        // then
 //        assertThat(actual).isEqualTo(expected);
@@ -52,7 +52,7 @@ class KakaoLoginServiceTest {
 //    @DisplayName("카카오 로그인 서비스 테스트 - 기존 사용자")
 //    void login_exist_user() {
 //        // given
-//        Token expected = new Token("testToken");
+//        JwtToken expected = new JwtToken("testToken");
 //        KakaoToken kakaoToken = new KakaoToken(null, "testAccessToken", null, null, null);
 //        KakaoUserInfo testUserInfo =
 //            new KakaoUserInfo(
@@ -69,7 +69,7 @@ class KakaoLoginServiceTest {
 //        given(userService.signUp(any(UserRequest.class))).willReturn(expected);
 //
 //        // when
-//        Token actual = kakaoLoginService.login("testCode");
+//        JwtToken actual = kakaoLoginService.login("testCode");
 //
 //        // then
 //        assertThat(actual).isEqualTo(expected);

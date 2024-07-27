@@ -7,22 +7,18 @@ import gift.domain.user.entity.User;
 import gift.exception.InvalidAuthException;
 import gift.external.api.kakao.KakaoApiProvider;
 import gift.external.api.kakao.dto.KakaoToken;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class OauthTokenService {
+@Component
+public class OauthTokenManager {
 
     private final OauthTokenJpaRepository oauthTokenJpaRepository;
     private final KakaoApiProvider kakaoApiProvider;
 
-    public OauthTokenService(OauthTokenJpaRepository oauthTokenJpaRepository,
+    public OauthTokenManager(OauthTokenJpaRepository oauthTokenJpaRepository,
         KakaoApiProvider kakaoApiProvider) {
         this.oauthTokenJpaRepository = oauthTokenJpaRepository;
         this.kakaoApiProvider = kakaoApiProvider;
-    }
-
-    public void save(OauthToken oauthToken) {
-        oauthTokenJpaRepository.save(oauthToken);
     }
 
     public OauthToken findByUserAndProvider(User user, AuthProvider provider) {

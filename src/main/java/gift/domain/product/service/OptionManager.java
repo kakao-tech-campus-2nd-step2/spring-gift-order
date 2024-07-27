@@ -12,16 +12,16 @@ import java.util.List;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-public class OptionService {
+@Component
+public class OptionManager {
 
     private final OptionJpaRepository optionJpaRepository;
     private final ProductJpaRepository productJpaRepository;
 
-    public OptionService(OptionJpaRepository optionJpaRepository, ProductJpaRepository productJpaRepository) {
+    public OptionManager(OptionJpaRepository optionJpaRepository, ProductJpaRepository productJpaRepository) {
         this.optionJpaRepository = optionJpaRepository;
         this.productJpaRepository = productJpaRepository;
 

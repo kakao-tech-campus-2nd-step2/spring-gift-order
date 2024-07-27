@@ -2,26 +2,26 @@ package gift.domain.order.service;
 
 import gift.auth.AuthProvider;
 import gift.auth.oauth.entity.OauthToken;
-import gift.auth.oauth.service.OauthTokenService;
+import gift.auth.oauth.service.OauthTokenManager;
 import gift.domain.order.dto.OrderResponse;
-import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.domain.user.entity.User;
 import gift.external.api.kakao.KakaoApiProvider;
+import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.external.api.kakao.dto.FeedObjectRequest.Button;
 import gift.external.api.kakao.dto.FeedObjectRequest.Content;
 import gift.external.api.kakao.dto.FeedObjectRequest.Link;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class KakaoTalkMessageService {
+@Component
+public class KakaoTalkMessageManager {
 
     private final KakaoApiProvider kakaoApiProvider;
-    private final OauthTokenService oauthTokenService;
+    private final OauthTokenManager oauthTokenManager;
 
-    public KakaoTalkMessageService(KakaoApiProvider kakaoApiProvider,
-        OauthTokenService oauthTokenService) {
+    public KakaoTalkMessageManager(KakaoApiProvider kakaoApiProvider,
+        OauthTokenManager oauthTokenManager) {
         this.kakaoApiProvider = kakaoApiProvider;
-        this.oauthTokenService = oauthTokenService;
+        this.oauthTokenManager = oauthTokenManager;
     }
 
     public Integer sendMessageToMe(User user, OrderResponse orderResponse) {
@@ -40,8 +40,8 @@ public class KakaoTalkMessageService {
                 )
             }
         );
-        OauthToken oauthToken = oauthTokenService.findByUserAndProvider(user, AuthProvider.KAKAO);
-        OauthToken renewedToken = oauthTokenService.renew(oauthToken);
+        OauthToken oauthToken = oauthTokenManager.findByUserAndProvider(user, AuthProvider.KAKAO);
+        OauthToken renewedToken = oauthTokenManager.renew(oauthToken);
 
         return kakaoApiProvider.sendMessageToMe(renewedToken.getAccessToken(), templateObject);
     }

@@ -21,10 +21,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class CategoryServiceTest {
+class CategoryManagerTest {
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryManager categoryManager;
 
     @MockBean
     private CategoryJpaRepository categoryJpaRepository;
@@ -43,7 +43,7 @@ class CategoryServiceTest {
         given(categoryJpaRepository.findAll()).willReturn(expected);
 
         // when
-        List<CategoryResponse> actual = categoryService.readAll();
+        List<CategoryResponse> actual = categoryManager.readAll();
 
         // then
         then(categoryJpaRepository).should().findAll();
@@ -58,7 +58,7 @@ class CategoryServiceTest {
         given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.of(expected));
 
         // when
-        Category actual = categoryService.readById(1L);
+        Category actual = categoryManager.readById(1L);
 
         // then
         then(categoryJpaRepository).should().findById(1L);
@@ -72,7 +72,7 @@ class CategoryServiceTest {
         given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> categoryService.readById(1L))
+        assertThatThrownBy(() -> categoryManager.readById(1L))
             .isInstanceOf(InvalidCategoryInfoException.class);
     }
 }

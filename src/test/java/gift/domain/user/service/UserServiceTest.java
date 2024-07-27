@@ -7,8 +7,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import gift.auth.AuthProvider;
+import gift.auth.jwt.JwtToken;
 import gift.auth.jwt.JwtProvider;
-import gift.auth.dto.Token;
 import gift.domain.user.repository.UserJpaRepository;
 import gift.domain.user.dto.UserRequest;
 import gift.domain.user.dto.UserLoginRequest;
@@ -46,14 +46,14 @@ class UserServiceTest {
         User user = userRequest.toUser();
         given(userJpaRepository.save(any(User.class))).willReturn(user);
 
-        Token expectedToken = new Token("token");
-        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedToken);
+        JwtToken expectedJwtToken = new JwtToken("token");
+        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedJwtToken);
 
         // when
-        Token actualToken = userService.signUp(userRequest);
+        JwtToken actualJwtToken = userService.signUp(userRequest);
 
         // then
-        assertThat(actualToken).isEqualTo(expectedToken);
+        assertThat(actualJwtToken).isEqualTo(expectedJwtToken);
     }
 
     @Test
@@ -65,14 +65,14 @@ class UserServiceTest {
         User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER, AuthProvider.LOCAL);
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.of(user));
 
-        Token expectedToken = new Token("token");
-        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedToken);
+        JwtToken expectedJwtToken = new JwtToken("token");
+        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedJwtToken);
 
         // when
-        Token actualToken = userService.login(loginDto);
+        JwtToken actualJwtToken = userService.login(loginDto);
 
         // then
-        assertThat(actualToken).isEqualTo(expectedToken);
+        assertThat(actualJwtToken).isEqualTo(expectedJwtToken);
     }
 
     @Test

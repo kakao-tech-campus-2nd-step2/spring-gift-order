@@ -2,7 +2,6 @@ package gift.domain.order.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -15,11 +14,11 @@ import gift.domain.order.repository.OrderJpaRepository;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
-import gift.domain.product.service.ProductService;
+import gift.domain.product.repository.ProductJpaRepository;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
-import gift.domain.wishlist.service.WishlistService;
-import java.util.AbstractMap.SimpleEntry;
+import gift.domain.wishlist.repository.WishlistJpaRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -37,10 +36,10 @@ class OrderServiceTest {
     private OrderJpaRepository orderJpaRepository;
 
     @MockBean
-    private ProductService productService;
+    private ProductJpaRepository productJpaRepository;
 
     @MockBean
-    private WishlistService wishlistService;
+    private WishlistJpaRepository wishlistJpaRepository;
 
     private static final User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER, AuthProvider.LOCAL);
     private static final Category category = new Category(1L, "교환권", "#FFFFFF", "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png", "test");
@@ -56,8 +55,8 @@ class OrderServiceTest {
         Order order = new Order(1L, user, product, option, 10, "테스트 와하하");
         OrderResponse expected = OrderResponse.from(order);
 
-        given(productService.buy(anyLong(), anyLong(), anyInt())).willReturn(new SimpleEntry<>(product, option));
-        doNothing().when(wishlistService).deleteOrderedWishItem(any(User.class), any(Product.class));
+        given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
+        doNothing().when(wishlistJpaRepository).deleteByUserAndProduct(any(User.class), any(Product.class));
         given(orderJpaRepository.save(any(Order.class))).willReturn(order);
 
         // when

@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.dto.Token;
+import gift.auth.jwt.JwtToken;
 import gift.domain.user.dto.UserRequest;
 import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.service.UserService;
@@ -58,14 +58,14 @@ class UserRestControllerTest {
         UserRequest userRequest = new UserRequest("testUser", "test@test.com", "test123");
         String jsonContent = objectMapper.writeValueAsString(userRequest);
 
-        Token expectedToken = new Token("token");
+        JwtToken expectedJwtToken = new JwtToken("token");
 
-        given(userService.signUp(any(UserRequest.class))).willReturn(expectedToken);
+        given(userService.signUp(any(UserRequest.class))).willReturn(expectedJwtToken);
 
         // when & then
         mockMvc.perform(postRequest(REGISTER_URL, jsonContent))
             .andExpect(status().isCreated())
-            .andExpect(content().json(objectMapper.writeValueAsString(expectedToken)))
+            .andExpect(content().json(objectMapper.writeValueAsString(expectedJwtToken)))
             .andDo(print());
     }
 
@@ -91,14 +91,14 @@ class UserRestControllerTest {
         UserLoginRequest userLoginRequest = new UserLoginRequest("test@test.com", "test123");
         String jsonContent = objectMapper.writeValueAsString(userLoginRequest);
 
-        Token expectedToken = new Token("token");
+        JwtToken expectedJwtToken = new JwtToken("token");
 
-        given(userService.login(any(UserLoginRequest.class))).willReturn(expectedToken);
+        given(userService.login(any(UserLoginRequest.class))).willReturn(expectedJwtToken);
 
         // when & then
         mockMvc.perform(postRequest(LOGIN_URL, jsonContent))
             .andExpect(status().isOk())
-            .andExpect(content().json(objectMapper.writeValueAsString(expectedToken)))
+            .andExpect(content().json(objectMapper.writeValueAsString(expectedJwtToken)))
             .andDo(print());
     }
 

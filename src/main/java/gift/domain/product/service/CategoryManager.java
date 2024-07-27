@@ -1,18 +1,18 @@
 package gift.domain.product.service;
 
 import gift.domain.product.dto.CategoryResponse;
-import gift.domain.product.repository.CategoryJpaRepository;
 import gift.domain.product.entity.Category;
+import gift.domain.product.repository.CategoryJpaRepository;
 import gift.exception.InvalidCategoryInfoException;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class CategoryService {
+@Component
+public class CategoryManager {
 
     private final CategoryJpaRepository categoryJpaRepository;
 
-    public CategoryService(CategoryJpaRepository categoryJpaRepository) {
+    public CategoryManager(CategoryJpaRepository categoryJpaRepository) {
         this.categoryJpaRepository = categoryJpaRepository;
     }
 

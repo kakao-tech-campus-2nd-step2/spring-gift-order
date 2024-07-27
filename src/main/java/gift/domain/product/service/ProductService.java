@@ -4,43 +4,39 @@ import gift.domain.product.dto.ProductReadAllResponse;
 import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.entity.Category;
-import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
 import gift.domain.product.repository.ProductJpaRepository;
-import gift.domain.wishlist.service.WishlistService;
-import gift.exception.InvalidOptionInfoException;
+import gift.domain.wishlist.repository.WishlistJpaRepository;
 import gift.exception.InvalidProductInfoException;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
 
     private final ProductJpaRepository productJpaRepository;
-    private final OptionService optionService;
-    private final CategoryService categoryService;
-    private final WishlistService wishlistService;
+    private final OptionManager optionManager;
+    private final CategoryManager categoryManager;
+    private final WishlistJpaRepository wishlistJpaRepository;
 
     public ProductService(
         ProductJpaRepository productJpaRepository,
-        OptionService optionService,
-        CategoryService categoryService,
-        WishlistService wishlistService) {
+        OptionManager optionManager,
+        CategoryManager categoryManager,
+        WishlistJpaRepository wishlistJpaRepository
+    ) {
         this.productJpaRepository = productJpaRepository;
-        this.optionService = optionService;
-        this.categoryService = categoryService;
-        this.wishlistService = wishlistService;
+        this.optionManager = optionManager;
+        this.categoryManager = categoryManager;
+        this.wishlistJpaRepository = wishlistJpaRepository;
     }
 
     public ProductResponse create(ProductRequest productRequest) {
-        Category category = categoryService.readById(productRequest.categoryId());
+        Category category = categoryManager.readById(productRequest.categoryId());
         Product product = productRequest.toProduct(category);
 
-        optionService.create(product, productRequest.options());
+        optionManager.create(product, productRequest.options());
         Product savedProduct = productJpaRepository.save(product);
         return ProductResponse.from(savedProduct);
     }
@@ -63,10 +59,10 @@ public class ProductService {
     public ProductResponse update(long productId, ProductRequest productRequest) {
         Product product = productJpaRepository.findById(productId)
             .orElseThrow(() -> new InvalidProductInfoException("error.invalid.product.id"));
-        Category category = categoryService.readById(productRequest.categoryId());
+        Category category = categoryManager.readById(productRequest.categoryId());
 
         product.updateInfo(category, productRequest.name(), productRequest.price(), productRequest.imageUrl());
-        optionService.update(product, productRequest.options());
+        optionManager.update(product, productRequest.options());
 
         Product savedProduct = productJpaRepository.save(product);
         return ProductResponse.from(savedProduct);
@@ -76,21 +72,8 @@ public class ProductService {
         Product product = productJpaRepository.findById(productId)
             .orElseThrow(() -> new InvalidProductInfoException("error.invalid.product.id"));
 
-        optionService.deleteAllByProductId(productId);
-        wishlistService.deleteAllByProductId(productId);
+        optionManager.deleteAllByProductId(productId);
+        wishlistJpaRepository.deleteAllByProductId(productId);
         productJpaRepository.delete(product);
-    }
-
-    @Transactional
-    public Entry<Product, Option> buy(long productId, long optionId, int quantity) {
-        Product product = productJpaRepository.findById(productId)
-            .orElseThrow(() -> new InvalidProductInfoException("error.invalid.product.id"));
-
-        if (!product.hasOption(optionId)) {
-            throw new InvalidOptionInfoException("error.invalid.option.id");
-        }
-        Option option = optionService.subtractQuantity(optionId, quantity);
-
-        return new SimpleEntry<>(product, option);
     }
 }
