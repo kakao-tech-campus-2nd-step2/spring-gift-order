@@ -50,14 +50,14 @@ class WishServiceTest {
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Member member = new Member(1L, "test@test.com", "test");
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.of(member));
         given(wishRepository.existsByProductIdAndMemberId(product.getId(),
             member.getId())).willReturn(false);
 
         //when
-        WishDto wishDto = new WishDto(1L);
-        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+        WishDto wishDto = new WishDto(product.getId());
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(member.getId());
         wishService.insertWish(wishDto, loginMemberIdDto);
 
         //then
@@ -107,10 +107,10 @@ class WishServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.empty());
 
-        WishDto wishDto = new WishDto(1L);
+        WishDto wishDto = new WishDto(product.getId());
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(-1L);
 
         //when, then
@@ -124,7 +124,7 @@ class WishServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        WishDto wishDto = new WishDto(1L);
+        WishDto wishDto = new WishDto(product.getId());
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
 
         given(productRepository.findById(product.getId())).willReturn(Optional.of(product));

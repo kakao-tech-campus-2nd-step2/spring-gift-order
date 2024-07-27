@@ -48,7 +48,7 @@ class OptionServiceTest {
         //given
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(optionRepository.existsByNameAndProductId("테스트옵션", product.getId())).willReturn(
             false);
 
@@ -73,13 +73,13 @@ class OptionServiceTest {
         //given
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
 
         //when
-        optionService.getOptionAllByProductId(1L);
+        optionService.getOptionAllByProductId(product.getId());
 
         //then
-        then(optionRepository).should().findAllByProductId(1L);
+        then(optionRepository).should().findAllByProductId(product.getId());
     }
 
     @Test
@@ -88,13 +88,13 @@ class OptionServiceTest {
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 1, product);
-        given(optionRepository.findById(1L)).willReturn(Optional.of(option));
+        given(optionRepository.findById(option.getId())).willReturn(Optional.of(option));
 
         //when
-        optionService.getOption(1L);
+        optionService.getOption(option.getId());
 
         //then
-        then(optionRepository).should().findById(1L);
+        then(optionRepository).should().findById(option.getId());
     }
 
     @Test
@@ -103,7 +103,7 @@ class OptionServiceTest {
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 1, product);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(optionRepository.existsByNameAndProductId("테스트옵션", product.getId())).willReturn(
             false);
         given(optionRepository.save(any())).willReturn(option);
@@ -126,19 +126,19 @@ class OptionServiceTest {
         //given
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        Option option2 = new Option(2L, "테스트옵션2", 1, product);
-        given(optionRepository.findById(2L)).willReturn(Optional.of(option2));
+        Option option = new Option(2L, "테스트옵션2", 1, product);
+        given(optionRepository.findById(option.getId())).willReturn(Optional.of(option));
 
         OptionResponse optionResponse1 = new OptionResponse(1L, "테스트옵션1", 1);
         OptionResponse optionResponse2 = new OptionResponse(2L, "테스트옵션2", 1);
-        given(optionRepository.findAllByProductId(1L)).willReturn(
+        given(optionRepository.findAllByProductId(product.getId())).willReturn(
             List.of(optionResponse1, optionResponse2));
 
         //when
-        optionService.deleteOption(option2.getId());
+        optionService.deleteOption(option.getId());
 
         //then
-        then(optionRepository).should().deleteById(option2.getId());
+        then(optionRepository).should().deleteById(option.getId());
     }
 
     @Test

@@ -41,8 +41,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 @SuppressWarnings("NonAsciiCharacters")
 class AuthServiceTest {
 
-    final String EMAIL = "test@test.com";
-    final String PASSWORD = "test";
+    static final String TEST_OAUTH_ACCESS_TOKEN = "test_oauth_access_token";
+    static final String TEST_OAUTH_REFRESH_TOKEN = "test_oauth_refresh_token";
+    static final String TEST_AUTHORIZATION_CODE = "test_authorization_code";
+    static final String EMAIL = "test@test.com";
+    static final String PASSWORD = "test";
 
     MockWebServer mockWebServer;
 
@@ -141,19 +144,19 @@ class AuthServiceTest {
     @Test
     void OAuth_토큰_발급() throws JsonProcessingException {
         //given
-        OAuthJwt responseBody = new OAuthJwt("test_oauth_access_token",
-            "test_oauth_refresh_token");
+        OAuthJwt responseBody = new OAuthJwt(TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
         mockWebServer.enqueue(new MockResponse().setBody(objectMapper.writeValueAsString(
             responseBody)));
 
         //when
         String mockUrl = mockWebServer.url("/oauth/token").toString();
-        OAuthJwt response = authService.getOAuthToken("test_authorization_code", mockUrl);
+        OAuthJwt response = authService.getOAuthToken(TEST_AUTHORIZATION_CODE, mockUrl);
 
         //then
         assertSoftly(softly -> {
-            assertThat(response.accessToken()).isEqualTo("test_oauth_access_token");
-            assertThat(response.refreshToken()).isEqualTo("test_oauth_refresh_token");
+            assertThat(response.accessToken()).isEqualTo(TEST_OAUTH_ACCESS_TOKEN);
+            assertThat(response.refreshToken()).isEqualTo(TEST_OAUTH_REFRESH_TOKEN);
         });
     }
 
@@ -167,7 +170,7 @@ class AuthServiceTest {
         String responseBody = "{\"kakao_account\":{\"email\":\"" + testEmail + "\"}}";
         mockWebServer.enqueue(new MockResponse().setBody(responseBody));
 
-        OAuthJwt oAuthJwt = new OAuthJwt("test_oauth_access_token", "test_oauth_refresh_token");
+        OAuthJwt oAuthJwt = new OAuthJwt(TEST_OAUTH_ACCESS_TOKEN, TEST_OAUTH_REFRESH_TOKEN);
 
         //when
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
@@ -188,10 +191,10 @@ class AuthServiceTest {
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(testMemberId);
         KakaoToken kakaoToken = new KakaoToken(1L,
             testMemberId,
-            "test_oauth_access_token",
-            "test_oauth_refresh_token");
+            TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
 
-        given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
+        given(kakaoTokenRepository.findByMemberId(testMemberId)).willReturn(Optional.of(kakaoToken));
 
         //when
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
@@ -220,7 +223,7 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/oauth/token").toString();
 
         //when, then
-        assertThatThrownBy(() -> authService.getOAuthToken("test_authorization_code",
+        assertThatThrownBy(() -> authService.getOAuthToken(TEST_AUTHORIZATION_CODE,
             mockUrl)).isInstanceOf(
             LoginFailedException.class);
     }
@@ -230,7 +233,7 @@ class AuthServiceTest {
         //given
         mockWebServer.enqueue(new MockResponse().setResponseCode(400));
         String mockUrl = mockWebServer.url("/v2/user/me").toString();
-        OAuthJwt oAuthJwt = new OAuthJwt("test_oauth_access_token", "test_oauth_refresh_token");
+        OAuthJwt oAuthJwt = new OAuthJwt(TEST_OAUTH_ACCESS_TOKEN, TEST_OAUTH_REFRESH_TOKEN);
 
         //when, then
         assertThatThrownBy(() -> authService.registerKakaoMember(oAuthJwt,
@@ -245,11 +248,11 @@ class AuthServiceTest {
         String mockUrl = mockWebServer.url("/v1/user/unlink").toString();
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         KakaoToken kakaoToken = new KakaoToken(1L,
-            1L,
-            "test_oauth_access_token",
-            "test_oauth_refresh_token");
+            loginMemberIdDto.id(),
+            TEST_OAUTH_ACCESS_TOKEN,
+            TEST_OAUTH_REFRESH_TOKEN);
 
-        given(kakaoTokenRepository.findByMemberId(1L)).willReturn(Optional.of(kakaoToken));
+        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.of(kakaoToken));
 
         //when, then
         assertThatThrownBy(() -> authService.unlinkKakaoAccount(loginMemberIdDto,

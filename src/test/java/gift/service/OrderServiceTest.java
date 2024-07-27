@@ -92,14 +92,14 @@ class OrderServiceTest {
     void 주문_조회() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        Order order = new Order(1L, 1L, 1, "test_message");
-        given(orderRepository.findByIdAndMemberId(1L, 1L)).willReturn(Optional.of(order));
+        Order order = new Order(1L, 1L, loginMemberIdDto.id(), 1, "test_message");
+        given(orderRepository.findByIdAndMemberId(order.getId(), loginMemberIdDto.id())).willReturn(Optional.of(order));
 
         //when
-        orderService.getOrder(1L, loginMemberIdDto);
+        orderService.getOrder(order.getId(), loginMemberIdDto);
 
         //then
-        then(orderRepository).should().findByIdAndMemberId(1L, loginMemberIdDto.id());
+        then(orderRepository).should().findByIdAndMemberId(order.getId(), loginMemberIdDto.id());
     }
 
     @Test
@@ -107,12 +107,12 @@ class OrderServiceTest {
         //given
         OrderDto orderDto = new OrderDto(1L, 3, "test_message");
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        Order order = new Order(1L, orderDto.optionId(), 1L, 2, orderDto.message());
+        Order order = new Order(1L, orderDto.optionId(), loginMemberIdDto.id(), 2, orderDto.message());
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 5, product);
         KakaoToken kakaoToken = new KakaoToken(1L,
-            1L,
+            loginMemberIdDto.id(),
             "test_oauth_access_token",
             "test_oauth_refresh_token");
 
@@ -137,14 +137,14 @@ class OrderServiceTest {
     void 주문_삭제() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        Order order = new Order(1L, 1L, 1, "test_message");
-        given(orderRepository.existsById(1L)).willReturn(true);
+        Order order = new Order(1L, 1L, loginMemberIdDto.id(), 1, "test_message");
+        given(orderRepository.existsById(order.getId())).willReturn(true);
 
         //when
-        orderService.deleteOrder(1L, loginMemberIdDto);
+        orderService.deleteOrder(order.getId(), loginMemberIdDto);
 
         //then
-        then(orderRepository).should().deleteByIdAndMemberId(1L, loginMemberIdDto.id());
+        then(orderRepository).should().deleteByIdAndMemberId(order.getId(), loginMemberIdDto.id());
     }
 
     @Test
@@ -153,9 +153,9 @@ class OrderServiceTest {
         Category category = new Category("테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 1, product);
-        OrderDto orderDto = new OrderDto(1L, 999, "test_message");
+        OrderDto orderDto = new OrderDto(option.getId(), 999, "test_message");
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        given(optionRepository.findById(1L)).willReturn(Optional.of(option));
+        given(optionRepository.findById(option.getId())).willReturn(Optional.of(option));
         given(authRepository.existsById(any())).willReturn(true);
 
         //when, then

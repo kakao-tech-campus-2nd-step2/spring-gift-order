@@ -30,8 +30,8 @@ class AuthRepositoryTest {
         //then
         assertSoftly(softly -> {
             assertThat(registeredMember.getId()).isNotNull();
-            assertThat(registeredMember.getEmail()).isEqualTo("test@test.com");
-            assertThat(registeredMember.getPassword()).isEqualTo("test");
+            assertThat(registeredMember.getEmail()).isEqualTo(member.getEmail());
+            assertThat(registeredMember.getPassword()).isEqualTo(member.getPassword());
         });
     }
 

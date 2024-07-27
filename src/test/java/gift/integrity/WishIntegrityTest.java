@@ -44,7 +44,7 @@ class WishIntegrityTest {
     @LocalServerPort
     int port;
 
-    String BASE_URL = "http://localhost:";
+    static final String BASE_URL = "http://localhost:";
 
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -76,7 +76,7 @@ class WishIntegrityTest {
         categoryService.insertCategory(categoryDto);
 
         String url = BASE_URL + port + "/api/products/insert";
-        ProductDto productDto = new ClientProductDto("테스트1", 1500, "테스트주소1", "테스트카테고리1");
+        ProductDto productDto = new ClientProductDto("테스트1", 1500, "테스트주소1", categoryDto.name());
         RequestEntity<ProductDto> requestEntity = new RequestEntity<>(productDto, HttpMethod.POST,
             URI.create(url));
 

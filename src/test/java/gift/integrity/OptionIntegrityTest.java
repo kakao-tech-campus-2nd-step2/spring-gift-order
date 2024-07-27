@@ -39,7 +39,7 @@ class OptionIntegrityTest {
     @LocalServerPort
     int port;
 
-    String BASE_URL = "http://localhost:";
+    static final String BASE_URL = "http://localhost:";
 
     @Autowired
     TestRestTemplate testRestTemplate;

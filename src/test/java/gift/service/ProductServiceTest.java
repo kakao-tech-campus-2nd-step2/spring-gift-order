@@ -66,13 +66,13 @@ class ProductServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
 
         //when
-        productService.getProduct(1L);
+        productService.getProduct(product.getId());
 
         //then
-        then(productRepository).should().findById(1L);
+        then(productRepository).should().findById(product.getId());
     }
 
     @Test
@@ -108,12 +108,12 @@ class ProductServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(categoryRepository.findByName("테스트카테고리")).willReturn(Optional.of(category));
 
         //when
         ProductDto updatedProductDto = new ClientProductDto("테스트상품수정", 2000, "테스트주소수정", "테스트카테고리");
-        productService.updateProduct(1L, updatedProductDto);
+        productService.updateProduct(product.getId(), updatedProductDto);
 
         //then
         then(productRepository).should().save(any());
@@ -124,13 +124,13 @@ class ProductServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
 
         //when
-        productService.deleteProduct(1L);
+        productService.deleteProduct(product.getId());
 
         //then
-        then(productRepository).should().deleteById(1L);
+        then(productRepository).should().deleteById(product.getId());
     }
 
     @Test
