@@ -37,32 +37,23 @@ public class OptionService {
         return optionRepository.findAllByProductId(id, pageable);
     }
 
-    public void registerOption(Long productId, OptionDTO optionDTO) {
+    public Option registerOption(Long productId, OptionDTO optionDTO) {
         System.out.println("[OptionService] registerOption()");
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID));
-        optionValidation.register(product, optionDTO);
-        Option option = new Option(
-            optionDTO.getName(),
-            optionDTO.getQuantity(),
-            product
-        );
-        optionRepository.save(option);
+        Option option = optionDTO.convertToDomain(product);
+        optionValidation.register(option);
+        return optionRepository.save(option);
     }
 
-    public void updateOption(Long id, OptionDTO optionDTO) {
+    public Option updateOption(Long id, OptionDTO optionDTO) {
         System.out.println("[OptionService] updateOption()");
         Product product = optionRepository.findById(id)
             .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
             .getProduct();
-        optionValidation.update(product, optionDTO);
-        Option option = new Option(
-            id,
-            optionDTO.getName(),
-            optionDTO.getQuantity(),
-            product
-        );
-        optionRepository.save(option);
+        Option option = optionDTO.convertToDomain(id, product);
+        optionValidation.update(option);
+        return optionRepository.save(option);
     }
 
     public void deleteOption(Long id, Long productId) {

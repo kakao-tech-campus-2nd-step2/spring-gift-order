@@ -6,11 +6,10 @@ import static gift.product.exception.GlobalExceptionHandler.LEAST_QUANTITY;
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 import static gift.product.exception.GlobalExceptionHandler.OVER_100MILLION;
 
-import gift.product.dto.OptionDTO;
 import gift.product.exception.DuplicateException;
 import gift.product.exception.InvalidIdException;
+import gift.product.exception.LastOptionException;
 import gift.product.model.Option;
-import gift.product.model.Product;
 import gift.product.repository.OptionRepository;
 import java.util.Collection;
 import java.util.List;
@@ -27,18 +26,18 @@ public class OptionValidation {
         this.optionRepository = optionRepository;
     }
 
-    public void register(Product product, OptionDTO optionDTO) {
-        List<Option> options = optionRepository.findAllByProduct(product);
+    public void register(Option option) {
+        List<Option> options = optionRepository.findAllByProduct(option.getProduct());
         validateOver100Million(options.size());
-        validateDuplicateName(options, optionDTO);
-        validateNegative(optionDTO.getQuantity());
+        validateDuplicateName(options, option);
+        validateNegative(option.getQuantity());
     }
 
-    public void update(Product product, OptionDTO optionDTO) {
-        validateExistId(optionDTO.getId());
-        List<Option> options = optionRepository.findAllByProduct(product);
-        validateDuplicateName(options, optionDTO);
-        validateNegative(optionDTO.getQuantity());
+    public void update(Option option) {
+        validateExistId(option.getId());
+        List<Option> options = optionRepository.findAllByProduct(option.getProduct());
+        validateDuplicateName(options, option);
+        validateNegative(option.getQuantity());
     }
 
     public void delete(Long id, Long productId) {
@@ -56,11 +55,9 @@ public class OptionValidation {
             throw new RuntimeException(OVER_100MILLION);
     }
 
-    private void validateDuplicateName(Collection<Option> options, OptionDTO optionDTO) {
+    private void validateDuplicateName(Collection<Option> options, Option option) {
         if(options.stream()
-            .anyMatch(option -> option.isSameName(optionDTO.getName())
-            )
-        )
+            .anyMatch(optionName -> option.isSameName(option.getName())))
             throw new DuplicateException(DUPLICATE_OPTION_NAME);
     }
 
@@ -71,7 +68,6 @@ public class OptionValidation {
 
     private void validateLastOption(int cnt) {
         if(cnt < 2)
-            throw new IllegalStateException(LAST_OPTION);
+            throw new LastOptionException(LAST_OPTION);
     }
-
 }

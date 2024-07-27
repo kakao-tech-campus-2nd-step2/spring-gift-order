@@ -35,24 +35,26 @@ public class ApiOptionController {
     }
 
     @PostMapping
-    public ResponseEntity<String> registerOption(@PathVariable Long productId, @RequestBody OptionDTO optionDTO) {
-        System.out.println("[ApiOptionController] getAllOptions()");
-        optionService.registerOption(productId, optionDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Option registered successfully");
+    public ResponseEntity<Option> registerOption(@PathVariable Long productId, @RequestBody OptionDTO optionDTO) {
+        System.out.println("[ApiOptionController] registerOption()");
+        Option option = optionService.registerOption(productId, optionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(option);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateOption(@PathVariable Long id, @RequestBody OptionDTO optionDTO) {
-        System.out.println("[ApiOptionController] getAllOptions()");
-        optionService.updateOption(id, optionDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Option update successfully");
+    public ResponseEntity<Option> updateOption(@PathVariable Long id, @RequestBody OptionDTO optionDTO) {
+        System.out.println("[ApiOptionController] updateOption()");
+        Option option = optionService.updateOption(id, optionDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(option);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteOption(@PathVariable Long id, @PathVariable Long productId) {
-        System.out.println("[ApiOptionController] getAllOptions()");
+    public ResponseEntity<Void> deleteOption(@PathVariable Long id, @PathVariable Long productId) {
+        System.out.println("[ApiOptionController] deleteOption()");
         optionService.deleteOption(id, productId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Option delete successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
