@@ -8,14 +8,14 @@ import gift.entity.Wish;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishlistRepository;
-import gift.util.JwtUtil;
-import io.jsonwebtoken.Claims;
+import gift.util.KakaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -23,19 +23,19 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final WishlistRepository wishlistRepository;
     private final RestClient restClient;
-    private final JwtUtil jwtUtil;
+    private final KakaoUtil kakaoUtil;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, RestClient restClient, JwtUtil jwtUtil) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, RestClient restClient, KakaoUtil kakaoUtil) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.wishlistRepository = wishlistRepository;
         this.restClient = restClient;
-        this.jwtUtil = jwtUtil;
+        this.kakaoUtil = kakaoUtil;
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest orderRequest, String token) {
+    public OrderResponse createOrder(OrderRequest orderRequest, String kakaoToken) {
         Option option = optionRepository.findById(orderRequest.optionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
@@ -46,8 +46,8 @@ public class OrderService {
         option.setQuantity(option.getQuantity() - orderRequest.quantity());
         optionRepository.save(option);
 
-        Claims claims = jwtUtil.extractClaims(token);
-        Long memberId = Long.parseLong(claims.getSubject());
+        Map<String, Object> userInfo = kakaoUtil.getUserInfo(kakaoToken);
+        Long memberId = Long.parseLong(userInfo.get("id").toString());
 
         Wish wish = wishlistRepository.findByMemberIdAndProductId(memberId, option.getProduct().getId())
                 .orElse(null);
@@ -63,12 +63,12 @@ public class OrderService {
         order.setMessage(orderRequest.message());
         orderRepository.save(order);
 
-        sendOrderMessage(order, token);
+        sendOrderMessage(order, kakaoToken);
 
         return new OrderResponse(order.getId(), option.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
 
-    private void sendOrderMessage(Order order, String token) {
+    private void sendOrderMessage(Order order, String kakaoToken) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
         String messageTemplate = "{\n" +
@@ -85,7 +85,7 @@ public class OrderService {
             restClient
                     .post()
                     .uri(url)
-                    .header("Authorization", "Bearer " + token)
+                    .header("Authorization", "Bearer " + kakaoToken)
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .body("template_object=" + messageTemplate)
                     .retrieve()
