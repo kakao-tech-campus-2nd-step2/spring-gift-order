@@ -16,16 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
-private final OrderService orderService;
+    private final OrderService orderService;
 
-@Autowired
-public OrderController(OrderService orderService) {
-    this.orderService = orderService;
-}
+    @Autowired
+    public OrderController(OrderService orderService) {
 
-@PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(@LoginMember Long memberId, @Valid OrderRequestDto orderRequestDto) {
-    OrderResponseDto orderResponseDto = orderService.createOrder(memberId, orderRequestDto);
-    return new ResponseEntity<>(HttpStatus.CREATED);
-}
+        this.orderService = orderService;
+    }
+
+    @PostMapping
+    public ResponseEntity<OrderResponseDto> createOrder(@LoginMember Long memberId,
+        @Valid OrderRequestDto orderRequestDto) {
+        OrderResponseDto orderResponseDto = orderService.createOrder(memberId, orderRequestDto);
+        return new ResponseEntity<>(orderResponseDto, HttpStatus.CREATED);
+    }
 }

@@ -19,7 +19,7 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    private int quantity;
+    private Long quantity;
 
     @Column(nullable = false)
     private String message;
@@ -38,11 +38,20 @@ public class Order {
     protected Order() {
     }
 
+    public Order(Long quantity, String message, LocalDateTime orderDateTime, Option option,
+        Member member) {
+        this.quantity = quantity;
+        this.message = message;
+        this.orderDateTime = orderDateTime;
+        this.option = option;
+        this.member = member;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public int getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 
