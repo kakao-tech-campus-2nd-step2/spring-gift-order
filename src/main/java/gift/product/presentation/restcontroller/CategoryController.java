@@ -33,7 +33,8 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> createCategory(@Valid @RequestBody RequestCategoryDto requestCategoryDto) {
+    public ResponseEntity<Long> createCategory(
+        @Valid @RequestBody RequestCategoryDto requestCategoryDto) {
         var categoryRegisterDto = requestCategoryDto.toCategoryRegisterDto();
         var createdCategoryId = categoryService.createCategory(categoryRegisterDto);
         return ResponseEntity.ok(createdCategoryId);
@@ -52,7 +53,6 @@ public class CategoryController {
         var deletedCategoryId = categoryService.deleteCategory(id);
         return ResponseEntity.ok(deletedCategoryId);
     }
-
 
 
 }

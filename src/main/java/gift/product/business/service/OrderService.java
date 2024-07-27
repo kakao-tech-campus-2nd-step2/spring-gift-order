@@ -22,7 +22,8 @@ public class OrderService {
     private final KakaoMessageClient kakaoMessageClient;
 
     public OrderService(ProductService productService, WishlistService wishlistService,
-        OrderRepository orderRepository, MemberService memberService, KakaoMessageClient kakaoMessageClient) {
+        OrderRepository orderRepository, MemberService memberService,
+        KakaoMessageClient kakaoMessageClient) {
         this.productService = productService;
         this.wishlistService = wishlistService;
         this.orderRepository = orderRepository;
@@ -48,7 +49,7 @@ public class OrderService {
         var order = orderInCreate.toOrder(product, member);
         var orderId = orderRepository.saveOrder(order);
 
-        if(member.getOAuthProvider() == OAuthProvider.KAKAO) {
+        if (member.getOAuthProvider() == OAuthProvider.KAKAO) {
             var accessToken = member.getAccessToken();
             var kakaoOrderMessage = KakaoOrderMessage.TemplateObject.of(
                 product.getName() + " 주문 완료",

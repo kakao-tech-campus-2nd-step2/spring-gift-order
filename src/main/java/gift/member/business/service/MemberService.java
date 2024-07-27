@@ -57,7 +57,7 @@ public class MemberService {
 
     public JwtToken loginVendorMember(MemberIn.VendorLogin memberInLogin) {
         var member = memberRepository.getMemberByEmail(memberInLogin.email());
-        if(member.getOAuthProvider() != memberInLogin.oAuthProvider()) {
+        if (member.getOAuthProvider() != memberInLogin.oAuthProvider()) {
             throw new LoginException(ErrorCode.LOGIN_ERROR, "OAuthProvider가 일치하지 않습니다.");
         }
         member.updateToken(memberInLogin.accessToken(), memberInLogin.refreshToken());

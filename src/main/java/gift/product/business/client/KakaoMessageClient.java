@@ -48,7 +48,8 @@ public class KakaoMessageClient {
             .body(String.class);
     }
 
-    private MultiValueMap<String, String> getOrderMessageRequestBody(KakaoOrderMessage.TemplateObject message) {
+    private MultiValueMap<String, String> getOrderMessageRequestBody(
+        KakaoOrderMessage.TemplateObject message) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
         var objectMapper = new ObjectMapper();

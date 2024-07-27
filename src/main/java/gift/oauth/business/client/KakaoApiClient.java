@@ -34,7 +34,7 @@ public class KakaoApiClient implements OAuthApiClient {
     public OAuthToken.Common getOAuthToken(OAuthParam param) {
         var url = "https://kauth.kakao.com/oauth/token";
 
-        var result =  restClient.post()
+        var result = restClient.post()
             .uri(url)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(param.getTokenRequestBody())

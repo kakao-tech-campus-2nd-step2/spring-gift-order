@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 public class OauthController {
+
     private final OAuthService oauthService;
     private final KakaoConfig kakaoConfig;
 
