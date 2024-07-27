@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    private final AuthService authService;
     private static final String KAKAO_AUTH_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String KAKAO_UNLINK_USER_URL = "https://kapi.kakao.com/v1/user/unlink";
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
+    private final AuthService authService;
 
     public AuthController(AuthService authService) {
         this.authService = authService;

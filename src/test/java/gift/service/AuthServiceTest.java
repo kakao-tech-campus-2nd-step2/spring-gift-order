@@ -252,7 +252,8 @@ class AuthServiceTest {
             TEST_OAUTH_ACCESS_TOKEN,
             TEST_OAUTH_REFRESH_TOKEN);
 
-        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.of(kakaoToken));
+        given(kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())).willReturn(Optional.of(
+            kakaoToken));
 
         //when, then
         assertThatThrownBy(() -> authService.unlinkKakaoAccount(loginMemberIdDto,

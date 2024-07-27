@@ -28,10 +28,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 @SuppressWarnings("NonAsciiCharacters")
 class CategoryIntegrityTest {
 
+    static final String BASE_URL = "http://localhost:";
     @LocalServerPort
     int port;
-    static final String BASE_URL = "http://localhost:";
-
     @Autowired
     TestRestTemplate testRestTemplate;
 

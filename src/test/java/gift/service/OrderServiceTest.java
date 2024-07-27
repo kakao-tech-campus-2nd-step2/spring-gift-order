@@ -97,7 +97,8 @@ class OrderServiceTest {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
         Order order = new Order(1L, 1L, loginMemberIdDto.id(), 1, "test_message");
-        given(orderRepository.findByIdAndMemberId(order.getId(), loginMemberIdDto.id())).willReturn(Optional.of(order));
+        given(orderRepository.findByIdAndMemberId(order.getId(), loginMemberIdDto.id())).willReturn(
+            Optional.of(order));
 
         //when
         orderService.getOrder(order.getId(), loginMemberIdDto);
@@ -111,7 +112,11 @@ class OrderServiceTest {
         //given
         OrderDto orderDto = new OrderDto(1L, 3, "test_message");
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        Order order = new Order(1L, orderDto.optionId(), loginMemberIdDto.id(), 2, orderDto.message());
+        Order order = new Order(1L,
+            orderDto.optionId(),
+            loginMemberIdDto.id(),
+            2,
+            orderDto.message());
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
         Option option = new Option(1L, "테스트옵션", 5, product);
@@ -172,7 +177,8 @@ class OrderServiceTest {
     void 실패_존재하지_않는_주문_내역_조회() {
         //given
         LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
-        given(orderRepository.findByIdAndMemberId(1L, loginMemberIdDto.id())).willReturn(Optional.empty());
+        given(orderRepository.findByIdAndMemberId(1L,
+            loginMemberIdDto.id())).willReturn(Optional.empty());
 
         //when, then
         assertThatThrownBy(() -> orderService.getOrder(1L, loginMemberIdDto)).isInstanceOf(
@@ -208,7 +214,9 @@ class OrderServiceTest {
             kakaoToken));
 
         //when, then
-        assertThatThrownBy(() -> orderService.doOrder(orderDto, loginMemberIdDto, mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> orderService.doOrder(orderDto,
+            loginMemberIdDto,
+            mockUrl)).isInstanceOf(
             LoginFailedException.class).hasMessage("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
     }
 
@@ -295,7 +303,9 @@ class OrderServiceTest {
             kakaoToken));
 
         //when, then
-        assertThatThrownBy(() -> orderService.doOrder(orderDto, loginMemberIdDto, mockUrl)).isInstanceOf(
+        assertThatThrownBy(() -> orderService.doOrder(orderDto,
+            loginMemberIdDto,
+            mockUrl)).isInstanceOf(
             LoginFailedException.class).hasMessage("카카오톡 메시지 API 관련 에러가 발생하였습니다. 다시 시도해주세요.");
     }
 

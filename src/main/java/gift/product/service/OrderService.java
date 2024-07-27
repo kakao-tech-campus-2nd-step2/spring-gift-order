@@ -28,13 +28,13 @@ import org.springframework.web.client.RestClient;
 @Transactional(readOnly = true)
 public class OrderService {
 
+    private static final String LINK_URL = "http://localhost:8080";
     private final OrderRepository orderRepository;
     private final WishRepository wishRepository;
     private final OptionRepository optionRepository;
     private final AuthRepository authRepository;
     private final KakaoTokenRepository kakaoTokenRepository;
     private final RestClient restClient = RestClient.builder().build();
-    private static final String LINK_URL = "http://localhost:8080";
 
     public OrderService(OrderRepository orderRepository,
         WishRepository wishRepository,
@@ -58,7 +58,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order doOrder(OrderDto orderDto, LoginMemberIdDto loginMemberIdDto, String externalApiUrl) {
+    public Order doOrder(OrderDto orderDto,
+        LoginMemberIdDto loginMemberIdDto,
+        String externalApiUrl) {
         Order order = processOrder(orderDto, loginMemberIdDto);
         LinkedMultiValueMap<String, String> body = getRequestBody(
             orderDto);
