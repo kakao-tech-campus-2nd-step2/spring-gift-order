@@ -1,5 +1,6 @@
 package gift;
 
+import gift.util.KakaoProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,14 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-
-@ConfigurationProperties("kakao")
-record KakaoProperties(
-        String clientId,
-        String redirectUrl
-){}
-
-@ActiveProfiles("test")
+@ActiveProfiles("secret")
 @SpringBootTest
 class RestTemplateTest {
     private final RestTemplate client = new RestTemplateBuilder().build();
@@ -36,7 +30,7 @@ class RestTemplateTest {
     @Test
     void test1(){
         var url = "https://kauth.kakao.com/oauth/token";
-        var code = "6mKKbQa2qRvriXvJ1E8AemtkmniawKWYS8xdEVv1th2NIqk-RUeatwAAAAQKPCQhAAABkO7cUP8e0jm_MNo9Pw";
+        var code = "MZqnpa_Ch0moTrUURmm4PEi74CgD3sYdPdG1cJU4nnv4ilOioKXq5AAAAAQKPCQfAAABkPMfVqjNsk3jZ7dWzg";
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         var body = new LinkedMultiValueMap<String, String>();

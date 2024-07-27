@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>Kakao Login</h1>
-<a href="https://kauth.kakao.com/oauth/authorize?client_id=7996810f652c133a85581783a17c69ffv&redirect_uri=http://localhost:8080&response_type=code">
+<a th:href="@{|https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUrl}&response_type=code|}">
     Login with Kakao
 </a>
 </body>
