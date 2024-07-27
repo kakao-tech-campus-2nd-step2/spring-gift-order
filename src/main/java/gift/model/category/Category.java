@@ -11,8 +11,6 @@ import java.util.List;
 @Table(name = "category")
 public class Category {
 
-    @OneToMany(mappedBy = "category")
-    private final List<Gift> gifts = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +24,9 @@ public class Category {
     private String imageUrl;
     @NotNull
     private String description;
+
+    @OneToMany(mappedBy = "category")
+    private final List<Gift> gifts = new ArrayList<>();
 
     protected Category() {
     }
