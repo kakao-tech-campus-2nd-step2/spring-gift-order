@@ -10,6 +10,7 @@ import gift.service.OptionFacadeService;
 import gift.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,7 +59,8 @@ public class OptionController {
     //상품 주문
     @PostMapping("/orders")
     @Operation(summary = "상품 주문", description = "Option에 해당하는 상품을 주문합니다.")
-    public ResponseEntity<OrderResponseDTO> orderOption(@RequestBody OrderRequestDTO orderRequestDTO,
+    public ResponseEntity<OrderResponseDTO> orderOption(
+        @RequestBody @Valid OrderRequestDTO orderRequestDTO,
         @LoginUser String email) {
         OrderResponseDTO response = optionService.orderOption(orderRequestDTO, email);
 
