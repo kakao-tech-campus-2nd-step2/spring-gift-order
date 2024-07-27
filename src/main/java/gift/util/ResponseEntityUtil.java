@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class ResponseEntityUtil {
-    public static final Logger logger = LoggerFactory.getLogger(ResponseEntityUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseEntityUtil.class);
 
     public static ResponseEntity<ResponseDTO> responseError(Exception e) {
         if (e instanceof BadRequestException) {
