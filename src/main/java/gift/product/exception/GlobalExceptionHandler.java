@@ -1,6 +1,5 @@
 package gift.product.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.validation.ValidationException;
 import java.sql.SQLException;
 import org.springframework.dao.DataAccessException;

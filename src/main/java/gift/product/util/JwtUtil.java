@@ -92,7 +92,11 @@ public class JwtUtil {
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN))
                 .getId();
             return memberRepository.findBySnsMemberId(snsMemberId)
+<<<<<<< HEAD
                 .orElseThrow(() -> new InvalidIdException(NOT_FOUND_MEMBER));
+=======
+                .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
+>>>>>>> chris0825
         }
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidIdException(INVALID_TOKEN));
