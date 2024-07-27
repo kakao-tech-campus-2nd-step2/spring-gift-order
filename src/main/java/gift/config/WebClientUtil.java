@@ -5,9 +5,9 @@ import reactor.core.publisher.Mono;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
 public class WebClientUtil {
-    private final Builder webClientBuilder;
+    private final WebClient.Builder webClientBuilder;
 
-    public WebClientUtil(Builder webClientBuilder) {
+    public WebClientUtil(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder;
     }
 
