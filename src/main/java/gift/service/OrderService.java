@@ -45,8 +45,6 @@ public class OrderService {
 
         wishService.removeWish(member.getId(), option.getProduct().getName());
 
-
-
         if (member.getEmail() != null) {
             String kakaoAccessToken = kakaoTokenService.getTokenByEmail(member.getEmail());
             kakaoService.sendToMe(kakaoAccessToken, orderRequest.getMessage());
