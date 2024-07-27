@@ -1,23 +1,35 @@
 package gift.member.presentation;
 
+import gift.auth.KakaoOauthProperty;
+import gift.auth.KakaoService;
+import gift.auth.KakaoToken;
 import gift.auth.TokenService;
 import gift.member.application.MemberService;
 import gift.member.presentation.request.*;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 @RequestMapping("/api/member")
 public class MemberController {
     private final MemberService memberService;
     private final TokenService tokenService;
+    private final KakaoService kakaoService;
 
-    public MemberController(MemberService memberService, TokenService tokenService) {
+    private static final String AUTHENTICATION_TYPE = "Bearer ";
+
+    public MemberController(MemberService memberService, TokenService tokenService, KakaoService kakaoService) {
         this.memberService = memberService;
         this.tokenService = tokenService;
+        this.kakaoService = kakaoService;
     }
 
     @PostMapping("/join")
@@ -28,7 +40,7 @@ public class MemberController {
         String token = tokenService.createToken(memberId);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
+        headers.add(AUTHORIZATION, AUTHENTICATION_TYPE + token);
 
         return ResponseEntity.ok().headers(headers).build();
     }
@@ -41,7 +53,38 @@ public class MemberController {
         String token = tokenService.createToken(memberId);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
+        headers.add(AUTHORIZATION, AUTHENTICATION_TYPE + token);
+
+        return ResponseEntity.ok().headers(headers).build();
+    }
+
+    @GetMapping("/login/kakao")
+    public void kakaoLogin(
+            HttpServletResponse response
+    ) throws IOException {
+        response.sendRedirect(kakaoService.getKakaoRedirectUrl());
+    }
+
+    @GetMapping("/login/kakao/callback")
+    public ResponseEntity<?> kakaoLoginCallback(
+            @RequestParam("code") String code
+    ) {
+        Long memberId = memberService.kakaoLogin(code);
+        String token = tokenService.createToken(memberId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AUTHORIZATION, AUTHENTICATION_TYPE + token);
+
+        return ResponseEntity.ok().headers(headers).build();
+    }
+
+    @PostMapping("/login/kakao/refresh-token")
+    public ResponseEntity<?> refreshToken(@RequestHeader(AUTHORIZATION) String authorizationHeader) {
+        String refreshToken = authorizationHeader.replace(AUTHENTICATION_TYPE, "");
+        KakaoToken newToken = kakaoService.refreshToken(refreshToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(AUTHORIZATION, AUTHENTICATION_TYPE + newToken.accessToken());
 
         return ResponseEntity.ok().headers(headers).build();
     }
