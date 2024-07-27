@@ -1,6 +1,7 @@
 package gift.product.service;
 
 import gift.config.KakaoMessageConfig;
+import gift.product.exception.kakao.KakaoMessageException;
 import gift.product.service.command.BuyProductMessageCommand;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class KakaoMessageService {
                 .toEntity(String.class);
 
         if (response.getStatusCode().isError()) {
-            throw new IllegalArgumentException("Message 전송에 실패했습니다.");
+            throw new KakaoMessageException();
         }
     }
 }

@@ -2,6 +2,7 @@ package gift.product.service.command;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.product.exception.kakao.KakaoMessageException;
 import gift.product.service.dto.ProductInfo;
 import gift.product.service.dto.ProductOptionInfo;
 import gift.product.service.dto.kakao.KakaoMessageTemplate;
@@ -29,7 +30,7 @@ public record BuyProductMessageCommand(
         try {
             templates.add("template_object", objectMapper.writeValueAsString(body));
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("메시지 전송에 실패하였습니다.");
+            throw new KakaoMessageException();
         }
 
         return templates;
