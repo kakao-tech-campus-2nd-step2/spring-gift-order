@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.client.KakaoApiClient;
+import gift.client.KakaoApi;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.entity.Order;
@@ -12,6 +12,7 @@ import gift.repository.OrderRepository;
 import gift.repository.ProductOptionRepository;
 import gift.repository.UserRepository;
 import gift.repository.WishRepository;
+import gift.value.Token;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,26 +26,26 @@ public class OrderService {
     private final ProductOptionRepository productOptionRepository;
     private final UserRepository userRepository;
     private final WishRepository wishRepository;
-    private final KakaoApiClient kakaoApiClient;
+    private final KakaoApi kakaoApi;
     private final TokenService tokenService;
 
     public OrderService(OrderRepository orderRepository, ProductOptionRepository productOptionRepository,
                         UserRepository userRepository, WishRepository wishRepository,
-                        KakaoApiClient kakaoApiClient, TokenService tokenService) {
+                        KakaoApi kakaoApi, TokenService tokenService) {
         this.orderRepository = orderRepository;
         this.productOptionRepository = productOptionRepository;
         this.userRepository = userRepository;
         this.wishRepository = wishRepository;
-        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoApi = kakaoApi;
         this.tokenService = tokenService;
     }
 
     @Transactional
     public OrderResponseDto createOrder(String jwtToken, String kakaoAccessToken, OrderRequestDto requestDto) {
-        String jwt = jwtToken.replace("Bearer ", "");
-        String kakaoToken = kakaoAccessToken.replace("Bearer ", "");
+        Token jwt = new Token(jwtToken);
+        Token kakaoToken = new Token(kakaoAccessToken);
 
-        Map<String, String> userInfo = tokenService.extractUserInfo(jwt);
+        Map<String, String> userInfo = tokenService.extractUserInfo(jwt.getToken());
         String userId = userInfo.get("id");
 
         User user = findUserById(userId);
@@ -58,7 +59,7 @@ public class OrderService {
 
         removeWish(user, productOption);
 
-        sendOrderConfirmationMessage(kakaoToken, order);
+        sendOrderConfirmationMessage(kakaoToken.getToken(), order);
 
         return new OrderResponseDto(order.getId(), productOption.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
@@ -95,6 +96,6 @@ public class OrderService {
     }
 
     private void sendOrderConfirmationMessage(String kakaoAccessToken, Order order) {
-        kakaoApiClient.sendMessageToMe(kakaoAccessToken, order);
+        kakaoApi.sendMessageToMe(kakaoAccessToken, order);
     }
 }

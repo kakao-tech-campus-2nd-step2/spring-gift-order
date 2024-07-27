@@ -7,12 +7,10 @@ import gift.entity.*;
 import gift.exception.BusinessException;
 import gift.repository.*;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.Rollback;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,17 +49,6 @@ public class OrderServiceTest {
     @MockBean
     private TokenService tokenService;
 
-    private User testUser;
-
-    @BeforeEach
-    public void setUp() {
-        testUser = userRepository.save(new User("test@example.com", "password123"));
-        Map<String, String> userInfo = new HashMap<>();
-        userInfo.put("id", testUser.getId().toString());
-
-        when(tokenService.extractUserInfo(anyString())).thenReturn(userInfo);
-    }
-
     @AfterEach
     public void tearDown() {
         wishRepository.deleteAll();
@@ -74,20 +61,21 @@ public class OrderServiceTest {
     }
 
     @Test
-    @Rollback
     public void 주문_생성_성공() {
-        // Given
+        User testUser = userRepository.save(new User("test@example.com", "password123"));
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("id", testUser.getId().toString());
+        when(tokenService.extractUserInfo(anyString())).thenReturn(userInfo);
+
         Category category = categoryRepository.save(new Category("Test Category", "#FF0000", "https://example.com/test.png", "Test Description"));
         Product product = productRepository.save(new Product(new ProductName("Test Product"), 1000, "https://example.com/image.jpg", category));
         Option option = optionRepository.save(new Option(new OptionName("Test Option")));
         ProductOption productOption = productOptionRepository.save(new ProductOption(product, option, 10));
         OrderRequestDto orderRequestDto = new OrderRequestDto(productOption.getId(), 2, "Test Message");
 
-        // When
         OrderService orderService = new OrderService(orderRepository, productOptionRepository, userRepository, wishRepository, kakaoApiClient, tokenService);
         OrderResponseDto orderResponseDto = orderService.createOrder("Bearer jwtToken", "Bearer kakaoAccessToken", orderRequestDto);
 
-        // Then
         assertNotNull(orderResponseDto);
         assertEquals(productOption.getId(), orderResponseDto.getProductOptionId());
         assertEquals(2, orderResponseDto.getQuantity());
@@ -95,37 +83,39 @@ public class OrderServiceTest {
     }
 
     @Test
-    @Rollback
     public void 주문_생성_실패_수량부족() {
-        // Given
+        User testUser = userRepository.save(new User("test@example.com", "password123"));
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("id", testUser.getId().toString());
+        when(tokenService.extractUserInfo(anyString())).thenReturn(userInfo);
+
         Category category = categoryRepository.save(new Category("Test Category", "#FF0000", "https://example.com/test.png", "Test Description"));
         Product product = productRepository.save(new Product(new ProductName("Test Product"), 1000, "https://example.com/image.jpg", category));
         Option option = optionRepository.save(new Option(new OptionName("Test Option")));
         ProductOption productOption = productOptionRepository.save(new ProductOption(product, option, 1));
         OrderRequestDto orderRequestDto = new OrderRequestDto(productOption.getId(), 2, "Test Message");
 
-        // When
         OrderService orderService = new OrderService(orderRepository, productOptionRepository, userRepository, wishRepository, kakaoApiClient, tokenService);
 
-        // Then
         assertThrows(BusinessException.class, () -> orderService.createOrder("Bearer jwtToken", "Bearer kakaoAccessToken", orderRequestDto));
     }
 
     @Test
-    @Rollback
     public void 주문_생성_후_카카오_메시지_전송_성공() {
-        // Given
+        User testUser = userRepository.save(new User("test@example.com", "password123"));
+        Map<String, String> userInfo = new HashMap<>();
+        userInfo.put("id", testUser.getId().toString());
+        when(tokenService.extractUserInfo(anyString())).thenReturn(userInfo);
+
         Category category = categoryRepository.save(new Category("Test Category", "#FF0000", "https://example.com/test.png", "Test Description"));
         Product product = productRepository.save(new Product(new ProductName("Test Product"), 1000, "https://example.com/image.jpg", category));
         Option option = optionRepository.save(new Option(new OptionName("Test Option")));
         ProductOption productOption = productOptionRepository.save(new ProductOption(product, option, 10));
         OrderRequestDto orderRequestDto = new OrderRequestDto(productOption.getId(), 2, "Test Message");
 
-        // When
         OrderService orderService = new OrderService(orderRepository, productOptionRepository, userRepository, wishRepository, kakaoApiClient, tokenService);
         orderService.createOrder("Bearer jwtToken", "Bearer kakaoAccessToken", orderRequestDto);
 
-        // Then
         verify(kakaoApiClient, times(1)).sendMessageToMe(anyString(), any(Order.class));
     }
 }

@@ -11,16 +11,20 @@ public class KakaoProperties {
     private final String authUrl;
     private final String tokenUrl;
     private final String infoUrl;
-    private final String messageUrl; // 메시지 전송 API URL 추가
+    private final String messageUrl;
+    private final int connectTimeoutMillis;
+    private final int responseTimeoutSeconds;
 
     @ConstructorBinding
-    public KakaoProperties(String clientId, String redirectUri, String authUrl, String tokenUrl, String infoUrl, String messageUrl) {
+    public KakaoProperties(String clientId, String redirectUri, String authUrl, String tokenUrl, String infoUrl, String messageUrl, int connectTimeoutMillis, int responseTimeoutSeconds) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.authUrl = authUrl;
         this.tokenUrl = tokenUrl;
         this.infoUrl = infoUrl;
         this.messageUrl = messageUrl;
+        this.connectTimeoutMillis = connectTimeoutMillis;
+        this.responseTimeoutSeconds = responseTimeoutSeconds;
     }
 
     public String getClientId() {
@@ -45,5 +49,13 @@ public class KakaoProperties {
 
     public String getMessageUrl() {
         return messageUrl;
+    }
+
+    public int getConnectTimeoutMillis() {
+        return connectTimeoutMillis;
+    }
+
+    public int getResponseTimeoutSeconds() {
+        return responseTimeoutSeconds;
     }
 }

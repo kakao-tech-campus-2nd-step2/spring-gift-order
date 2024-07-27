@@ -62,6 +62,10 @@ public class User {
         return this.password != null && this.password.equals(password);
     }
 
+    public boolean isPasswordIncorrect(String password) {
+        return !isPasswordCorrect(password);
+    }
+
     public Long getId() {
         return id;
     }
