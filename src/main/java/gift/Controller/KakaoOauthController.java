@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+@RequestMapping("/members")
 @RestController
 public class KakaoOauthController {
 
@@ -22,13 +23,13 @@ public class KakaoOauthController {
         this.kakaoLoginService = kakaoLoginService;
     }
 
-    @GetMapping("/kakao-oauth")
+    @GetMapping("/kakao-login")
     public RedirectView requestLogin(){
         URI redirectURI = kakaoLoginService.requestLogin();
         return new RedirectView(redirectURI.toString());
     }
 
-    @GetMapping("/kakao-token")
+    @GetMapping("/login")
     public ResponseEntity<Map<String,String>> getToken(@RequestParam ("code") String oauthCode) {
         String accessToken = kakaoLoginService.getToken(oauthCode);
         Map<String, String> response = new HashMap<>();
