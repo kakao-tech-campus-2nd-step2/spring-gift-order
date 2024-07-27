@@ -63,7 +63,9 @@ public class KakaoLoginService {
 
     public String loginOrRegisterUser(String oauthCode) {
         String kakaoAccessToken = getToken(oauthCode);
-        String userEmail = client.post()
+        String userEmail;
+        try {
+        userEmail = client.post()
                 .uri(URI.create(GET_USER_INFO_URI))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "+kakaoAccessToken)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -72,6 +74,11 @@ public class KakaoLoginService {
                 .getBody()
                 .getKakaoAccount()
                 .getEmail();
+        } catch (HttpClientErrorException e) {
+            throw new KaKaoBadRequestException(e.getStatusCode() + "에러 발생");
+        } catch (HttpServerErrorException e) {
+            throw new KaKaoServerErrorException(e.getStatusCode() + "에러발생");
+        }
 
         Email email = new Email(userEmail);
         Member member = memberRepository.findByEmail(email).orElseGet(()->memberRepository.save(new Member(email, new Password("카카오 유저"))));
