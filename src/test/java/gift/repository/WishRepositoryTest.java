@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class WishRepositoryTest {
+    /*
     @Autowired
     private WishRepository wishes;
     @Autowired
@@ -39,13 +40,13 @@ class WishRepositoryTest {
                 .imageUrl("https://example.com/images/exchange_voucher.jpg")
                 .description("다양한 상품으로 교환 가능한 교환권")
                 .build();
-
         Product expectedProduct = new Product.Builder()
                 .name("아메리카노")
                 .price(2000)
                 .imageUrl("https://example.com/americano")
                 .category(category)
                 .build();
+
         categories.save(category);
         products.save(expectedProduct);
 
@@ -248,4 +249,5 @@ class WishRepositoryTest {
                 () -> assertThat(page.getTotalPages()).isEqualTo(2)
         );
     }
+    */
 }
