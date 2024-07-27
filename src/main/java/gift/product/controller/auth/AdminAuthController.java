@@ -70,7 +70,7 @@ public class AdminAuthController {
         HttpServletResponse response) {
         Cookie cookie = new Cookie(ACCESS_TOKEN, accessToken);
         cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        cookie.setPath("/admin");
         response.addCookie(cookie);
     }
 }
