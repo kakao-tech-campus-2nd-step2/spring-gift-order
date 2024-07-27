@@ -1,35 +1,35 @@
 package gift.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name="orders")
-public class Order extends BaseEntity{
+public class Order extends BaseEntity {
     @Column(nullable = false, name="option_id")
     private Long optionId;
     @Column(nullable = false, name="quantity")
     private Long quantity;
     @Column(nullable = false, name="message")
     private String message;
-    @Column(nullable = false, name="orderDateTime")
-    private String orderDateTime;
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime orderDateTime;
 
     protected Order() {
+        super();
     }
 
     public Order(Long optionId, Long quantity, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
         this.message = message;
-
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-        this.orderDateTime = now.format(formatter);
     }
 
     public Long getOptionId() {
@@ -45,6 +45,6 @@ public class Order extends BaseEntity{
     }
 
     public String getOrderDateTime() {
-        return orderDateTime;
+        return orderDateTime.toString();
     }
 }
