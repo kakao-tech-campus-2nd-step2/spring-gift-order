@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -18,11 +19,14 @@ public class OrderController {
     this.orderService=orderService;
   }
 
-  //kakaoLoginUser 하기
   @PostMapping
-  public ResponseEntity<String> orderOption(@RequestBody OrderDto orderDto) throws IllegalAccessException {
-    String response = orderService.orderOption(orderDto);
-    return ResponseEntity.ok(response);
+  public ResponseEntity<OrderDto> orderOption(@RequestBody OrderDto orderDto) throws IllegalAccessException {
+    OrderDto orderdDto = orderService.orderOption(orderDto);
+    var location = ServletUriComponentsBuilder.fromCurrentRequest()
+      .path("/{id}")
+      .buildAndExpand(orderdDto.getId())
+      .toUri();
+    return ResponseEntity.created(location).body(orderdDto);
   }
 
 }

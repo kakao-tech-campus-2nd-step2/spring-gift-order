@@ -34,7 +34,7 @@ public class OrderService {
     this.kakaoApi = kakaoApi;
   }
 
-  public String orderOption(OrderDto orderDto) {
+  public OrderDto orderOption(OrderDto orderDto) {
     OptionDto optionDto = orderDto.getOptionDto();
     optionService.optionQuantitySubtract(optionDto, orderDto.getQuantity());
 
@@ -48,8 +48,9 @@ public class OrderService {
 
     KakaoJwtToken kakaoJwtToken = kakaoJwtTokenRepository.findById(1L)
       .orElseThrow(() -> new EmptyResultDataAccessException("해당 데이터가 없습니다", 1));
+    kakaoApi.kakaoSendMe(orderDto,kakaoJwtToken,URL);
 
-    return kakaoApi.kakaoSendMe(orderDto,kakaoJwtToken,URL);
+    return orderDto;
   }
 
 

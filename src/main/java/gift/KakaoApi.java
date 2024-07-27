@@ -21,7 +21,7 @@ public class KakaoApi {
   RestClient restClient = RestClient.builder().build();
   private RestTemplate restTemplate;
 
-  public KakaoJwtTokenDto kakaoLoginApiPost(String url,String API_KEY, String autuhorizationKey) {
+  public KakaoJwtTokenDto kakaoLoginApiPost(String url, String API_KEY, String autuhorizationKey) {
     var body = new LinkedMultiValueMap<String, String>();
 
     body.add("grant_type", "authorization_code");
@@ -46,7 +46,8 @@ public class KakaoApi {
       String scope = jsonNode.get("scope").asText();
       int refreshTokenExpiresIn = jsonNode.get("refresh_token_expires_in").asInt();
 
-      KakaoJwtTokenDto kakaoJwtTokenDto = new KakaoJwtTokenDto(1L,accessToken, tokenType, refreshToken,
+      KakaoJwtTokenDto kakaoJwtTokenDto = new KakaoJwtTokenDto(1L, accessToken, tokenType,
+        refreshToken,
         expiresIn, scope,
         refreshTokenExpiresIn);
 
@@ -58,17 +59,16 @@ public class KakaoApi {
     }
   }
 
-  public String kakaoSendMe(OrderDto orderDto,KakaoJwtToken kakaoJwtToken, String url){
-    restTemplate=new RestTemplate();
+  public void kakaoSendMe(OrderDto orderDto, KakaoJwtToken kakaoJwtToken, String url) {
+    restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
     headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
     headers.setBearerAuth(kakaoJwtToken.getAccessToken());
 
-    String body = "template_object="+createTemplateObject(orderDto);
+    String body = "template_object=" + createTemplateObject(orderDto);
     HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-    String response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class).getBody();
-
-    return response;
+    String response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class)
+      .getBody();
   }
 
   public String createTemplateObject(OrderDto orderDto) {
@@ -88,6 +88,6 @@ public class KakaoApi {
           ] 
         }
       } 
-      """.formatted(orderDto.getOptionDto().getName(),orderDto.getQuantity());
+      """.formatted(orderDto.getOptionDto().getName(), orderDto.getQuantity());
   }
 }
