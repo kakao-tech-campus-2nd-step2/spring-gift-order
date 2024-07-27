@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/gifts")
-public class GiftController {
+public class GiftController implements GiftSpecification {
 
     private final GiftService giftService;
     private final OptionService optionService;
@@ -25,11 +25,10 @@ public class GiftController {
         this.optionService = optionService;
     }
 
-
     @PostMapping
     public ResponseEntity<String> addGift(@Valid @RequestBody GiftRequest.Create giftRequest) {
         giftService.addGift(giftRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Gift created");
+        return ResponseEntity.status(HttpStatus.CREATED).body("상품이 생성되었습니다.");
     }
 
     @GetMapping("/{id}")

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/orders")
-public class OrderController {
+public class OrderController implements OrderSpecification {
 
     private final OrderService orderService;
 
@@ -25,7 +25,7 @@ public class OrderController {
                                                @PathVariable Long giftId,
                                                @Valid @RequestBody OrderRequest.Create orderRequest) {
         OrderResponse orderResponse = orderService.order(user.getId(), giftId, orderRequest);
-        orderService.sendMessage(orderRequest,user,giftId);
+        orderService.sendMessage(orderRequest, user, giftId);
         return ResponseEntity.ok(orderResponse);
     }
 }

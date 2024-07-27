@@ -5,14 +5,13 @@ import gift.dto.category.CategoryResponse;
 import gift.service.category.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/categories")
-public class CategoryController {
+public class CategoryController implements CategorySpecification {
 
     private final CategoryService categoryService;
 
@@ -20,7 +19,6 @@ public class CategoryController {
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
-
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAllCategories() {
@@ -54,4 +52,3 @@ public class CategoryController {
     }
 
 }
-
