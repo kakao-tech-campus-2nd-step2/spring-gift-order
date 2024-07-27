@@ -7,6 +7,7 @@ import gift.dto.request.MemberRequest;
 import gift.dto.request.OrderRequest;
 import gift.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -25,11 +26,11 @@ public class OrderService {
         this.kakaoService = kakaoService;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void orderOption(OrderRequest orderRequest, MemberRequest memberRequest, String accessToken){
-        Option option = optionService.subtractQuantityById(orderRequest.optionId(), orderRequest.quantity()).toEntity();
+        optionService.subtractQuantityById(orderRequest.optionId(), orderRequest.quantity());
 
-        save(memberRequest, orderRequest, option);
+        save(memberRequest, orderRequest);
 
         if(wishService.existsByOptionId(orderRequest.optionId())){
             wishService.deleteByOptionId(orderRequest.optionId());
@@ -40,9 +41,11 @@ public class OrderService {
     }
 
 
-    public void save(MemberRequest memberRequest, OrderRequest orderRequest, Option option){
+    @Transactional
+    public void save(MemberRequest memberRequest, OrderRequest orderRequest){
         LocalDateTime orderDateTime = LocalDateTime.now();
         Member member = memberRequest.toEntity();
+        Option option = optionService.findById(orderRequest.optionId()).toEntity();
 
         Order order =  orderRequest.toEntity(orderDateTime, member, option);
         orderRepository.save(order);
