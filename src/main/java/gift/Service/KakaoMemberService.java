@@ -23,14 +23,10 @@ public class KakaoMemberService {
   }
 
   public KakaoJwtToken getToken(String autuhorizationKey) {
-    var body = new LinkedMultiValueMap<String, String>();
 
-    body.add("grant_type", "authorization_code");
-    body.add("client_id", API_KEY);
-    body.add("redirect_url", "http://localhost:8080");
-    body.add("code", autuhorizationKey);
 
-    KakaoJwtToken kakaoJwtToken = kakaoApi.kakaoLoginApiPost(URL, body);
+
+    KakaoJwtToken kakaoJwtToken = kakaoApi.kakaoLoginApiPost(URL, API_KEY,autuhorizationKey);
     kakaoJwtTokenRepository.save(kakaoJwtToken);
     return kakaoJwtToken;
 

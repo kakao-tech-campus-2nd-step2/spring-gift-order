@@ -20,7 +20,14 @@ public class KakaoApi {
   RestClient restClient = RestClient.builder().build();
   private RestTemplate restTemplate;
 
-  public KakaoJwtToken kakaoLoginApiPost(String url, LinkedMultiValueMap<String, String> body) {
+  public KakaoJwtToken kakaoLoginApiPost(String url,String API_KEY, String autuhorizationKey) {
+    var body = new LinkedMultiValueMap<String, String>();
+
+    body.add("grant_type", "authorization_code");
+    body.add("client_id", API_KEY);
+    body.add("redirect_url", "http://localhost:8080");
+    body.add("code", autuhorizationKey);
+
     String response = restClient.post()
       .uri(url)
       .contentType(MediaType.APPLICATION_FORM_URLENCODED)
