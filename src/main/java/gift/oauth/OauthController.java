@@ -27,6 +27,6 @@ public class OauthController {
 
     @GetMapping("/kakao/token")
     public String getToken(@RequestParam String code) {
-        return oauthService.getToken(code);
+        return oauthService.getAccessToken(code);
     }
 }

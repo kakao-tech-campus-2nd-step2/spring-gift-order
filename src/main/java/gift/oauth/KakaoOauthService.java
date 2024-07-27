@@ -7,9 +7,9 @@ import gift.exception.FailedLoginException;
 import gift.exception.InvalidAccessTokenException;
 import gift.member.MemberService;
 import gift.oauth.config.KakaoOauthConfigure;
-import gift.oauth.message.DefaultMessageTemplate;
 import gift.oauth.dto.KakaoTokenResponseDTO;
 import gift.oauth.dto.KakaoUserInfoDTO;
+import gift.oauth.message.DefaultMessageTemplate;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
@@ -47,33 +47,30 @@ public class KakaoOauthService {
             .toUri();
     }
 
-    public String getToken(String code) {
-        KakaoTokenResponseDTO kakaoToken = restClient.post()
-            .uri(kakaoOauthConfigure.getTokenURL())
-            .contentType(APPLICATION_FORM_URLENCODED)
-            .body(generateBody(code))
-            .retrieve()
-            .onStatus(
-                HttpStatusCode::is4xxClientError,
-                (request, response) -> {
-                    throw new FailedLoginException(KAKAO_AUTHENTICATION_FAILED);
-                }
-            ).toEntity(KakaoTokenResponseDTO.class)
-            .getBody();
-
-        Pair<String, Long> emailAndPassword = getEmailAndSubFromAccessToken(
-            Objects.requireNonNull(kakaoToken).getAccessToken()
-        );
-
-        memberService.registerIfNotExists(
-            emailAndPassword.getFirst(),
-            emailAndPassword.getSecond().toString()
-        );
-
-        return Objects.requireNonNull(kakaoToken).getAccessToken();
+    public String getAccessToken(String code) {
+        String accessToken = getAccessTokenFromKakao(code);
+        registerMemberIfExists(accessToken);
+        return accessToken;
     }
 
-    private LinkedMultiValueMap<String, String> generateBody(String code) {
+    private String getAccessTokenFromKakao(String code) {
+        return Objects.requireNonNull(
+                restClient.post()
+                    .uri(kakaoOauthConfigure.getTokenURL())
+                    .contentType(APPLICATION_FORM_URLENCODED)
+                    .body(generateGetAccessTokenFromKakaoBody(code))
+                    .retrieve()
+                    .onStatus(
+                        HttpStatusCode::is4xxClientError,
+                        (request, response) -> {
+                            throw new FailedLoginException(KAKAO_AUTHENTICATION_FAILED);
+                        }
+                    ).toEntity(KakaoTokenResponseDTO.class)
+                    .getBody())
+            .getAccessToken();
+    }
+
+    private LinkedMultiValueMap<String, String> generateGetAccessTokenFromKakaoBody(String code) {
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("code", code);
         body.add("grant_type", "authorization_code");
@@ -82,12 +79,21 @@ public class KakaoOauthService {
         return body;
     }
 
+    private void registerMemberIfExists(String accessToken) {
+        Pair<String, Long> emailAndPassword = getEmailAndSubFromAccessToken(accessToken);
+
+        memberService.registerIfNotExists(
+            emailAndPassword.getFirst(),
+            emailAndPassword.getSecond().toString()
+        );
+    }
+
     public void sendMessage(String message, String accessToken) {
         restClient.post()
             .uri(kakaoOauthConfigure.getMessageSendURL())
             .header("Authorization", accessToken)
             .contentType(APPLICATION_FORM_URLENCODED)
-            .body(generateMessageBody(message))
+            .body(generateSendMessageBody(message))
             .exchange((request, response) -> {
                 if (!response.getStatusCode().is2xxSuccessful()) {
                     throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
@@ -96,7 +102,7 @@ public class KakaoOauthService {
             });
     }
 
-    private LinkedMultiValueMap<String, String> generateMessageBody(String message) {
+    private LinkedMultiValueMap<String, String> generateSendMessageBody(String message) {
         DefaultMessageTemplate defaultMessageTemplate = new DefaultMessageTemplate(
             "text", message, Map.of(), "버튼"
         );
@@ -108,13 +114,9 @@ public class KakaoOauthService {
     }
 
     public Pair<String, Long> getEmailAndSubFromAccessToken(String accessToken) {
-        if (!accessToken.startsWith("Bearer")) {
-            accessToken = "Bearer " + accessToken;
-        }
-
         return restClient.get()
             .uri(kakaoOauthConfigure.getUserInfoFromAccessTokenURL())
-            .header("Authorization", accessToken)
+            .header("Authorization", startWithBearer(accessToken))
             .accept(APPLICATION_FORM_URLENCODED)
             .exchange((request, response) -> {
                 if (response.getStatusCode().is2xxSuccessful()) {
@@ -127,5 +129,12 @@ public class KakaoOauthService {
 
                 throw new InvalidAccessTokenException(KAKAO_AUTHENTICATION_FAILED);
             });
+    }
+
+    private String startWithBearer(String accessToken) {
+        if (!accessToken.startsWith("Bearer")) {
+            return "Bearer " + accessToken;
+        }
+        return accessToken;
     }
 }
