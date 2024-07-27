@@ -27,6 +27,9 @@ public class KakaoOAuthService {
     @Value("${kakao.api.userProfileUrl}")
     private String userProfileUrl;
 
+    @Value("${kakao.api.sendMessageUrl}")
+    private String sendMessageUrl;
+
     public KakaoOAuthService(RestTemplate restTemplate, Dotenv dotenv) {
         this.restTemplate = restTemplate;
         this.dotenv = dotenv;
@@ -64,7 +67,6 @@ public class KakaoOAuthService {
     }
 
     public void sendOrderMessageToMe(Order order) {
-        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBearerAuth(dotenv.get("KAKAO_ACCESS_TOKEN"));
@@ -74,7 +76,7 @@ public class KakaoOAuthService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(sendMessageUrl, request, String.class);
         if (response.getStatusCodeValue() != 200) {
             throw new RuntimeException("Failed to send Kakao message: " + response.getBody());
         }
