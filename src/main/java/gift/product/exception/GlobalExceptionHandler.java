@@ -1,5 +1,6 @@
 package gift.product.exception;
 
+import jakarta.validation.ValidationException;
 import java.sql.SQLException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -98,6 +99,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidIdException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public void handleInvalidIdException(InvalidIdException ex, Model model) {
+        model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void handleValidtaionException(ValidationException ex, Model model) {
         model.addAttribute("errorMessage", "Response error: " + ex.getMessage());
     }
 }
