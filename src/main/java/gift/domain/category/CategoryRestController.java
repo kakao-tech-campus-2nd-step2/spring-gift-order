@@ -3,6 +3,7 @@ package gift.domain.category;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,12 +30,14 @@ public class CategoryRestController {
     }
 
     @GetMapping
+    @Operation(summary = "모든 카테고리 조회")
     public ResponseEntity<ResultResponseDto<List<Category>>> getCategories() {
         List<Category> categories = categoryService.getCategories();
         return ResponseMaker.createResponse(HttpStatus.OK, "전체 카테코리 목록 조회 성공", categories);
     }
 
     @PostMapping
+    @Operation(summary = "카테고리 추가")
     public ResponseEntity<SimpleResultResponseDto> createCategory(
         @Valid @RequestBody CategoryDTO categoryDTO) {
         categoryService.createCategory(categoryDTO);
@@ -42,12 +45,14 @@ public class CategoryRestController {
     }
 
     @DeleteMapping("{id}")
+    @Operation(summary = "카테고리 삭제")
     public ResponseEntity<SimpleResultResponseDto> deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "카테고리 삭제 성공");
     }
 
     @PutMapping("{id}")
+    @Operation(summary = "카테고리 수정")
     public ResponseEntity<SimpleResultResponseDto> updateCategory(@PathVariable("id") Long id,
         @Valid @RequestBody CategoryDTO categoryDTO) {
         categoryService.updateCategory(id, categoryDTO);

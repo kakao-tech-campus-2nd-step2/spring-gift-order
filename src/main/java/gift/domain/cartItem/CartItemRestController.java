@@ -6,6 +6,7 @@ import gift.global.resolver.Login;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -37,6 +38,7 @@ public class CartItemRestController {
      * 장바구니에 상품 담기
      */
     @PostMapping("/{productId}")
+    @Operation(summary = "장바구니에 상품 담기")
     public ResponseEntity<ResultResponseDto<Integer>> addCartItem(
         @PathVariable("productId") Long productId, @Login UserInfo userInfo) {
 
@@ -50,6 +52,7 @@ public class CartItemRestController {
      * 장바구니 조회 - 페이징(매개변수별)
      */
     @GetMapping
+    @Operation(summary = "장바구니 조회 - 페이징")
     public ResponseEntity<ResultResponseDto<List<CartItemDTO>>> getProductsInCartByUserIdAndPageAndSort(
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
@@ -71,6 +74,7 @@ public class CartItemRestController {
      * 장바구니 상품 삭제
      */
     @DeleteMapping("/{cartItemId}")
+    @Operation(summary = "장바구니 상품 삭제")
     public ResponseEntity<SimpleResultResponseDto> deleteCartItem(
         @PathVariable("cartItemId") Long cartItemId, @Login UserInfo userInfo) {
 
@@ -85,6 +89,7 @@ public class CartItemRestController {
     // TODO cartItem 에 userId, productId, + 상품 정보까지 담는걸로
     // 안그러면 productId 로 다시 상품 정보를 불러와야 함..페이징할때도 cartItem 에서 바로 할 수 있으니 나을 것 같다
     @PutMapping("/{cartItemId}")
+    @Operation(summary = "장바구니 상품 수량 변경")
     public ResponseEntity<SimpleResultResponseDto> updateCartItem(
         @PathVariable("cartItemId") Long cartItemId,
         @RequestParam("count") int count,

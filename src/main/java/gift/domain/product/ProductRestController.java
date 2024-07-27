@@ -3,6 +3,7 @@ package gift.domain.product;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -37,6 +38,7 @@ public class ProductRestController {
      * 상품 추가
      */
     @PostMapping
+    @Operation(summary = "상품 추가")
     public ResponseEntity<SimpleResultResponseDto> createProduct(
         @Valid @RequestBody ProductDTO productDTO) {
         productService.createProduct(productDTO);
@@ -44,9 +46,10 @@ public class ProductRestController {
     }
 
     /**
-     * 전체 상품 조회 - 페이징
+     * 모든 상품 조회 - 페이징
      */
     @GetMapping
+    @Operation(summary = "모든 상품 조회 - 페이징")
     public ResponseEntity<ResultResponseDto<Page<Product>>> getProductsByPageAndSort(
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "sort", defaultValue = "id_asc") String sort
@@ -62,6 +65,7 @@ public class ProductRestController {
      * 상품 수정
      */
     @PutMapping("/{id}")
+    @Operation(summary = "상품 수정")
     public ResponseEntity<SimpleResultResponseDto> updateProduct(@PathVariable("id") Long id,
         @Valid @RequestBody ProductDTO productDTO) {
         productService.updateProduct(id, productDTO);
@@ -73,6 +77,7 @@ public class ProductRestController {
      * 선택된 상품들 삭제
      */
     @DeleteMapping
+    @Operation(summary = "선택된 상품들 삭제")
     public ResponseEntity<SimpleResultResponseDto> deleteSelectedProducts(
         @RequestBody List<Long> productIds) {
         productService.deleteProductsByIds(productIds);
@@ -83,6 +88,7 @@ public class ProductRestController {
      * 상품 삭제
      */
     @DeleteMapping("/{id}")
+    @Operation(summary = "상품 삭제")
     public ResponseEntity<SimpleResultResponseDto> deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "상품이 삭제되었습니다.");

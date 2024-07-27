@@ -3,6 +3,7 @@ package gift.domain.user;
 import gift.domain.user.dto.UserDTO;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class UserRestController {
      * 회원 가입
      */
     @PostMapping
+    @Operation(summary = "회원가입")
     public ResponseEntity<SimpleResultResponseDto> join(@Valid @RequestBody UserDTO userDTO) {
         userService.join(userDTO);
 
@@ -36,6 +38,7 @@ public class UserRestController {
      * 회원 로그인
      */
     @PostMapping("/login")
+    @Operation(summary = "로그인")
     public ResponseEntity<SimpleResultResponseDto> login(@Valid @RequestBody UserDTO userDTO) {
         String jwt = userService.login(userDTO);
 
