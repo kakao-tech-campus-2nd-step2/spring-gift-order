@@ -15,3 +15,6 @@ INSERT INTO category (name, color, image_url, description) VALUES ('백화점', 
 INSERT INTO product (name, price, description, image_url, category_id) VALUES ('Product1', 10.00, 'Description for Product1', 'http://example.com/product1.jpg', (SELECT id FROM category WHERE name = '교환권'));
 INSERT INTO product (name, price, description, image_url, category_id) VALUES ('Product2', 20.00, 'Description for Product2', 'http://example.com/product2.jpg', (SELECT id FROM category WHERE name = '상품권'));
 
+INSERT INTO option (name, quantity, product_id) VALUES
+('Option1', 100, (SELECT id FROM product WHERE name = 'Product1')),
+('Option2', 200, (SELECT id FROM product WHERE name = 'Product2'));
