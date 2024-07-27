@@ -25,4 +25,5 @@ public interface JpaWishRepository extends JpaRepository<Wish, Long> {
 
     Page<Wish> findByMemberId(Long memberId, Pageable pageable);
 
+    void deleteByMemberIdAndProductId(Long id, Long id1);
 }
