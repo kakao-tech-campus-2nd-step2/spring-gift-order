@@ -1,4 +1,4 @@
-package gift.order;
+package gift.order.dto;
 
 import gift.member.domain.Member;
 import gift.option.domain.Option;
