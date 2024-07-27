@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 public interface DerivedMemberService<DerivedMember, DerivedMemberRequest extends MemberRequest> {
 
-    MemberResponse registerMember(MemberRequest requestDto, Member member);
-    MemberResponse loginMember(MemberRequest requestDto, Member member);
+    Member registerMember(MemberRequest requestDto, Member member);
+    Member loginMember(MemberRequest requestDto, Member member);
     DerivedMember findDerivedMemberBy(Member member);
     DerivedMemberRequest convert(MemberRequest requestDto);
 

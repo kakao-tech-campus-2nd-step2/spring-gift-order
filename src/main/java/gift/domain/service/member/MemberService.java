@@ -4,10 +4,10 @@ import gift.domain.dto.request.member.MemberRequest;
 import gift.domain.dto.response.MemberResponse;
 import gift.domain.entity.Member;
 import gift.domain.exception.conflict.MemberAlreadyExistsException;
-import gift.domain.exception.forbidden.MemberIncorrectLoginInfoException;
 import gift.domain.exception.notFound.MemberNotFoundException;
 import gift.domain.repository.MemberRepository;
 import gift.global.WebConfig.Constants.Domain.Member.Permission;
+import gift.global.util.JwtUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +16,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final DerivedMemberService.Factory memberServiceFactory;
+    private final JwtUtil jwtUtil;
 
-    public MemberService(MemberRepository memberRepository, DerivedMemberService.Factory memberServiceFactory) {
+    public MemberService(MemberRepository memberRepository, DerivedMemberService.Factory memberServiceFactory, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.memberServiceFactory = memberServiceFactory;
+        this.jwtUtil = jwtUtil;
     }
 
     @Transactional
@@ -28,17 +30,15 @@ public class MemberService {
         memberRepository.findByEmail(requestDto.getEmail()).ifPresent(p -> {
             throw new MemberAlreadyExistsException();
         });
-
         Member member = memberRepository.save(requestDto.toEntity(Permission.MEMBER));
-        return memberServiceFactory.getInstance(requestDto).registerMember(requestDto, member);
+        return new MemberResponse(jwtUtil.generateToken(memberServiceFactory.getInstance(requestDto).registerMember(requestDto, member)));
     }
 
     @Transactional(readOnly = true)
     public MemberResponse loginMember(MemberRequest requestDto) {
         // 존재하지 않은 이메일을 가진 유저로 로그인 시도한 경우 예외
         Member member = findByEmail(requestDto.getEmail());
-
-        return memberServiceFactory.getInstance(requestDto).loginMember(requestDto, member);
+        return new MemberResponse(jwtUtil.generateToken(memberServiceFactory.getInstance(requestDto).loginMember(requestDto, member)));
     }
 
     @Transactional
