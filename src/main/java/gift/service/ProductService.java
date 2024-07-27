@@ -57,6 +57,7 @@ public class ProductService {
                 .orElseThrow(() -> new NoSuchElementException("해당 카테고리가 없습니다."));
 
         String optionString = inputProductDTO.getOption();
+        String optionQuantity = inputProductDTO.getQuantity();
 
         Product product = new Product(
                 inputProductDTO.getName(),
@@ -67,7 +68,7 @@ public class ProductService {
         productRepository.save(product);
 
         Long productID = productRepository.findByName(inputProductDTO.getName()).get().getId();
-        optionService.addOptions(optionString, productID);
+        optionService.addOptions(optionString, optionQuantity, productID);
     }
 
     //삭제

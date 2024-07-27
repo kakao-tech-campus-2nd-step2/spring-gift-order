@@ -1,6 +1,8 @@
 package gift.controller;
 
+import gift.dto.AddOptionDTO;
 import gift.dto.GetOptionDTO;
+import gift.dto.InputProductDTO;
 import gift.service.OptionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,8 +26,8 @@ public class OptionController {
     }
 
     @PostMapping("/add/{productId}")
-    public String addOption(@PathVariable Long productId, @RequestParam("option") String newOption, Model model) {
-        optionService.addOption(newOption, productId);
+    public String addOption(@PathVariable Long productId, @ModelAttribute AddOptionDTO addOptionDTO, Model model) {
+        optionService.addOption(addOptionDTO, productId);
         GetOptionDTO options = optionService.getOptions(productId);
         model.addAttribute("options", options.GetOptionList());
         model.addAttribute("productId", productId);

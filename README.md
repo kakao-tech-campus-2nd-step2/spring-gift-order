@@ -1,6 +1,9 @@
 # spring-gift-jpa#
 KTC step2 클론코딩 선물하기 구현
 
+API 문서
+https://pollen-car-5e9.notion.site/Kakao-Gift-API-c5c6db2a153e4089a6bcf0445afaaf13
+
 ## 객체
 ### Product
 - **id** : 상품 id

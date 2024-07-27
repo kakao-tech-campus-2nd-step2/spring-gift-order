@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.AddOptionDTO;
 import gift.model.Option;
 import gift.model.Product;
 import gift.repository.OptionRepository;
@@ -11,10 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,12 +48,10 @@ class OptionServiceTest {
         List<Option> options = Arrays.asList(option1, option2);
         given(optionRepository.findAllByProduct_Id(1L)).willReturn(options);
         given(optionRepository.findById(any())).willReturn(Optional.of(option2));
-        long beforeSize = option1.getQuantity();
         // when
         optionService.deleteOption("deleteOption", 1L);
         // Then
         then(optionRepository).should().deleteByName("deleteOption");
-        then(optionRepository).should().updateQuantityByProductId(1L, -1);
     }
 
     @Test
@@ -65,10 +64,10 @@ class OptionServiceTest {
         given(optionRepository.findAll()).willReturn(options);
         given(productRepository.findById(1L)).willReturn(Optional.of(product));
         // When
-        optionService.addOption("newOption", 1L);
+        AddOptionDTO addOptionDTO = new AddOptionDTO("newOption", 50);
+        optionService.addOption(addOptionDTO, 1L);
         // Then
         then(optionRepository).should().save(argThat(option -> "newOption".equals(option.getName())));
-        then(optionRepository).should().updateQuantityByProductId(1L, 1);
     }
 
     @Test
@@ -77,8 +76,7 @@ class OptionServiceTest {
         // given
         Product product = new Product(1L, "Product", 1000, "1.img", null);
         Option oldOption = new Option(1L, "oldName", 5, product);
-        Option updatedOption = new Option(1L, "newName", 5, product);
-        List<Option> options = Arrays.asList(oldOption, updatedOption);
+        List<Option> options = Arrays.asList(oldOption);
         given(optionRepository.findByName("oldName")).willReturn(Optional.of(oldOption));
         given(optionRepository.findAllByProduct_Id(1L)).willReturn(options);
         // When
@@ -93,13 +91,12 @@ class OptionServiceTest {
         // given
         Product product = new Product(1L, "Product", 1000, "1.img", null);
         Option option1 = new Option(1L, "option1", 5, product);
-        Option option2 = new Option(2L, "option2", 5, product);
-        List<Option> options = Arrays.asList(option1, option2);
+        List<Option> options = Arrays.asList(option1);
         given(optionRepository.findAllByProduct_Id(1L)).willReturn(options);
+        Long expected = 2L;
         // When
-        optionService.removeOption(1L, 1);
+        optionService.removeOption(option1, 3);
         // Then
-        then(optionRepository).should().deleteById(1L);
-        then(optionRepository).should().updateQuantityByProductId(1L, -1);
+        then(optionRepository).should().save(argThat(option -> option.getQuantity()==expected));
     }
 }

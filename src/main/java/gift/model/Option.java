@@ -68,4 +68,14 @@ public class Option {
         this.updateQuantity(this.quantity + num);
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "Option{" +
+                "id=" + id +
+                ", quantity=" + quantity +
+                ", name='" + name + '\'' +
+                ", product=" + product +
+                '}';
+    }
 }
