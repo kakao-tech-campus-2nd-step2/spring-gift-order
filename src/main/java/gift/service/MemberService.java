@@ -65,6 +65,8 @@ public class MemberService {
         String accessToken = kakaoService.getAccessToken(code);
         Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
 
+        System.out.println("kakao= " + accessToken);
+
         Long kakaoId = (Long) userInfo.get("id");
         Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
         Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
@@ -89,6 +91,10 @@ public class MemberService {
             memberRepository.save(member);
         }
 
-        return jwtUtil.generateToken(member.getId(), member.getEmail(), "USER");
+        String token = jwtUtil.generateToken(member.getId(), member.getEmail(), "USER");
+
+        System.out.println(token);
+
+        return token;
     }
 }
