@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.entity.Member;
 import gift.exception.MemberNotFoundException;
 import gift.service.KakaoService;
 import gift.util.KakaoProperties;
@@ -36,6 +37,7 @@ public class KakaoLoginController {
             model.addAttribute("accessToken", accessToken);
             return "home";
         } catch (MemberNotFoundException e) {
+            model.addAttribute("member", new Member()); // Member 객체 추가
             return "register";
         }
 
