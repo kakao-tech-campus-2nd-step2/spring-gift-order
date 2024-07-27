@@ -24,7 +24,7 @@ public class MemberDummyDataProvider {
     }
 
     private void doRun(int quantity) {
-        String sql = "insert into member (name, email, created_at, updated_at) values (?, ?, ?, ?)";
+        String sql = "insert into member (name, email, password, created_at, updated_at) values (?, ?, ?, ?, ?)";
         jdbcTemplate.batchUpdate(sql, getBatchPreparedStatementSetter(quantity));
     }
 
@@ -34,6 +34,7 @@ public class MemberDummyDataProvider {
             public void setValues(PreparedStatement ps, int i) throws SQLException {
                 ps.setString(1, "member" + i);
                 ps.setString(2, "member" + i + "@gmail.com");
+                ps.setString(3, "member" + i + "0");
                 ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
                 ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
             }
