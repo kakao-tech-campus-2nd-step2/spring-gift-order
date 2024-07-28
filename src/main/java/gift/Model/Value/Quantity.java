@@ -32,6 +32,14 @@ public class Quantity {
         this.value -= value;
     }
 
+
+    public void add(int value) {
+        if (this.value > 9999_9999)
+            throw new IllegalArgumentException("옵션 수량은 최대 9999_9999개 이하입니다. 더하려는 수량을 조절해 주십시오.");
+
+        this.value -= value;
+    }
+
     public int getValue() {
         return value;
     }
