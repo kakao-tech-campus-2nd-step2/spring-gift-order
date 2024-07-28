@@ -45,10 +45,16 @@ public class OptionService {
     }
 
     @Transactional(readOnly = true)
-    public OptionResponse find(UUID id) {
+    public OptionResponse getOptionResponseById(UUID id) {
         Option target = optionRepository.findById(id)
             .orElseThrow(OptionNotExistsException::new);
         return toOptionResponse(target);
+    }
+
+    @Transactional(readOnly = true)
+    public Option findById(UUID id) {
+        return optionRepository.findById(id)
+            .orElseThrow(OptionNotExistsException::new);
     }
 
     @Transactional

@@ -48,7 +48,7 @@ public class OptionController {
 
     @GetMapping("/options/{optionId}")
     public ResponseEntity<OptionResponse> getOption(@PathVariable UUID optionId) {
-        return ResponseEntity.status(HttpStatus.OK).body(optionService.find(optionId));
+        return ResponseEntity.status(HttpStatus.OK).body(optionService.getOptionResponseById(optionId));
     }
 
     @PostMapping("/options/{productId}")
@@ -66,7 +66,7 @@ public class OptionController {
     }
 
     @PutMapping("/options/{optionId}/buy/{quantity}")
-    public ResponseEntity<OptionResponse> subtractOption(@LoginAdmin LoginResponse member,
+    public ResponseEntity<OptionResponse> subtractOption(@LoginUser LoginResponse member,
         @PathVariable UUID optionId, @PathVariable Integer quantity) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(optionService.subtract(optionId, quantity));
