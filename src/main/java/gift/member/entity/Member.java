@@ -1,6 +1,5 @@
 package gift.member.entity;
 
-import gift.member.dto.KakaoTokenInfo;
 import gift.member.dto.MemberDto;
 import gift.wishlist.entity.Wish;
 import jakarta.persistence.Column;
@@ -11,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

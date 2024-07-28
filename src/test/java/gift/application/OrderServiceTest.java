@@ -2,7 +2,7 @@ package gift.application;
 
 import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
-import gift.member.dto.KakaoTokenInfo;
+import gift.member.entity.KakaoTokenInfo;
 import gift.member.entity.Member;
 import gift.order.application.OrderService;
 import gift.order.dao.OrderRepository;

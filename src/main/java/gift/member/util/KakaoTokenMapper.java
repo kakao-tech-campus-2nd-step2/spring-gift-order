@@ -1,7 +1,7 @@
 package gift.member.util;
 
 import gift.kakao.auth.dto.KakaoTokenResponse;
-import gift.member.dto.KakaoTokenInfo;
+import gift.member.entity.KakaoTokenInfo;
 
 import java.time.LocalDateTime;
 

@@ -7,7 +7,7 @@ import gift.kakao.auth.dto.KakaoTokenResponse;
 import gift.kakao.client.KakaoClient;
 import gift.member.application.MemberService;
 import gift.member.dao.MemberRepository;
-import gift.member.dto.KakaoTokenInfo;
+import gift.member.entity.KakaoTokenInfo;
 import gift.member.dto.MemberDto;
 import gift.member.entity.Member;
 import gift.member.util.MemberMapper;

@@ -1,7 +1,10 @@
-package gift.member.dto;
+package gift.member.entity;
+
+import jakarta.persistence.Embeddable;
 
 import java.time.LocalDateTime;
 
+@Embeddable
 public class KakaoTokenInfo {
 
     private String kakaoAccessToken;
