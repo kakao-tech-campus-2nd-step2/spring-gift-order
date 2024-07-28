@@ -12,6 +12,7 @@ import gift.user.repository.UserRepository;
 import gift.utility.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,20 +23,25 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoLoginService {
-    final RestClient client;
+    private final RestClient client;
 
     private final String clientId;
     private final String redirectUri;
+
+    private final ObjectMapper objectMapper;
 
     private final UserRepository userRepository;
 
     public KakaoLoginService(@Value("${kakao.client-id}") String clientId,
         @Value("${kakao.redirect-uri}") String redirectUri,
-        UserRepository userRepository, RestClient client){
+        UserRepository userRepository,
+        RestClient client,
+        ObjectMapper objectMapper){
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.userRepository = userRepository;
         this.client = client;
+        this.objectMapper = objectMapper;
     }
 
     public String getAccessToken(String code){
@@ -100,7 +106,6 @@ public class KakaoLoginService {
         LinkObject link = new LinkObject("www.naver.com");
         TemplateObject template = new TemplateObject("text", message, link);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = "";
 
         try {
