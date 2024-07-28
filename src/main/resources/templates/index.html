@@ -93,7 +93,13 @@
                 });
             },
             error: function(err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         });
     }
@@ -138,7 +144,13 @@
                 alert("상품이 위시 리스트에 등록되었습니다");
             },
             error : function(err){
-                alert("상품 등록에 실패했습니다");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
         console.log(localStorage.getItem("token"));
