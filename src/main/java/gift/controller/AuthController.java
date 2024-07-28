@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import gift.entity.User;
 import gift.service.AuthService;
+import gift.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
@@ -19,20 +20,22 @@ import jakarta.validation.Valid;
 public class AuthController {
 	
 	private final AuthService authService;
+	private final UserService userService;
 	
-	public AuthController(AuthService authService) {
+	public AuthController(AuthService authService, UserService userService) {
 		this.authService = authService;
+		this.userService = userService;
 	}
 	
 	@PostMapping("/register")
 	public ResponseEntity<Void> register(@Valid @RequestBody User user, BindingResult bindingResult){
-		authService.createUser(user, bindingResult);
+		userService.createUser(user, bindingResult);
         return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
 	@PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody User user, BindingResult bindingResult){
-		Map<String, String> loginResponse = authService.loginUser(user, bindingResult);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+		Map<String, String> accessToken = authService.loginUser(user, bindingResult);
+        return ResponseEntity.status(HttpStatus.OK).body(accessToken);
     }
 }
