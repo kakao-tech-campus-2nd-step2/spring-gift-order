@@ -1,6 +1,6 @@
 package gift.Exception;
 
-public class NullTokenException extends RuntimeException{
+public class NullTokenException extends BusinessException {
     public NullTokenException(String message) {
         super(message);
     }
