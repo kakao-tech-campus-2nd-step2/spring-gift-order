@@ -1,5 +1,8 @@
 package gift.entity;
 
+import org.springframework.http.HttpStatus;
+
+import gift.exception.InvalidUserException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +44,10 @@ public class Category {
 		return id;
 	}
 	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -55,5 +62,11 @@ public class Category {
 	
 	public String getDescription() {
 		return description;
+	}
+	
+	public void validateIdMatch(Long categoryId) {
+		if (!this.id.equals(categoryId)) {
+			throw new InvalidUserException("The email doesn't or thr password is incorrect.", HttpStatus.FORBIDDEN);
+		}
 	}
 }
