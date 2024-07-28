@@ -30,6 +30,12 @@ public class Option {
 
     public Option() {}
 
+    public Option(String name, Integer quantity, Product product) {
+        this.name = name;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
     public Long getId() {
         return id;
     }

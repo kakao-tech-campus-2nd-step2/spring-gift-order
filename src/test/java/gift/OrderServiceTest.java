@@ -41,6 +41,9 @@ class OrderServiceTest {
     private ProductService productService;
 
     @Mock
+    private WishRepository wishRepository;
+
+    @Mock
     private KakaoService kakaoService;
 
     private Member member;
@@ -53,17 +56,11 @@ class OrderServiceTest {
     void setUp() {
         member = new Member(1L, "test@example.com", "password");
         product = new Product(1L, "Test Product", 1000L, "http://example.com/image.png", new Category("Test Category", "Red", "http://example.com/image.png", "Description"));
-        option = new Option();
-        option.setId(1L);
-        option.setName("Test Option");
-        option.setQuantity(10);
-        option.setProduct(product);
+        option = new Option("Test Option", 10, product);
 
         orderItemRequest = new OrderItemRequest(1L, 1L, 2);
 
-        orderRequest = new OrderRequest();
-        orderRequest.setItems(Arrays.asList(orderItemRequest));
-        orderRequest.setRecipientMessage("Happy Birthday!");
+        orderRequest = new OrderRequest(Arrays.asList(orderItemRequest), "Happy Birthday!");
     }
 
     @Test
@@ -118,10 +115,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 실패 테스트 - 옵션이 상품에 없음")
     void testPlaceOrder_OptionDoesNotBelongToProduct() throws Exception {
-        Option otherOption = new Option();
-        otherOption.setId(2L);
-        otherOption.setName("Other Option");
-        otherOption.setProduct(new Product(2L, "Other Product", 2000L, "http://example.com/image2.png", new Category("Other Category", "Blue", "http://example.com/image2.png", "Other Description")));
+        Option otherOption = new Option("Other Option", 2,
+                new Product(2L, "Other Product", 2000L, "http://example.com/image2.png", new Category("Other Category", "Blue", "http://example.com/image2.png", "Other Description")));
 
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(product);
