@@ -96,7 +96,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("AbnormalOrderTest1")
-    void test3() throws JsonProcessingException {
+    void test3(){
         // given
         ArgumentCaptor<Long> captor_id = ArgumentCaptor.forClass(Long.class);
 
@@ -114,7 +114,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("AbnormalOrderTest2")
-    void test4() throws JsonProcessingException {
+    void test4(){
         // given
         ArgumentCaptor<Long> captor_id = ArgumentCaptor.forClass(Long.class);
 
