@@ -24,6 +24,8 @@ public class Wish {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    private Long optionId;
+
     public Wish() {
     }
 
@@ -42,6 +44,10 @@ public class Wish {
 
     public Product getProduct() {
         return product;
+    }
+
+    public Long getOptionId() {
+        return optionId;
     }
 
     public void addWish(Member member, Product product) {
