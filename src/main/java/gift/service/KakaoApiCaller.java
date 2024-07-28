@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -90,6 +91,7 @@ public class KakaoApiCaller {
                 }).body(String.class);
     }
 
+    @Async
     public void sendKakaoMessage(String accessToken, Orders orders) {
         client.post()
                 .uri(URI.create(properties.selfMessageUrl()))
