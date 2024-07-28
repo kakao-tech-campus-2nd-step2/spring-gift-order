@@ -94,6 +94,10 @@ public class Option {
         this.quantity.subtract(quantity);
     }
 
+    public void addQuantity(int quantity) {
+        this.quantity.add(quantity);
+    }
+
     public boolean hasSameName(String name){
         return this.name.isSame(name);
     }
