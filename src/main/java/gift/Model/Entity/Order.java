@@ -95,11 +95,13 @@ public class Order {
     }
 
     public void addQuantity(Quantity deltaQuantity) {
+        validateQuantity(deltaQuantity);
         this.quantity.add(deltaQuantity.getValue());
         this.option.subtract(deltaQuantity.getValue());
     }
 
     public void subtractQuantity(Quantity deltaQuantity) {
+        validateQuantity(deltaQuantity);
         this.quantity.subtract(deltaQuantity.getValue());
         this.option.add(deltaQuantity.getValue());
     }
