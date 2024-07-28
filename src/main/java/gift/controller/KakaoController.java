@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.common.exception.InvalidTokenException;
 import gift.dto.KakaoProperties;
+import gift.dto.KakaoUserInfo;
 import gift.service.KakaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -60,7 +61,7 @@ public class KakaoController {
         }
         String accessToken = (String) tokenResponse.get("access_token");
 
-        Map<String, Object> userInfo = kakaoService.getUserInfo(accessToken);
+        KakaoUserInfo userInfo = kakaoService.getUserInfo(accessToken);
 
         session.setAttribute("userInfo", userInfo);
         session.setAttribute("accessToken", accessToken);

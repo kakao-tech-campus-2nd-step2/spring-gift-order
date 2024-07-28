@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.dto.KakaoProperties;
+import gift.dto.KakaoUserInfo;
 import java.util.Map;
 import java.net.URI;
 import org.springframework.http.HttpEntity;
@@ -20,13 +21,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class KakaoService {
 
     private final KakaoProperties kakaoProperties;
+    private final KakaoApiClient kakaoApiClient;
     private final RestTemplate restTemplate = new RestTemplate();
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
 
-    public KakaoService(KakaoProperties kakaoProperties) {
+    public KakaoService(KakaoProperties kakaoProperties, KakaoApiClient kakaoApiClient) {
         this.kakaoProperties = kakaoProperties;
+        this.kakaoApiClient = kakaoApiClient;
     }
 
     public String getKakaoLogin() {
@@ -52,6 +55,10 @@ public class KakaoService {
                 "Error while getting access token", e);
         }
 
+    }
+
+    public KakaoUserInfo getUserInfo(String accessToken) {
+        return kakaoApiClient.getUserInfo(accessToken);
     }
 
     private HttpHeaders createHeaders() {
@@ -84,19 +91,4 @@ public class KakaoService {
         return responseBody;
     }
 
-    public Map<String, Object> getUserInfo(String accessToken) {
-        String url = KAKAO_API_URI + "/v2/user/me";
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
-
-        HttpEntity<Void> request = new HttpEntity<>(headers);
-        try {
-            ResponseEntity<Map> response = restTemplate.exchange(URI.create(url), HttpMethod.GET,
-                request, Map.class);
-            return response.getBody();
-        } catch (RestClientException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Error while fetching user info", e);
-        }
-    }
 }
