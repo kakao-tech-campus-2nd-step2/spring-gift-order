@@ -61,4 +61,8 @@ public class MemberService {
         }
         throw new AuthenticationException("Invalid password");
     }
+
+    public Member getById(Long memberId) {
+        return memberRepository.findById(memberId).get();
+    }
 }

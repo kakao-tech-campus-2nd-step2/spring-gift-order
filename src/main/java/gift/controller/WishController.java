@@ -40,10 +40,8 @@ public class WishController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id, @RequestParam("Token") String token) throws IllegalAccessException {
-        if (wishService.delete(id, token)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        wishService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/wishes")

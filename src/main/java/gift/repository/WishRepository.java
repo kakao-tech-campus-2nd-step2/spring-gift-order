@@ -10,9 +10,10 @@ import java.util.List;
 
 @Repository
 public interface WishRepository extends JpaRepository<Wish, Long> {
-    List<Wish> findAllByMember_id(Long member_id);
+    List<Wish> findAllByMemberId(Long memberId);
 
     Page<Wish> findAll(Pageable pageable);
 
+    Wish findByProductIdAndMemberId(Long productId, Long memberId);
 }
 

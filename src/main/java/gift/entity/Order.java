@@ -63,6 +63,14 @@ public class Order {
         this.member = member;
     }
 
+    public Order(Option option, Long quantity, LocalDateTime orderDateTime, String message, Member member) {
+        this.option=option;
+        this.quantity=quantity;
+        this.orderDateTime = orderDateTime;
+        this.message =message;
+        this.member= member;
+    }
+
     public Long getId() {
         return id;
     }
