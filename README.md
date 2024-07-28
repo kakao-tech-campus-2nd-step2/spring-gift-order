@@ -5,7 +5,7 @@
     - [x] 토큰 받기를 읽고 액세스 토큰을 추출한다.
 - [x] 테스트 구현
 # step2
-- [ ]카카오톡 메시지 API를 사용하여 주문하기 기능을 구현한다.
+- [x]카카오톡 메시지 API를 사용하여 주문하기 기능을 구현한다.
     - [x] 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
     - [x] 사용자가 상품 옵션과 해당 수량을 선택하여 주문할 수 있다.
     - [x] 사용자가 주문을 하면 해당 상품 옵션의 수량이 차감된다.
@@ -15,3 +15,7 @@
 # step1 피드백
 - [x] ConfigurationProperties 생성자로 바인딩
 - [x] JSONObject를 추상환된 클래스로 변경
+# step2 피드백
+- [ ] Objectmapper, Gson 직렬화 도구 비교 학습
+- [ ] LinkedMultiValueMap 과 Map 비교 학습
+- [ ] RestClient timeout 설정
