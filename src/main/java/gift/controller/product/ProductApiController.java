@@ -20,7 +20,6 @@ public class ProductApiController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-
     private final OptionService optionService;
 
     public ProductApiController(ProductService productService,

@@ -2,7 +2,6 @@ package gift.domain;
 
 import gift.utils.TimeStamp;
 import jakarta.persistence.*;
-
 import java.util.UUID;
 
 import static gift.utils.TokenConstant.*;

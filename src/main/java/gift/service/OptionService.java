@@ -30,7 +30,7 @@ public class OptionService {
     }
 
     @Transactional
-    public OptionResponseDto saveOption(OptionRequestDto optionRequestDto, Long productId){
+    public OptionResponseDto saveOption(OptionRequestDto optionRequestDto, Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
 
@@ -50,14 +50,14 @@ public class OptionService {
         return OptionResponseDto.from(savedOption);
     }
 
-    public List<OptionResponseDto> findOptionsByProduct(Long productId){
+    public List<OptionResponseDto> findOptionsByProduct(Long productId) {
         return optionRepository.findOptionsByProductId(productId).stream()
                 .map(OptionResponseDto::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public OptionResponseDto updateOptionQuantity(Long optionId, int quantity){
+    public OptionResponseDto updateOptionQuantity(Long optionId, int quantity) {
         Option findOption = optionRepository.findOptionByIdForUpdate(optionId)
                 .orElseThrow(() -> new EntityNotFoundException(OPTION_NOT_FOUND));
 
@@ -67,12 +67,12 @@ public class OptionService {
     }
 
     @Transactional
-    public OptionResponseDto deleteOneOption(Long productId, Long optionId){
+    public OptionResponseDto deleteOneOption(Long productId, Long optionId) {
         Option option = optionRepository.findById(optionId).orElseThrow(() -> new EntityNotFoundException(OPTION_NOT_FOUND));
 
         Long count = optionRepository.countOptionByProductId(productId);
 
-        if(count == 1){
+        if (count == 1) {
             throw new DenyDeleteException();
         }
 

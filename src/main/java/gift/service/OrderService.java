@@ -40,7 +40,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponseDto addOrder(OrderRequestDto orderRequestDto, AuthToken token){
+    public OrderResponseDto addOrder(OrderRequestDto orderRequestDto, AuthToken token) {
         Option findOption = optionRepository.findOptionByIdForUpdate(orderRequestDto.optionId())
                 .orElseThrow(() -> new EntityNotFoundException(OPTION_NOT_FOUND));
 
@@ -63,7 +63,7 @@ public class OrderService {
 
         OrderResponseDto orderResponseDto = OrderResponseDto.from(savedOrder);
 
-        if(token.getAccessToken() != null){
+        if (token.getAccessToken() != null) {
             kakaoService.sendKakaoMessage(token.getAccessToken(), orderResponseDto);
         }
 

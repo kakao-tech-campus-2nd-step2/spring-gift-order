@@ -32,7 +32,12 @@ public class OAuthTokenFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String path = httpRequest.getRequestURI();
-        if (path.equals("/home") || path.equals("/oauth/renew/kakao") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")) {
+        if (path.equals("/home") || path.equals("/oauth/renew/kakao") || path.startsWith("/members") || path.startsWith("/login/oauth") || path.startsWith("/h2-console")
+                || path.equals("/swagger-ui.html") // 변경
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/api-docs") // 추가
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-resources")) {
             filterChain.doFilter(request, response);
             return;
         }

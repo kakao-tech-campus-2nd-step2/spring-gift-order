@@ -27,7 +27,7 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberResponseDto memberJoin(MemberRequestDto memberRequestDto){
+    public MemberResponseDto memberJoin(MemberRequestDto memberRequestDto) {
         Member member = new Member.Builder()
                 .email(memberRequestDto.email())
                 .password(memberRequestDto.password())
@@ -35,7 +35,7 @@ public class AuthService {
 
         Optional<Member> memberByEmail = memberRepository.findMemberByEmail(memberRequestDto.email());
 
-        if(memberByEmail.isPresent()){
+        if (memberByEmail.isPresent()) {
             throw new EmailDuplicationException();
         }
 
@@ -45,7 +45,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String kakaoMemberLogin(String kakaoId, TokenInformation tokenInfo){
+    public String kakaoMemberLogin(String kakaoId, TokenInformation tokenInfo) {
         MemberResponseDto memberResponseDto = memberRepository.findMemberByKakaoId(kakaoId).map(MemberResponseDto::from)
                 .orElseGet(() -> memberKakaoJoin(kakaoId));
 
@@ -55,10 +55,10 @@ public class AuthService {
     }
 
     @Transactional
-    public MemberResponseDto memberKakaoJoin(String kakaoId){
+    public MemberResponseDto memberKakaoJoin(String kakaoId) {
         Member member = new Member.Builder()
-                .email(kakaoId+ KAKAO_COM)
-                .password(kakaoId+KAKAO_COM)
+                .email(kakaoId + KAKAO_COM)
+                .password(kakaoId + KAKAO_COM)
                 .kakaoId(kakaoId)
                 .build();
 
@@ -67,7 +67,7 @@ public class AuthService {
         return MemberResponseDto.from(savedMember);
     }
 
-    public MemberResponseDto findOneByEmailAndPassword(MemberRequestDto memberRequestDto){
+    public MemberResponseDto findOneByEmailAndPassword(MemberRequestDto memberRequestDto) {
         Member findMember = memberRepository.findMemberByEmailAndPassword(memberRequestDto.email(), memberRequestDto.password())
                 .orElseThrow(MemberNotFoundException::new);
 

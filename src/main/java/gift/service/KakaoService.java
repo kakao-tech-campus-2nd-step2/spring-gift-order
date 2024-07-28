@@ -47,7 +47,7 @@ public class KakaoService {
         this.objectMapper = objectMapper;
     }
 
-    public StringBuilder makeKakaOauthParameter(){
+    public StringBuilder makeKakaOauthParameter() {
         StringBuilder builder = new StringBuilder();
         builder.append("scope=").append(SCOPE).append("&")
                 .append("response_type=").append(RESPONSE_TYPE).append("&")
@@ -57,7 +57,7 @@ public class KakaoService {
         return builder;
     }
 
-    public TokenInformation getKakaoOauthToken(String code){
+    public TokenInformation getKakaoOauthToken(String code) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         RequestEntity request = new RequestEntity<>(makeAccessTokenBody(code), headers, HttpMethod.POST, URI.create(ACCESS_TOKEN_API_URL));
@@ -66,14 +66,14 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return new TokenInformation(jsonNode);
-        }catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new JsonException();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
         }
     }
 
-    public String getKakaoUserInformation(String accessToken){
+    public String getKakaoUserInformation(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.setBearerAuth(accessToken);
@@ -84,14 +84,14 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return jsonNode.get("id").asText();
-        }catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new JsonException();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
         }
     }
 
-    public TokenInformation renewToken(AuthToken authToken){
+    public TokenInformation renewToken(AuthToken authToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         RequestEntity request = new RequestEntity<>(makeTokenRenewBody(authToken.getRefreshToken()), headers, HttpMethod.POST, URI.create(ACCESS_TOKEN_API_URL));
@@ -100,14 +100,14 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return new TokenInformation(jsonNode);
-        }catch (JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new JsonException();
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
         }
     }
 
-    public void sendKakaoMessage(String accessToken, OrderResponseDto orderResponseDto){
+    public void sendKakaoMessage(String accessToken, OrderResponseDto orderResponseDto) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.setBearerAuth(accessToken);
@@ -145,7 +145,7 @@ public class KakaoService {
                 .append(orderResponseDto.message())
                 .append("\",\"link\":{\"web_url\":\"\"}}");
 
-        return  sb.toString();
+        return sb.toString();
     }
 
 }
