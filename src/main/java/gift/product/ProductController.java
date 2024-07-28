@@ -3,6 +3,7 @@ package gift.product;
 import gift.Exception.ErrorResponse;
 import gift.option.Option;
 import gift.option.OptionRequest;
+import gift.option.OptionResponse;
 import gift.option.OptionService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,7 +30,8 @@ public class ProductController {
     private final ProductService productService;
     private final OptionService optionService;
 
-    public ProductController(ProductRepository productRepository, ProductService productService, OptionService optionService){
+    public ProductController(ProductRepository productRepository, ProductService productService,
+        OptionService optionService) {
         this.productRepository = productRepository;
         this.productService = productService;
         this.optionService = optionService;
@@ -44,17 +46,20 @@ public class ProductController {
     }
 
     @PostMapping("/post")
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest newProduct) {
+    public ResponseEntity<ProductResponse> createProduct(
+        @Valid @RequestBody ProductRequest newProduct) {
         Product product = productService.createProduct(newProduct.toEntity());
         Option option = optionService.addOption(newProduct.getOptionRequest(), product);
         productService.addOption(product.getId(), option);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ProductResponse(product));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody ProductRequest changeProduct) {
-        return ResponseEntity.ok(productService.updateProduct(changeProduct.toEntity()));
+    public ResponseEntity<ProductResponse> updateProduct(
+        @Valid @RequestBody ProductRequest changeProduct) {
+        return ResponseEntity.ok(
+            new ProductResponse(productService.updateProduct(changeProduct.toEntity())));
     }
 
     @DeleteMapping("/delete/{id}")
@@ -64,13 +69,15 @@ public class ProductController {
     }
 
     @GetMapping("{id}/options")
-    public ResponseEntity<List<Option>> getOptions(@PathVariable("id") Long productId){
-        return ResponseEntity.status(HttpStatus.OK).body(optionService.findAllByProductId(productId));
+    public ResponseEntity<List<Option>> getOptions(@PathVariable("id") Long productId) {
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(optionService.findAllByProductId(productId));
     }
 
     @PostMapping("{id}/options")
-    public ResponseEntity<List<Option>> addOption(@RequestBody @Valid OptionRequest optionRequest,
-        @PathVariable Long id){
+    public ResponseEntity<List<OptionResponse>> addOption(
+        @RequestBody @Valid OptionRequest optionRequest,
+        @PathVariable Long id) {
         Product product = productService.findById(id);
         Option option = optionService.addOption(optionRequest, product);
 
@@ -78,22 +85,26 @@ public class ProductController {
     }
 
     @PutMapping("{id}/options")
-    public ResponseEntity<String> updateOption(@RequestBody @Valid OptionRequest optionRequest, @PathVariable Long id){
+    public ResponseEntity<String> updateOption(@RequestBody @Valid OptionRequest optionRequest,
+        @PathVariable Long id) {
         optionService.updateOption(optionRequest, id);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("update");
     }
 
     @DeleteMapping("{id}/options")
-    public ResponseEntity<List<Option>> deleteOption(@PathVariable("id") Long productId, @RequestParam Long optionId){
+    public ResponseEntity<List<Option>> deleteOption(@PathVariable("id") Long productId,
+        @RequestParam Long optionId) {
         Option option = optionService.getOption(optionId);
         productService.deleteOption(productId, option);
 
-        return ResponseEntity.status(HttpStatus.OK).body(productService.deleteOption(productId, option));
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(productService.deleteOption(productId, option));
     }
 
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(
+        IllegalArgumentException ex) {
         return ResponseEntity.status(400).body(new ErrorResponse(ex.getMessage()));
     }
 

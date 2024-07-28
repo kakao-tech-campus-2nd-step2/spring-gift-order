@@ -1,6 +1,7 @@
 package gift.product;
 
 import gift.option.Option;
+import gift.option.OptionResponse;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,9 +27,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private final List<Option> options = new ArrayList<>();
-
-    /*@OneToMany(mappedBy = "product")
-    private final List<Option> options = new ArrayList<>();*/
 
     public Long getId(){
         return this.id;
@@ -78,6 +76,14 @@ public class Product {
         if(name.contains("카카오")){
             throw new IllegalArgumentException( "\"카카오\"가 포함된 문구는 담당 MD와 협의한 경우에만 사용할 수 있습니다.");
         }
+    }
+
+    public List<OptionResponse> getOptionResponses(){
+        List<OptionResponse> optionResponseList = new ArrayList<>();
+        for (Option e : this.getOptions()){
+            optionResponseList.add(new OptionResponse(e));
+        }
+        return optionResponseList;
     }
 
 }

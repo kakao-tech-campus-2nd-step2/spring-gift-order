@@ -12,12 +12,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginMethodArgumentResolver(new JwtService()));//LoginMemberArgumentResolver 등록
+        resolvers.add(new OAuthMethodArgumentResolver(new JwtService()));
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtInterceptor(new JwtService()))
-            .addPathPatterns("/wish"); // 필요한 경로 설정
+            .addPathPatterns("/wish", "api/order"); // 필요한 경로 설정
         //.excludePathPatterns("/signup", "/login"); // 회원가입과 로그인은 토큰 없어도 됨
     }
 }

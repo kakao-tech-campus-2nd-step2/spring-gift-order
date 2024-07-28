@@ -1,6 +1,7 @@
 package gift.product;
 
 import gift.option.Option;
+import gift.option.OptionResponse;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,11 @@ public class ProductService {
         return productRepository.findById(productId).orElseThrow();
     }
 
-    public List<Option> addOption(Long productId, Option option){
+    public List<OptionResponse> addOption(Long productId, Option option){
         Product product = findById(productId);
         product.getOptions().add(option);
 
-        return product.getOptions();
+        return product.getOptionResponses();
     }
 
     public List<Option> deleteOption(Long productId, Option option){

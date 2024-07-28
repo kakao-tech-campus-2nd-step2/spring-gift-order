@@ -42,6 +42,11 @@ public class OptionService {
         return optionRepository.findById(id).orElseThrow();
     }
 
+    public Product getProduct(Long id){
+        Option option = getOption(id);
+        return option.getProduct();
+    }
+
     private void isValidRequest(OptionRequest optionRequest, Long productId){
         if(isExistName(optionRequest, productId)){
             throw new IllegalArgumentException(" 동일한 상품 내의 옵션 이름은 중복될 수 없습니다. ");
