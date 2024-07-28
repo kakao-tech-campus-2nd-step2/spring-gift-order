@@ -41,7 +41,7 @@ public class KakaoAuthController {
             KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
             KakaoUserDTO kakaoUserDTO = kakaoAuthService.getKakaoUser(
                 tokenResponse.getAccessToken());
-            Member member = kakaoAuthService.registerOrGetMember(kakaoUserDTO);
+            Member member = kakaoAuthService.registerOrGetMember(kakaoUserDTO, tokenResponse.getAccessToken());
             return ResponseEntity.ok(tokenResponse.getAccessToken());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
