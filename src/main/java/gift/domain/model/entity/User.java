@@ -32,6 +32,12 @@ public class User {
     @Column
     private String providerId;
 
+    @Column
+    private String kakaoAccessToken;
+
+    @Column
+    private String kakaoRefreshToken;
+
     protected User() {
     }
 
@@ -45,6 +51,15 @@ public class User {
         this.email = email;
         this.password = password;
         this.authProvider = AuthProvider.LOCAL;
+    }
+
+    public User(String email, AuthProvider authProvider, String providerId, String kakaoAccessToken,
+        String kakaoRefreshToken) {
+        this.email = email;
+        this.authProvider = authProvider;
+        this.providerId = providerId;
+        this.kakaoAccessToken = kakaoAccessToken;
+        this.kakaoRefreshToken = kakaoRefreshToken;
     }
 
     public Long getId() {
@@ -67,9 +82,22 @@ public class User {
         return providerId;
     }
 
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
+    }
+
+    public String getKakaoRefreshToken() {
+        return kakaoRefreshToken;
+    }
+
     public void update(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public void updateKakaoTokens(String newAccessToken, String newRefreshToken) {
+        this.kakaoAccessToken = newAccessToken;
+        this.kakaoRefreshToken = newRefreshToken;
     }
 
     public enum AuthProvider {

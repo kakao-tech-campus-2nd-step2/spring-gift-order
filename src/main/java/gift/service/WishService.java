@@ -32,22 +32,22 @@ public class WishService {
     }
 
     @Transactional(readOnly = true)
-    public Page<WishResponseDto> getWishes(String email, int page, WishSortBy sortBy) {
+    public Page<WishResponseDto> getWishes(User user, int page, WishSortBy sortBy) {
         Sort sort = sortBy.getSort();
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, sort);
 
-        Page<Wish> wishPage = wishRepository.findByUserEmail(email, pageable);
+        Page<Wish> wishPage = wishRepository.findByUserEmail(user.getEmail(), pageable);
 
         return wishPage.map(this::convertToWishResponseDto);
     }
 
     @Transactional
-    public WishResponseDto addWish(String email, Long productId) {
+    public WishResponseDto addWish(User user, Long productId) {
         productService.validateExistProductId(productId);
-        if (wishRepository.existsByUserEmailAndProductId(email, productId)) {
+        if (wishRepository.existsByUserEmailAndProductId(user.getEmail(), productId)) {
             throw new DuplicateWishItemException("이미 위시리스트에 존재하는 상품입니다.");
         }
-        User user = userService.getUserByEmail(email);
+
         Product product = productService.convertResponseDtoToEntity(
             productService.getProduct(productId));
 
@@ -56,24 +56,24 @@ public class WishService {
     }
 
     @Transactional
-    public void deleteWish(String email, Long productId) {
+    public void deleteWish(User user, Long productId) {
         productService.validateExistProductId(productId);
-        validateExistWishProduct(email, productId);
-        wishRepository.deleteByUserEmailAndProductId(email, productId);
+        validateExistWishProduct(user.getEmail(), productId);
+        wishRepository.deleteByUserEmailAndProductId(user.getEmail(), productId);
     }
 
     @Transactional
-    public WishResponseDto updateWish(Long productId, String email,
+    public WishResponseDto updateWish(Long productId, User user,
         WishUpdateRequestDto wishUpdateRequestDto) {
         productService.validateExistProductId(productId);
-        Wish wish = validateExistWishProduct(email, productId);
+        Wish wish = validateExistWishProduct(user.getEmail(), productId);
         wish.setCount(wishUpdateRequestDto.getCount());
         return convertToWishResponseDto(wishRepository.save(wish));
     }
 
     @Transactional(readOnly = true)
-    public Wish validateExistWishProduct(String email, Long productId) {
-        return wishRepository.findByUserEmailAndProductId(email, productId)
+    public Wish validateExistWishProduct(User user, Long productId) {
+        return wishRepository.findByUserEmailAndProductId(user.getEmail(), productId)
             .orElseThrow(() -> new NoSuchWishException("위시리스트에 존재하지 않는 상품입니다."));
     }
 

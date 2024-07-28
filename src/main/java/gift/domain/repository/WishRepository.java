@@ -1,5 +1,7 @@
 package gift.domain.repository;
 
+import gift.domain.model.entity.Product;
+import gift.domain.model.entity.User;
 import gift.domain.model.entity.Wish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,4 +21,6 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
     boolean existsByUserEmailAndProductId(String email, Long productId);
 
     void deleteByUserEmailAndProductId(String email, Long productId);
+
+    void deleteByUserAndProduct(User user, Product product);
 }

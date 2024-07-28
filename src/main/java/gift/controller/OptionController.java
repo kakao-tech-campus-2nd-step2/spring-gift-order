@@ -23,22 +23,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class OptionController {
 
-    private final OptionService OptionService;
+    private final OptionService optionService;
 
-    public OptionController(OptionService OptionService) {
-        this.OptionService = OptionService;
+    public OptionController(OptionService optionService) {
+        this.optionService = optionService;
     }
 
     @GetMapping
     public ResponseEntity<List<OptionResponseDto>> getAllOptionsByProductId(@PathVariable Long productId) {
-        return ResponseEntity.ok(OptionService.getAllOptionsByProductId(productId));
+        return ResponseEntity.ok(optionService.getAllOptionsByProductId(productId));
     }
 
     @PostMapping
     public ResponseEntity<OptionResponseDto> addOption(
         @PathVariable Long productId,
         @Valid @RequestBody OptionAddRequestDto optionAddRequestDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(OptionService.addOption(productId,
+        return ResponseEntity.status(HttpStatus.CREATED).body(optionService.addOption(productId,
             optionAddRequestDto));
     }
 
@@ -46,12 +46,12 @@ public class OptionController {
     public ResponseEntity<OptionResponseDto> updateOption(
         @PathVariable Long id,
         @Valid @RequestBody OptionUpdateRequestDto optionUpdateRequestDto) {
-        return ResponseEntity.ok(OptionService.updateOption(id, optionUpdateRequestDto));
+        return ResponseEntity.ok(optionService.updateOption(id, optionUpdateRequestDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOption(@PathVariable Long id) {
-        OptionService.deleteOption(id);
+        optionService.deleteOption(id);
         return ResponseEntity.noContent().build();
     }
 }

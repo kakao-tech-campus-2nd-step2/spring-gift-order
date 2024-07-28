@@ -11,9 +11,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(Exception e) {
-        ExceptionResponse error = new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(),
+        ExceptionResponse error = new ExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(),
             e.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -51,9 +51,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ExceptionResponse> handleBadCredentialsException(
         BadCredentialsException e) {
-        ExceptionResponse error = new ExceptionResponse(HttpStatus.UNAUTHORIZED.value(),
+        ExceptionResponse error = new ExceptionResponse(HttpStatus.FORBIDDEN.value(),
             e.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UnauthorizedException.class)
@@ -75,6 +75,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchWishException.class)
     public ResponseEntity<ExceptionResponse> handleNoSuchWishException(
         NoSuchWishException e) {
+        ExceptionResponse error = new ExceptionResponse(HttpStatus.NOT_FOUND.value(),
+            e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoSuchOptionException.class)
+    public ResponseEntity<ExceptionResponse> handleNoSuchOptionException(
+        NoSuchOptionException e) {
+        ExceptionResponse error = new ExceptionResponse(HttpStatus.NOT_FOUND.value(),
+            e.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InsufficientQuantityException.class)
+    public ResponseEntity<ExceptionResponse> handleInsufficientQuantityException(
+        InsufficientQuantityException e) {
         ExceptionResponse error = new ExceptionResponse(HttpStatus.CONFLICT.value(),
             e.getMessage());
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
