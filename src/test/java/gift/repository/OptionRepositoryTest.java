@@ -36,8 +36,7 @@ class OptionRepositoryTest {
         categoryRepository.deleteAll();
 
         category = categoryRepository.save(new Category("테스트 카테고리"));
-        product = productRepository.save(new Product(1L,"테스트 상품", 10000, "image.jpg", category));
-
+        product = productRepository.save(new Product("테스트 상품", 10000, "image.jpg", category));
         option1 = optionRepository.save(new Option("옵션1", 10, product));
         option2 = optionRepository.save(new Option("옵션2", 20, product));
     }

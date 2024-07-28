@@ -1,6 +1,8 @@
 package gift.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -8,8 +10,10 @@ import static org.mockito.Mockito.when;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wish;
+import gift.repository.ProductRepository;
 import gift.repository.WishRepository;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +27,8 @@ class WishServiceTest {
 
     @Mock
     private WishRepository wishRepository;
+    @Mock
+    private ProductRepository productRepository;
 
     @InjectMocks
     private WishService wishService;
@@ -35,6 +41,7 @@ class WishServiceTest {
     void setUp() {
         member = new Member("test@email.com", "testPassword");
         product = new Product("product", 10000, "image.jpg");
+        product.setId(1L);
         wish = new Wish(product, member);
         wish.setId(1L);
     }
@@ -60,6 +67,7 @@ class WishServiceTest {
     public void addWishTest() throws Exception {
         // given
         when(wishRepository.save(wish)).thenReturn(wish);
+        when(productRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(product));
 
         // when
         var addedWish = wishService.addWish(product.getId(),member);

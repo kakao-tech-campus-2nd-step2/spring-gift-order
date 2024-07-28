@@ -45,7 +45,6 @@ class WishRepositoryTest {
         product = new Product("productName", 10000, "image.jpg");
         product.setCategory(category);
         product = productRepository.save(product);
-
         // 기존 위시 데이터 삭제
         wishRepository.deleteAll();
     }
