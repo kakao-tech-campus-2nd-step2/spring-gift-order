@@ -64,6 +64,14 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
+    public Product(String name, Integer price, String imageUrl,
+        Category category) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
+    }
+
     public Product(Long id, String name, Integer price, String imageUrl,
         Category category) {
         this.id = id;
