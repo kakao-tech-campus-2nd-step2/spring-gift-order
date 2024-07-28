@@ -10,9 +10,7 @@ import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.transaction.Transactional;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +19,30 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final KakaoService kakaoService;
+    private final ProductService productService;
+    private final WishService wishService;
 
-    public OrderService(ProductRepository productRepository, OrderRepository orderRepository, KakaoService kakaoService) {
+    public OrderService(ProductRepository productRepository, OrderRepository orderRepository, KakaoService kakaoService,
+        ProductService productService, WishService wishService) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.kakaoService = kakaoService;
+        this.productService = productService;
+        this.wishService = wishService;
+    }
+
+    @Transactional
+    public OrderResponseDto processOrder(OrderRequestDto orderRequestDto, Member member) {
+        // 재고 처리
+        productService.decreaseOptionQuantity(orderRequestDto.productId(), orderRequestDto.optionId(),orderRequestDto.quantity());
+        // 위시리스트 삭제
+        wishService.deleteProductFromWishList(member.getId(), orderRequestDto.productId());
+        // 주문 생성 및 저장
+        OrderResponseDto orderResponseDto = createOrder(orderRequestDto);
+        // 주문 메시지 발송
+        sendOrderMessage(orderRequestDto, member);
+
+        return orderResponseDto;
     }
 
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {

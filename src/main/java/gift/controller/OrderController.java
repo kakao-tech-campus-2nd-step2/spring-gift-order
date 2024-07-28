@@ -18,24 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-    private final ProductService productService;
-    private final WishService wishService;
     private final OrderService orderService;
 
-    public OrderController(ProductService productService, WishService wishService,
-        OrderService orderService) {
-        this.productService = productService;
-        this.wishService = wishService;
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderRequestDto orderRequestDto, @LoginMember Member member) {
-        productService.decreaseOptionQuantity(orderRequestDto.productId(), orderRequestDto.optionId(),orderRequestDto.quantity());
-        wishService.deleteProductFromWishList(member.getId(), orderRequestDto.productId());
-        OrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
-
-        orderService.sendOrderMessage(orderRequestDto, member);
+        OrderResponseDto orderResponseDto = orderService.processOrder(orderRequestDto, member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponseDto);
     }
