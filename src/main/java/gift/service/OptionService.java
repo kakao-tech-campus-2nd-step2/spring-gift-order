@@ -9,6 +9,7 @@ import gift.model.product.Product;
 import gift.repository.option.OptionRepository;
 import gift.repository.product.ProductRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,10 @@ public class OptionService {
         this.productRepository = productRepository;
     }
 
+    public OptionResponse getOptionById(Long optionId) {
+        Option option = optionRepository.findById(optionId).orElseThrow();
+        return OptionResponse.from(option);
+    }
     @Transactional
     public List<OptionResponse> getOptionByProductId(Long productId) {
         Product product = productRepository.findById(productId).orElseThrow(

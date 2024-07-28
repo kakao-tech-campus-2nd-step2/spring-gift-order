@@ -7,6 +7,8 @@ import gift.model.product.ProductRequest;
 import gift.model.product.ProductResponse;
 import gift.service.OptionService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
+@Tag(name = "상품 API", description = "상품 관련 API")
 @RestController
 @RequestMapping("/api/products")
 public class ProductRestController {
@@ -40,6 +42,7 @@ public class ProductRestController {
     }
 
     // 모든 상품 조회
+    @Operation(summary = "상품 조회", description = "등록된 상품을 모두 조회한다.")
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(
         @PageableDefault(size = 10, sort = "id") Pageable pageable) {
@@ -48,6 +51,7 @@ public class ProductRestController {
     }
 
     // 특정 상품 조회
+    @Operation(summary = "Id별 상품 조회", description = "Id를 받고 그에 맞는 상품을 찾는다.")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
         ProductResponse product = productService.getProductById(id);
@@ -55,13 +59,15 @@ public class ProductRestController {
     }
 
     // 상품 추가
+    @Operation(summary = "상품 추가", description = "새로운 상품을 추가한다.")
     @PostMapping
     public ResponseEntity<ProductResponse> addProduct(@Valid @RequestBody ProductRequest product, @RequestBody OptionRequest option) {
         ProductResponse createdProduct = productService.createProduct(product, option);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 
-//     상품 수정
+    // 상품 수정
+    @Operation(summary = "상품 정보 수정", description = "상품 정보를 수정한다.")
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest product) {
         try {
@@ -73,6 +79,7 @@ public class ProductRestController {
     }
 
     // 상품 삭제
+    @Operation(summary = "상품 삭제", description = "Id를 받아서 상품을 삭제한다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
@@ -80,12 +87,14 @@ public class ProductRestController {
     }
 
     // 상품 옵션 조회, 추가, 수정, 삭제
+    @Operation(summary = "상품 옵션 조회", description = "상품 옵션을 조회한다.")
     @GetMapping("/{id}/options")
     public ResponseEntity<List<OptionResponse>> getOptionsByProductId(@PathVariable("id") Long productId) {
         List<OptionResponse> options = optionService.getOptionByProductId(productId);
         return ResponseEntity.ok(options);
     }
 
+    @Operation(summary = "id별 상품 옵션 조회", description = "Id를 받고 상품 옵션을 조회한다.")
     @PostMapping("/{id}/options")
     public ResponseEntity<OptionResponse> addOption(@PathVariable("id") Long productId,
         @RequestBody OptionRequest optionRequest) {
@@ -93,6 +102,7 @@ public class ProductRestController {
         return ResponseEntity.ok(optionResponse);
     }
 
+    @Operation(summary = "상품 옵션 수정", description = "상품 옵션을 수정한다.")
     @PutMapping("/{id}/options/{optionId}")
     public ResponseEntity<OptionResponse> updateOption(@PathVariable("id") Long productId,
         @PathVariable("optionId") Long optionId, @RequestBody OptionRequest optionRequest) {
@@ -100,6 +110,7 @@ public class ProductRestController {
         return ResponseEntity.ok(optionResponse);
     }
 
+    @Operation(summary = "상품 옵션 삭제", description = "상품 옵션을 삭제한다.")
     @DeleteMapping("/{id}/options/{optionId}")
     public ResponseEntity<Void> deleteOption(@PathVariable("id") Long productId,
         @PathVariable("optionId") Long optionId) {

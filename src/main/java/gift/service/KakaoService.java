@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.common.config.KakaoProperties;
+import gift.common.exception.CustomClientErrorException;
+import gift.common.exception.CustomServerErrorException;
 import gift.kakaologin.KakaoResponse;
 import gift.model.order.Order;
 import gift.model.order.OrderRequest;
@@ -19,15 +21,10 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoService {
 
-//    @Value("${kakao.client-id}")
-//    private String restKey;
-//
-//    @Value("${kakao.redirect-url}")
-//    private  String redirectUrl;
-
     @Autowired
     private KakaoProperties kakaoProperties;
-    private final RestClient restClient = RestClient.builder().build();
+    @Autowired
+    private RestClient restClient;
 
     public String getKakaoUrl() {
         return "https://kauth.kakao.com/oauth/authorize" +
@@ -45,10 +42,10 @@ public class KakaoService {
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, (request, responses) -> {
-                throw new RuntimeException("4xx error");
+                throw new CustomClientErrorException("4XX 에러 발생");
         })
             .onStatus(HttpStatusCode::is5xxServerError, (request, responses) -> {
-                throw new RuntimeException("5xx error");
+                throw new CustomServerErrorException("5XX 에러 발생");
             })
             .toEntity(KakaoResponse.class);
         return response.getBody().getAccessToken();

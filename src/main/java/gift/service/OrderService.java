@@ -22,19 +22,17 @@ public class OrderService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final WishListRepository wishListRepository;
-    private final KakaoService kakaoService;
     private final KakaoMessageService kakaoMessageService;
 
     public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
         UserRepository userRepository, ProductRepository productRepository,
-        WishListRepository wishListRepository, KakaoService kakaoService,
+        WishListRepository wishListRepository,
         KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
         this.wishListRepository = wishListRepository;
-        this.kakaoService = kakaoService;
         this.kakaoMessageService = kakaoMessageService;
     }
 
@@ -42,10 +40,11 @@ public class OrderService {
         User user = userRepository.findById(orderRequest.userId()).orElseThrow(
             () -> new UserNotFoundException("해당 Id를 가진 사용자는 존재하지 않습니다.")
         );
-        Product product = productRepository.findById(orderRequest.productId()).orElseThrow(
-            () -> new ProductNotFoundException("해당 Id를 가진 상품은 존재하지 않습니다.")
-        );
-        Option option = optionRepository.findByProductAndId(product, orderRequest.optionId()).orElseThrow();
+
+//        Product product = productRepository.findById(orderRequest.productId()).orElseThrow(
+//            () -> new ProductNotFoundException("해당 Id를 가진 상품은 존재하지 않습니다.")
+//        );
+        Option option = optionRepository.findById(orderRequest.optionId()).orElseThrow();
         option.subtract(orderRequest.quantity());
         optionRepository.save(option);
 
@@ -53,7 +52,7 @@ public class OrderService {
         orderRepository.save(order);
 
         // 위시리스트에 주문 상품이 존재하면 위시리스트에서 삭제
-        if(wishListRepository.existsByUserAndProduct(user, product)) {
+        if(wishListRepository.existsByUserAndProduct(user, option.getProduct())) {
             wishListRepository.deleteByUserIdAndAndProductId(orderRequest.userId(),
                 orderRequest.productId());
         }

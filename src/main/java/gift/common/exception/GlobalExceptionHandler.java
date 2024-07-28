@@ -73,6 +73,20 @@ public class GlobalExceptionHandler {
         URI.create("/errors/option-not-found");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problemDetail);
     }
+    @ExceptionHandler(CustomClientErrorException.class)
+    public ResponseEntity<String> handleCustomClientErrorException(CustomClientErrorException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomServerErrorException.class)
+    public ResponseEntity<String> handleCustomServerErrorException(CustomServerErrorException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
 
 
