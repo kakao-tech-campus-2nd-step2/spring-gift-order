@@ -54,7 +54,10 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse order(
-            OrderRequest orderRequest, UserResponse userResponse, Long productId) throws JsonProcessingException {
+            OrderRequest orderRequest, UserResponse userResponse, Long productId) throws JsonProcessingException
+    {
+        if(userResponse.getToken() == null)
+            throw new NoSuchFieldError("카카오 유저만 구매할 수 있습니다!");
         Option option = optionRepository.findById(orderRequest.getOptionId()).orElseThrow(NoSuchFieldError::new);
         Long before = option.getQuantity();
         option.subtract(orderRequest.getQuantity());

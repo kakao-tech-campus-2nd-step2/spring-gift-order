@@ -57,7 +57,7 @@ public class UserService {
      * id를 기준으로 한 유저를 조회하는 로직
      */
     public UserResponse findById(Long id){
-        User user = userRepository.findById(id).orElseThrow(NullPointerException::new);
+        User user = userRepository.findById(id).orElseThrow(NoSuchFieldError::new);
         return new UserResponse(user);
     }
     /*
@@ -78,6 +78,9 @@ public class UserService {
      */
     @Transactional
     public UserResponse saveKakao(String kakaoId, String token){
+        if(userRepository.existsByUserId(kakaoId)) {
+            return new UserResponse(userRepository.findByUserId(kakaoId));
+        }
         User savedKakaoUser = userRepository.save(new User(
                 kakaoId,
                 kakaoId + "email.com",
@@ -98,8 +101,14 @@ public class UserService {
     /*
      * userId의 중복 여부를 확인하는 로직
      */
-    public boolean isDuplicate(UserRequest userRequest){
-        return userRepository.existsByUserId(userRequest.getUserId());
+    public boolean isUserIdDuplicate(String userId){
+        return userRepository.existsByUserId(userId);
+    }
+    /*
+     * Email의 중복 여부를 확인하는 로직
+     */
+    public boolean isEmailDuplicate(String email){
+        return userRepository.existsByEmail(email);
     }
     /*
      * 로그인을 위한 확인을 해주는 로직
