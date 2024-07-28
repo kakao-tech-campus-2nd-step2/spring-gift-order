@@ -23,7 +23,8 @@ public class OrderService {
     @Autowired
     private KakaoMessageService kakaoMessageService;
 
-    public Order placeOrder(String email, OrderRequestDTO orderRequestDTO) {
+    public Order placeOrder(String email, OrderRequestDTO orderRequestDTO, String accessToken)
+        throws Exception {
         Member member = memberService.findMemberEntityByEmail(email);
         Option option = optionService.findOptionById(orderRequestDTO.getOptionId());
         optionService.subtractOptionQuantity(option.getId(), orderRequestDTO.getQuantity());
@@ -31,7 +32,7 @@ public class OrderService {
         Order order = new Order(member, option, orderRequestDTO.getQuantity(), orderRequestDTO.getMessage());
         Order savedOrder = orderRepository.save(order);
 
-        kakaoMessageService.sendOrderMessage(member.getToken(), createOrderMessage(savedOrder));
+        kakaoMessageService.sendOrderMessage(accessToken, createOrderMessage(savedOrder));
         return savedOrder;
     }
 
