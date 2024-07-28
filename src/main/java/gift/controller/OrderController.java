@@ -41,6 +41,7 @@ public class OrderController {
         }
         OrderResponseDTO orderResponseDTO = orderService.createOrder(orderRequestDTO, member.getEmail());
         String accessToken = orderRequestDTO.accessToken();
+        kakaoService.sendKakaoMessage(accessToken, orderResponseDTO);
         return "redirect:/admin/products";
     }
 
