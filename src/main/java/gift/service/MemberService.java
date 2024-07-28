@@ -9,7 +9,6 @@ import gift.exception.NoSuchMemberException;
 import gift.repository.MemberRepository;
 import gift.util.JwtProvider;
 import java.util.Map;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,26 +25,22 @@ public class MemberService {
     }
 
     public MemberDTO findMember(String email) {
-        Optional<Member> foundMember = memberRepository.findById(email);
-        if (foundMember.isEmpty()) {
-            return null;
-        }
-        return foundMember.get().toDTO();
+        return memberRepository.findById(email)
+            .orElseThrow(NoSuchMemberException::new)
+            .toDTO();
     }
 
-    public Map<String, String> register(MemberDTO memberDTO) {
-        if (findMember(memberDTO.email()) != null) {
+    public void register(MemberDTO memberDTO) {
+        try {
+            findMember(memberDTO.email());
             throw new AlreadyExistMemberException();
+        } catch (NoSuchMemberException e) {
+            memberRepository.save(memberDTO.toEntity()).toDTO();
         }
-        MemberDTO savedMemberDTO = memberRepository.save(memberDTO.toEntity()).toDTO();
-        return Map.of("token:", jwtProvider.createAccessToken(savedMemberDTO));
     }
 
     public Map<String, String> login(MemberDTO memberDTO) {
         MemberDTO foundMemberDTO = findMember(memberDTO.email());
-        if (foundMemberDTO == null) {
-            throw new NoSuchMemberException();
-        }
         checkPassword(memberDTO.password(), foundMemberDTO.password());
         return Map.of("token:", jwtProvider.createAccessToken(memberDTO));
     }

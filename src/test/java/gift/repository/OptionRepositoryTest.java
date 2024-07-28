@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import gift.domain.Option;
+import gift.domain.Product;
 import gift.exception.InsufficientQuantityException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,9 @@ public class OptionRepositoryTest {
     @BeforeEach
     void setup() {
         quantity = 3;
-        option = optionRepository.save(createOption(1L, "test", quantity, createProduct(createCategory())));
+        Product product = createProduct(1L, "아이스 아메리카노", createCategory());
+        option = optionRepository.save(createOption(null, "test", quantity, product));
+        System.out.println(option.toDTO());
     }
 
     @DisplayName("옵션 수량 차감")
