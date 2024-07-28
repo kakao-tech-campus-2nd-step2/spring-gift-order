@@ -284,6 +284,44 @@ Content-Type: application/json
 
 ### week5/step2
 
+카카오톡 메시지 API를 사용하여 주문하기 기능을 구현한다.
+
+- 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
+- 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감된다.
+- 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
+- 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
+  - 메시지는 메시지 템플릿의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.
+- 아래 예시와 같이 HTTP 메시지를 주고받도록 구현한다.
+
+#### Request
+
+```http request
+POST /api/orders HTTP/1.1
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+    "optionId": 1,
+    "quantity": 2,
+    "message": "Please handle this order with care."
+}
+```
+
+#### Response
+
+```http request
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "id": 1,
+    "optionId": 1,
+    "quantity": 2,
+    "orderDateTime": "2024-07-21T10:00:00",
+    "message": "Please handle this order with care."
+}
+```
+
 ### week5/step3
 
 </details>
@@ -360,14 +398,29 @@ Content-Type: application/json
 #### 모델 설계
 
 - [x] 멤버를 표현하는 도메인 객체
-  - 멤버의 구성요소
-    - id: int (primary key, unique, not null)
-      - 멤버를 구분하는 pk로, 내부적으로만 사용됨
-    - email: string (unique, not null)
-    - password: string
-      - 해시함수를 한번 거친다.
-    - permission: string
-      - `user`, `admin` 중 하나가 가능
+  - 멤버는 기본적으로 이메일(email)과 권한(permission)을 가지며, 유형에 따라 구분됨 
+    - 멤버의 기본 구성요소    
+      1. id: int (primary key, unique, not null)
+         - 멤버를 구분하는 pk로, 내부적으로만 사용됨    
+      2. email: string (unique, not null)
+         - 멤버 유형에 관계없이 이메일은 중복될 수 없음
+      3. permission: string
+         - `member`, `admin` 중 하나가 가능
+      4. userType: string
+         - 멤버는 반드시 오로지 한 유형에만 속해야 함
+         - `local`, `kakao` 중 하나가 가능
+    - Local Member만 가지는 구성요소
+      1. password: string
+         - 해시함수를 한번 거쳐 저장됨
+      2. member_id: int (fk, not null)
+         - 기본 멤버를 지칭하는 요소
+    - Kakao Member만 가지는 구성요소
+      1. kakao_identifier: int
+         - 카카오 계정을 고유하게 식별하는 값
+      2. access_token: string
+         - 카카오 api 접근시 필요한 임시 토큰으로 서버에서 저장
+      3. member_id: int (fk, not null)
+        - 기본 멤버를 지칭하는 요소
 - [x] 멤버를 저장하는 데이터베이스 연동
   - [x] Jpa Repository
   - [x] 엔티티 클래스 및 예제 데이터 구비
@@ -517,6 +570,47 @@ Content-Type: application/json
 #### Server-side Renderings
 
 - [ ] 옵션들만 모아서 볼 수 있는 화면
+
+</details>
+
+---
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 도메인</span></summary>
+
+### 주문 도메인
+
+#### 모델 설계
+
+- [x] 주문을 표현하는 도메인 객체
+  - 주문 구성요소
+    - id: int (pk)
+      - 주문의 고유번호
+    - optionId: int (fk, not null)
+      - 주문한 상품 옵션 아이디
+    - quantity: Integer
+      - 주문한 상품 옵션 수량
+    - order_date_time: DateTime
+      - 주문한 시각
+    - message: 주문 메시지
+
+- [x] 주문을 저장하는 데이터베이스 연동
+  - [x] Jpa Repository
+  - [x] 엔티티 클래스 및 예제 데이터 구비
+
+#### 기능 설계(컨트롤러 및 서비스 설계)
+
+- [x] 주문 생성 API
+- [x] 주문 조회 API
+
+#### 예외, 검증 설계
+
+- [x] 커스텀 예외 및 예외 핸들링
+
+#### Server-side Renderings
+
+- [ ] 주문을 할 수 있는 화면
+- [ ] 주문들을 모아서 볼 수 있는 화면
 
 </details>
 
@@ -954,10 +1048,28 @@ Content-Type: application/json
 
 #### 회원가입 API/Request/Body
 
+- 회원 종류에 따라 서로 다른 요청을 해아 한다.
+
+##### 일반 회원인 경우
+
 ```json
 {
+  "user-type": "local",
   "email": "admin@email.com",
   "password": "password"
+}
+```
+
+##### 카카오 회원인 경우
+
+- 요청 전 카카오 로그인을 통해 `access_token`을 발급받아야 한다.
+  - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
+
+```json
+{
+  "user-type": "kakao",
+  "email": "kakao_user@kakao.com",
+  "access-token": "your-access-token-is-here"
 }
 ```
 
@@ -993,10 +1105,28 @@ Content-Type: application/json
 
 #### 로그인 API/Request/Body
 
+- 회원 종류에 따라 서로 다른 요청을 해아 한다.
+
+##### 일반 회원인 경우
+
 ```json
 {
+  "user-type": "local",
   "email": "admin@email.com",
   "password": "password"
+}
+```
+
+##### 카카오 회원인 경우
+
+- 요청 전 카카오 로그인을 통해 `access_token`을 발급받아야 한다.
+  - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
+
+```json
+{
+  "user-type": "kakao",
+  "email": "kakao_user@kakao.com",
+  "access-token": "your-access-token-is-here"
 }
 ```
 
@@ -1227,7 +1357,7 @@ Content-Type: application/json
   ```
 
 - 비로그인 상태로 위시리스트 도메인 API를 사용할 경우, 서버는 401 Auauthorized 응답을 반환한다.
-- 
+
 </details>
 
 ---
@@ -1718,6 +1848,118 @@ Authorization: Bearer your-token-string
 
 </details>
 
+---
+
+
+
+### API 명세서/주문 도메인
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">Overview</span></summary>
+
+- 주문 관련 API는 모두 인증이 필요하며, Header에 로그인 또는 회원가입으로 발급받은 토큰을 아래와 같이 `Authorization` 키와 같이 명시한다.
+
+- 주문 도메인 API/Request/Header
+
+  ```http request
+  GET /api/wishes HTTP/1.1
+  content-type: application/json
+  host: localhost:8080
+  Authorization: Bearer your-token-string
+  ```
+
+- 비로그인 상태로 주문 도메인 API를 사용할 경우, 서버는 401 Auauthorized 응답을 반환한다.
+
+</details>
+
+---
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 생성 API</span></summary>
+
+#### 주문 생성 API/Request
+
+- 로컬 타입 멤버가 주문하는 경우, 주문 내역은 서버에서만 확인이 가능하다.
+- 카카오 타입 멤저가 주문하는 경우, 주문이 성공하는 경우 주문 내역이 카카오톡 메시지로 전송된다.
+
+| Method | URL         | Path param | Path variable | Body |
+|--------|-------------|------------|---------------|------|
+| POST   | /api/orders | -          | -             | yes  |
+
+#### 주문 생성 API/Body
+
+```json
+{
+  "option-id": 1,
+  "quantity": 2,
+  "message": "Please handle this order with care."
+}
+```
+
+#### 주문 생성 API/Response
+
+- Status
+  - 201 CREATED
+- Body
+
+##### Response 예시
+
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.0000000",
+  "success": true,
+  "status": 201,
+  "created-order": {
+    "id": 1,
+    "option-id": 1,
+    "quantity": 2,
+    "order-date-time": "2024-01-01T10:00:00",
+    "message": "Please handle this order with care."
+  }
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 조회 API</span></summary>
+
+#### 주문 조회 API/Request
+
+| Method | URL         | Path param | Path variable | Body |
+|--------|-------------|------------|---------------|------|
+| GET    | /api/orders | -          | -             | -    |
+
+#### 주문 조회 API/Response
+
+- Status
+  - 200 OK
+- Body
+
+##### Response 예시
+
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.0000000",
+  "success": true,
+  "status": 200,
+  "orders": [
+    {
+      "id": 1,
+      "option-id": 1,
+      "quantity": 2,
+      "order-date-time": "2024-01-01T10:00:00",
+      "message": "Please handle this order with care."
+    },
+    {}
+  ]
+}
+```
+
+</details>
+
 <br>
 
 ---
@@ -1751,6 +1993,7 @@ Authorization: Bearer your-token-string
 | `EBR_OP002` | 옵션 수량 수정 시 `action`이 잘못됨 | 허용되는 `action`으로 옵션 수량 수정 |
 | `EBR_OP003` | 상품 등록시 옵션이 하나도 주어지지 않음   | 1개 이상의 옵션과 함께 상품 등록      |
 | `EBR_VF001` | 요청시 만족해야 하는 제약 조건을 위반함   | 제약조건을 준수하여 재요청           |
+| `EBR_OA001` | Oauth 공급자가 잘못되었음         | 서버에서 지원하는 Oauth 공급자로 재시도 |
 
 #### Conflict
 

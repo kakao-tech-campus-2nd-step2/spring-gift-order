@@ -1,10 +1,13 @@
 package gift.utilForTest;
 
 import gift.domain.entity.Category;
+import gift.domain.entity.LocalMember;
 import gift.domain.entity.Member;
 import gift.domain.entity.Option;
 import gift.domain.entity.Product;
 import gift.domain.entity.Wish;
+import gift.global.WebConfig.Constants.Domain.Member.Permission;
+import gift.global.WebConfig.Constants.Domain.Member.Type;
 import gift.global.util.HashUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +22,8 @@ public class MockObjectSupplier {
     static {
         Category category = new Category("상품권", "#919191", "color.png", "");
         Product product = new Product("testProduct", 5000, "image.png", category);
-        Member member = new Member("test@example.com", HashUtil.hashCode("password"), "user");
+        Member member = new Member("test@example.com", Permission.MEMBER, Type.LOCAL);
+        member.setLocalMember(new LocalMember(HashUtil.hashCode("password"), member));
         Wish wish = new Wish(product, member, 5L);
         Option option = new Option(product, "옵션1", 555);
 
@@ -27,6 +31,7 @@ public class MockObjectSupplier {
         ReflectionTestUtils.setField(product, "id", 1L);
         ReflectionTestUtils.setField(product, "options", new ArrayList<>(List.of(option)));
         ReflectionTestUtils.setField(member, "id", 1L);
+        ReflectionTestUtils.setField(member.getLocalMember(), "id", 1L);
         ReflectionTestUtils.setField(wish, "id", 1L);
         ReflectionTestUtils.setField(option, "id", 1L);
 
