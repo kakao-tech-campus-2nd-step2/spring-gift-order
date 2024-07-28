@@ -1,5 +1,6 @@
 # spring-gift-order
 
+
 쓰고 나니 부족한 부분이 보여 기능추가를 해야겠다. 
 
 ## API 문서
@@ -77,3 +78,4 @@
 | 회원 로그인/등록 페이지 | GET /members/login, /members/register | -                            | HTML: "user"                      | 회원 로그인 및 등록 페이지를 반환합니다. |
 | 제품 페이지        | GET /product                 | -                            | HTML: "memberProduct"             | 제품 페이지를 반환합니다. |
 | 위시리스트 페이지   | GET /wishlist                | -                            | HTML: "memberWishList"            | 회원의 위시리스트 페이지를 반환합니다. |
+=======
