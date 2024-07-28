@@ -6,8 +6,9 @@ import gift.entity.Product;
 import gift.entity.Wish;
 import gift.service.WishlistService;
 import gift.util.KakaoUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/wishes")
+@Tag(name = "Wishlist Management", description = "위시리스트 관리 API")
 public class WishlistController {
 
     private final WishlistService wishlistService;
@@ -33,6 +35,7 @@ public class WishlistController {
         this.kakaoUtil = kakaoUtil;
     }
 
+    @Operation(summary = "위시리스트 아이템 추가", description = "위시리스트에 새로운 아이템을 추가합니다.")
     @PostMapping("/add")
     public ResponseEntity<?> addItem(@RequestHeader("Authorization") String token, @RequestBody Map<String, Object> requestBody, HttpServletRequest request) {
         Map<String, Object> userInfo = kakaoUtil.getUserInfo(token.replace("Bearer ", ""));
@@ -60,6 +63,7 @@ public class WishlistController {
         return ResponseEntity.ok(new WishResponse(addedWish.getId(), addedWish.getProduct().getId(), addedWish.getProduct().getName(), addedWish.getProductNumber()));
     }
 
+    @Operation(summary = "위시리스트 조회", description = "사용자의 위시리스트를 조회합니다.")
     @GetMapping("/items")
     public String getItems(@RequestHeader("Authorization") String token,
                            @RequestParam(defaultValue = "0") int page,
@@ -86,6 +90,7 @@ public class WishlistController {
         return "wishlist";
     }
 
+    @Operation(summary = "위시리스트 상품 상세 조회", description = "위시리스트 상품의 상세 정보를 조회합니다.")
     @GetMapping("/item-details/{productId}")
     public ResponseEntity<?> getProductDetails(@RequestHeader("Authorization") String token, @PathVariable Long productId) {
         Map<String, Object> userInfo = kakaoUtil.getUserInfo(token.replace("Bearer ", ""));
@@ -102,6 +107,7 @@ public class WishlistController {
         }
     }
 
+    @Operation(summary = "위시리스트 상품 수량 수정", description = "위시리스트 상품의 수량을 수정합니다.")
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateProductNumber(@RequestHeader("Authorization") String token, @PathVariable Long id, @RequestBody int productNumber) {
         Map<String, Object> userInfo = kakaoUtil.getUserInfo(token.replace("Bearer ", ""));
@@ -118,6 +124,7 @@ public class WishlistController {
         }
     }
 
+    @Operation(summary = "위시리스트 상품 삭제", description = "위시리스트에서 상품을 삭제합니다.")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteItem(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         Map<String, Object> userInfo = kakaoUtil.getUserInfo(token.replace("Bearer ", ""));
