@@ -19,7 +19,7 @@ public class KakaoOauthMemberRequest extends MemberRequest {
         return accessToken;
     }
 
-    public KakaoOauthMember toEntity(Member member, Integer kakaoIdentifier) {
+    public KakaoOauthMember toEntity(Member member, Long kakaoIdentifier) {
         return new KakaoOauthMember(kakaoIdentifier, accessToken, member);
     }
 }

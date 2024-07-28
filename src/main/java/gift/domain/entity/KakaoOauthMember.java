@@ -16,7 +16,7 @@ public class KakaoOauthMember {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Integer kakaoIdentifier;
+    private Long kakaoIdentifier;
 
     @Column
     private String accessToken;
@@ -28,7 +28,7 @@ public class KakaoOauthMember {
     protected KakaoOauthMember() {
     }
 
-    public KakaoOauthMember(Integer kakaoIdentifier, String accessToken, Member member) {
+    public KakaoOauthMember(Long kakaoIdentifier, String accessToken, Member member) {
         this.kakaoIdentifier = kakaoIdentifier;
         this.accessToken = accessToken;
         this.member = member;
@@ -38,7 +38,7 @@ public class KakaoOauthMember {
         return id;
     }
 
-    public Integer getKakaoIdentifier() {
+    public Long getKakaoIdentifier() {
         return kakaoIdentifier;
     }
 
