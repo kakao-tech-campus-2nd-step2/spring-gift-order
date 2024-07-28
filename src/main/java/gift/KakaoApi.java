@@ -40,16 +40,8 @@ public class KakaoApi {
     try {
       JsonNode jsonNode = objectMapper.readTree(response);
       String accessToken = jsonNode.get("access_token").asText();
-      String tokenType = jsonNode.get("token_type").asText();
       String refreshToken = jsonNode.get("refresh_token").asText();
-      int expiresIn = jsonNode.get("expires_in").asInt();
-      String scope = jsonNode.get("scope").asText();
-      int refreshTokenExpiresIn = jsonNode.get("refresh_token_expires_in").asInt();
-
-      KakaoJwtTokenDto kakaoJwtTokenDto = new KakaoJwtTokenDto(1L, accessToken, tokenType,
-        refreshToken,
-        expiresIn, scope,
-        refreshTokenExpiresIn);
+      KakaoJwtTokenDto kakaoJwtTokenDto = new KakaoJwtTokenDto(1L, accessToken, refreshToken);
 
       return kakaoJwtTokenDto;
 

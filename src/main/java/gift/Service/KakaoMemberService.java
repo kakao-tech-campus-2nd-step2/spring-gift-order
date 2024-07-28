@@ -25,9 +25,7 @@ public class KakaoMemberService {
   public KakaoJwtTokenDto getToken(String autuhorizationKey) {
     KakaoJwtTokenDto kakaoJwtTokenDto = kakaoApi.kakaoLoginApiPost(URL, API_KEY, autuhorizationKey);
     KakaoJwtToken kakaoJwtToken = new KakaoJwtToken(kakaoJwtTokenDto.getAccessToken(),
-      kakaoJwtTokenDto.getTokenType(), kakaoJwtTokenDto.getRefreshToken(),
-      kakaoJwtTokenDto.getExpiresIn(), kakaoJwtTokenDto.getScope(),
-      kakaoJwtTokenDto.getRefreshTokenExpiresIn());
+      kakaoJwtTokenDto.getRefreshToken());
     kakaoJwtTokenRepository.save(kakaoJwtToken);
 
     return kakaoJwtTokenDto;
