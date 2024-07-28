@@ -34,6 +34,9 @@ public class Option {
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
+  @ManyToOne
+  private Orders orders;
+
   protected Option() {
   }
 

@@ -9,6 +9,7 @@ import gift.DTO.WishList;
 import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import gift.Repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -33,16 +34,18 @@ public class OrderService {
     this.kakaoApi = kakaoApi;
   }
 
+  @Transactional
   public OrderDto orderOption(OrderDto orderDto) {
-    OptionDto optionDto = orderDto.getOptionDto();
-    optionService.optionQuantitySubtract(optionDto, orderDto.getQuantity());
-
-    ProductDto productDto = optionDto.getProductDto();
-    Product product = productRepository.findById(productDto.getId())
-      .orElseThrow(() -> new EmptyResultDataAccessException("해당 상품이 없습니다", 1));
-    List<WishList> wishLists = product.getWishlists();
-    for (WishList wishList : wishLists) {
-      wishListService.deleteProductToWishList(wishList.getId());
+    List<OptionDto> optionDtos = orderDto.getOptionDtos();
+    for(OptionDto optionDto : optionDtos){
+      optionService.optionQuantitySubtract(optionDto, orderDto.getQuantity());
+      ProductDto productDto = optionDto.getProductDto();
+      Product product = productRepository.findById(productDto.getId())
+        .orElseThrow(() -> new EmptyResultDataAccessException("해당 상품이 없습니다", 1));
+      List<WishList> wishLists = product.getWishlists();
+      for (WishList wishList : wishLists) {
+        wishListService.deleteProductToWishList(wishList.getId());
+      }
     }
 
     KakaoJwtToken kakaoJwtToken = kakaoJwtTokenRepository.findById(1L)

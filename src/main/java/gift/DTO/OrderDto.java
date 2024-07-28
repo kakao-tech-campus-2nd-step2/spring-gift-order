@@ -1,17 +1,19 @@
 package gift.DTO;
 
+import java.util.List;
+
 public class OrderDto {
 
   private final Long id;
-  private final OptionDto optionDto;
+  private final List<OptionDto> optionDtos;
   private final int quantity;
   private final String orderDateTime;
   private final String message;
 
-  public OrderDto(Long id, OptionDto optionDto, int quantity, String orderDateTime,
+  public OrderDto(Long id, List<OptionDto> optionDtos, int quantity, String orderDateTime,
     String message) {
     this.id = id;
-    this.optionDto = optionDto;
+    this.optionDtos = optionDtos;
     this.quantity = quantity;
     this.orderDateTime = orderDateTime;
     this.message = message;
@@ -21,8 +23,8 @@ public class OrderDto {
     return id;
   }
 
-  public OptionDto getOptionDto() {
-    return optionDto;
+  public List<OptionDto> getOptionDtos() {
+    return optionDtos;
   }
 
   public int getQuantity() {
