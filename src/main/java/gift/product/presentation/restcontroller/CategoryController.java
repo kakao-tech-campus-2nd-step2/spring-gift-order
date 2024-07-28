@@ -1,5 +1,6 @@
 package gift.product.presentation.restcontroller;
 
+import gift.docs.product.CategoryApiDocs;
 import gift.product.business.service.CategoryService;
 import gift.product.presentation.dto.RequestCategoryDto;
 import gift.product.presentation.dto.ResponseCategoryDto;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/categories")
-public class CategoryController {
+public class CategoryController implements CategoryApiDocs {
 
     private final CategoryService categoryService;
 
