@@ -4,9 +4,10 @@ import gift.dto.OptionResponseDto;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.repository.OptionRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Service
 public class OptionService {
     private final OptionRepository optionRepository;
 
@@ -95,5 +96,9 @@ public class OptionService {
             }
         }
         return false;
+    }
+
+    public Option getOptionById(Long optionId) {
+        return optionRepository.findById(optionId).get();
     }
 }
