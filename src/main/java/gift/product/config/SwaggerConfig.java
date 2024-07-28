@@ -19,9 +19,13 @@ import org.springframework.context.annotation.Configuration;
     version = "1.0.0"
 ))
 public class SwaggerConfig {
+
     @Bean
     public OpenApiCustomizer customAuthParameter() {
-        Set<String> targetPaths = Set.of("/admin/wishes", "/api/wishes", "/api/orders", "/members/login/kakao/unlink");
+        Set<String> targetPaths = Set.of("/admin/wishes",
+            "/api/wishes",
+            "/api/orders",
+            "/members/login/kakao/unlink");
 
         return openApi -> openApi
             .getPaths()
