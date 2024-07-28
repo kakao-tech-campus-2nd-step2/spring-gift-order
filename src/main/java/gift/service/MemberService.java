@@ -42,13 +42,13 @@ public class MemberService {
         }
     }
 
-    public void kakaoLogin(KakaoTokenResponseDTO kakaoTokenResponseDTO) {
-        var email = kakaoTokenResponseDTO.email;
-        var token = kakaoTokenResponseDTO.accessToken;
+    public void kakaoLogin(String email, String token) {
         try {
             memberRepository.save(new Member(email, token));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 이메일입니다.: " + email);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid email : " + email);
+            throw new RuntimeException("로그인에 실패하였습니다." + email);
         }
     }
 
