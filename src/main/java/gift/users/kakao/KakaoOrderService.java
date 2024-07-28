@@ -2,19 +2,26 @@ package gift.users.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import gift.administrator.option.OptionDTO;
 import gift.administrator.option.OptionService;
+import gift.administrator.product.ProductDTO;
 import gift.administrator.product.ProductService;
 import gift.error.KakaoOrderException;
 import gift.token.TokenService;
+import gift.users.kakao.kakaoMessage.Button;
+import gift.users.kakao.kakaoMessage.Commerce;
+import gift.users.kakao.kakaoMessage.Content;
+import gift.users.kakao.kakaoMessage.KakaoMessageTemplate;
+import gift.users.kakao.kakaoMessage.Link;
 import gift.users.wishlist.WishListService;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -43,10 +50,11 @@ public class KakaoOrderService {
         this.wishListService = wishListService;
     }
 
+    @Transactional
     public KakaoOrderDTO kakaoOrder(long userId, KakaoOrderDTO kakaoOrderDTO,
         String orderDateTime) {
 
-        if(productService.existsByProductId(kakaoOrderDTO.productId())){
+        if (productService.existsByProductId(kakaoOrderDTO.productId())) {
             throw new KakaoOrderException("없는 상품입니다.");
         }
 
@@ -75,21 +83,15 @@ public class KakaoOrderService {
     private String makeKakaoMessage(KakaoOrderDTO kakaoOrderDTO) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ObjectNode templateObject = objectMapper.createObjectNode();
-        templateObject.put("object_type", "text");
-        templateObject.put("text",
-            "주문내역\n상품: " + productService.getProductById(kakaoOrderDTO.productId()).getName()
-                + "\n옵션: " + optionService.findOptionById(kakaoOrderDTO.optionId()).getName()
-                + "\n수량: " + kakaoOrderDTO.quantity() + "\n메시지: " + kakaoOrderDTO.message());
+        ProductDTO productDTO = productService.getProductById(kakaoOrderDTO.productId());
+        OptionDTO optionDTO = optionService.findOptionById(kakaoOrderDTO.optionId());
 
-        ObjectNode linkObject = objectMapper.createObjectNode();
-        linkObject.put("web_url", "");
-        linkObject.put("mobile_web_url", "");
-        templateObject.set("link", linkObject);
+        KakaoMessageTemplate template = getKakaoMessageTemplate(kakaoOrderDTO,
+            productDTO, optionDTO);
 
         String messageObject;
         try {
-            messageObject = objectMapper.writeValueAsString(templateObject);
+            messageObject = objectMapper.writeValueAsString(template);
             logger.info("json: {}", messageObject);
         } catch (JsonProcessingException e) {
             throw new KakaoOrderException("잘못된 json 형식입니다.");
@@ -97,18 +99,42 @@ public class KakaoOrderService {
         return URLEncoder.encode(messageObject, StandardCharsets.UTF_8);
     }
 
+    private static KakaoMessageTemplate getKakaoMessageTemplate(KakaoOrderDTO kakaoOrderDTO,
+        ProductDTO productDTO, OptionDTO optionDTO) {
+        String productNameWithOptionName =
+            productDTO.getName() + " [옵션: " + optionDTO.getName() + "]";
+        int orderedPrice = productDTO.getPrice();
+        Commerce commerce = new Commerce(productNameWithOptionName, orderedPrice);
+
+        String webUrl = "";
+        String mobileWebUrl = "";
+        Link link = new Link(webUrl, mobileWebUrl);
+
+        String contentTitle =
+            "주문이 완료되었습니다. [수량: " + kakaoOrderDTO.quantity() + "]\n" + kakaoOrderDTO.message();
+        String contentImageUrl = productDTO.getImageUrl();
+        String contentDescription = optionDTO.getName() + "[수량: " + kakaoOrderDTO.quantity() + "]";
+        Content content = new Content(contentTitle, contentImageUrl, 640, 640, contentDescription,
+            link);
+
+        Button button = new Button("주문 상세 보기", link);
+        String objectType = "commerce";
+        return new KakaoMessageTemplate(objectType, content, commerce,
+            List.of(button));
+    }
+
     private void sendKakaoMessage(String accessToken, String messageObject) {
-        ResponseEntity<String> response;
+        ResponseEntity<KakaoApiResponse> response;
         try {
             response = restClientBuilder.build().post().uri(kakaoProperties.sendToMeUrl())
                 .header(HEADER_NAME, kakaoProperties.userHeaderValue() + " " + accessToken)
-                .body("template_object=" + messageObject).retrieve().toEntity(String.class);
+                .body("template_object=" + messageObject).retrieve().toEntity(KakaoApiResponse.class);
 
         } catch (RestClientException e) {
-            throw new KakaoOrderException("카카오 메시지를 보내는 데에 실패했습니다." + e);
+            throw new KakaoOrderException("카카오 메시지를 보내는 데에 실패했습니다.");
         }
 
-        if (response.getBody() == null || !response.getBody().contains("0")) {
+        if (response.getBody() == null || response.getBody().resultCode() != 0) {
             throw new KakaoOrderException("카카오 메시지를 보내는 데에 실패했습니다.");
         }
     }
