@@ -77,9 +77,9 @@ public class KakaoLoginService {
                 .getKakaoAccount()
                 .getEmail();
         } catch (HttpClientErrorException e) {
-            throw new KaKaoBadRequestException(e.getStatusCode() + "에러 발생");
+            throw new KaKaoBadRequestException("카카오 사용자 정보 가져오기 API : " +  e.getStatusCode() + "에러 발생");
         } catch (HttpServerErrorException e) {
-            throw new KaKaoServerErrorException(e.getStatusCode() + "에러발생");
+            throw new KaKaoServerErrorException("카카오 사용자 정보 가져오기 API : " + e.getStatusCode() + "에러발생");
         }
 
         Email email = new Email(userEmail);
@@ -103,9 +103,9 @@ public class KakaoLoginService {
 
             return accessToken;
         } catch (HttpClientErrorException e){
-            throw new KaKaoBadRequestException(e.getStatusCode()+"에러 발생");
+            throw new KaKaoBadRequestException("카카오 토큰 가져오기 API : "+e.getStatusCode()+"에러 발생");
         } catch (HttpServerErrorException e){
-            throw new KaKaoServerErrorException(e.getStatusCode()+"에러발생");
+            throw new KaKaoServerErrorException("카카오 토큰 가져오기 API : "+ e.getStatusCode()+"에러발생");
         }
     }
 

@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.Link;
 import gift.DTO.SendToMeTemplate;
 import gift.Exception.JsonRunTimeException;
+import gift.Exception.KaKaoBadRequestException;
+import gift.Exception.KaKaoServerErrorException;
 import gift.Model.Value.AccessToken;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
@@ -26,18 +30,20 @@ public class KakaoUtil {
     }
 
     public void sendMessageToMe(AccessToken accessToken, String message){
-        System.out.println("메세지 발송 도입");
         LinkedMultiValueMap<String, String> body = generateBodyOfSendMessageToMe(message);
-        System.out.println(body);
-            String str=client.post()
-                    .uri(URI.create(MESSAGE_TO_ME_URI))
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer "+accessToken.getValue())
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        try{
+            client.post().
+                    uri(URI.create(MESSAGE_TO_ME_URI))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getValue()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
-                    .toEntity(String.class).getBody().toString();
+                    .toEntity(String.class);
+        } catch (HttpClientErrorException e) {
+            throw new KaKaoBadRequestException("카카오 나에게 메세지 보내기 API : "+e.getStatusCode() + "에러 발생. ");
+        } catch (HttpServerErrorException e) {
+            throw new KaKaoServerErrorException("카카오 나에게 메세지 보내기 API : "+e.getStatusCode() + "에러 발생");
+        }
 
-            System.out.println("str:" + str);
     }
 
     private LinkedMultiValueMap<String, String> generateBodyOfSendMessageToMe(String message) {
