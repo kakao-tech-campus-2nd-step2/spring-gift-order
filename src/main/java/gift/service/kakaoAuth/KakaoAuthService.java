@@ -13,8 +13,10 @@ import org.springframework.web.client.RestClient;
 public class KakaoAuthService {
 
     private final KakaoProperties kakaoProperties;
+    private final RestClient restClient;
 
-    public KakaoAuthService(KakaoProperties kakaoProperties) {
+    public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties) {
+        this.restClient = restClient;
         this.kakaoProperties = kakaoProperties;
     }
 
@@ -31,8 +33,7 @@ public class KakaoAuthService {
         String url = "https://kauth.kakao.com/oauth/token";
         var body = kakaoProperties.createBody(code);
 
-        RestClient client = RestClient.create();
-        var response = client.post()
+        var response = restClient.post()
             .uri(URI.create(url))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
@@ -47,8 +48,7 @@ public class KakaoAuthService {
     public KakaoInfo getMemberInfoFromKakaoServer(Token accessToken) {
         String url = "https://kapi.kakao.com/v2/user/me";
 
-        RestClient client = RestClient.create();
-        ResponseEntity<Map<String, Object>> response = client.post()
+        ResponseEntity<Map<String, Object>> response = restClient.post()
             .uri(URI.create(url))
             .header("Authorization", "Bearer " + accessToken.token())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
