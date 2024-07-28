@@ -14,6 +14,18 @@ public class SignupRequest {
     @NotBlank
     private String confirmPassword;
 
+    private Long kakaoId;
+
+    public SignupRequest() {
+    }
+
+    public SignupRequest(Long kakaoId) {
+        this.email = kakaoId + "@kakao.com";
+        this.password = "password";
+        this.confirmPassword = this.password;
+        this.kakaoId = kakaoId;
+    }
+
     public String getEmail() {
         return email;
     }

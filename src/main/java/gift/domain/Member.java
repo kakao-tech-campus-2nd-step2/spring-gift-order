@@ -27,6 +27,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column
+    private Long kakaoId;
+
+    @Column
+    private boolean isKakaoMember;
+
     @OneToMany(mappedBy = "member",
                cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wishlist> wishes = new ArrayList<>();
@@ -37,6 +43,12 @@ public class Member {
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(String email, String password, Long kakaoId) {
+        this(email, password);
+        this.kakaoId = kakaoId;
+        this.isKakaoMember = true;
     }
 
     public String getEmail() {

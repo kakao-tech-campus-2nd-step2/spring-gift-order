@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.DTO.kakao.KakaoSignupRequest;
 import gift.DTO.member.LoginRequest;
 import gift.DTO.member.LoginResponse;
 import gift.DTO.member.SignupRequest;
@@ -39,6 +40,12 @@ public class MemberService {
         return new SignupResponse(member.getEmail());
     }
 
+    @Transactional
+    public SignupResponse registerKakaoMember(KakaoSignupRequest kakaoSignupRequest) {
+        SignupRequest signupRequest = new SignupRequest(kakaoSignupRequest.kakaoId());
+        return registerMember(signupRequest);
+    }
+
     @Transactional(readOnly = true)
     public LoginResponse loginMember(LoginRequest loginRequest) {
         Optional<Member> member = memberRepository.findByEmail(loginRequest.getEmail());
@@ -59,6 +66,12 @@ public class MemberService {
         return member;
     }
 
+    @Transactional(readOnly = true)
+    public Member getMemberByKakaoId(Long kakaoId) {
+        return memberRepository.findByKakaoId(kakaoId).orElse(null);
+
+    }
+
     private void validatePassword(Member member, String password) {
         if (!member.getPassword().equals(password)) {
             throw new InvalidAccountException();
@@ -70,5 +83,4 @@ public class MemberService {
             throw new PasswordMismatchException();
         }
     }
-
 }

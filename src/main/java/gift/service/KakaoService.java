@@ -2,10 +2,9 @@ package gift.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.DTO.kakao.KakaoMemberResponse;
+import gift.DTO.kakao.KakaoMemberInfo;
 import gift.controller.kakao.KakaoProperties;
 import java.io.IOException;
-import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -28,11 +27,9 @@ public class KakaoService {
 
     public String sendTokenRequest(String authCode) {
 
-        String tokenRequestUrl = "https://kauth.kakao.com/oauth/token";
         var body = createRequestBody(authCode);
-
         String tokenResponse =  restClient.post()
-                                        .uri(URI.create(tokenRequestUrl))
+                                        .uri(kakaoProperties.getTokenUri())
                                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                         .body(body)
                                         .retrieve()
@@ -44,8 +41,8 @@ public class KakaoService {
     private MultiValueMap<String, String> createRequestBody(String authCode) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoProperties.clientId());
-        body.add("redirect_uri", kakaoProperties.redirectUri());
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUri().toString());
         body.add("code", authCode);
         return body;
     }
@@ -59,17 +56,20 @@ public class KakaoService {
         }
     }
 
-    public KakaoMemberResponse getMemberInfo(String accessToken) {
+    public KakaoMemberInfo getMemberInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        body.add("property_keys", "[\"kakao_account.email\"]");
         var response = restClient.post()
-            .uri(URI.create(kakaoProperties.apiUserUri()))
+            .uri(kakaoProperties.getUserUri())
             .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(body)
             .retrieve()
-            .body(String.class);
+            .toEntity(KakaoMemberInfo.class);
 
-        return new KakaoMemberResponse(extractIdFromApiResponse(response));
+        return response.getBody();
     }
 
     private Long extractIdFromApiResponse(String response) {
