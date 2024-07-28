@@ -2,9 +2,11 @@ package gift.service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import gift.entity.KakaoErrorCode;
 import gift.entity.KakaoProperties;
 import gift.entity.User;
 import gift.entity.UserDTO;
+import gift.exception.KakaoException;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.UserRepository;
 import gift.util.UserUtility;
@@ -102,7 +104,8 @@ public class UserService {
                     .body(String.class);
         } catch (HttpClientErrorException e) {
             String statusCode = e.getMessage().split(" ")[0];
-            throw new ResponseStatusException(HttpStatus.valueOf(statusCode), e.getMessage());
+            KakaoErrorCode errorCode = KakaoErrorCode.determineKakaoErrorCode(statusCode);
+            throw new ResponseStatusException(errorCode.getStatus(), errorCode.getMessage());
         }
 
         JsonObject jsonObject = JsonParser.parseString(accessTokenResponse).getAsJsonObject();
@@ -124,7 +127,8 @@ public class UserService {
                     .body(String.class);
         } catch (HttpClientErrorException e) {
             String statusCode = e.getMessage().split(" ")[0];
-            throw new ResponseStatusException(HttpStatus.valueOf(statusCode), e.getMessage());
+            KakaoErrorCode errorCode = KakaoErrorCode.determineKakaoErrorCode(statusCode);
+            throw new KakaoException(errorCode.getStatus(), errorCode.getMessage());
         }
 
         JsonObject jsonObject = JsonParser.parseString(userDataResponse).getAsJsonObject();
