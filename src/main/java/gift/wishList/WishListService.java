@@ -99,10 +99,10 @@ public class WishListService {
         }
 
         if(user instanceof User) {
-            wishListRepository.findByUser((User) user, pageable).map(WishListResponse::new);
+            return wishListRepository.findByUser((User) user, pageable).map(WishListResponse::new);
         }
         if(user instanceof KakaoUser) {
-            wishListRepository.findByKakaouser((KakaoUser) user, pageable).map(WishListResponse::new);
+            return wishListRepository.findByKakaouser((KakaoUser) user, pageable).map(WishListResponse::new);
         }
         return null;
 

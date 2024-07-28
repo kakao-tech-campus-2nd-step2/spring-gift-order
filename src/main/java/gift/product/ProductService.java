@@ -24,13 +24,13 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Page<Product> getProductPages(int pageNum, int size, String sortBy, String sortDirection) {
+    public Page<ProductResponse> getProductPages(int pageNum, int size, String sortBy, String sortDirection) {
         Pageable pageable = PageRequest.of(pageNum, size, Sort.by(Sort.Order.asc(sortBy)));
         if (Objects.equals(sortDirection, "desc")) {
             pageable = PageRequest.of(pageNum, size, Sort.by(Sort.Order.desc(sortBy)));
         }
 
-        return productRepository.findAll(pageable);
+        return productRepository.findAll(pageable).map(ProductResponse::new);
     }
 
     public Product findByID(Long id) {
