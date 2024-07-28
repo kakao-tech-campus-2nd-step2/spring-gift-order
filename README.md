@@ -33,4 +33,12 @@
     - Controller
     - Service
     - Repository
-  - 
+
+## step3 - ToDo List
+- 3단계 - API 문서 만들기
+
+- 기능 요구 사항
+  - API 문서 만들기
+
+- 구현 기능 목록
+  - Swagger 적용하기
