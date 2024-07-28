@@ -71,10 +71,10 @@ public class OptionServiceTest {
         // given
         // when
         optionService.delete(option.getId(), email);
-
-        // then
         Exception exception = assertThrows(ResourceNotFoundException.class,
                 () -> optionService.findById(option.getId()));
+
+        // then
         assertThat(exception.getMessage())
                 .isEqualTo("Option not found with id: " + option.getId());
         assertThat(userService.findOne(email)).isNotNull();
@@ -84,9 +84,10 @@ public class OptionServiceTest {
     void subtract_total_보다_amount가_더_많은_테스트() {
         // given
         // when
-        // then
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> optionService.subtract(option.getId(), 9999));
+
+        // then
         assertThat(exception.getMessage()).isEqualTo("Not enough quantity");
     }
 
@@ -94,11 +95,12 @@ public class OptionServiceTest {
     void amount가_0_이하인_테스트() {
         // given
         // when
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> optionService.subtract(option.getId(), -1));
+
         // then
         assertThrows(IllegalArgumentException.class,
                 () -> optionService.subtract(option.getId(), 0));
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> optionService.subtract(option.getId(), -1));
         assertThat(exception.getMessage()).isEqualTo("Invalid quantity");
     }
 
