@@ -76,7 +76,7 @@ class WishControllerTest {
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
 
                                 requestHeaders(
-                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}")
+                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN} +\n인증방식, 액세스 토큰으로 인증요청")
                                 ),
                                 requestFields(
                                         fieldWithPath("productId").type(JsonFieldType.NUMBER).description("위시에 추가할 상품 ID"),
@@ -111,7 +111,7 @@ class WishControllerTest {
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}\n로그인으로 받게되는 토큰").optional()
+                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN} +\n인증방식, 액세스 토큰으로 인증요청").optional()
                                 ),
                                 responseFields(
                                         fieldWithPath("totalElements").type(JsonFieldType.NUMBER)
@@ -191,7 +191,7 @@ class WishControllerTest {
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}\n로그인으로 받게되는 토큰").optional()
+                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN} +\n인증방식, 액세스 토큰으로 인증요청").optional()
                                 ),
 
                                 requestFields(
@@ -221,7 +221,7 @@ class WishControllerTest {
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}\n로그인으로 받게되는 토큰").optional()
+                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN} +\n인증방식, 액세스 토큰으로 인증요청").optional()
                                 ),
                                 pathParameters(
                                         parameterWithName("id").description("삭제하고 싶은 위시 ID")

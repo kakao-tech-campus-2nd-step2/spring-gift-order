@@ -93,7 +93,7 @@ class OrderControllerTest {
                                 Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
                                 Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
                                 requestHeaders(
-                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN}\n로그인으로 받게되는 토큰").optional()
+                                        headerWithName("Authorization").description("Authorization: Bearer ${ACCESS_TOKEN} +\n인증방식, 액세스 토큰으로 인증요청").optional()
                                 ),
                                 requestFields(
                                         fieldWithPath("optionId").description("주문할 상품의 옵션 ID").type(JsonFieldType.NUMBER),
