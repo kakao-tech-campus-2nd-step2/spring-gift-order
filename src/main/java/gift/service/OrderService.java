@@ -7,6 +7,7 @@ import gift.domain.Product;
 import gift.dto.OrderRequest;
 import gift.dto.OrderResponse;
 import gift.repository.OrderRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +24,7 @@ public class OrderService {
         this.wishService = wishService;
     }
 
-    public OrderResponse createOrder(OrderRequest orderDto) {
+    public OrderResponse createOrder(OrderRequest orderDto, HttpSession session) {
         Member member = memberService.getMemberById(1L); // 임시!
         Option option = optionService.getOption(orderDto.getOptionId());
         Product product = option.getProduct();
@@ -35,6 +36,6 @@ public class OrderService {
         Order order = new Order(member, option, orderDto.getQuantity(), orderDto.getMessage());
         orderRepository.save(order);
 
-        return new OrderResponse(order.getId(), orderDto.getOptionId(), order.getQuantity(), order.getOrdered_at(), order.getMessage());
+        return new OrderResponse(order.getId(), orderDto.getOptionId(), order.getQuantity(), order.getOrdered_at(), order.getMessage(), session);
     }
 }

@@ -4,6 +4,7 @@ import gift.domain.Option;
 import gift.dto.OrderResponse;
 import gift.exception.ForbiddenException;
 import gift.exception.RestTemplateResponseErrorHandler;
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,19 +71,24 @@ public class KakaoTokenService {
                 option.getName(), orderResponse.getQuantity(), orderResponse.getOrderDateTime(), orderResponse.getMessage()
         );
 
-        sendKakaoMessage(messageTemplate); // 생성한 메시지를 전달
+        sendKakaoMessage(messageTemplate, orderResponse.getSession()); // 생성한 메시지를 전달
     }
 
-    public void sendKakaoMessage(String messageTemplate) throws JSONException {
+    public void sendKakaoMessage(String messageTemplate, HttpSession session) throws JSONException {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"; // 카카오톡 메시지 전송 API URL
-        String token = "Bearer {token}"; // 실제 토큰으로 교체
+
+        // 세션에서 토큰 가져오기
+        String token = (String) session.getAttribute("accessToken"); // 세션에서 토큰을 가져옴
+        if (token == null) {
+            throw new IllegalArgumentException("Access token is missing in the session.");
+        }
+        String bearerToken = "Bearer " + token;
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("template_object", createKakaoTemplate(messageTemplate));
 
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        headers.set("Authorization", bearerToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
