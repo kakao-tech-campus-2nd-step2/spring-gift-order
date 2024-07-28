@@ -54,5 +54,4 @@ public class MemberService {
     public Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow();
     }
-
 }

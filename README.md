@@ -45,3 +45,6 @@
   - [x] 문자열을 만들어 주기 보다는, sendKakaoMessage는 전달 역할만 하고 문자열은 파라미터로 받아서 전달하기
   - [x] 현재 세션 객체에서 토큰을 뽑아보기
 
+## API 문서
+ notion : https://impossible-repair-22e.notion.site/57ec013f9424421eb2317b11a2b9a29c?v=f3fe7340ebae425bbfa70db78123a663
+

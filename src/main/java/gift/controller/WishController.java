@@ -25,13 +25,8 @@ public class WishController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Wish>> getWishList(
-            @LoginMember Member member,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "asc") String direction) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort));
+    public ResponseEntity<Page<Wish>> getWishList(@LoginMember Member member, Pageable pageable) {
+
         Page<Wish> wishPage = wishService.getWishPage(member, pageable);
         return ResponseEntity.ok(wishPage);
     }
