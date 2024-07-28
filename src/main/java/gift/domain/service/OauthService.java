@@ -7,6 +7,7 @@ import gift.domain.dto.response.KakaoUserInfoResponse;
 import gift.domain.dto.response.OauthTokenResponse;
 import gift.domain.entity.Order;
 import gift.domain.entity.Product;
+import gift.domain.exception.badRequest.OauthVendorIllegalException;
 import gift.domain.exception.unauthorized.TokenUnexpectedErrorException;
 import gift.global.WebConfig.Constants.Domain.Member.Type;
 import java.util.Objects;
@@ -38,7 +39,7 @@ public class OauthService {
         if (Objects.requireNonNull(userType) == Type.KAKAO) {
             return getKakaoOauthToken(authorizationCode);
         }
-        throw new IllegalStateException();
+        throw new OauthVendorIllegalException();
     }
 
     public KakaoUserInfoResponse getKakaoUserInfo(String kakaoUserAccessToken) {

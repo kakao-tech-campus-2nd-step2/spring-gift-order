@@ -1,6 +1,7 @@
 package gift.domain.exception;
 
 import gift.domain.exception.badRequest.BadRequestException;
+import gift.domain.exception.badRequest.OauthVendorIllegalException;
 import gift.domain.exception.badRequest.OptionQuantityOutOfRangeException;
 import gift.domain.exception.badRequest.OptionUpdateActionInvalidException;
 import gift.domain.exception.badRequest.ProductOptionsEmptyException;
@@ -90,7 +91,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
         ProductOptionsEmptyException.class,
         OptionQuantityOutOfRangeException.class,
-        OptionUpdateActionInvalidException.class
+        OptionUpdateActionInvalidException.class,
+        OauthVendorIllegalException.class
     })
     public ResponseEntity<ErrorApiResponse> handleBadRequestException(BadRequestException e) {
         return ErrorApiResponse.of(e, HttpStatus.BAD_REQUEST);

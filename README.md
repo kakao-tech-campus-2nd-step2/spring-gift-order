@@ -605,7 +605,7 @@ Content-Type: application/json
 
 #### 예외, 검증 설계
 
-- [ ] 커스텀 예외 및 예외 핸들링
+- [x] 커스텀 예외 및 예외 핸들링
 
 #### Server-side Renderings
 
@@ -1993,6 +1993,7 @@ Authorization: Bearer your-token-string
 | `EBR_OP002` | 옵션 수량 수정 시 `action`이 잘못됨 | 허용되는 `action`으로 옵션 수량 수정 |
 | `EBR_OP003` | 상품 등록시 옵션이 하나도 주어지지 않음   | 1개 이상의 옵션과 함께 상품 등록      |
 | `EBR_VF001` | 요청시 만족해야 하는 제약 조건을 위반함   | 제약조건을 준수하여 재요청           |
+| `EBR_OA001` | Oauth 공급자가 잘못되었음         | 서버에서 지원하는 Oauth 공급자로 재시도 |
 
 #### Conflict
 

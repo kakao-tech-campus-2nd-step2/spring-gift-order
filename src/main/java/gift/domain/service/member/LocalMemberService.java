@@ -8,12 +8,15 @@ import gift.domain.exception.forbidden.MemberIncorrectLoginInfoException;
 import gift.domain.exception.notFound.MemberNotFoundException;
 import gift.domain.repository.LocalMemberRepository;
 import gift.global.util.HashUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LocalMemberService implements DerivedMemberService<LocalMember, LocalMemberRequest> {
 
+    private static final Logger log = LoggerFactory.getLogger(LocalMemberService.class);
     private final LocalMemberRepository localMemberRepository;
 
     public LocalMemberService(LocalMemberRepository localMemberRepository) {
@@ -52,6 +55,7 @@ public class LocalMemberService implements DerivedMemberService<LocalMember, Loc
         if (requestDto instanceof LocalMemberRequest) {
             return (LocalMemberRequest) requestDto;
         }
-        throw new IllegalStateException();
+        log.error("Type conversion was invalid! requestDto type was {}.", requestDto.getClass().getTypeName());
+        throw new IllegalStateException("Type Conversion invalid! You need debugging!");
     }
 }

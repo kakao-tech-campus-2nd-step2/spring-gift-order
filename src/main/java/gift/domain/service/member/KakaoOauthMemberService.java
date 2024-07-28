@@ -9,12 +9,15 @@ import gift.domain.exception.forbidden.MemberIncorrectLoginInfoException;
 import gift.domain.exception.notFound.MemberNotFoundException;
 import gift.domain.repository.KakaoOauthMemberRepository;
 import gift.domain.service.OauthService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class KakaoOauthMemberService implements DerivedMemberService<KakaoOauthMember, KakaoOauthMemberRequest> {
 
+    private static final Logger log = LoggerFactory.getLogger(KakaoOauthMemberService.class);
     private final KakaoOauthMemberRepository kakaoOauthMemberRepository;
     private final OauthService oauthService;
 
@@ -61,7 +64,9 @@ public class KakaoOauthMemberService implements DerivedMemberService<KakaoOauthM
         if (requestDto instanceof KakaoOauthMemberRequest) {
             return (KakaoOauthMemberRequest) requestDto;
         }
-        throw new IllegalStateException();
+
+        log.error("Type conversion was invalid! requestDto type was {}.", requestDto.getClass().getTypeName());
+        throw new IllegalStateException("Type Conversion invalid! You need debugging!");
     }
 
     private Long getKakaoIdentifier(MemberRequest requestDto) {
