@@ -4,6 +4,7 @@ import gift.config.KakaoProperties;
 import gift.dto.KakaoAccessTokenDTO;
 import gift.dto.KakaoUserInfoDTO;
 import gift.dto.MemberDTO;
+import gift.dto.OrderResponseDTO;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.util.JwtUtil;
@@ -84,5 +85,13 @@ public class KakaoService {
     public String generateToken(String email, String role) {
         String jwtToken = jwtUtil.generateToken(email,role);
         return jwtToken;
+    }
+
+    private String TemplateObject(Long id, Long optionId, Long quantity, String orderDateTime, String message) {
+        return "{"
+            + "\"object_type\":\"text\","
+            + "\"text\":\"주문 정보:\\n주문 ID: " + id + "\\n옵션 ID: " + optionId + "\\n수량: " + quantity + "\\n주문 시간: " + orderDateTime + "\\n메시지: " + message + "\","
+            + "\"link\":{\"web_url\":\"http://localhost:8080/admin/products\",\"mobile_web_url\":\"http://localhost:8080/admin/products\"}"
+            + "}";
     }
 }
