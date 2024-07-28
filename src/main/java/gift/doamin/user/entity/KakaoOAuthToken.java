@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 public class KakaoOAuthToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -36,11 +37,21 @@ public class KakaoOAuthToken {
     protected KakaoOAuthToken() {
     }
 
-    public void update( String accessToken, LocalDateTime expires_at,
+    public User getUser() {
+        return user;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void update(String accessToken, LocalDateTime expires_at,
         String refreshToken, LocalDateTime refresh_token_expires_at) {
         this.accessToken = accessToken;
         this.expires_at = expires_at;
-        this.refreshToken = refreshToken;
-        this.refresh_token_expires_at = refresh_token_expires_at;
+        if (refreshToken != null && refresh_token_expires_at != null) {
+            this.refreshToken = refreshToken;
+            this.refresh_token_expires_at = refresh_token_expires_at;
+        }
     }
 }

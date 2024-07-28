@@ -32,6 +32,7 @@ public class OAuthService {
     private final JwtProvider jwtProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final KakaoOAuthTokenRepository kakaoOAuthTokenRepository;
+    private final RestClient restClient = RestClient.builder().build();
 
     public OAuthService(KakaoClientProperties clientProperties,
         KakaoProviderProperties providerProperties, JpaUserRepository userRepository,
@@ -53,7 +54,6 @@ public class OAuthService {
     }
 
     public KakaoOAuthTokenResponse requestToken(String authorizeCode) {
-        RestClient restClient = RestClient.builder().build();
 
         String tokenUri = providerProperties.tokenUri();
 
@@ -76,7 +76,6 @@ public class OAuthService {
 
     @Transactional
     public String authenticate(KakaoOAuthTokenResponse tokenResponse) {
-        RestClient restClient = RestClient.builder().build();
 
         ResponseEntity<KakaoOAuthUserInfoResponse> entity = restClient.get()
             .uri(providerProperties.userInfoUri())
@@ -105,12 +104,17 @@ public class OAuthService {
         return myRefreshToken;
     }
 
+    @Transactional
     public void saveToken(User user, KakaoOAuthTokenResponse tokenData) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().minusMinutes(10);
         LocalDateTime access_token_expires_at = now.plusSeconds(
             Long.parseLong(tokenData.getExpiresIn()));
-        LocalDateTime refresh_token_expires_at = now.plusSeconds(
-            Long.parseLong(tokenData.getRefreshTokenExpiresIn()));
+
+        LocalDateTime refresh_token_expires_at = null;
+        if (tokenData.getRefreshTokenExpiresIn() != null) {
+            refresh_token_expires_at = now.plusSeconds(
+                Long.parseLong(tokenData.getRefreshTokenExpiresIn()));
+        }
 
         KakaoOAuthToken kakaoOAuthToken = kakaoOAuthTokenRepository.findByUser(user)
             .orElseGet(() -> new KakaoOAuthToken(user));
@@ -119,5 +123,23 @@ public class OAuthService {
             tokenData.getRefreshToken(), refresh_token_expires_at);
 
         kakaoOAuthTokenRepository.save(kakaoOAuthToken);
+    }
+
+    @Transactional
+    public void renewOAuthTokens(KakaoOAuthToken kakaoOAuthToken) {
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientProperties.clientId());
+        body.add("client_secret", clientProperties.clientSecret());
+        body.add("refresh_token", kakaoOAuthToken.getRefreshToken());
+
+        ResponseEntity<KakaoOAuthTokenResponse> entity = restClient.post()
+            .uri("https://kauth.kakao.com/oauth/token")
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body(body)
+            .retrieve()
+            .toEntity(KakaoOAuthTokenResponse.class);
+
+        saveToken(kakaoOAuthToken.getUser(), entity.getBody());
     }
 }

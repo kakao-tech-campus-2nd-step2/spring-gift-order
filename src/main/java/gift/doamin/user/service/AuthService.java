@@ -69,7 +69,6 @@ public class AuthService {
         RefreshToken tokenEntity = refreshTokenRepository.findByToken(refreshToken)
             .orElseThrow(InvalidRefreshTokenException::new);
 
-
         User user = tokenEntity.getUser();
         return jwtProvider.generateToken(user.getId(), user.getRole());
     }
