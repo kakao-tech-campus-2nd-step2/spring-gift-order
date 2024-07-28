@@ -18,6 +18,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import gift.util.JwtTokenUtil;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -51,15 +53,19 @@ public class KakaoService {
 
 
     public Map<String, Object> kakaoLogin(String authorizationCode) {
-        String tokenUrl = "https://kauth.kakao.com/oauth/token";
+        //String tokenUrl = "https://kauth.kakao.com/oauth/token";
+        String tokenUrl = kakaoProperties.tokenUrl();
         String clientId = kakaoProperties.clientId();
         String redirectUri = kakaoProperties.redirectUri();
-
+        /*
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", authorizationCode);
+
+         */
+        var body = createTokenRequestBody(clientId, redirectUri, authorizationCode);
 
         try {
             var tokenResponse = requestAccessToken(tokenUrl, body);
@@ -73,20 +79,33 @@ public class KakaoService {
             String email = (String) userInfo.get("email");
             User user = userService.findOrCreateUser(id, email);
             // JWT 토큰을 생성하여 반환
+            /*
             String jwtToken = jwtTokenUtil.generateAccessToken(user.getEmail());
             userInfo.put("jwt_token", jwtToken);
             String jwtRefresh = jwtTokenUtil.generateRefreshToken(user.getEmail());
             userInfo.put("jwt_refresh", jwtRefresh);
+             */
+            Map<String, String> tokens = userService.generateJwtToken(user);
+            userInfo.putAll(tokens);
 
             // 필요하다면 user 객체의 정보를 userInfo에 추가
-            //userInfo.put("user_id", user.getId());
-            //userInfo.put("user_email", user.getEmail());
+            userInfo.put("server_user_id", user.getId());
+            userInfo.put("server_user_email", user.getEmail());
 
             return userInfo;
 
         } catch (RestClientException e) {
             throw new RuntimeException("Request failed", e);
         }
+    }
+
+    private LinkedMultiValueMap<String, String> createTokenRequestBody(String clientId, String redirectUri, String authorizationCode) {
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", clientId);
+        body.add("redirect_uri", redirectUri);
+        body.add("code", authorizationCode);
+        return body;
     }
 
     private String requestAccessToken(String url, LinkedMultiValueMap<String, String> body) {
@@ -114,10 +133,12 @@ public class KakaoService {
 
     private Map<String, Object> getUserInfo(String accessToken) {
         Map<String, Object> userInfo = new HashMap<>();
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
+        //String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
+        String userInfoUrl = kakaoProperties.userInfoUrl();
+
         try {
             String response = client.post()
-                    .uri(URI.create(reqURL))
+                    .uri(URI.create(userInfoUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .body(String.class);
@@ -165,26 +186,31 @@ public class KakaoService {
         // Send Kakao message
         sendKakaoMessage(user, accessToken, orderRequest.getMessage(), productOption.getName(), orderRequest.getQuantity());
 
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedNow = now.format(formatter);
+
         // Return response
         Map<String, Object> response = new HashMap<>();
         response.put("id", 1);  // This should be replaced with the actual order ID
         response.put("optionId", orderRequest.getOptionId());
         response.put("quantity", orderRequest.getQuantity());
-        response.put("orderDateTime", "2024-07-21T10:00:00");  // This should be replaced with the actual order date/time
+        response.put("orderDateTime", formattedNow);  // This should be replaced with the actual order date/time
         response.put("message", orderRequest.getMessage());
 
         return response;
     }
 
     private void sendKakaoMessage(User user, String accessToken, String message, String optionName, Long quantity) {
-        String reqURL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        //String messageUrl = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        String messageUrl = kakaoProperties.messageUrl();
 
         var body = new LinkedMultiValueMap<String, String>();
         body.add("template_object", createTemplateObject(user, message, optionName, quantity));
 
         try {
             client.post()
-                    .uri(URI.create(reqURL))
+                    .uri(URI.create(messageUrl))
                     .header("Authorization", "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
