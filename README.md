@@ -575,6 +575,47 @@ Content-Type: application/json
 
 ---
 
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 도메인</span></summary>
+
+### 주문 도메인
+
+#### 모델 설계
+
+- [ ] 주문을 표현하는 도메인 객체
+  - 주문 구성요소
+    - id: int (pk)
+      - 주문의 고유번호
+    - optionId: int (fk, not null)
+      - 주문한 상품 옵션 아이디
+    - quantity: Integer
+      - 주문한 상품 옵션 수량
+    - order_date_time: DateTime
+      - 주문한 시각
+    - message: 주문 메시지
+
+- [ ] 주문을 저장하는 데이터베이스 연동
+  - [ ] Jpa Repository
+  - [ ] 엔티티 클래스 및 예제 데이터 구비
+
+#### 기능 설계(컨트롤러 및 서비스 설계)
+
+- [ ] 주문 생성 API
+- [ ] 주문 조회 API
+
+#### 예외, 검증 설계
+
+- [ ] 커스텀 예외 및 예외 핸들링
+
+#### Server-side Renderings
+
+- [ ] 주문을 할 수 있는 화면
+- [ ] 주문들을 모아서 볼 수 있는 화면
+
+</details>
+
+---
+
 <br>
 
 
@@ -1802,6 +1843,118 @@ Authorization: Bearer your-token-string
     "name": "01. [Best] 시어버터 핸드 & 시어 스틱 립 밤",
     "quantity": 969
   }
+}
+```
+
+</details>
+
+---
+
+
+
+### API 명세서/주문 도메인
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">Overview</span></summary>
+
+- 주문 관련 API는 모두 인증이 필요하며, Header에 로그인 또는 회원가입으로 발급받은 토큰을 아래와 같이 `Authorization` 키와 같이 명시한다.
+
+- 주문 도메인 API/Request/Header
+
+  ```http request
+  GET /api/wishes HTTP/1.1
+  content-type: application/json
+  host: localhost:8080
+  Authorization: Bearer your-token-string
+  ```
+
+- 비로그인 상태로 주문 도메인 API를 사용할 경우, 서버는 401 Auauthorized 응답을 반환한다.
+
+</details>
+
+---
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 생성 API</span></summary>
+
+#### 주문 생성 API/Request
+
+- 로컬 타입 멤버가 주문하는 경우, 주문 내역은 서버에서만 확인이 가능하다.
+- 카카오 타입 멤저가 주문하는 경우, 주문이 성공하는 경우 주문 내역이 카카오톡 메시지로 전송된다.
+
+| Method | URL         | Path param | Path variable | Body |
+|--------|-------------|------------|---------------|------|
+| POST   | /api/orders | -          | -             | yes  |
+
+#### 주문 생성 API/Body
+
+```json
+{
+  "option-id": 1,
+  "quantity": 2,
+  "message": "Please handle this order with care."
+}
+```
+
+#### 주문 생성 API/Response
+
+- Status
+  - 201 CREATED
+- Body
+
+##### Response 예시
+
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.0000000",
+  "success": true,
+  "status": 200,
+  "created-order": {
+    "id": 1,
+    "option-id": 1,
+    "quantity": 2,
+    "order-date-time": "2024-01-01T10:00:00",
+    "message": "Please handle this order with care."
+  }
+}
+```
+
+</details>
+
+---
+
+<details>
+<summary><span style="font-size:1.3em;font-weight:bold">주문 조회 API</span></summary>
+
+#### 주문 조회 API/Request
+
+| Method | URL         | Path param | Path variable | Body |
+|--------|-------------|------------|---------------|------|
+| GET    | /api/orders | -          | -             | -    |
+
+#### 주문 조회 API/Response
+
+- Status
+  - 200 OK
+- Body
+
+##### Response 예시
+
+```json
+{
+  "timestamp": "2024-01-01T00:00:00.0000000",
+  "success": true,
+  "status": 200,
+  "orders": [
+    {
+      "id": 1,
+      "option-id": 1,
+      "quantity": 2,
+      "order-date-time": "2024-01-01T10:00:00",
+      "message": "Please handle this order with care."
+    },
+    {}
+  ]
 }
 ```
 
