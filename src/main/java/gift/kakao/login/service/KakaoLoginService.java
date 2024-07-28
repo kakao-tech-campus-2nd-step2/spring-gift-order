@@ -21,8 +21,7 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoLoginService {
-    @Autowired
-    RestClient client;
+    final RestClient client;
 
     private final String clientId;
     private final String redirectUri;
@@ -31,10 +30,11 @@ public class KakaoLoginService {
 
     public KakaoLoginService(@Value("${kakao.client-id}") String clientId,
         @Value("${kakao.redirect-uri}") String redirectUri,
-        UserRepository userRepository){
+        UserRepository userRepository, RestClient client){
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.userRepository = userRepository;
+        this.client = client;
     }
 
     public String getAccessToken(String code){
