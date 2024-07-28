@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface OptionsRepository extends JpaRepository<Options, Long> {
     Optional<Options> findByProduct_Id(int product_id);
-    Optional<Options> findByOptionListContaining(Option option);
+    Optional<Integer> findProductIdByOptionListContaining(Option option);
 }
