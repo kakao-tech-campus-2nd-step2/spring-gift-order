@@ -1,6 +1,6 @@
 package gift.domain;
 
-import gift.dto.OrderDTO;
+import gift.dto.OrderOptionDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,11 +9,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-public class Order {
+@Table(name = "order_option")
+public class OrderOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,18 +39,18 @@ public class Order {
     @JoinColumn(name = "member_email", nullable = false)
     private Member member;
 
-    protected Order() {
+    protected OrderOption() {
 
     }
 
-    public Order(Option option, int quantity, String message, Member member) {
+    public OrderOption(Option option, int quantity, String message, Member member) {
         this.option = option;
         this.quantity = quantity;
         this.message = message;
         this.member = member;
     }
 
-    public OrderDTO toDTO() {
-        return new OrderDTO(id, option.getId(), quantity, orderDateTime, message);
+    public OrderOptionDTO toDTO() {
+        return new OrderOptionDTO(id, option.getId(), quantity, orderDateTime, message);
     }
 }

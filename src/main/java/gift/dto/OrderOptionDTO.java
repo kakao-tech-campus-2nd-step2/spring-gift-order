@@ -2,12 +2,12 @@ package gift.dto;
 
 import gift.domain.Member;
 import gift.domain.Option;
-import gift.domain.Order;
+import gift.domain.OrderOption;
 import jakarta.validation.constraints.NotNull;
 import java.sql.Timestamp;
 import org.hibernate.validator.constraints.Range;
 
-public record OrderDTO(
+public record OrderOptionDTO(
     long id,
 
     @NotNull
@@ -23,7 +23,7 @@ public record OrderDTO(
     String message
 ) {
 
-    public Order toEntity(Option option, Member member) {
-        return new Order(option, quantity, message, member);
+    public OrderOption toEntity(Option option, Member member) {
+        return new OrderOption(option, quantity, message, member);
     }
 }
