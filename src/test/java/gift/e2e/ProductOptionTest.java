@@ -9,7 +9,7 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
-import gift.auth.Login;
+import gift.auth.domain.Login;
 import gift.domain.ProductOption.CreateOption;
 import gift.domain.ProductOption.UpdateOption;
 import org.junit.jupiter.api.BeforeEach;

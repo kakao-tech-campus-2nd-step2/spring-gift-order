@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.auth.domain;
 
 public class Token {
 

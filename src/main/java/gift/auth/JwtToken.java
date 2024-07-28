@@ -1,6 +1,8 @@
 package gift.auth;
 
-import gift.entity.UserEntity;
+import gift.auth.domain.JWT;
+import gift.auth.domain.Token;
+import gift.entity.enums.SocialType;
 import gift.util.errorException.BaseHandler;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,13 +28,18 @@ public class JwtToken {
         this.tokenExpTime = tokenExpTime;
     }
 
-    public Token createToken(UserEntity user) {
+    public Token createToken(JWT jwt) {
         Claims claims = Jwts.claims();
-        claims.put("id", user.getId());
-        claims.put("email", user.getEmail());
+        claims.put("id", jwt.getId());
+        claims.put("email", jwt.getEmail());
+        claims.put("socialToken", jwt.getSocialToken());
+        claims.put("socialType", jwt.getSocialType());
 
         ZonedDateTime now = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("UTC"));
         ZonedDateTime expirationDateTime = now.plusSeconds(tokenExpTime);
+        if (tokenExpTime > jwt.getExp() && jwt.getExp() != -1) {
+            expirationDateTime = now.plusSeconds(jwt.getExp());
+        }
 
         return new Token(Jwts.builder()
             .setClaims(claims)
@@ -62,5 +69,15 @@ public class JwtToken {
     public String getEmail(String token) {
         Claims claims = validateToken(token);
         return claims.get("email", String.class);
+    }
+
+    public String getSocialToken(String token) {
+        Claims claims = validateToken(token);
+        return claims.get("socialToken", String.class);
+    }
+
+    public SocialType getSocialType(String token) {
+        Claims claims = validateToken(token);
+        return SocialType.valueOf(claims.get("socialType", String.class));
     }
 }
