@@ -39,7 +39,7 @@
   - [x] 남은 옵션의 수량보다 많이 주문 할 경우 오류메시지가 뜨는 지 확인
 
 ## 1단계 + 2단계 피드백
-- [ ] KakaoTokenController에 "api/kakao" 로 path 지정
+- [x] KakaoAuthController에 "api/kakao" 로 path 지정
 - [ ] KakaoTokenService
   - [ Json 객체 직접 만들어서 String으로 변환해보기
   - [ ] 문자열을 만들어 주기 보다는, sendKakaoMessage는 전달 역할만 하고 문자열은 파라미터로 받아서 전달하기

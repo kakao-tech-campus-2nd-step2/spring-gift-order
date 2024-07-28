@@ -10,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 
-@RestController
+@RestController("api/kakao")
 public class KakaoAuthController {
     @Value("${kakao.app.key}")
     private String appKey;
