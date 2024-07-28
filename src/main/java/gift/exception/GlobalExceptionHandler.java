@@ -7,6 +7,7 @@ import gift.exception.member.PasswordMismatchException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,5 +32,12 @@ public class GlobalExceptionHandler {
         DuplicateCategoryNameException e
     ) {
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+    }
+  
+    @ExceptionHandler(HttpClientErrorException.class)
+    protected ResponseEntity<String> HandleHttpClientError(
+        HttpClientErrorException e
+    ) {
+        return ResponseEntity.status(e.getStatusCode()).body(e.getMessage());
     }
 }
