@@ -28,6 +28,10 @@ public class MemberDetails {
         return email;
     }
 
+    public String getEmailValue() {
+        return email.getValue();
+    }
+
     public Platform getPlatform() {
         return platform;
     }
