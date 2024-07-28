@@ -41,8 +41,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse makeOrder(String authCode, OrderRequest orderRequest) {
-        KakaoMemberInfo kakaoMemberInfo = kakaoService.getMemberInfo(authCode);
+    public OrderResponse makeOrder(String accessToken, OrderRequest orderRequest) {
+        KakaoMemberInfo kakaoMemberInfo = kakaoService.getMemberInfo(accessToken);
         Member member = memberService.getMemberByKakaoId(kakaoMemberInfo.id());
         Long optionId = orderRequest.optionId();
         Long quantity = orderRequest.quantity();
@@ -56,6 +56,9 @@ public class OrderService {
                                     member);
         Order savedOrder = orderRepository.save(newOrder);
 
+        // 상품 id, 상품명, 옵션  id, 옵션 이름, 옵션 수량, 구매자, 주문메시지
+
+        kakaoService.sendKakaoMessage(accessToken, newOrder);
         return OrderResponse.fromEntity(savedOrder);
     }
 }

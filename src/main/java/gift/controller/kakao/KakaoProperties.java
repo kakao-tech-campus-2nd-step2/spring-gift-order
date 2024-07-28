@@ -13,17 +13,19 @@ public class KakaoProperties {
     String authUri;
     String tokenUri;
     String userUri;
+    String messageUri;
 
     @ConstructorBinding
     public KakaoProperties(
-        String clientId, String redirectUri,
-        String authUri, String tokenUri, String userUri
+        String clientId, String redirectUri, String authUri,
+        String tokenUri, String userUri, String messageUri
     ) {
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.authUri = authUri;
         this.tokenUri = tokenUri;
         this.userUri = userUri;
+        this.messageUri = messageUri;
     }
 
     public URI getLoginUri() {
@@ -49,5 +51,9 @@ public class KakaoProperties {
 
     public String getTokenUri() {
         return tokenUri;
+    }
+
+    public String getMessageUri() {
+        return messageUri;
     }
 }

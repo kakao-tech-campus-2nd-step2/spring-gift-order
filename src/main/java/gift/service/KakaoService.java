@@ -2,8 +2,11 @@ package gift.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import gift.DTO.kakao.KakaoMemberInfo;
+import gift.DTO.kakao.KakaoMessageResponse;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.Order;
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -80,4 +83,37 @@ public class KakaoService {
         }
     }
 
+    protected KakaoMessageResponse sendKakaoMessage(String accessToken, Order order) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+        ObjectNode linkObject = objectMapper.createObjectNode();
+        linkObject.put("web_url", "https://developers.kakao.com");
+        linkObject.put("mobile_web_url", "https://developers.kakao.com");
+
+        ObjectNode templateObject = objectMapper.createObjectNode();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", order.getMessage());
+        templateObject.set("link", linkObject);
+        templateObject.put("button_title", "바로 확인");
+
+        String templateObjectString;
+        try {
+            templateObjectString = objectMapper.writeValueAsString(templateObject);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create JSON string");
+        }
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObjectString);
+
+        return restClient.post()
+            .uri(kakaoProperties.getMessageUri())
+            .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(body)
+            .retrieve()
+            .toEntity(KakaoMessageResponse.class)
+            .getBody();
+    }
 }
