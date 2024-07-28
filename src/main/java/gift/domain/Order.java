@@ -19,7 +19,7 @@ public class Order {
     private LocalDateTime createdAt;
     private String message;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long productId, Long optionId, int quantity, String message) {
