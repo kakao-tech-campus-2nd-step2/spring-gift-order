@@ -3,6 +3,7 @@ package gift.product.controller.product;
 import gift.product.dto.product.AdminProductDto;
 import gift.product.model.Product;
 import gift.product.service.ProductService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+@Hidden
 @Controller
 @RequestMapping("/admin")
 public class AdminProductController {
