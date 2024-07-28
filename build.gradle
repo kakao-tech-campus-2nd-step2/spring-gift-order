@@ -27,6 +27,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
     ext {
         JJWT_VERSION = "0.12.3"
