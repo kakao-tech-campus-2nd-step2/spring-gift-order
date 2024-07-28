@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
@@ -11,7 +12,8 @@ import org.springframework.web.client.RestClient;
 
 @SpringBootTest
 public class LoginTest {
-    private final RestClient client = RestClient.builder().build();
+    @Autowired
+    RestClient client;
 
     @Value("${kakao.client-id}")
     private String clientId;
