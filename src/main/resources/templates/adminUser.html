@@ -115,7 +115,13 @@
                 });
             },
             error: function(err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         });
     }
@@ -161,7 +167,13 @@
                 location.reload();
             },
             error : function(err){
-                alert("유저 정보 생성 실패");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     });
@@ -170,13 +182,22 @@
         $.ajax({
             type: "DELETE",
             url: "api/users/" + id,
+            headers : {
+                Authorization: 'Bearer ' + localStorage.getItem("token"),
+            },
             success : function(res){
                 $('#user-table').find('tr[data-id="' + id + '"]').remove();
                 alert("유저 ID : " + id + "가 삭제되었습니다.");
                 location.reload();
             },
             error : function(error){
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     }
@@ -194,11 +215,20 @@
             contentType: "application/json",
             datatype : "json",
             data : JSON.stringify(user),
+            headers : {
+                Authorization: 'Bearer ' + localStorage.getItem("token"),
+            },
             success : function(res){
                 location.reload();
             },
             error : function(err){
-                alert("유저 정보 수정에 실패했습니다" + err.status);
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     })

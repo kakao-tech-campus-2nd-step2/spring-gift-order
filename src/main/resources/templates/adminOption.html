@@ -111,7 +111,13 @@
                 });
             },
             error: function(err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         });
     }
@@ -164,7 +170,13 @@
                     alert("[Name error : " + error + "]");
                 }
                 else{
-                    alert("옵션을 추가할 수 없습니다!");
+                    if(err.responseJSON){
+                        var s = JSON.stringify(err.responseJSON);
+                        alert(s);
+                    }
+                    else{
+                        alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                    }
                 }
             }
         })
@@ -180,7 +192,13 @@
                 location.reload();
             },
             error : function(error){
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     }
@@ -201,13 +219,12 @@
                 location.reload();
             },
             error : function(err){
-                var text = err.responseText;
-                if(text) {
-                    var errors = JSON.parse(text);
-                    alert("[Name error : " + errors.name + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
                 }
-                else {
-                    alert("[Id error : " + err.status + ", 등록되지 않은 상품을 수정할 수 없습니다]");
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
                 }
             }
         })

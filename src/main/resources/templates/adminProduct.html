@@ -54,7 +54,7 @@
     </select>
 
     <label for="p_basicOption">BasicOption:</label>
-    <input type="text" id="p_basicOption" name="p_basicOption" required>
+    <input type="text" id="p_basicOption" name="p_basicOption" disabled>
 
     <input type="button" id="put" value="수정">
 </div>
@@ -124,7 +124,13 @@
                     getCategories(page + 1);
             },
             error: function(err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         });
     }
@@ -171,7 +177,13 @@
                 });
             },
             error: function(err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         });
     }
@@ -219,16 +231,15 @@
                 Authorization: 'Bearer ' + localStorage.getItem("token"),
             },
             success : function(res){
-                location.reload();
+                getProducts(currentPage);
             },
             error : function(err){
-                var text = err.responseJSON;
-                var error = text['name'];
-                if(text) {
-                    alert("[Name error : " + error + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
                 }
                 else{
-                    alert("상품을 추가할 수 없습니다!");
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
                 }
             }
         })
@@ -238,13 +249,22 @@
         $.ajax({
             type: "DELETE",
             url: "api/products/" + id,
+            headers : {
+                Authorization: 'Bearer ' + localStorage.getItem("token"),
+            },
             success : function(res){
                 $('#product-table').find('tr[data-id="' + id + '"]').remove();
                 alert("상품 ID : " + id + "가 삭제되었습니다.");
-                location.reload();
+                getProducts(currentPage);
             },
             error : function(error){
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     }
@@ -264,17 +284,19 @@
             contentType: "application/json",
             datatype : "json",
             data : JSON.stringify(product),
+            headers : {
+                Authorization: 'Bearer ' + localStorage.getItem("token"),
+            },
             success : function(res){
-                location.reload();
+                getProducts(currentPage);
             },
             error : function(err){
-                var text = err.responseText;
-                if(text) {
-                    var errors = JSON.parse(text);
-                    alert("[Name error : " + errors.name + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
                 }
-                else {
-                    alert("[Id error : " + err.status + ", 등록되지 않은 상품을 수정할 수 없습니다]");
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
                 }
             }
         })
@@ -282,7 +304,6 @@
 
     function logoutFunction(){
         localStorage.removeItem('token');
-        localStorage.removeItem('email');
         backToHome();
     }
 </script>

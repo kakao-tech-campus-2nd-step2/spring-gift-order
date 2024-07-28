@@ -85,7 +85,13 @@
                 });
             },
             error: function (err) {
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     }
@@ -123,7 +129,13 @@
                 location.reload();
             },
             error : function(error){
-                alert("error occur! [error code : " + err.status + "]");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     }
