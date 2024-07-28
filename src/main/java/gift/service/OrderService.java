@@ -10,9 +10,9 @@ import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
-import jakarta.transaction.Transactional;
 import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -45,6 +45,7 @@ public class OrderService {
         return orderResponseDto;
     }
 
+    @Transactional
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
         Order order = new Order(orderRequestDto.productId(), orderRequestDto.optionId(), orderRequestDto.quantity(), orderRequestDto.message());
         Order savedOrder = orderRepository.save(order);
@@ -68,6 +69,7 @@ public class OrderService {
         }
     }
 
+    @Transactional(readOnly = true)
     public String textDetail(OrderRequestDto orderRequestDto, String email) {
         Product product = productRepository.findById(orderRequestDto.productId())
             .orElseThrow(() -> new NoSuchElementException("해당 id의 상품 없음: " + orderRequestDto.productId()));
