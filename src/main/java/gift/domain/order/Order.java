@@ -31,4 +31,33 @@ public class Order {
     @Column(nullable = false)
     private String message;
 
+    protected Order() {
+
+    }
+
+    public Order(Option option, Long quantity, String message) {
+        this.option = option;
+        this.quantity = quantity;
+        this.message = message;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
