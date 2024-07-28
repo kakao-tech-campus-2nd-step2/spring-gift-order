@@ -44,7 +44,6 @@ public class CartItemRestController {
         @Parameter(description = "상품 ID") @PathVariable("productId") Long productId,
         @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
     ) {
-
         int currentCount = cartItemService.addCartItem(userInfo.getId(), productId);
 
         return ResponseMaker.createResponse(HttpStatus.OK,
