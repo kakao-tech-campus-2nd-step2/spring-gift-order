@@ -70,4 +70,14 @@ public class OptionService {
         optionRepository.saveAndFlush(option);
     }
 
+    public void subtractOption(Long id, int quantity) {
+        Option option = getOptionById(id);
+        int optionQuantity = option.getQuantity();
+        if (optionQuantity < quantity) {
+            throw new IllegalStateException("상품 수량 부족");
+        }
+        option.setQuantity(optionQuantity - quantity);
+        optionRepository.saveAndFlush(option);
+    }
+
 }

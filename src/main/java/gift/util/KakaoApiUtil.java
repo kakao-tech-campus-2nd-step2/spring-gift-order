@@ -2,6 +2,14 @@ package gift.util;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.ToNumberPolicy;
+import gift.dto.KakaoUserInfoDTO;
+import gift.dto.LinkDTO;
+import gift.dto.MessageTemplateDTO;
 import gift.dto.OauthTokenDTO;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @PropertySource("classpath:application-dev.properties")
 @Component
 public class KakaoApiUtil {
+
     private final RestClient restClient = RestClient.create();
 
     @Value("${kakao.api.key}")
@@ -27,6 +36,10 @@ public class KakaoApiUtil {
 
     @Value("${client.id}")
     private String clientId;
+
+    Gson gson = new GsonBuilder()
+        .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+        .create();
 
     private OauthTokenDTO getToken(String code) {
         String url = "https://kauth.kakao.com/oauth/token";
@@ -47,8 +60,8 @@ public class KakaoApiUtil {
         return Mapper(response);
     }
 
-    //유저의 정보를 받아오는 메서드
-    private ResponseEntity<String> getUserInfo(String accessToken) {
+    //유저의 정보를 받아 DTO 형태로 반환.
+    public KakaoUserInfoDTO getUserInfo(String accessToken) {
         String url = "https://kapi.kakao.com/v2/user/me";
 
         var response = restClient.get()
@@ -57,20 +70,52 @@ public class KakaoApiUtil {
             .retrieve()
             .toEntity(String.class);
 
+        if (response.getBody() == null) {
+            throw new IllegalStateException("잘못된 요청입니다.");
+        }
 
-        return response;
+        JsonElement jsonElement = JsonParser.parseString(response.getBody());
+        JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+        long id = jsonObject.get("id").getAsLong();
+        String email = jsonObject.getAsJsonObject("kakao_account").get("email").getAsString();
+
+        return new KakaoUserInfoDTO(id, email, accessToken);
 
     }
 
+    //카카오톡 나에게 메세지 보내기 API를 이용해 메시지 전송.
+    public ResponseEntity<String> SendOrderMessage(String text,String accessToken){
+
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        MessageTemplateDTO messageTemplate = new MessageTemplateDTO("text"
+            ,text,new LinkDTO("http://localhost:8080","http://localhost:8080"));
+
+        String messageTemplateJson = gson.toJson(messageTemplate);
+        System.out.println(messageTemplateJson);
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", messageTemplateJson);
+
+
+        var response = restClient.post()
+            .uri(url)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header("Authorization","Bearer "+accessToken)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
+
+        return response;
+    }
+
     private OauthTokenDTO Mapper(ResponseEntity<String> response) {
-        Gson gson = new Gson();
         return gson.fromJson(response.getBody(), OauthTokenDTO.class);
     }
 
     public String getAccessToken(String code) {
         OauthTokenDTO token = getToken(code);
-        String accessToken = token.getAccessToken();
-        return accessToken;
+        return token.getAccessToken();
 
     }
 
