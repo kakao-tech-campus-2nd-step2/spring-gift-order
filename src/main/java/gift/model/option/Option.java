@@ -60,7 +60,7 @@ public class Option {
         return item;
     }
 
-    public void update(String name, Long quantity){
+    public void update(String name, Long quantity) {
         this.name = name;
         this.quantity = quantity;
     }

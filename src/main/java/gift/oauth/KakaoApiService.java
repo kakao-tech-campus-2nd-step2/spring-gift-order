@@ -2,9 +2,6 @@ package gift.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.oauth.response.KakaoInfoResponse;
-import gift.oauth.response.KakaoTokenResponse;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.MediaType;
@@ -26,45 +23,13 @@ public class KakaoApiService {
         this.client = restClient;
     }
 
-    public URI getKakaoLoginPage() {
-        return kakaoApiSecurityProps.getLoginUri();
-    }
-
-    public KakaoTokenResponse requestToken(String code) {
-        var uri = kakaoApiSecurityProps.getTokenUri();
-        var body = getTokenRequestBody(code);
-        var response = client.post().uri(uri)
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED).body(body)
-            .retrieve()
-            .toEntity(KakaoTokenResponse.class);
-        return response.getBody();
-    }
-
-    public Long getKakaoId(String token) {
-        var uri = kakaoApiSecurityProps.getUserInfoUri();
-        var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
-            .retrieve().toEntity(KakaoInfoResponse.class);
-        return response.getBody().id();
-    }
-
     public void sendMessageToMe(String token, String text)
         throws JsonProcessingException {
         var uri = kakaoApiSecurityProps.getMemoSend();
         var body = getSelfMessageRequestBody(text);
-        var response = client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .headers(httpHeaders -> httpHeaders.setBearerAuth(token))
-            .retrieve().toEntity(String.class);
-    }
-
-    public LinkedMultiValueMap<String, String> getTokenRequestBody(String code) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoApiSecurityProps.getClientId());
-        body.add("redirect_uri", kakaoApiSecurityProps.getRedirectUri());
-        body.add("code", code);
-        return body;
+        client.post().uri(uri).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body).contentType(MediaType.APPLICATION_JSON)
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(token)).retrieve().toBodilessEntity();
     }
 
     public MultiValueMap<String, String> getSelfMessageRequestBody(String text)

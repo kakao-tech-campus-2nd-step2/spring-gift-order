@@ -14,10 +14,13 @@ public class RestClientConfig {
     @Value("${api.timeout}")
     private int timeout;
 
+    private final HttpRestClientResponseErrorHandler errorHandler = new HttpRestClientResponseErrorHandler();
+
     @Bean
     public RestClient restClient() {
         return RestClient.builder()
             .requestFactory(getClientHttpRequestFactory())
+            .defaultStatusHandler(errorHandler)
             .build();
     }
 

@@ -6,6 +6,9 @@ import gift.exception.customException.CustomDuplicateException;
 import gift.exception.customException.CustomException;
 import gift.model.categories.CategoryDTO;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Category Api")
 @RestController
 @RequestMapping("/category")
 public class CategoryController {
@@ -28,6 +32,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "카테고리 추가.")
     @PostMapping
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryForm,
         BindingResult result)
@@ -42,13 +47,16 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.insertCategory(categoryForm));
     }
 
+    @Operation(summary = "카테고리 목록 조회.")
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategoryList());
     }
 
+    @Operation(summary = "카테고리 수정")
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDTO> updateCategory(@PathVariable("id") Long id,
+    public ResponseEntity<CategoryDTO> updateCategory(
+        @Parameter(name = "id", description = "수정할 카테고리의 id") @PathVariable("id") Long id,
         @Valid @RequestBody CategoryDTO categoryForm, BindingResult result)
         throws CustomException, CustomArgumentNotValidException {
         if (result.hasErrors()) {

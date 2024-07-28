@@ -7,9 +7,12 @@ import gift.exception.customException.CustomException;
 import gift.exception.customException.PassWordMissMatchException;
 import gift.model.user.UserDTO;
 import gift.model.user.UserForm;
-import gift.oauth.KakaoApiService;
+import gift.oauth.KakaoOAuthService;
 import gift.service.JwtProvider;
 import gift.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,35 +24,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Auth Api", description = "로그인 및 회원가입 관련 Api")
 @RestController
 public class AuthController {
 
     private final UserService userService;
     private final JwtProvider jwtProvider;
-    private final KakaoApiService kakaoApiClient;
+    private final KakaoOAuthService kakaoOAuthService;
 
     public AuthController(UserService userService, JwtProvider jwtProvider,
-        KakaoApiService kakaoApiClient) {
+        KakaoOAuthService kakaoOAuthService) {
         this.userService = userService;
         this.jwtProvider = jwtProvider;
-        this.kakaoApiClient = kakaoApiClient;
+        this.kakaoOAuthService = kakaoOAuthService;
     }
 
+
+    @Operation(summary = "카카오 소셜 로그인", responses = @ApiResponse(responseCode = "200", description = "로그인 성공시 토큰 반환"))
     @GetMapping("/login/kakao")
     public ResponseEntity<?> getKakaoLoginPage() {
-        var uri = kakaoApiClient.getKakaoLoginPage();
+        var uri = kakaoOAuthService.getKakaoLoginPage();
         return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT).location(uri).build();
     }
 
+    @Operation(summary = "카카오 소셜 로그인 리다이렉트")
     @GetMapping
     public ResponseEntity<?> handleKakaoLoginRequest(@RequestParam("code") String code) {
-        var token = kakaoApiClient.requestToken(code);
-        Long kakaoId = kakaoApiClient.getKakaoId(token.accessToken());
+        var token = kakaoOAuthService.requestToken(code);
+        Long kakaoId = kakaoOAuthService.getKakaoId(token.accessToken());
         UserDTO userDTO = userService.findByKakaoId(kakaoId, token);
         String newToken = jwtProvider.generateToken(userDTO);
         return ResponseEntity.ok(newToken);
     }
 
+    @Operation(summary = "로그인", responses = @ApiResponse(responseCode = "200", description = "로그인 성공시 토큰 반환")
+    )
     @PostMapping("/login")
     public ResponseEntity<?> handleLoginRequest(@Valid @RequestBody UserForm userForm,
         BindingResult result)
@@ -69,6 +78,7 @@ public class AuthController {
             jwtProvider.generateToken(userService.findByEmail(userForm.getEmail())));
     }
 
+    @Operation(summary = "회원가입")
     @PostMapping("/register")
     public ResponseEntity<?> handleSignUpRequest(@Valid @RequestBody UserForm userForm,
         BindingResult result) throws CustomException, CustomArgumentNotValidException {

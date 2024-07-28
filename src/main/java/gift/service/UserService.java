@@ -55,7 +55,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public boolean isKakaoUser(Long userId) {
-        return userRepository.findById(userId).isPresent();
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new CustomNotFoundException(ErrorCode.USER_NOT_FOUND)).getKakaoId()
+            != null;
     }
 
     @Transactional

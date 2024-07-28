@@ -2,6 +2,7 @@ package gift.exception;
 
 import gift.exception.customException.CustomArgumentNotValidException;
 import gift.exception.customException.CustomException;
+import gift.exception.customException.KakaoApiException;
 import io.jsonwebtoken.JwtException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.ResourceAccessException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -47,6 +49,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<?> handleDuplicateKeyException(DuplicateKeyException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<?> handleKakaoApiException(KakaoApiException e) {
+        return ResponseEntity.status(e.getCode()).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ResourceAccessException.class)
+    public ResponseEntity<?> handleResourceAccessException(ResourceAccessException e) {
+        return ResponseEntity.status(ErrorCode.CONNECT_TIMEOUT.getStatus())
+            .body(ErrorCode.CONNECT_TIMEOUT.getMessage());
     }
 
     public ResponseEntity<ErrorResponseDTO> handleException(ErrorCode errorCode,

@@ -12,7 +12,6 @@ import gift.repository.ItemRepository;
 import gift.repository.OrderRepository;
 import gift.repository.UserRepository;
 import gift.repository.WishListRepository;
-import java.io.UnsupportedEncodingException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,7 @@ public class OrderService {
 
     @Transactional
     public OrderDTO executeOrder(Long userId, OrderDTO orderDTO)
-        throws UnsupportedEncodingException, JsonProcessingException {
+        throws JsonProcessingException {
         User user = findUserByUserId(userId);
         Long targetId = findItemByItemId(orderDTO.getTargetId()).getId();
         Item item = findItemByItemId(orderDTO.getItemId());
