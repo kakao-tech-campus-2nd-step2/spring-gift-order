@@ -1,13 +1,12 @@
 package gift.controller;
 
-import static gift.util.JwtUtil.extractToken;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.domain.Order;
 import gift.service.KakaoService;
 import gift.service.OrderService;
 import gift.util.JwtUtil;
-import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "Order", description = "주문 API")
 public class OrderController {
 
     private final OrderService orderService;
@@ -32,11 +32,9 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "주문 추가", description = "해당 회원이 해당 상품에 대한 주문 추가")
     public ResponseEntity<?> addOrder(HttpServletRequest request, @Valid @RequestBody Order order) throws JsonProcessingException {
-        String token = extractToken(request);
-        Claims claims = jwtUtil.extractAllClaims(token);
-        Number id = (Number) claims.get("id");
-        Long memberId = id.longValue();
+        Long memberId = jwtUtil.extractMemberId(request);
         Order addedOrder = orderService.addOrder(memberId, order);
         kakaoService.sendOrderMessage(memberId, order);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedOrder);

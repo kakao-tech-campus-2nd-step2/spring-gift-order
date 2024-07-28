@@ -60,12 +60,18 @@ public class JwtUtil {
             .getBody();
     }
 
-    public static String extractToken(HttpServletRequest request) {
+    public String extractToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
         throw new UnauthorizedException("Invalid token");
+    }
+
+    public Long extractMemberId(HttpServletRequest request) {
+        Claims claims = extractAllClaims(extractToken(request));
+        Number memberId = (Number) claims.get("id");
+        return memberId.longValue();
     }
 
 }

@@ -68,3 +68,10 @@ Content-Type: application/json
   - OptionService
     - Order의 quantity 만큼 quantity 차감
 
+## STEP-3 기능 구현 사항
+- API 사양에 관해 클라이언트와 어떻게 소통할 수 있을까? 어떻게 하면 편하게 소통할 수 있을지 고민해 보고 그 방법을 구현한다.
+- Swagger를 활용한 API문서 만들기
+  - build.gradle에 해당 의존성 추가
+  - SwaggerConfig를 통한 설정
+  - Annotation들을 통한 api 문서 작성
+

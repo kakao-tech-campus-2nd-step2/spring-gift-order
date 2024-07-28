@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.config;
 
 import gift.error.UnauthorizedException;
 import gift.util.JwtUtil;

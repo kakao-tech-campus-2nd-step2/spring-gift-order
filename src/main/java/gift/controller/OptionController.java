@@ -1,9 +1,10 @@
 package gift.controller;
 
-import gift.domain.Category;
+
 import gift.domain.Option;
-import gift.service.CategoryService;
 import gift.service.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/products/{product_id}/options")
+@Tag(name = "Option", description = "옵션 API")
 public class OptionController {
 
     private final OptionService optionService;
@@ -27,11 +29,13 @@ public class OptionController {
     }
 
     @GetMapping
+    @Operation(summary = "전체 옵션 조회", description = "해당 상품의 전체 옵션을 조회합니다.")
     public ResponseEntity<?> getAllOptions(@PathVariable("product_id") Long productId) {
         return ResponseEntity.ok(optionService.getAllOptionByProductId(productId));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "단일 옵션 조회", description = "아이디로 해당 상품의 옵션을 조회합니다.")
     public ResponseEntity<?> getOptionById(
         @PathVariable("product_id") Long productId,
         @PathVariable("id") Long id) {
@@ -39,6 +43,7 @@ public class OptionController {
     }
 
     @PostMapping
+    @Operation(summary = "옵션 추가", description = "해당 상품에 옵션을 추가합니다.")
     public ResponseEntity<?> addOption(
         @PathVariable("product_id") Long productId,
         @Valid @RequestBody Option option) {
@@ -47,6 +52,7 @@ public class OptionController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "옵션 수정", description = "아이디로 옵션을 수정합니다.")
     public ResponseEntity<?> updateOption(
         @PathVariable("id") Long id,
         @Valid @RequestBody Option option) {
@@ -55,6 +61,7 @@ public class OptionController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "옵션 삭제", description = "아이디로 옵션을 삭제합니다.")
     public ResponseEntity<?> deleteOption(@PathVariable("id") Long id) {
         optionService.deleteOption(id);
         return ResponseEntity.ok().build();
