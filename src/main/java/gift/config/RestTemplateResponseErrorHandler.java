@@ -32,15 +32,17 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
             LOGGER.error("Server error: {} - Response body: {}", statusCode, responseBody);
             throw new HttpServerErrorException(statusCode, httpResponse.getStatusText(),
                 httpResponse.getHeaders(), responseBody.getBytes(), null);
-        } else if (statusCode.is4xxClientError()) {
+        }
+
+        if (statusCode.is4xxClientError()) {
             LOGGER.error("Client error: {} - Response body: {}", statusCode, responseBody);
             if (statusCode == HttpStatus.NOT_FOUND) {
                 throw new KakaoNotFoundException(
                     "리소스를 찾을 수 없습니다. - Response body: " + responseBody);
-            } else {
-                throw new HttpClientErrorException(statusCode, httpResponse.getStatusText(),
-                    httpResponse.getHeaders(), responseBody.getBytes(), null);
             }
+
+            throw new HttpClientErrorException(statusCode, httpResponse.getStatusText(),
+                httpResponse.getHeaders(), responseBody.getBytes(), null);
         }
     }
 }
