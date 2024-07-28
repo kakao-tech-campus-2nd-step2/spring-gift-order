@@ -15,14 +15,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
-public class KakaoLoginClient {
+public class KakaoApiClient {
 
     private final RestClient restClient;
 
     private final KakaoProperties properties;
     private final ObjectMapper objectMapper;
 
-    public KakaoLoginClient(RestClient restClient, KakaoProperties properties,
+    public KakaoApiClient(RestClient restClient, KakaoProperties properties,
         ObjectMapper objectMapper) {
         this.restClient = restClient;
         this.properties = properties;
