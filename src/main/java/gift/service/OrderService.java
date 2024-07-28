@@ -9,6 +9,7 @@ import gift.vo.Option;
 import gift.vo.Order;
 import gift.vo.Product;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -45,6 +46,7 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public Order createOrder(Long memberId, OrderRequestDto orderRequestDto) {
         optionService.subtractOptionQuantity(orderRequestDto.optionId(), orderRequestDto.quantity());
         Order savedOrder = orderRepository.save(orderRequestDto.toOrder(memberId));

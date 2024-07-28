@@ -64,7 +64,7 @@ public class KakaoApiService {
 
             OAuthToken oauthToken = kakaoApiProvider.parseOAuthToken(response.getBody());
 
-            return oauthToken.getAccess_token();
+            return oauthToken.access_token();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             throw ex; // 예외를 던져 GlobalExceptionHandler에서 처리
         } catch (JsonProcessingException e) {
