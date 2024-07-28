@@ -20,7 +20,7 @@ public class OrderRequest {
     }
 
     public OrderInfo toEntity(){
-        return new OrderInfo(null ,this.quantity, LocalDateTime.now(), message);
+        return new OrderInfo(optionId ,this.quantity, LocalDateTime.now(), message);
     }
 
 }

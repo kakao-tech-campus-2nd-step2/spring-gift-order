@@ -1,10 +1,12 @@
 package gift.order;
 
+import com.google.gson.Gson;
 import gift.option.Option;
 import gift.option.OptionService;
 import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
@@ -28,32 +30,34 @@ public class OrderService {
         return orderRepository.save(orderRequest.toEntity());
     }
 
-    public MessageTemplate setMessage(OrderRequest orderRequest) {
-        return new MessageTemplate(
+    public LinkedMultiValueMap<String, String> setMessage(OrderRequest orderRequest) {
+
+        LinkedMultiValueMap<String, String> template = new LinkedMultiValueMap<String, String>();
+        MessageTemplate messageTemplate = new MessageTemplate(
             "text",
             orderRequest.getMessage(),
             new Link("")
         );
 
-       /* var link = new LinkedMultiValueMap<String, String>();
-        link.add("web_url", "");
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("object_type", "text");
-        body.add("text", orderRequest.getMessage());
-        body.add("link", link.toString());*/
+        Gson gson = new Gson();
+
+        String templateObjectJson = gson.toJson(messageTemplate);
+        template.add("template_object", templateObjectJson);
+
+        return template;
     }
 
     public void sendMessage(OrderRequest orderRequest, String accessToken) {
         RestClient client = RestClient.builder().build();
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
-        var body = setMessage(orderRequest);
+        var template = setMessage(orderRequest);
 
         var response = client.post()
             .uri(URI.create(url))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .header("Authorization", "Bearer " + accessToken)
-            .body(body) // request body
+            .body(template) // request body
             .retrieve()
             .toEntity(String.class);
     }
