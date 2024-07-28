@@ -64,7 +64,6 @@ public class RestDocsOrderTest extends AbstractRestDocsTest {
         //when //then
         mockMvc.perform(post("/api/orders")
                 .header("Authorization", "Bearer " + token)
-                .requestAttr("member_id", memberId)
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

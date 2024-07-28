@@ -32,13 +32,8 @@ public class WishListApiController {
     @GetMapping("/api/wishlist")
     public ResponseEntity<List<ProductResponse>> getWishList(
         @LoginMember LoginMemberDto memberDto) {
-        List<ProductResponse> dtoList;
-        List<Product> wishlist = wishService.getMyWishList(memberDto.id());
-
-        dtoList = wishlist.stream()
-            .map(ProductResponse::createProductResponse)
-            .toList();
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+        List<ProductResponse> dto = wishService.getMyWishList(memberDto.id());
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @CheckRole("ROLE_USER")
