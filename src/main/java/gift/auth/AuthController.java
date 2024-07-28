@@ -29,5 +29,4 @@ public class AuthController {
         return authService.getTokenFromAuthorizationCode(authorizationCode);
     }
 
-
 }
