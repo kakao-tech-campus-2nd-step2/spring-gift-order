@@ -29,7 +29,7 @@ public class OrderService {
     }
 
     public OrderResponseDto createOrder(OrderRequestDto orderRequestDto) {
-        Order order = new Order(orderRequestDto.optionId(), orderRequestDto.quantity(), orderRequestDto.message());
+        Order order = new Order(orderRequestDto.productId(), orderRequestDto.optionId(), orderRequestDto.quantity(), orderRequestDto.message());
         Order savedOrder = orderRepository.save(order);
         return OrderResponseDto.convertToDto(savedOrder);
     }
