@@ -10,3 +10,6 @@
 3. option 수량 차감
 4. wishList에 존재하면 삭제하기
 5. test 코드 작성
+
+### step 3
+1. swagger를 이용한 API 문서 작성
