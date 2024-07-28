@@ -80,4 +80,8 @@ public class Category {
     public String getImageUrl() {
         return imageUrl;
     }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
 }
