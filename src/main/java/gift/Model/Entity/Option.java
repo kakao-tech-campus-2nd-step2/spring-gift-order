@@ -90,12 +90,8 @@ public class Option {
         update(new Name(name), new Quantity(quantity));
     }
 
-    public void subtract(int quantity){
+    public void subtractQuantity(int quantity){
         this.quantity.subtract(quantity);
-    }
-
-    public void add(int quantity) {
-        this.quantity.add(quantity);
     }
 
     public void addQuantity(int quantity) {

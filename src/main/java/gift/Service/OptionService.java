@@ -58,7 +58,7 @@ public class OptionService {
     @Transactional
     public void subtractQuantity(Long optionId, int quantity) {
         Option option = optionRepository.findById(optionId).orElseThrow(() -> new OptionNotFoundException("매칭되는 옵션이 없습니다"));
-        option.subtract(quantity);
+        option.subtractQuantity(quantity);
     }
 
     @Transactional
