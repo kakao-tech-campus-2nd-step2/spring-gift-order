@@ -12,11 +12,11 @@ public class Member {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password")
-    private String password;
-
     @Column(name = "token", nullable = false)
     private String token;
+
+    @Column(name = "password")
+    private String password;
 
     public Member() {}
 
