@@ -141,9 +141,7 @@ public class ProductService {
         return product;
     }
     private Option convertToOptionEntity(OptionDTO optionDTO, Long productId) {
-        Option option = new Option();
-        option.setName(optionDTO.getName());
-        option.setQuantity(optionDTO.getQuantity());
+        Option option = new Option(optionDTO.getName(), optionDTO.getQuantity());
 
         Product product = new Product();
         product.setId(productId);
