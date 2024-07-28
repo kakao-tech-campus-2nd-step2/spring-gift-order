@@ -4,6 +4,7 @@ import gift.model.category.Category;
 import gift.model.gift.Gift;
 import gift.model.option.Option;
 import gift.repository.gift.GiftRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,13 +22,15 @@ class GiftRepositoryTest {
     private GiftRepository giftRepository;
 
     @Test
-    void findAllTest() {
+    @DisplayName("상품이 조회가 잘 되는지 테스트")
+    void testfindById() {
         Gift gift = giftRepository.findById(1L).orElseThrow(IllegalArgumentException::new);
-        assertThat(gift.getName()).isEqualTo("coffe");
+        assertThat(gift.getName()).isEqualTo("coffee");
     }
 
     @Test
-    void saveTest() {
+    @DisplayName("상품 저장이 잘 되는지 테스트")
+    void testSave() {
         Category category = new Category(10L, "test", "test", "test", "test");
         Option option1 = new Option("testOption", 1);
         List<Option> option = Arrays.asList(option1);
