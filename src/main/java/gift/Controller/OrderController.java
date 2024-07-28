@@ -36,7 +36,9 @@ public class OrderController {
     }
 
     @PutMapping()
-    public ResponseEntity<String> editOrder(@ValidUser Member member, @RequestParam("order-id") Long orderId, @RequestParam("quantity") Integer quantity){
+    public ResponseEntity<String> editOrder(@ValidUser Member member,
+                                            @RequestParam("order-id") Long orderId,
+                                            @RequestParam("quantity") Integer quantity){
         orderService.editOrder(member, orderId, quantity);
         return ResponseEntity.ok("주문이 정상적으로 수정되었습니다");
     }
