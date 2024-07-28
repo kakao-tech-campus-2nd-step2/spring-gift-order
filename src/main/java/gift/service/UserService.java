@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -91,12 +92,18 @@ public class UserService {
         body.add("redirect_url", kakaoProperties.redirectUrl());
         body.add("code", code);
 
-        String accessTokenResponse = client.post()
-                .uri(URI.create("https://kauth.kakao.com/oauth/token"))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .body(String.class);
+        String accessTokenResponse;
+        try {
+            accessTokenResponse = client.post()
+                    .uri(URI.create("https://kauth.kakao.com/oauth/token"))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException e) {
+            String statusCode = e.getMessage().split(" ")[0];
+            throw new ResponseStatusException(HttpStatus.valueOf(statusCode), e.getMessage());
+        }
 
         JsonObject jsonObject = JsonParser.parseString(accessTokenResponse).getAsJsonObject();
         String kakaoAccessToken = jsonObject.get("access_token").getAsString();
@@ -107,12 +114,18 @@ public class UserService {
     @Transactional
     public Map<String, String> getKakaoProfile(String kakaoAccessToken) {
         // 유저 정보 받아오기
-        String userDataResponse = client.post()
-                .uri(URI.create("https://kapi.kakao.com/v2/user/me"))
-                .header("Authorization", "Bearer " + kakaoAccessToken)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .retrieve()
-                .body(String.class);
+        String userDataResponse;
+        try {
+            userDataResponse = client.post()
+                    .uri(URI.create("https://kapi.kakao.com/v2/user/me"))
+                    .header("Authorization", "Bearer " + kakaoAccessToken)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException e) {
+            String statusCode = e.getMessage().split(" ")[0];
+            throw new ResponseStatusException(HttpStatus.valueOf(statusCode), e.getMessage());
+        }
 
         JsonObject jsonObject = JsonParser.parseString(userDataResponse).getAsJsonObject();
         JsonObject kakaoObject = jsonObject.get("kakao_account").getAsJsonObject();
