@@ -31,8 +31,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .anonymous(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/api/auth/signup").permitAll()
-                .requestMatchers("/api/auth/login").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/products").hasAnyRole("SELLER", "ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                 .requestMatchers(HttpMethod.PUT, "/api/products/").hasAnyRole("SELLER", "ADMIN")

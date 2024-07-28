@@ -129,13 +129,14 @@ public class OAuthService {
     public void renewOAuthTokens(KakaoOAuthToken kakaoOAuthToken) {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("grant_type", "refresh_token");
         body.add("client_id", clientProperties.clientId());
         body.add("client_secret", clientProperties.clientSecret());
         body.add("refresh_token", kakaoOAuthToken.getRefreshToken());
 
         ResponseEntity<KakaoOAuthTokenResponse> entity = restClient.post()
             .uri("https://kauth.kakao.com/oauth/token")
-            .header("Content-Type", "application/x-www-form-urlencoded")
+            .contentType(APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
             .toEntity(KakaoOAuthTokenResponse.class);

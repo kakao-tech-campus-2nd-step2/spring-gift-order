@@ -50,6 +50,14 @@ public class Order {
         return id;
     }
 
+    public User getSender() {
+        return sender;
+    }
+
+    public User getReceiver() {
+        return receiver;
+    }
+
     public Option getOption() {
         return option;
     }

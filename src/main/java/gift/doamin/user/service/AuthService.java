@@ -62,7 +62,7 @@ public class AuthService {
     }
 
     public String makeNewAccessToken(String refreshToken) {
-        if (jwtProvider.validateToken(refreshToken)) {
+        if (!jwtProvider.validateToken(refreshToken)) {
             throw new InvalidRefreshTokenException();
         }
 

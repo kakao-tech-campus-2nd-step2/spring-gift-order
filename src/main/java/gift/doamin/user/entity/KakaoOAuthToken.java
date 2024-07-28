@@ -41,6 +41,10 @@ public class KakaoOAuthToken {
         return user;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     public String getRefreshToken() {
         return refreshToken;
     }
