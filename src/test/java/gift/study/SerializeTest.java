@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import gift.oauth.KakaoToken;
+import gift.order.Link;
+import gift.order.MessageTemplate;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.StopWatch;
 
 //@SpringBootTest
@@ -48,6 +51,23 @@ public class SerializeTest {
             + "\"refresh_token_expires_in\": 5184000, "
             + "\"scope\": \"account_email profile\""
             + "}";
+    }
+
+    @Test
+    void serializeOutputTest(){
+        LinkedMultiValueMap<String, String> template = new LinkedMultiValueMap<String, String>();
+        MessageTemplate messageTemplate = new MessageTemplate(
+            "text",
+            "message",
+            new Link("")
+        );
+
+        Gson gson = new Gson();
+
+        String templateObjectJson = gson.toJson(messageTemplate);
+        template.add("template_object", templateObjectJson);
+
+        System.out.println(template);
     }
 
 }
