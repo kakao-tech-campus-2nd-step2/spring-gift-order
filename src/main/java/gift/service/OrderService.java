@@ -16,12 +16,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
-    private final KakaoService kakaoService;
+    private final KakaoMessageService kakaoMessageService;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, KakaoService kakaoService) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
-        this.kakaoService = kakaoService;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class OrderService {
                 order.getMessage()
         );
 
-        kakaoService.sendmessage(response, accessToken);
+        kakaoMessageService.sendMessage(response, accessToken);
 
         return response;
     }

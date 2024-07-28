@@ -17,21 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class KakaoService {
+public class KakaoMessageService {
 
-    private static final Logger logger = LoggerFactory.getLogger(KakaoService.class);
-
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
-
-    @Value("${kakao.api-key}")
-    private String apiKey;
-
-    @Value("${kakao.api-url}")
-    private String apiUrl;
+    private static final Logger logger = LoggerFactory.getLogger(KakaoMessageService.class);
 
     @Value("${kakao.message-url}")
     private String messageUrl;
@@ -39,46 +27,12 @@ public class KakaoService {
     private final RestTemplate kakaoRestTemplate;
     private final ObjectMapper objectMapper;
 
-    public KakaoService(RestTemplate kakaoRestTemplate) {
+    public KakaoMessageService(RestTemplate kakaoRestTemplate) {
         this.kakaoRestTemplate = kakaoRestTemplate;
         this.objectMapper = new ObjectMapper();
     }
 
-    public String getAccessToken(String code) {
-        String url = "https://kauth.kakao.com/oauth/token";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
-        body.add("scope", "talk_message");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-
-        ResponseEntity<Map> response;
-        try {
-            logger.info("Requesting access token with code: {}", code);
-            response = kakaoRestTemplate.exchange(url, HttpMethod.POST, request, Map.class);
-            logger.info("Access token response: {}", response);
-        } catch (Exception e) {
-            logger.error("Failed to get access token", e);
-            throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.", e);
-        }
-
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            String accessToken = (String) response.getBody().get("access_token");
-            logger.info("Received access token: {}", accessToken);
-            return accessToken;
-        } else {
-            throw new RuntimeException("엑세스 토큰을 받을 수 없습니다.");
-        }
-    }
-
-    public void sendmessage(OrderResponse order, String accessToken) {
+    public void sendMessage(OrderResponse order, String accessToken) {
         String message = String.format("OptionId: %d\nQuantity: %d\nOrder Date: %s\nMessage: %s",
                 order.getOptionId(), order.getQuantity(), order.getOrderDateTime().toString(), order.getMessage());
 
@@ -95,7 +49,7 @@ public class KakaoService {
         }});
 
         try {
-            String templateObjectJson = new ObjectMapper().writeValueAsString(templateObject);
+            String templateObjectJson = objectMapper.writeValueAsString(templateObject);
             logger.info("Template Object JSON: {}", templateObjectJson);
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
