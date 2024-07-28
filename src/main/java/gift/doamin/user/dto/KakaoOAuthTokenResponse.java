@@ -1,6 +1,6 @@
 package gift.doamin.user.dto;
 
-public class KakaoOAuthTokenResponseDto {
+public class KakaoOAuthTokenResponse {
 
     private String token_type;
     private String access_token;
@@ -8,7 +8,7 @@ public class KakaoOAuthTokenResponseDto {
     private String refresh_token;
     private String refresh_token_expires_in;
 
-    public KakaoOAuthTokenResponseDto(String token_type, String access_token, String expires_in,
+    public KakaoOAuthTokenResponse(String token_type, String access_token, String expires_in,
         String refresh_token, String refresh_token_expires_in) {
         this.token_type = token_type;
         this.access_token = access_token;

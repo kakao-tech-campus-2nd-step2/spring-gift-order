@@ -2,12 +2,12 @@ package gift.doamin.user.dto;
 
 import java.util.Map;
 
-public class KakaoOAuthUserInfoResponseDto {
+public class KakaoOAuthUserInfoResponse {
 
     private Long id;
     private Map<String, String> properties;
 
-    public KakaoOAuthUserInfoResponseDto(Long id, Map<String, String> properties) {
+    public KakaoOAuthUserInfoResponse(Long id, Map<String, String> properties) {
         this.id = id;
         this.properties = properties;
     }
