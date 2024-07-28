@@ -27,9 +27,17 @@ public class Quantity {
 
     public void subtract(int value){
         if (this.value - value < 1)
-            throw new IllegalArgumentException("옵션 수량은 최소 1개이상이여야 합니다. 빼려는 수량을 조절해 주십시오.");
+            throw new IllegalArgumentException("수량은 최소 1개이상이여야 합니다. 빼려는 수량을 조절해 주십시오.");
 
         this.value -= value;
+    }
+
+
+    public void add(int value) {
+        if (this.value + value > 9999_9999)
+            throw new IllegalArgumentException("수량은 최대 9999_9999개 이하입니다. 더하려는 수량을 조절해 주십시오.");
+
+        this.value += value;
     }
 
     public int getValue() {

@@ -45,7 +45,7 @@ public class OptionTest {
     @Test
     void subtractTest(){
         Option option = new Option("옵션1", 5, product1);
-        option.subtract(3);
+        option.subtractQuantity(3);
 
         assertThat(option.getQuantity().getValue()).isEqualTo(2);
     }

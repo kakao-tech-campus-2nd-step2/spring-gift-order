@@ -20,7 +20,7 @@ public class Option {
     private Long id;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "name, nullable = false"))
+    @AttributeOverride(name = "value", column = @Column(name = "name" , nullable = false))
     private Name name;
 
     @Embedded
@@ -31,7 +31,7 @@ public class Option {
     @JoinColumn
     private Product product;
 
-    private Option() {}
+    protected Option() {}
 
     public Option(Name name, Quantity quantity, Product product) {
         name.checkNameLength(NAME_MAX_LENGTH);
@@ -90,8 +90,12 @@ public class Option {
         update(new Name(name), new Quantity(quantity));
     }
 
-    public void subtract(int quantity){
+    public void subtractQuantity(int quantity){
         this.quantity.subtract(quantity);
+    }
+
+    public void addQuantity(int quantity) {
+        this.quantity.add(quantity);
     }
 
     public boolean hasSameName(String name){

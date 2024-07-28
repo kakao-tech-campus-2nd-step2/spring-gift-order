@@ -1,8 +1,11 @@
 package gift.Model.Entity;
 
+import gift.Model.Value.AccessToken;
 import gift.Model.Value.Email;
 import gift.Model.Value.Password;
 import jakarta.persistence.*;
+
+import java.util.Optional;
 
 @Entity
 public class Member {
@@ -19,16 +22,20 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "password", nullable = false))
     private Password password;
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "access_token"))
+    private AccessToken accessToken;
+
     protected Member() {}
 
     public Member(Email email, Password password) {
         this.email = email;
         this.password = password;
+        this.accessToken = null;
     }
 
     public Member(String email, String password) {
-        this.email = new Email(email);
-        this.password = new Password(password);
+        this(new Email(email), new Password(password));
     }
 
     public Long getId() {
@@ -43,6 +50,10 @@ public class Member {
         return password;
     }
 
+    public Optional<AccessToken>  getAccessToken() {
+        return Optional.ofNullable(accessToken);
+    }
+
     public void update(Email email, Password password){
         this.email = email;
         this.password = password;
@@ -50,5 +61,9 @@ public class Member {
 
     public void update(String email, String password) {
         update(new Email(email), new Password(password));
+    }
+
+    public void updateAccessToken(String accessToken){
+        this.accessToken = new AccessToken(accessToken);
     }
 }

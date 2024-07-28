@@ -1,6 +1,6 @@
 package gift.Exception;
 
-public class NotValidTokenException extends RuntimeException{
+public class NotValidTokenException extends BusinessException {
     public NotValidTokenException(String message) {
         super(message);
     }

@@ -41,7 +41,7 @@ public class ProductService {
                 .orElseThrow(()-> new CategoryNotFoundException("매칭되는 카테고리가 없습니다"));
         Product product = new Product(requestProductPostDTO.name(), requestProductPostDTO.price(), requestProductPostDTO.imageUrl(), category);
         productRepository.save(product);
-        optionRepository.save(new Option(requestProductPostDTO.name(), requestProductPostDTO.optionQuantity(), product));
+        optionRepository.save(new Option(requestProductPostDTO.optionName(), requestProductPostDTO.optionQuantity(), product));
     }
 
     @Transactional(readOnly = true)
