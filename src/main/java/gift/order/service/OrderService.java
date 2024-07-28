@@ -1,6 +1,6 @@
 package gift.order.service;
 
-import gift.config.KakaoProperties;
+import gift.client.kakao.KakaoProperties;
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
 import gift.order.dto.KakaoMessageRequestBody;
@@ -13,7 +13,7 @@ import gift.product.entity.Product;
 import gift.product.option.entity.Option;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.option.service.OptionService;
-import gift.user.client.KakaoApiClient;
+import gift.client.kakao.KakaoApiClient;
 import gift.user.entity.User;
 import gift.user.repository.UserJpaRepository;
 import gift.wish.repository.WishRepository;

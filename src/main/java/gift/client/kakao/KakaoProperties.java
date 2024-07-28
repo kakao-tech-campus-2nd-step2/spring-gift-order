@@ -1,4 +1,4 @@
-package gift.config;
+package gift.client.kakao;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;

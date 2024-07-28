@@ -1,8 +1,7 @@
-package gift.user.client;
+package gift.client.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.config.KakaoProperties;
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
 import gift.order.dto.KakaoMessageRequestBody;
