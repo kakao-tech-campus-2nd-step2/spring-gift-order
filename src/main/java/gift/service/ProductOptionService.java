@@ -2,6 +2,8 @@ package gift.service;
 
 import gift.domain.ProductOption;
 import gift.repository.ProductOptionRepository;
+import gift.repository.ProductRepository;
+import gift.web.dto.request.order.CreateOrderRequest;
 import gift.web.dto.request.productoption.CreateProductOptionRequest;
 import gift.web.dto.request.productoption.SubtractProductOptionQuantityRequest;
 import gift.web.dto.request.productoption.UpdateProductOptionRequest;
@@ -21,19 +23,32 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductOptionService {
 
     private final ProductOptionRepository productOptionRepository;
+    private final ProductRepository productRepository;
 
-    public ProductOptionService(ProductOptionRepository productOptionRepository) {
+    public ProductOptionService(ProductOptionRepository productOptionRepository,
+        ProductRepository productRepository) {
         this.productOptionRepository = productOptionRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public CreateProductOptionResponse createOption(Long productId, CreateProductOptionRequest request) {
+        validateExistsProduct(productId);
         String optionName = request.getName();
         validateOptionNameExists(productId, optionName);
 
         ProductOption createdOption = productOptionRepository.save(request.toEntity(productId));
 
         return CreateProductOptionResponse.fromEntity(createdOption);
+    }
+
+    /**
+     * 상품이 존재하는지 확인합니다.
+     * @param productId 상품 아이디
+     */
+    private void validateExistsProduct(Long productId) {
+        productRepository.findById(productId)
+            .orElseThrow(() -> new ResourceNotFoundException("상품 아이디: ", productId.toString()));
     }
 
     /**
@@ -129,6 +144,10 @@ public class ProductOptionService {
         option.subtractQuantity(request.getQuantity());
 
         return SubtractProductOptionQuantityResponse.fromEntity(option);
+    }
+
+    public SubtractProductOptionQuantityResponse subtractOptionStock(CreateOrderRequest request) {
+        return subtractOptionStock(request.getOptionId(), new SubtractProductOptionQuantityRequest(request.getQuantity()));
     }
 
     @Transactional
