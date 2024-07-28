@@ -62,8 +62,9 @@ public class WishController {
     }
 
     @DeleteMapping("/{memberId}/{productId}")
-    public ResponseEntity<Void> deleteProduct(@LoginAdmin LoginResponse member,
+    public ResponseEntity<Void> deleteProduct(@LoginUser LoginResponse member,
         @PathVariable UUID memberId, @PathVariable UUID productId) {
+        AuthController.validateUserOrAdmin(member, memberId);
         wishService.delete(memberId, productId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
