@@ -26,6 +26,7 @@ public class WishController {
 
     @GetMapping
     public ResponseEntity<Page<Wish>> getWishList(@LoginMember Member member, Pageable pageable) {
+
         Page<Wish> wishPage = wishService.getWishPage(member, pageable);
         return ResponseEntity.ok(wishPage);
     }
