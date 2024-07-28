@@ -1,5 +1,36 @@
 # spring-gift-order
 
+## Step2
+feat: KakaoService - 주문 생성 기능 추가 및 Kakao 메시지 전송 구현 [박한솔]
+- createOrder 메서드 구현: 주문을 생성하고, 카카오 메시지를 전송하여 주문 정보를 사용자에게 알림
+
+feat: KakaoService - Kakao 메시지 전송 및 템플릿 객체 생성 메서드 구현 [박한솔]
+- sendKakaoMessage 메서드 추가: Kakao API를 통해 사용자에게 메시지 전송
+- createTemplateObject 메서드 추가: Kakao 메시지에 사용할 템플릿 객체를 생성
+
+feat: WishRepository - Wish 조회 메서드 추가 [박한솔]
+- findByUserIdAndProductIdAndIsDeletedFalse 메서드 추가: 삭제되지 않은 Wish를 사용자 ID와 상품 ID로 조회
+
+feat: KakaoController - 주문 생성 API 추가 [박한솔]
+- createOrder 메서드 추가: 로그인된 사용자에 대해 주문 생성 요청을 처리
+
+
+
+### 로직 순서
+### 1. 카카오 로그인
+- 사용자가 카카오 로그인 버튼을 클릭하여 카카오 계정으로 로그인할 수 있는 기능.
+- 로그인 후, 카카오 API를 통해 액세스 토큰을 받아 사용자 정보를 조회.
+- JWT 토큰+카카오 엑세스 토큰을 생성하여 클라이언트에 반환.
+
+### 2. 주문 생성
+- JWT 토큰과 카카오 엑세스 토큰, OrderRequest의 정보를 담아 요청을 보낸다.
+- 사용자가 상품 옵션과 수량을 선택하여 주문을 생성할 수 있는 기능.
+- 주문 생성 시, 상품의 수량을 차감하고, 기존의 찜 목록에서 해당 상품을 삭제.
+- 카카오 메시지를 통해 주문 확인 메시지를 사용자에게 전송.
+
+### 3. 카카오 메시지 전송
+- 주문 완료 후 카카오톡 메시지를 사용자에게 전송하는 기능.
+- 메시지에는 주문 정보와 링크를 포함.
 
 ## Step1
 

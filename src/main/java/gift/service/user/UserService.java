@@ -13,9 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -69,23 +67,22 @@ public class UserService {
     }
 
     //카카오 로그인
-
-    //실제 경우 id 와 이메일을 둘다 받을수 있는 경우
-    /*
     public User findOrCreateUser(Long id, String email) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            return userOptional.get();
-        } else {
-            String randomPassword = UUID.randomUUID().toString();
-            String encodedPassword = passwordEncoder.encode(randomPassword);
-            User newUser = new User(id, email, encodedPassword);
-            return userRepository.save(newUser);
-        }
+        // 이메일이 주어진 경우, 해당 이메일로 사용자 검색
+        // 현재 카카오 서버에서 이메일을 못 받는 상황을 고려하여 임시 코드
+        String emailToUse = (email == null || email.isEmpty()) ? id.toString() : email;
+
+        return userRepository.findByEmail(emailToUse)
+                .orElseGet(() -> {
+                    // 이메일이 없거나 사용자 존재하지 않는 경우 새로운 사용자 생성
+                    String randomPassword = UUID.randomUUID().toString();
+                    String encodedPassword = passwordEncoder.encode(randomPassword);
+
+                    User newUser = new User(id, emailToUse, encodedPassword);
+                    return userRepository.save(newUser);
+                });
     }
-
-     */
-
+    /*
     public User findOrCreateUser(Long id, String email) {
         // 이메일이 주어진 경우, 해당 이메일로 사용자 검색
         // 현재 카카오 서버에서 이메일을 못 받는 상황을 고려하여 임시 코드
@@ -114,6 +111,20 @@ public class UserService {
                 return existingUserOptional.get();
             }
         }
+    }
+
+     */
+
+    //카카오 인증 후 서버 Jwt 발급
+    public Map<String, String> generateJwtToken(User user) {
+        String jwtToken = jwtTokenUtil.generateAccessToken(user.getEmail());
+        String jwtRefresh = jwtTokenUtil.generateRefreshToken(user.getEmail());
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("jwt_token", jwtToken);
+        tokens.put("jwt_refresh", jwtRefresh);
+
+        return tokens;
     }
 
 
