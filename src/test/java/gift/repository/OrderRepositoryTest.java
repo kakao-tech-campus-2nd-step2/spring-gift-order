@@ -36,7 +36,8 @@ class OrderRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        category = categoryRepository.save(new Category("testName", "testColor", "testImage", "testDescription"));
+        category = categoryRepository.save(
+            new Category("testName", "testColor", "testImage", "testDescription"));
         product = productRepository.save(new Product("testName", 1000, "testImage.jpg", category));
         option = optionRepository.save(new Option("testOption", 300, product));
         user = userRepository.save(new User("test@abc.com", "password"));
@@ -56,7 +57,8 @@ class OrderRepositoryTest {
     @Test
     @DisplayName("findAllByUserId 테스트")
     void findAllByUserIdTest() {
-        Order expected = orderRepository.save(new Order(option, user, 30, LocalDateTime.now(), "test"));
+        Order expected = orderRepository.save(
+            new Order(option, user, 30, LocalDateTime.now(), "test"));
 
         List<Order> orders = orderRepository.findAllByUserId(user.getId());
         Order actual = orders.getFirst();

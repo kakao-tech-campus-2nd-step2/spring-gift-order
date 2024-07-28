@@ -19,7 +19,8 @@ class OrderTest {
     @Test
     @DisplayName("생성자 테스트")
     void OrderConstructorTest() {
-        Order newOrder = new Order(new Option(), new User(), 50, LocalDateTime.now(), "newTestMessage");
+        Order newOrder = new Order(new Option(), new User(), 50, LocalDateTime.now(),
+            "newTestMessage");
 
         assertThat(newOrder).isNotNull();
         assertThat(newOrder.getQuantity()).isEqualTo(50);
@@ -31,6 +32,6 @@ class OrderTest {
     void getTotalPriceTest() {
         Product product = new Product("상품", 10000, "testImg.jpg", new Category());
 
-        assertThat(order.getTotalPrice(product)).isEqualTo(10000*30);
+        assertThat(order.getTotalPrice(product)).isEqualTo(10000 * 30);
     }
 }

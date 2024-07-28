@@ -79,93 +79,93 @@ VALUES ('Product 15', 1500, 'image15.jpg', 3);
 
 -- Product 1
 INSERT INTO options (name, quantity, product_id)
-VALUES ('01 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 1);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 1);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('02 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 1);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 1);
 
 -- Product 2
 INSERT INTO options (name, quantity, product_id)
-VALUES ('03 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 2);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 2);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('04 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 2);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 2);
 
 -- Product 3
 INSERT INTO options (name, quantity, product_id)
-VALUES ('05 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 3);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 3);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('06 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 3);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 3);
 
 -- Product 4
 INSERT INTO options (name, quantity, product_id)
-VALUES ('07 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 4);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 4);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('08 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 4);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 4);
 
 -- Product 5
 INSERT INTO options (name, quantity, product_id)
-VALUES ('09 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 5);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 5);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('10 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 5);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 5);
 
 -- Product 6
 INSERT INTO options (name, quantity, product_id)
-VALUES ('11 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 6);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 6);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('12 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 6);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 6);
 
 -- Product 7
 INSERT INTO options (name, quantity, product_id)
-VALUES ('13 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 7);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 7);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('14 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 7);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 7);
 
 -- Product 8
 INSERT INTO options (name, quantity, product_id)
-VALUES ('15 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 8);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 8);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('16 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 8);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 8);
 
 -- Product 9
 INSERT INTO options (name, quantity, product_id)
-VALUES ('17 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 9);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 9);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('18 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 9);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 9);
 
 -- Product 10
 INSERT INTO options (name, quantity, product_id)
-VALUES ('19 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 10);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 10);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('20 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 10);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 10);
 
 -- Product 11
 INSERT INTO options (name, quantity, product_id)
-VALUES ('21 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 11);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 11);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('22 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 11);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 11);
 
 -- Product 12
 INSERT INTO options (name, quantity, product_id)
-VALUES ('23 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 12);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 12);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('24 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 12);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 12);
 
 -- Product 13
 INSERT INTO options (name, quantity, product_id)
-VALUES ('25 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 13);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 13);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('26 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 13);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 13);
 
 -- Product 14
 INSERT INTO options (name, quantity, product_id)
-VALUES ('27 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 14);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 14);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('28 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 14);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 14);
 
 -- Product 15
 INSERT INTO options (name, quantity, product_id)
-VALUES ('29 [Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 15);
+VALUES ('[Best] 시어버터 핸드 & 시어 스틱 립 밤', 969, 15);
 INSERT INTO options (name, quantity, product_id)
-VALUES ('30 [Top] 라벤더 핸드 & 스틱 립 밤', 500, 15);
+VALUES ('[Top] 라벤더 핸드 & 스틱 립 밤', 500, 15);
 
 
 -- 위시리스트 더미 데이터 추가

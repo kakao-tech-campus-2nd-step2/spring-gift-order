@@ -2,6 +2,7 @@ package gift.entity;
 
 import gift.exception.DuplicateOptionNameException;
 import gift.exception.MinimumOptionException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,16 +14,20 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description = "Option entity representing a option")
 @Entity
 @Table(name = "options")
 public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Option ID", example = "1")
     private Long id;
     @NotNull
+    @Schema(description = "Option name", example = "[Best] 시어버터 핸드 & 시어 스틱 립 밤")
     private String name;
     @NotNull
+    @Schema(description = "Option quantity", example = "969")
     private Integer quantity;
     @ManyToOne
     @JoinColumn(name = "product_id")
