@@ -1,6 +1,8 @@
 package gift.domain.cartItem;
 
 import gift.domain.cartItem.dto.CartItemDTO;
+import gift.domain.option.JpaOptionRepository;
+import gift.domain.option.Option;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
 import gift.domain.user.JpaUserRepository;
@@ -22,15 +24,18 @@ public class CartItemService {
     private final JpaProductRepository productRepository;
     private final JpaCartItemRepository cartItemRepository;
     private final JpaUserRepository userRepository;
+    private final JpaOptionRepository optionRepository;
 
     public CartItemService(
         JpaProductRepository jpaProductRepository,
         JpaCartItemRepository jpaCartItemRepository,
-        JpaUserRepository jpaUserRepository
+        JpaUserRepository jpaUserRepository,
+        JpaOptionRepository jpaOptionRepository
     ) {
         this.userRepository = jpaUserRepository;
         this.cartItemRepository = jpaCartItemRepository;
         this.productRepository = jpaProductRepository;
+        this.optionRepository = jpaOptionRepository;
     }
 
     /**
@@ -92,5 +97,14 @@ public class CartItemService {
 
         findCartItem.updateCount(count); // 수량 수정
         return count;
+    }
+
+    /**
+     * 장바구니에 해당 옵션의 상품이 존재하면 삭제
+     */
+    public void deleteCartItemIfExists(Long userId, Long optionId) {
+        Option option = optionRepository.findById(optionId).get();
+        cartItemRepository.findByUserIdAndProductId(userId, option.getProduct().getId())
+            .ifPresent(cartItemRepository::delete);
     }
 }

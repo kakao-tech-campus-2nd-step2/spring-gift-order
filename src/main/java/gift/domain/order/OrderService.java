@@ -2,6 +2,7 @@ package gift.domain.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.domain.cartItem.CartItemService;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.option.JpaOptionRepository;
 import gift.domain.option.Option;
@@ -35,6 +36,7 @@ public class OrderService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final JpaUserRepository userRepository;
+    private final CartItemService cartItemService;
 
     @Autowired
     public OrderService(
@@ -43,7 +45,8 @@ public class OrderService {
         JpaCartItemRepository jpaCartItemRepository,
         RestTemplate restTemplate,
         ObjectMapper objectMapper,
-        JpaUserRepository userRepository
+        JpaUserRepository userRepository,
+        CartItemService cartItemService
     ) {
         optionRepository = jpaOptionRepository;
         this.optionService = optionService;
@@ -51,20 +54,26 @@ public class OrderService {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
+        this.cartItemService = cartItemService;
     }
 
     /**
      * (나에게) 상품 선물하기
      */
-    @Transactional
     public void order(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
+        orderProduct(orderRequestDTO, userInfo);
+        sendMessage(orderRequestDTO, userInfo);
+    }
+    @Transactional
+    public void orderProduct(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
         // 해당 상품의 옵션의 수량을 차감
         optionService.decreaseOptionQuantity(orderRequestDTO.optionId(),
             orderRequestDTO.quantity());
 
         // 해당 상품이 (나의) 위시리스트에 있는 경우 위시 리스트에서 삭제
-        removeFromWishList(userInfo.getId(), orderRequestDTO.optionId());
-
+        cartItemService.deleteCartItemIfExists(userInfo.getId(), orderRequestDTO.optionId());
+    }
+    private void sendMessage(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
         // 메세지 작성
         MultiValueMap<String, String> body = createTemplateObject(
             orderRequestDTO);
@@ -99,10 +108,4 @@ public class OrderService {
         return body;
     }
 
-    private void removeFromWishList(Long userId, Long optionId) {
-        Option option = optionRepository.findById(optionId).get();
-        Product product = option.getProduct();
-        cartItemRepository.findByUserIdAndProductId(userId, product.getId())
-            .ifPresent(cartItemRepository::delete);
-    }
 }
