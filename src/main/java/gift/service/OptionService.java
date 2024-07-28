@@ -33,7 +33,7 @@ public class OptionService {
 
         return optionList.getOptionList()
             .stream()
-            .map(OptionResponseDTO::of)
+            .map(OptionResponseDTO::from)
             .toList();
     }
 
