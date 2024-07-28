@@ -4,6 +4,12 @@ import gift.dto.CategoryRequest;
 import gift.dto.CategoryResponse;
 import gift.service.CategoryService;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/categories")
+@Tag(name = "Admin Category API", description = "관리자 카테고리 관련 API")
 public class AdminCategoryController {
 
     private CategoryService categoryService;
@@ -29,6 +36,12 @@ public class AdminCategoryController {
     }
 
     @PostMapping
+    @Operation(summary = "카테고리 추가", description = "새로운 카테고리를 추가합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "카테고리 추가 성공",
+            content = {@Content(schema = @Schema(implementation = CategoryResponse.class))}),
+        @ApiResponse(responseCode = "403", description = "관리자 권한이 인증되지 않음")
+    })
     public ResponseEntity<CategoryResponse> addCategory(
         @RequestBody CategoryRequest categoryRequest,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -41,6 +54,13 @@ public class AdminCategoryController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "카테고리 수정", description = "기존 카테고리를 수정합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "성공",
+            content = {@Content(schema = @Schema(implementation = CategoryResponse.class))}),
+        @ApiResponse(responseCode = "403", description = "관리자 권한이 인증되지 않음"),
+        @ApiResponse(responseCode = "404", description = "카테고리를 찾을 수 없음")
+    })
     public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Long id,
         @RequestBody CategoryRequest categoryRequest,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -53,6 +73,12 @@ public class AdminCategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "카테고리 삭제", description = "기존 카테고리를 삭제합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "카테고리 삭제 성공"),
+        @ApiResponse(responseCode = "403", description = "관리자 권한이 인증되지 않음"),
+        @ApiResponse(responseCode = "404", description = "카테고리를 찾을 수 없음")
+    })
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id,
         @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         String token = authHeader.replace("Bearer ", "");
@@ -60,10 +86,10 @@ public class AdminCategoryController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (!categoryService.findById(id).isPresent()) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         categoryService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
