@@ -6,6 +6,7 @@ import gift.dto.KakaoUserInfoDTO;
 import gift.dto.MemberDTO;
 import gift.model.Member;
 import gift.repository.MemberRepository;
+import gift.util.JwtUtil;
 import java.net.URI;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,10 +22,13 @@ public class KakaoService {
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient = RestClient.builder().build();
     private final MemberRepository memberRepository;
+    private final JwtUtil jwtUtil;
 
-    public KakaoService(KakaoProperties kakaoProperties, MemberRepository memberRepository) {
+    public KakaoService(KakaoProperties kakaoProperties, MemberRepository memberRepository,
+        JwtUtil jwtUtil) {
         this.kakaoProperties = kakaoProperties;
         this.memberRepository = memberRepository;
+        this.jwtUtil = jwtUtil;
     }
 
     public String generateKakaoLoginUrl() {
@@ -75,5 +79,10 @@ public class KakaoService {
             memberRepository.save(member);
         }
         return member;
+    }
+
+    public String generateToken(String email, String role) {
+        String jwtToken = jwtUtil.generateToken(email,role);
+        return jwtToken;
     }
 }
