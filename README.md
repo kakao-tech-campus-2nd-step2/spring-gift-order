@@ -16,6 +16,6 @@
 - [x] ConfigurationProperties 생성자로 바인딩
 - [x] JSONObject를 추상환된 클래스로 변경
 # step2 피드백
-- [ ] Objectmapper, Gson 직렬화 도구 비교 학습
+- [x] Objectmapper, Gson 직렬화 도구 비교 학습
 - [ ] LinkedMultiValueMap 과 Map 비교 학습
 - [ ] RestClient timeout 설정
