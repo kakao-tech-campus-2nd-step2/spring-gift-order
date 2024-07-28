@@ -1,6 +1,5 @@
 # spring-gift-order
 
-- [x] 카카오 나에게 메세지 보내기 기능 구현(예제 메시지로 일단 전송)
-- [X] 주문과 메세지 연동
-- [X] 옵션에서 수량 감소
-- [X] 위시 리스트에 있는 경우 위시 리스트에서 삭제
+- [x] Springboot REST Docs API 문서 작성
+- [X] @slf4j 적용
+- [X] StringBuilder로 변경
