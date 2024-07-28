@@ -29,7 +29,7 @@ public class MemberController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute MemberDTO memberDTO) {
         memberService.register(memberDTO);
-        return "redirect:/login";
+        return "redirect:/kakao/login";
     }
 
     @PostMapping("/login")
