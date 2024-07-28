@@ -2,17 +2,14 @@ package gift.controller.kakao;
 
 import gift.domain.order.OrderRequest;
 import gift.domain.user.User;
+import gift.domain.user.UserInfoDto;
 import gift.validation.LoginMember;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import gift.service.kakao.KakaoService;
 
 import java.util.Map;
-import gift.service.kakao.KakaoService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/kakao")
@@ -25,7 +22,7 @@ public class KakaoController {
     }
 
     @PostMapping("/login")
-    public Map<String, Object> kakaoLogin(@RequestParam("code") String authorizationCode) {
+    public UserInfoDto kakaoLogin(@RequestParam("code") String authorizationCode) {
         return kakaoService.kakaoLogin(authorizationCode);
     }
 
