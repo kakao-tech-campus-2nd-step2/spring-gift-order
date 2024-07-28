@@ -40,11 +40,12 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<ApiResponse<Order>> createOrder(@RequestHeader("Authorization") String kakaoToken, @RequestBody Order order) {
         try {
+            String accessToken = kakaoToken.replace("Bearer ", "");
             Option option = optionRepository.findById(order.getOptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
             order.setOption(option);
 
-            String email = kakaoAuthService.getUserInfo(kakaoToken).getEmail();
+            String email = kakaoAuthService.getUserInfo(accessToken).getEmail();
             Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member email"));
 
