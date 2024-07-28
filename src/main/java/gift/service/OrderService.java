@@ -3,7 +3,9 @@ package gift.service;
 import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 
 import gift.dto.OrderRequest;
@@ -27,32 +29,53 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final WishlistRepository wishlistRepository;
     private final KakaoMessageService kakaoMessageService;
-    private final UserService userService;
     private final WishlistService wishlistService;
+    private final UserService userService;
+    private final RetryTemplate retryTemplate;
 
     public OrderService(OptionRepository optionRepository, OrderRepository orderRepository,
                         WishlistRepository wishlistRepository, KakaoMessageService kakaoMessageService,
-                        UserService userService, WishlistService wishlistService) {
+                        WishlistService wishlistService, UserService userService,
+                        RetryTemplate retryTemplate) {
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
         this.wishlistRepository = wishlistRepository;
         this.kakaoMessageService = kakaoMessageService;
-        this.userService = userService;
         this.wishlistService = wishlistService;
+        this.retryTemplate = retryTemplate;
+        this.userService = userService;
     }
-
+    
+    @Transactional
     public OrderResponse createOrder(String token, OrderRequest request, BindingResult bindingResult) {
-        validateBindingResult(bindingResult);
-        Option option = findOption(request.getOptionId());
-        option.decreaseQuantity(request.getQuantity());
-        Order order = request.toEntity(option);
-        order.setOrderDateTime(LocalDateTime.now());
-        orderRepository.save(order);
-        User user = userService.getUserFromToken(token);
-        removeWishlistOnOrder(user, option.getProduct().getId(), token, bindingResult);
-
+	    return retryTemplate.execute(context -> {
+    		validateBindingResult(bindingResult);
+	        Option option = updateOptionQuantity(request);
+	        Order order = saveOrder(request, option);
+	        User user = userService.getUserFromToken(token);
+	        orderTasks(token, user, option, request, bindingResult);
+	        return order.toDto();
+	    });
+    }
+    
+    private void orderTasks(String token, User user, Option option, OrderRequest request,
+    		BindingResult bindingResult){
+    	removeWishlistOnOrder(user, option.getProduct().getId(), token, bindingResult);
         sendKakaoMessage(token, request.getMessage());
-        return order.toDto();
+    }
+    
+    private Option updateOptionQuantity(OrderRequest request) {
+    	Option option = findOption(request.getOptionId());
+    	option.decreaseQuantity(request.getQuantity());
+    	optionRepository.save(option);
+    	return option;
+    }
+    
+    private Order saveOrder(OrderRequest request, Option option) {
+    	Order order = request.toEntity(option);
+    	order.setOrderDateTime(LocalDateTime.now());
+    	orderRepository.save(order);
+    	return order;
     }
 
     private Option findOption(Long optionId) {
