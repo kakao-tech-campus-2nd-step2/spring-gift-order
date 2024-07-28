@@ -26,7 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
                 "/members/login",
                 "/api/categories/**",
                 "/api/kakao/login/**",
-                "/swagger/**",
+                "/swagger-ui/**",
                 "/v3/api-docs/**"); // 로그인 및 회원가입 요청은 제외
     }
 
