@@ -6,9 +6,11 @@ import gift.service.KakaoService;
 import gift.service.OrderService;
 import gift.service.TokenService;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -33,12 +35,19 @@ public class OrderController {
         this.tokenService = tokenService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getAllOrders() {
+        List<OrderResponse> response = orderService.getAllOrders();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PostMapping
     public ResponseEntity<OrderResponse> makeOrder(
-        @RequestHeader(value = "Authorization") String authCode,
+        @RequestHeader(value = "Authorization") String authorizationHeader,
         @RequestBody @Valid OrderRequest orderRequest
     ) {
-        OrderResponse orderResponse = orderService.makeOrder(orderRequest);
+        String token = tokenService.getBearerTokenFromHeader(authorizationHeader);
+        OrderResponse orderResponse = orderService.makeOrder(token, orderRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     }
 }

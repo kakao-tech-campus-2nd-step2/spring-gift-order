@@ -28,17 +28,22 @@ public class Order {
     private LocalDateTime orderDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "option_id", nullable = false)
     private Option option;
 
-    protected Order() {
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-    public Order(Long quantity, String message, LocalDateTime orderDateTime, Option option) {
+    public Order(
+        Long quantity, String message, LocalDateTime orderDateTime,
+        Option option, Member member
+    ) {
         this.quantity = quantity;
         this.message = message;
         this.orderDateTime = orderDateTime;
         this.option = option;
+        this.member = member;
     }
 
     public Long getId() {
@@ -59,5 +64,9 @@ public class Order {
 
     public Option getOption() {
         return option;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }

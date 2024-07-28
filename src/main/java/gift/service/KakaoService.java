@@ -61,7 +61,6 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        body.add("property_keys", "[\"kakao_account.email\"]");
         var response = restClient.post()
             .uri(kakaoProperties.getUserUri())
             .headers(httpHeaders -> httpHeaders.addAll(headers))

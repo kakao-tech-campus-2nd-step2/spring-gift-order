@@ -1,5 +1,6 @@
 package gift.controller.kakao;
 
+import gift.DTO.kakao.KakaoLoginResponse;
 import gift.DTO.kakao.KakaoMemberInfo;
 import gift.DTO.kakao.KakaoSignupRequest;
 import gift.domain.Member;
@@ -25,17 +26,18 @@ public class KakaoController {
     }
 
     @GetMapping
-    public ResponseEntity<KakaoMemberInfo> kakaoLogin(
+    public ResponseEntity<KakaoLoginResponse> kakaoLogin(
         @RequestParam("code") String authCode
     ) {
         String accessToken = kakaoService.sendTokenRequest(authCode);
         KakaoMemberInfo kakaoMemberInfo = kakaoService.getMemberInfo(accessToken);
         Long kakaoId = kakaoMemberInfo.id();
-        Member kakaoMemberFound = memberService.getMemberByKakaoId(kakaoId);
-        if (kakaoMemberFound == null) { // sign-up
+        if (memberService.getMemberByKakaoId(kakaoId) == null) { // sign-up
             memberService.registerKakaoMember(new KakaoSignupRequest(kakaoId));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(kakaoMemberInfo);
+        return ResponseEntity.status(HttpStatus.OK).body(
+            new KakaoLoginResponse(kakaoMemberInfo.id(), accessToken)
+        );
     }
 
 }
