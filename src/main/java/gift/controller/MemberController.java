@@ -1,12 +1,12 @@
 package gift.controller;
 
 import gift.argumentresolver.LoginMember;
+import gift.dto.JwtResponse;
 import gift.dto.MemberDTO;
 import gift.dto.MemberPasswordDTO;
 import gift.exception.NoSuchMemberException;
 import gift.service.MemberService;
 import jakarta.validation.Valid;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -29,7 +29,7 @@ public class MemberController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute MemberDTO memberDTO) {
         memberService.register(memberDTO);
-        return "redirect:/login";
+        return "redirect:/kakao/login";
     }
 
     @PostMapping("/login")
@@ -43,7 +43,7 @@ public class MemberController {
     }
 
     @PostMapping("/password")
-    public ResponseEntity<Map<String, String>> changePassword(
+    public ResponseEntity<JwtResponse> changePassword(
         @LoginMember MemberDTO memberDTO,
         @Valid @RequestBody MemberPasswordDTO memberPasswordDTO
     ) {

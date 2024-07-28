@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({NoSuchProductException.class, NoSuchWishedProductException.class,
+    @ExceptionHandler({NoSuchProductException.class, NoSuchMemberException.class, NoSuchWishedProductException.class,
         NoSuchCategoryException.class, NoSuchOptionException.class})
     public ProblemDetail handleNotFoundException(RuntimeException runtimeException) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
@@ -33,8 +33,8 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler({AlreadyExistMemberException.class, NoSuchMemberException.class,
-        InvalidPasswordException.class, NoOptionsForProductException.class})
+    @ExceptionHandler({AlreadyExistMemberException.class, InvalidPasswordException.class, NoOptionsForProductException.class,
+        InsufficientQuantityException.class,  NoKakaoTokenException.class, InvalidKakaoTalkTemplateException.class})
     public ProblemDetail handleRuntimeException(RuntimeException runtimeException) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setDetail(runtimeException.getMessage());

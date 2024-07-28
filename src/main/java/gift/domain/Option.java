@@ -71,4 +71,8 @@ public class Option {
     public int getQuantity() {
         return quantity;
     }
+
+    public Product getProduct() {
+        return product;
+    }
 }

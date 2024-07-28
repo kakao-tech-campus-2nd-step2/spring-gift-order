@@ -3,8 +3,10 @@ package gift.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "kakao_token")
 public class KakaoToken {
 
     @Id
@@ -25,5 +27,9 @@ public class KakaoToken {
         this.email = email;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 }

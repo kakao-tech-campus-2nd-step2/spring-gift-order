@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.JwtResponse;
 import gift.dto.KakaoProfileDTO;
 import gift.dto.KakaoTokenDTO;
 import gift.dto.MemberDTO;
@@ -7,7 +8,6 @@ import gift.repository.KakaoTokenRepository;
 import gift.util.JwtProvider;
 import gift.util.KakaoProperties;
 import java.net.URI;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
@@ -38,14 +38,14 @@ public class KakaoLoginService {
         this.kakaoTokenRepository = kakaoTokenRepository;
     }
 
-    public Map<String, String> login(String code) {
+    public JwtResponse login(String code) {
         var kakaoTokenDTO = getKakaoToken(code);
-        var kakaoProfileDTO = getKakaoProfile(kakaoTokenDTO);
+        var kakaoProfileDTO = getKakaoProfile(kakaoTokenDTO.access_token());
 
         String email = kakaoProfileDTO.kakao_account().email();
         MemberDTO foundMemberDTO = memberService.findMember(email);
         kakaoTokenRepository.save(kakaoTokenDTO.toEntity(email));
-        return Map.of("token:", jwtProvider.createAccessToken(foundMemberDTO));
+        return new JwtResponse(jwtProvider.createAccessToken(foundMemberDTO));
     }
 
     private KakaoTokenDTO getKakaoToken(String code) {
@@ -63,11 +63,11 @@ public class KakaoLoginService {
             .body(KakaoTokenDTO.class);
     }
 
-    private KakaoProfileDTO getKakaoProfile(KakaoTokenDTO kakaoTokenDTO) {
+    private KakaoProfileDTO getKakaoProfile(String kakaoAccessToken) {
         var client = RestClient.builder(restTemplate).build();
         return client.get()
             .uri(URI.create(KAKAO_PROFILE_URL))
-            .header("Authorization", "Bearer " + kakaoTokenDTO.access_token())
+            .header("Authorization", "Bearer " + kakaoAccessToken)
             .retrieve()
             .body(KakaoProfileDTO.class);
     }
