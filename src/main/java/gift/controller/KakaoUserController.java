@@ -32,8 +32,8 @@ public class KakaoUserController {
     }
 
     @GetMapping("/kakao/auth")
-    @Operation(summary = "카카오 인증 리다이렉트", description = "카카오 인증 페이지로 리다이렉트합니다.",
-        responses = @ApiResponse(responseCode = "302", description = "카카오 인증 리디렉트 성공"))
+    @Operation(summary = "카카오 인증 리다이렉트", description = "카카오 인증 페이지로 리다이렉트합니다.\n이 엔드포인트는 Swagger UI에서 직접 호출할 수 없습니다. 브라우저를 통해 직접 접근해야 합니다.",
+        responses = @ApiResponse(responseCode = "302", description = "카카오 인증 리다이렉트 성공"))
     public RedirectView redirectToAuthorization() {
         String url = kakaoUserService.getAuthorizationUrl();
         return new RedirectView(url);
