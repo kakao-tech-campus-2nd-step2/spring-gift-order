@@ -128,15 +128,12 @@ class OptionServiceTest {
     void subtractQuantity_success() {
         //given
         Option option = OptionFixture.createOption("테스트 옵션", 10);
-        when(optionRepository.findById(anyLong())).thenReturn(Optional.of(option));
 
         //when
-        optionService.subtractQuantity(any(), 5);
+        optionService.subtractQuantity(option, 5);
 
         //then
         assertThat(option.getQuantity()).isEqualTo(5);
-
-        verify(optionRepository).findById(anyLong());
     }
     
     @Test
@@ -144,10 +141,9 @@ class OptionServiceTest {
     void subtractQuantity_fail_notEnoughQuantity() {
         //given
         Option option = new Option("재고 부족한 옵션", 5);
-        when(optionRepository.findById(anyLong())).thenReturn(Optional.of(option));
 
         //then
-        assertThatThrownBy(() -> optionService.subtractQuantity(any(), 15))
+        assertThatThrownBy(() -> optionService.subtractQuantity(option, 15))
             .isInstanceOf(OptionNotEnoughStockException.class)
             .hasMessage(OptionErrorCode.NOT_ENOUGH_STOCK.getMessage());
     }

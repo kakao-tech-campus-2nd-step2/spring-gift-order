@@ -21,7 +21,6 @@ import gift.member.exception.MemberNotFoundByIdException;
 import gift.member.repository.MemberRepository;
 import gift.option.OptionFixture;
 import gift.option.entity.Option;
-import gift.option.repository.OptionRepository;
 import gift.option.service.OptionService;
 import gift.order.OrderFixture;
 import gift.order.dto.OrderReqDto;
@@ -49,9 +48,6 @@ class OrderServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private OptionRepository optionRepository;
 
     @Mock
     private OptionService optionService;
@@ -133,7 +129,7 @@ class OrderServiceTest {
         Member member = MemberFixture.createMember();
         member.getWishLists().add(WishListFixture.createWishList(member, product, 5));
 
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
+        given(optionService.findByIdOrThrow(any())).willReturn(option);
 
         given(memberRepository.findById(any())).willReturn(Optional.of(member));
 
@@ -187,7 +183,6 @@ class OrderServiceTest {
 
         Order order = OrderFixture.createOrder(member, option, 5, "메시지");
 
-        given(memberRepository.findById(any())).willReturn(Optional.of(member));
         given(orderRepository.findById(any())).willReturn(Optional.of(order));
 
         willAnswer(invocationOnMock -> {

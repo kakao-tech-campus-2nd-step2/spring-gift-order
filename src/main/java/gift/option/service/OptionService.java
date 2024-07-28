@@ -4,6 +4,8 @@ import gift.option.dto.OptionReqDto;
 import gift.option.entity.Option;
 import gift.option.exception.OptionDuplicatedNameException;
 import gift.option.exception.OptionNotEnoughStockException;
+import gift.option.exception.OptionNotFoundException;
+import gift.option.repository.OptionRepository;
 import gift.product.entity.Product;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OptionService {
+
+    private final OptionRepository optionRepository;
+
+    public OptionService(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public Option findByIdOrThrow(Long optionId) {
+        return optionRepository.findById(optionId)
+            .orElseThrow(() -> OptionNotFoundException.EXCEPTION);
+    }
 
     @Transactional
     public void addOptions(Product product, List<OptionReqDto> optionReqDtos) {
