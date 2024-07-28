@@ -52,6 +52,7 @@ dependencies {
     testImplementation 'capital.scalable:spring-auto-restdocs-core:2.0.11'
     testImplementation 'capital.scalable:spring-auto-restdocs-json-doclet:2.0.11'
     asciidoctorExt 'capital.scalable:spring-auto-restdocs-asciidoctor-extension:2.0.11'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 test {
