@@ -9,7 +9,7 @@ public class ReadMemberResponse {
     private String password;
     private String name;
 
-    private ReadMemberResponse(Long id, String email, String password, String name) {
+    public ReadMemberResponse(Long id, String email, String password, String name) {
         this.id = id;
         this.email = email;
         this.password = password;

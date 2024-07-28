@@ -95,7 +95,7 @@ class MemberApiControllerTest {
             member.getPassword().getValue()
         );
         LoginResponse loginResponse = memberService.login(loginRequest);
-        return loginResponse.getToken();
+        return Token.from(loginResponse.getAccessToken());
     }
 
     private void insertDummyData(int quantity) {
@@ -151,7 +151,7 @@ class MemberApiControllerTest {
         //then
         assertAll(
             () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-            () -> assertThat(response.getBody().getToken()).isNotNull()
+            () -> assertThat(response.getBody().getAccessToken()).isNotNull()
         );
     }
 

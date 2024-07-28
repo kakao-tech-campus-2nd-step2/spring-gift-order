@@ -35,8 +35,9 @@ public class CreateMemberRequest {
     public Member toEntity() {
         return new Member.Builder()
             .email(gift.domain.vo.Email.from(this.email))
-            .password(gift.domain.vo.Password.from(this.password))
+            .password(gift.domain.vo.Password.from(password))
             .name(this.name)
             .build();
     }
+
 }

@@ -51,11 +51,11 @@ VALUES
     ('Product 49', 49000, 'https://via.placeholder.com/4950', 3, NOW(), 1, NOW(), 1),
     ('Product 50', 50000, 'https://via.placeholder.com/5050', 3, NOW(), 1, NOW(), 1);
 
-INSERT INTO member(name, email, password, created_at, updated_at)
+INSERT INTO member(name, password, email, created_at, updated_at)
 VALUES
-    ('Member 1', 'member01@gmail.com', 'member010101', NOW(), NOW()),
-    ('Member 2', 'member02@gmail.com', 'member020202', NOW(), NOW()),
-    ('Member 3', 'member03@gmail.com', 'member030303', NOW(), NOW());
+    ('Member 1', 'password01', 'member01@gmail.com', NOW(), NOW()),
+    ('Member 2', 'password02', 'member02@gmail.com', NOW(), NOW()),
+    ('Member 3', 'password03', 'member03@gmail.com', NOW(), NOW());
 
 INSERT INTO wish_product(member_id, product_id, quantity, created_at, created_by, updated_at, updated_by)
 VALUES

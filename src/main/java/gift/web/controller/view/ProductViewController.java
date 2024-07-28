@@ -1,6 +1,8 @@
 package gift.web.controller.view;
 
+import gift.authentication.annotation.LoginMember;
 import gift.service.ProductService;
+import gift.web.dto.MemberDetails;
 import gift.web.dto.form.CreateProductForm;
 import gift.web.dto.response.product.ReadAllProductsResponse;
 import gift.web.dto.response.product.ReadProductResponse;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/view/products")
+@RequestMapping("/view")
 public class ProductViewController {
 
     private final ProductService productService;
@@ -21,7 +23,7 @@ public class ProductViewController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("/products")
     public String readAdminPage(Model model) {
         ReadAllProductsResponse allProductsResponse = productService.readAllProducts();
         List<ReadProductResponse> products = allProductsResponse.getProducts();
@@ -29,16 +31,32 @@ public class ProductViewController {
         return "admin";
     }
 
-    @GetMapping("/add")
+    @GetMapping("/products/add")
     public String addForm(Model model) {
         model.addAttribute("product", new CreateProductForm());
         return "form/add-product-form";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/products/{id}")
     public String editForm(@PathVariable Long id, Model model) {
         ReadProductResponse product = productService.readProductById(id);
         model.addAttribute("product", product);
         return "form/edit-product-form";
+    }
+
+    @GetMapping("/login")
+    public String loginForm() {
+        return "form/login-form";
+    }
+
+    @GetMapping("/register")
+    public String registerForm() {
+        return "form/register-form";
+    }
+
+    @GetMapping("/login-callback")
+    public String loginCallback(@LoginMember MemberDetails memberDetails, Model model) {
+        model.addAttribute("member", memberDetails);
+        return "login-callback";
     }
 }

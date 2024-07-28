@@ -6,6 +6,7 @@ import gift.domain.Member;
 import gift.domain.vo.Email;
 import gift.repository.MemberRepository;
 import gift.repository.WishProductRepository;
+import gift.web.client.dto.KakaoAccount;
 import gift.web.dto.request.LoginRequest;
 import gift.web.dto.request.member.CreateMemberRequest;
 import gift.web.dto.response.LoginResponse;
@@ -24,8 +25,7 @@ public class MemberService {
     private final WishProductRepository wishProductRepository;
     private final JwtProvider jwtProvider;
 
-    public MemberService(MemberRepository memberRepository,
-        WishProductRepository wishProductRepository,
+    public MemberService(MemberRepository memberRepository, WishProductRepository wishProductRepository,
         JwtProvider jwtProvider) {
         this.memberRepository = memberRepository;
         this.wishProductRepository = wishProductRepository;
@@ -45,6 +45,12 @@ public class MemberService {
         return ReadMemberResponse.fromEntity(member);
     }
 
+    public Member findOrCreateMember(KakaoAccount kakaoAccount) {
+        String email = kakaoAccount.getEmail();
+        return memberRepository.findByEmail(Email.from(email))
+            .orElseGet(() -> memberRepository.save(kakaoAccount.toMember()));
+    }
+
     public void deleteMember(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(NoSuchElementException::new);
         wishProductRepository.deleteAllByMemberId(id);
@@ -59,6 +65,6 @@ public class MemberService {
 
         Token token = jwtProvider.generateToken(member);
 
-        return new LoginResponse(token);
+        return new LoginResponse(token.getValue());
     }
 }

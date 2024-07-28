@@ -110,6 +110,6 @@ class MemberServiceTest {
         LoginResponse response = memberService.login(request);
 
         //then
-        assertThat(response.getToken()).isNotNull();
+        assertThat(response.getAccessToken()).isNotNull();
     }
 }

@@ -1,13 +1,19 @@
 package gift.domain;
 
 import gift.domain.base.BaseTimeEntity;
+import gift.domain.constants.Platform;
 import gift.domain.vo.Email;
 import gift.domain.vo.Password;
 import gift.web.validation.exception.client.IncorrectPasswordException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
+@DynamicInsert
 @Entity
 public class Member extends BaseTimeEntity {
 
@@ -20,6 +26,11 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'GIFT'")
+    private Platform platform;
+
     protected Member() {
     }
 
@@ -28,6 +39,7 @@ public class Member extends BaseTimeEntity {
         private Email email;
         private Password password;
         private String name;
+        private Platform platform;
 
         public Builder email(Email email) {
             this.email = email;
@@ -41,6 +53,11 @@ public class Member extends BaseTimeEntity {
 
         public Builder name(String name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder platform(Platform platform) {
+            this.platform = platform;
             return this;
         }
 
@@ -60,6 +77,7 @@ public class Member extends BaseTimeEntity {
         email = builder.email;
         password = builder.password;
         name = builder.name;
+        platform = builder.platform;
     }
 
     public Email getEmail() {
@@ -74,7 +92,11 @@ public class Member extends BaseTimeEntity {
         return name;
     }
 
-    public void matchPassword(String password) {
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public void matchPassword(final String password) {
         if (!this.password.matches(password)) {
             throw new IncorrectPasswordException();
         }

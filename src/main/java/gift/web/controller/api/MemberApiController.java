@@ -9,6 +9,7 @@ import gift.web.dto.request.member.CreateMemberRequest;
 import gift.web.dto.request.wishproduct.UpdateWishProductRequest;
 import gift.web.dto.response.LoginResponse;
 import gift.web.dto.response.member.CreateMemberResponse;
+import gift.web.dto.response.member.ReadMemberResponse;
 import gift.web.dto.response.wishproduct.ReadAllWishProductsResponse;
 import gift.web.dto.response.wishproduct.UpdateWishProductResponse;
 import java.net.URI;
@@ -51,6 +52,12 @@ public class MemberApiController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Validated @RequestBody LoginRequest request) {
         LoginResponse response = memberService.login(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<ReadMemberResponse> readMember(@PathVariable Long memberId) {
+        ReadMemberResponse response = memberService.readMember(memberId);
         return ResponseEntity.ok(response);
     }
 
