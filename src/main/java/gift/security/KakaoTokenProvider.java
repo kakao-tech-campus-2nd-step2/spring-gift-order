@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.net.URI;
 
@@ -24,6 +23,7 @@ public class KakaoTokenProvider {
 
     private final RestClient client = RestClient.builder().build();
 
+    // 새로운 액세스 토큰을 발급받는 메소드
     public String getToken(String code) throws Exception {
         var url = "https://kauth.kakao.com/oauth/token";
         var body = new LinkedMultiValueMap<String, String>();
@@ -44,35 +44,28 @@ public class KakaoTokenProvider {
         JsonNode jsonNode = objectMapper.readTree(resBody);
 
         if (jsonNode.has("error")) {
-            throw new RuntimeException("Failed to get access token: " + jsonNode.get("error_description").asText());
+            throw new RuntimeException("액세스 토큰 발급 실패: " + jsonNode.get("error_description").asText());
         }
 
         return jsonNode.get("access_token").asText();
     }
 
+    // 카카오 메시지 전송
     public void sendMessage(String accessToken, String templateObject) throws Exception {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         var body = new LinkedMultiValueMap<String, String>();
         body.add("template_object", templateObject);
 
-        try {
-            ResponseEntity<String> entity = client.post()
-                    .uri(URI.create(url))
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .body(body)
-                    .retrieve()
-                    .toEntity(String.class);
+        ResponseEntity<String> entity = client.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .body(body)
+                .retrieve()
+                .toEntity(String.class);
 
-            if (entity.getStatusCode().isError()) {
-                throw new RuntimeException("Failed to send Kakao message: " + entity.getBody());
-            }
-        } catch (HttpClientErrorException e) {
-            throw new RuntimeException("Failed to send Kakao message: " + e.getResponseBodyAsString(), e);
+        if (entity.getStatusCode().isError()) {
+            throw new RuntimeException("카카오 메시지 전송 실패: " + entity.getBody());
         }
-    }
-
-    public String getTokenForUser(String email) {
-        return "sample_access_token";
     }
 }
