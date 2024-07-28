@@ -3,6 +3,8 @@ package gift.repository;
 import gift.domain.KakaoToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface KakaoTokenRepository extends JpaRepository<KakaoToken, Long> {
-    KakaoToken findByMemberId(Long memberId);
+    Optional<KakaoToken> findByMemberId(Long memberId);
 }

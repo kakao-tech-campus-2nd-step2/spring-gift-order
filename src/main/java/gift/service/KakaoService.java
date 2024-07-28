@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class KakaoService {
@@ -86,10 +87,9 @@ public class KakaoService {
     }
 
     public void sendOrderMessage(Long memberId, Order order) throws Exception {
-        KakaoToken kakaoToken = kakaoTokenRepository.findByMemberId(memberId);
-        if (kakaoToken == null) {
-            throw new Exception("Kakao token not found for member ID " + memberId);
-        }
+        Optional<KakaoToken> optionalKakaoToken = kakaoTokenRepository.findByMemberId(memberId);
+
+        KakaoToken kakaoToken = optionalKakaoToken.orElseThrow(() -> new Exception("Kakao token not found for member ID " + memberId));
 
         String messageTemplate = createOrderMessage(order);
         sendMessage(kakaoToken.getAccessToken(), messageTemplate);
