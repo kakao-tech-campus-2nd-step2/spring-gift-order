@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class KakaoLogisterService {
+public class KakaoAuthService {
     private final KakaoTokenService kakaoTokenService;
     private final MemberService memberService;
 
-    public KakaoLogisterService(KakaoTokenService kakaoTokenService, MemberService memberService) {
+    public KakaoAuthService(KakaoTokenService kakaoTokenService, MemberService memberService) {
         this.kakaoTokenService = kakaoTokenService;
         this.memberService = memberService;
     }
