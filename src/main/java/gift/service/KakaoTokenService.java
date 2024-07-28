@@ -13,7 +13,7 @@ public class KakaoTokenService {
     private KakaoTokenRepository kakaoTokenRepository;
 
     @Transactional
-    public KakaoToken saveToken(Long memberId, String email, String accessToken) {
+    public void saveToken(Long memberId, String email, String accessToken) {
         KakaoToken kakaoToken = kakaoTokenRepository.findByMemberId(memberId);
 
         if (kakaoToken == null) {
@@ -24,6 +24,6 @@ public class KakaoTokenService {
 
         kakaoToken.setAccessToken(accessToken);
 
-        return kakaoTokenRepository.save(kakaoToken);
+        kakaoTokenRepository.save(kakaoToken);
     }
 }
