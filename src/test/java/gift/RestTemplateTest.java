@@ -4,8 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,18 +28,25 @@ public class RestTemplateTest {
     @Autowired
     private KakaoProperties properties;
 
-    // 최신 인가 코드를 입력합니다.
-    private final String authorizationCode = "";
+    private static Dotenv dotenv;
+    private static String authorizationCode;
+
+    @BeforeAll
+    public static void setup() {
+        dotenv = Dotenv.load();
+        authorizationCode = dotenv.get("AUTHORIZATION_CODE");
+    }
 
     @Test
+    @Disabled("외부 API 호출 테스트로, 필요시 수동으로 실행하세요.")
     void testKakaoProperties() {
         assertThat(properties.getClientId()).isNotEmpty();
         assertThat(properties.getRedirectUri()).isNotEmpty();
         assertThat(properties.getClientSecret()).isNotEmpty();
-        System.out.println(properties);
     }
 
     @Test
+    @Disabled("외부 API 호출 테스트로, 필요시 수동으로 실행하세요.")
     void testGetAccessToken() {
         var url = "https://kauth.kakao.com/oauth/token";
         var headers = new HttpHeaders();

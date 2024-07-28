@@ -39,3 +39,12 @@ CREATE TABLE IF NOT EXISTS wish (
     FOREIGN KEY (member_id) REFERENCES member(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
 );
+
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    option_id BIGINT NOT NULL,
+    quantity INT NOT NULL,
+    order_date_time TIMESTAMP NOT NULL,
+    message VARCHAR(500),
+    FOREIGN KEY (option_id) REFERENCES option(id)
+);
