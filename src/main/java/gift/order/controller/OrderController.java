@@ -1,13 +1,12 @@
 package gift.order.controller;
 
-import gift.option.repository.OptionRepository;
 import gift.option.service.OptionService;
 import gift.order.domain.OrderRequest;
 import gift.order.domain.OrderResponse;
 import gift.order.service.OrderService;
-import gift.utility.JwtUtil;
-import gift.wish.repository.WishlistRepository;
 import gift.wish.service.WishlistService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "Order")
 public class OrderController {
     private final OrderService orderService;
     private final OptionService optionService;
@@ -33,6 +33,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "order 가져오기")
     public ResponseEntity<OrderResponse> getOrder(
         @RequestBody OrderRequest orderRequest,
         @RequestParam("userId") Long userId,

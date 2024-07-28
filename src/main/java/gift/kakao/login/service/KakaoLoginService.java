@@ -1,15 +1,17 @@
 package gift.kakao.login.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.kakao.login.dto.KakaoMessageSendResponse;
 import gift.kakao.login.dto.KakaoTokenResponseDTO;
 import gift.kakao.login.dto.KakaoUser;
 import gift.kakao.login.dto.KakaoUserInfoResponse;
+import gift.kakao.login.dto.LinkObject;
+import gift.kakao.login.dto.TemplateObject;
 import gift.user.repository.UserRepository;
-import gift.user.service.UserService;
 import gift.utility.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -21,20 +23,25 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoLoginService {
-    @Autowired
-    RestClient client;
+    private final RestClient client;
 
     private final String clientId;
     private final String redirectUri;
+
+    private final ObjectMapper objectMapper;
 
     private final UserRepository userRepository;
 
     public KakaoLoginService(@Value("${kakao.client-id}") String clientId,
         @Value("${kakao.redirect-uri}") String redirectUri,
-        UserRepository userRepository){
+        UserRepository userRepository,
+        RestClient client,
+        ObjectMapper objectMapper){
         this.clientId = clientId;
         this.redirectUri = redirectUri;
         this.userRepository = userRepository;
+        this.client = client;
+        this.objectMapper = objectMapper;
     }
 
     public String getAccessToken(String code){
@@ -96,16 +103,19 @@ public class KakaoLoginService {
     }
 
     private @NotNull MultiValueMap<String, String> createSendMsgBody(String message){
-        JSONObject linkObject = new JSONObject();
-        linkObject.put("web_url", "www.naver.com");
+        LinkObject link = new LinkObject("www.naver.com");
+        TemplateObject template = new TemplateObject("text", message, link);
 
-        JSONObject templateObject = new JSONObject();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", message);
-        templateObject.put("link", linkObject);
+        String jsonString = "";
+
+        try {
+            jsonString = objectMapper.writeValueAsString(template);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("template_object", templateObject.toString());
+        body.add("template_object", jsonString);
 
         return body;
     }
