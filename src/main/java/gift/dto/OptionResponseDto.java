@@ -1,10 +1,10 @@
 package gift.dto;
 
 public class OptionResponseDto {
-    private Long id;
-    private String name;
-    private Long quantity;
-    private Long product_id;
+    private final Long id;
+    private final String name;
+    private final Long quantity;
+    private final Long product_id;
 
     public OptionResponseDto(Long id, String name, Long quantity, Long product_id) {
         this.id = id;

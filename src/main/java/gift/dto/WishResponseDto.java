@@ -1,9 +1,9 @@
 package gift.dto;
 
 public class WishResponseDto {
-    private Long id;
-    private Long productId;
-    private String tokenValue;
+    private final Long id;
+    private final Long productId;
+    private final String tokenValue;
 
     public WishResponseDto(Long id, Long productId, String tokenValue) {
         this.id = id;

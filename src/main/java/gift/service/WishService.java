@@ -33,6 +33,11 @@ public class WishService {
 
     }
 
+    public Wish findByProductIdAndMemberId(Long productId, Long memberId) {
+        Wish wish = wishRepository.findByProductIdAndMemberId(productId, memberId);
+        return wish;
+    }
+
     public WishResponseDto save(Long productId, String tokenValue) {
 
         Long userId = translateIdFrom(tokenValue);
@@ -45,7 +50,7 @@ public class WishService {
 
     public List<WishResponseDto> getAll(String tokenValue) {
         Long memberId = translateIdFrom(tokenValue);
-        List<Wish> wishes = wishRepository.findAllByMember_id(memberId);
+        List<Wish> wishes = wishRepository.findAllByMemberId(memberId);
         List<WishResponseDto> wishResponseDtos = wishes.stream().map(this::fromEntity).toList();
         return wishResponseDtos;
     }
@@ -59,17 +64,9 @@ public class WishService {
         return Base64.getEncoder().encodeToString(userId.toString().getBytes());
     }
 
-    public boolean delete(Long id, String token) throws IllegalAccessException {
-
-        Long userId = translateIdFrom(token);
+    public void delete(Long id) throws IllegalAccessException {
         Wish candidateWish = wishRepository.findById(id).get();
-        Long wishUserId = candidateWish.getMemberId();
-
-        if (userId.equals(wishUserId)) {
-            wishRepository.delete(candidateWish);
-            return true;
-        }
-        return false;
+        wishRepository.delete(candidateWish);
     }
 
     private Long translateIdFrom(String tokenValue) {

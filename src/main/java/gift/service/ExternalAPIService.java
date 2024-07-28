@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.entity.Properties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,9 +18,11 @@ import java.net.URI;
 @Service
 public class ExternalAPIService {
 
-    String kakaoOauthAuthorizeUrl= "https://kauth.kakao.com/oauth/authorize";
+    String kakaoOauthAuthorizeUrl = "https://kauth.kakao.com/oauth/authorize";
     String kakaoOauthTokenUrl = "https://kauth.kakao.com/oauth/token";
     Properties properties;
+    private static final Logger logger = LoggerFactory.getLogger(ExternalAPIService.class);
+
 
     private final RestTemplate client = new RestTemplateBuilder().build();
 
@@ -30,40 +34,31 @@ public class ExternalAPIService {
 
         String code = null;
         String state = null;
-        String error = null;
-        String errorDescription = null;
+
         for (String param : params) {
             String[] keyValue = param.split("=");
             if (keyValue[0].equals("code")) {
                 code = keyValue[1];
             } else if (keyValue[0].equals("state")) {
                 state = keyValue[1];
-            } else if (keyValue[0].equals("error")) {
-                error = keyValue[1];
-            } else if (keyValue[0].equals("error_description")) {
-                errorDescription = keyValue[1];
             }
         }
 
         if (code != null && state != null) {
             getKakaoToken(code);
-        } else if (error != null && errorDescription != null) {
-            handleError(error, errorDescription);
-        } else {
-            handleUnexpectedResponse();
         }
     }
 
 
     public void getKakaoAuthorize() {
         var headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var body = new LinkedMultiValueMap<String,String>();
-        body.add("response_type","code");
-        body.add("client_id",properties.getClientId());
-        body.add("redirect_uri",properties.getRedirectUri());
-        body.add("state","state");
-        var request =new RequestEntity<>(body,headers, HttpMethod.GET, URI.create(kakaoOauthAuthorizeUrl));
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("response_type", "code");
+        body.add("client_id", properties.getClientId());
+        body.add("redirect_uri", properties.getRedirectUri());
+        body.add("state", "state");
+        var request = new RequestEntity<>(body, headers, HttpMethod.GET, URI.create(kakaoOauthAuthorizeUrl));
         var response = client.exchange(request, String.class);
 
         if (response.getStatusCode() == HttpStatus.FOUND) {
@@ -72,24 +67,25 @@ public class ExternalAPIService {
         }
     }
 
-    public void getKakaoToken() {
+    public void getKakaoToken(String code) {
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var body = new LinkedMultiValueMap<String,String>();
-        body.add("grant_type","authorization_code");
-        body.add("client_id",properties.getClientId());
-        body.add("redirect_uri",properties.getRedirectUri());
-        body.add("code",properties.getAuthorizationCode());
-        var request =new RequestEntity<>(body,headers, HttpMethod.POST, URI.create(kakaoOauthTokenUrl));
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("grant_type", "authorization_code");
+        body.add("client_id", properties.getClientId());
+        body.add("redirect_uri", properties.getRedirectUri());
+        body.add("code", code);
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(kakaoOauthTokenUrl));
         var response = client.exchange(request, String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println("Token response: " + response.getBody());
+            logger.info("Token response: " + response.getBody());
         } else {
-            System.out.println("Failed to get token. Status code: " + response.getStatusCode());
+            logger.error("토큰 가져오기 실패, 상태코드: " + response.getStatusCode());
         }
     }
 
+    public void sendKakaoMessageToMe() {
 
+    }
 }
-

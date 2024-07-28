@@ -1,14 +1,11 @@
 package gift.entity;
 
 public class Properties {
-    private String clientId;
-    private String redirectUri;
-    private String authorizationCode;
-
-
+    private final String clientId;
+    private final String redirectUri;
 
     public Properties() {
-        this("51e91e613f587d79dc0bfa02e3054f95","http://localhost:8080");
+        this("https://developers.kakao.com/console/app/1109424/config/appKey 여기에서 RestAPI키받아서 넣기", "http://localhost:8080");
     }
 
     public Properties(String clientId, String redirectUri) {
@@ -24,7 +21,4 @@ public class Properties {
         return redirectUri;
     }
 
-    public String getAuthorizationCode() {
-        return authorizationCode;
-    }
 }

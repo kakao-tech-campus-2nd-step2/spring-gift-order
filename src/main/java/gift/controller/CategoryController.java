@@ -24,12 +24,12 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<List<CategoryResponseDto>> getAllCategories() {
         List<CategoryResponseDto> categoryResponseDto = categoryService.getAllCategoryResponseDto();
-        return new ResponseEntity<>(categoryResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(categoryResponseDto, HttpStatus.OK);
     }
 
     @GetMapping("/{product_id}")
     public ResponseEntity<CategoryResponseDto> getCategoryDtoByProductId(@RequestParam("product_id") Long productId) {
         CategoryResponseDto categoryResponseDto = categoryService.getCategoryDtoByProductId(productId);
-        return new ResponseEntity<>(categoryResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(categoryResponseDto, HttpStatus.OK);
     }
 }

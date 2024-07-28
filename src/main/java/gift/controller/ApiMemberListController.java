@@ -20,6 +20,6 @@ public class ApiMemberListController {
     @GetMapping("/user/list")
     public ResponseEntity<List<MemberResponseDto>> UserList() {
         List<MemberResponseDto> memberResponseDto = memberService.getAllMemberResponseDto();
-        return new ResponseEntity<>(memberResponseDto,HttpStatus.OK);
+        return new ResponseEntity<>(memberResponseDto, HttpStatus.OK);
     }
 }
