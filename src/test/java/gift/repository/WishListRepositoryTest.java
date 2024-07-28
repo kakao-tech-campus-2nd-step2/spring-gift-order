@@ -20,6 +20,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @DataJpaTest
 public class WishListRepositoryTest {
@@ -50,7 +54,7 @@ public class WishListRepositoryTest {
         option.setProduct(product);
         productRepository.save(product);
         optionRepository.save(option);
-        user = new User("admin@email.com", "1234");
+        user = new User("admin@email.com", "1234", "local");
         userRepository.save(user);
     }
 
@@ -78,8 +82,8 @@ public class WishListRepositoryTest {
     }
 
     @Test
-    @DisplayName("이메일 위시리스트 전체 찾기")
-    void findAllByEmail() {
+    @DisplayName("유저 아이디 위시리스트 전체 찾기")
+    void findAllByUserId() {
         //Given
         Product product2 = new Product("라이언", 3000, "example.jpg", category, options);
         productRepository.save(product2);
@@ -90,26 +94,161 @@ public class WishListRepositoryTest {
         wishListRepository.save(wishList);
         wishListRepository.save(wishList1);
 
+        int page = 0;
+        int size = 10;
+        String sortBy = "id";
+        Sort.Direction direction = Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        List<WishList> expected = List.of(wishList, wishList1);
+
         //When
-        List<WishList> actual = wishListRepository.findAllByUserId(user.getId());
+        Page<WishList> result = wishListRepository.findAllByUserId(user.getId(), pageable);
 
         //Then
-        assertThat(actual).hasSize(2);
-        assertThat(actual.getFirst().getId()).isNotNull();
-        assertThat(actual.get(1).getId()).isNotNull();
-        assertThat(actual)
-            .containsExactly(wishList, wishList1);
+        assertThat(result.getTotalElements()).isEqualTo(expected.size());
+        assertThat(result.getContent().get(0))
+            .extracting(WishList::getUser, WishList::getOption, WishList::getProduct, WishList::getNum)
+            .containsExactly(expected.getFirst().getUser(), expected.getFirst().getOption(),
+                expected.getFirst().getProduct(), expected.getFirst().getNum());
+        assertThat(result.getContent().get(1))
+            .extracting(WishList::getUser, WishList::getOption, WishList::getProduct, WishList::getNum)
+            .containsExactly(expected.get(1).getUser(), expected.get(1).getOption(),
+                expected.get(1).getProduct(), expected.get(1).getNum());
     }
 
     @Test
-    @DisplayName("위시리스트 이메일과 상품 아이디로 삭제하기")
-    void deleteByEmailAndProductId() {
+    @DisplayName("위시리스트 아이디로 찾기")
+    void findById() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+        WishList expected = new WishList(user, product, 3, option);
+
+        //When
+        Optional<WishList> actual = wishListRepository.findById(wishList.getId());
+
+        //Then
+        assertThat(actual).isPresent();
+        assertThat(actual.get())
+            .extracting(WishList::getUser, WishList::getProduct, WishList::getOption)
+            .containsExactly(expected.getUser(), expected.getProduct(), expected.getOption());
+    }
+
+    @Test
+    @DisplayName("위시리스트 아이디와 유저 아이디로 존재 여부 확인 시 존재함")
+    void existsByIdAndUserId() {
         //Given
         WishList wishList = new WishList(user, product, 3, option);
         wishListRepository.save(wishList);
 
         //When
-        wishListRepository.deleteByUserIdAndProductId(user.getId(), product.getId());
+        boolean actual = wishListRepository.existsByIdAndUserId(wishList.getId(), user.getId());
+
+        //Then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("위시리스트 아이디와 유저 아이디로 존재 여부 확인 시 존재하지 않음")
+    void notExistsByIdAndUserId() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        boolean actual = wishListRepository.existsByIdAndUserId(wishList.getId() + 1,
+            user.getId());
+
+        //Then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("유저 아이디, 상품 아이디, 옵션 아이디로 위시리스트 존재 여부 확인 시 존재함")
+    void existsByUserIdAndProductIdAndOptionId() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        boolean actual = wishListRepository.existsByUserIdAndProductIdAndOptionId(user.getId(),
+            product.getId(), option.getId());
+
+        //Then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("유저 아이디, 상품 아이디, 옵션 아이디로 위시리스트 존재 여부 확인 시 존재하지 않음")
+    void notExistsByUserIdAndProductIdAndOptionId() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        boolean actual = wishListRepository.existsByUserIdAndProductIdAndOptionId(user.getId(),
+            product.getId(), option.getId() + 1);
+
+        //Then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("유저 아이디, 상품 아이디, 옵션 아이디로 위시리스트 존재하며 위시리스트 아이디로 존재하지 않음")
+    void existsByUserIdAndProductIdAndOptionIdAndIdNot() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        boolean actual = wishListRepository.existsByUserIdAndProductIdAndOptionIdAndIdNot(user.getId(),
+            product.getId(), option.getId(), wishList.getId() + 1);
+
+        //Then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("유저 아이디, 상품 아이디, 옵션 아이디로 위시리스트 존재하지 않거나 위시리스트 아이디로 존재함")
+    void existsByUserIdAndProductIdAndOptionIdAndIdNotReturnFalse() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        boolean actual = wishListRepository.existsByUserIdAndProductIdAndOptionIdAndIdNot(user.getId(),
+            product.getId(), option.getId(), wishList.getId());
+
+        //Then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("유저 아이디, 상품 아이디, 옵션 아이디로 위시리스트 삭제하기")
+    void deleteByUserIdAndProductIdAndOptionId() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        wishListRepository.deleteByUserIdAndProductIdAndOptionId(user.getId(), product.getId(),
+            option.getId());
+        Optional<WishList> actual = wishListRepository.findById(wishList.getId());
+
+        //Then
+        assertThat(actual).isNotPresent();
+    }
+
+    @Test
+    @DisplayName("위시리스트 아이디로 위시리스트 삭제하기")
+    void deleteById() {
+        //Given
+        WishList wishList = new WishList(user, product, 3, option);
+        wishListRepository.save(wishList);
+
+        //When
+        wishListRepository.deleteById(wishList.getId());
         Optional<WishList> actual = wishListRepository.findById(wishList.getId());
 
         //Then

@@ -1,7 +1,7 @@
 package gift.users.wishlist;
 
 import gift.util.PageUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import java.util.Arrays;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
@@ -29,13 +29,11 @@ public class WishListApiController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<Page<WishListDTO>> getWishList(@PathVariable("userId") long userId,
-        HttpServletRequest request,
         @RequestParam(value = "page", required = false, defaultValue = "0") int page,
         @RequestParam(value = "size", required = false, defaultValue = "10") int size,
         @RequestParam(value = "sortBy", required = false, defaultValue = "id") String sortBy,
         @RequestParam(value = "sortDirection", required = false, defaultValue = "asc") String sortDirection) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         size = PageUtil.validateSize(size);
         sortBy = PageUtil.validateSortBy(sortBy, Arrays.asList("id", "productId", "num"));
         Direction direction = PageUtil.validateDirection(sortDirection);
@@ -47,30 +45,27 @@ public class WishListApiController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<WishListDTO> addWishList(@PathVariable("userId") long userId,
-        HttpServletRequest request, @RequestBody WishListDTO wishListDTO) {
+        @Valid @RequestBody WishListDTO wishListDTO) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
         WishListDTO result = wishListService.addWishList(wishListDTO, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/{userId}/{productId}")
+    @PutMapping("/{userId}/{wishListId}")
     public ResponseEntity<WishListDTO> updateWishList(@PathVariable("userId") long userId,
-        @PathVariable("productId") long productId, HttpServletRequest request,
-        @RequestBody WishListDTO wishListDTO) {
+        @PathVariable("wishListId") long wishListId,
+        @Valid @RequestBody WishListDTO wishListDTO) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
-        WishListDTO result = wishListService.updateWishList(userId, productId,
+        WishListDTO result = wishListService.updateWishList(userId, wishListId,
             wishListDTO);
         return ResponseEntity.ok().body(result);
     }
 
-    @DeleteMapping("/{userId}/{productId}")
-    public ResponseEntity<Void> deleteWishList(@PathVariable("userId") long userId,
-        @PathVariable("productId") long productId, HttpServletRequest request) {
+    @DeleteMapping("/{userId}/{wishListId}")
+    public ResponseEntity<Void> deleteWishListByWishListId(@PathVariable("userId") long userId,
+        @PathVariable("wishListId") long wishListId) {
 
-        wishListService.extractUserIdFromTokenAndValidate(request, userId);
-        wishListService.deleteWishList(userId, productId);
+        wishListService.deleteWishListByWishListId(userId, wishListId);
         return ResponseEntity.ok().build();
     }
 }

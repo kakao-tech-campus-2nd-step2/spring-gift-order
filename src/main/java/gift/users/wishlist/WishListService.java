@@ -6,11 +6,10 @@ import gift.administrator.option.OptionService;
 import gift.administrator.product.Product;
 import gift.administrator.product.ProductDTO;
 import gift.administrator.product.ProductService;
+import gift.error.NotFoundIdException;
 import gift.users.user.User;
 import gift.users.user.UserDTO;
 import gift.users.user.UserService;
-import gift.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,10 +17,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class WishListService {
@@ -30,19 +27,13 @@ public class WishListService {
     private final ProductService productService;
     private final UserService userService;
     private final OptionService optionService;
-    private final JwtUtil jwtUtil;
-
-    private static final String HEADER_NAME = "Authorization";
-    private static final String HEADER_VALUE = "Bearer ";
 
     public WishListService(WishListRepository wishListRepository, ProductService productService,
-        UserService userService, OptionService optionService,
-        JwtUtil jwtUtil) {
+        UserService userService, OptionService optionService) {
         this.wishListRepository = wishListRepository;
         this.productService = productService;
         this.userService = userService;
         this.optionService = optionService;
-        this.jwtUtil = jwtUtil;
     }
 
     public Page<WishListDTO> getWishListsByUserId(long id, int page, int size, Direction direction,
@@ -56,22 +47,13 @@ public class WishListService {
         return new PageImpl<>(wishLists, pageRequest, wishListPage.getTotalElements());
     }
 
-    public void extractUserIdFromTokenAndValidate(HttpServletRequest request, Long userId) {
-        String authHeader = request.getHeader(HEADER_NAME);
-        if (authHeader == null || !authHeader.startsWith(HEADER_VALUE)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
-        }
-        String token = authHeader.substring(7);
-        String tokenUserId = jwtUtil.extractUserId(token);
-        if (!userId.toString().equals(tokenUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "유저 아이디가 토큰과 일치하지 않습니다.");
-        }
-    }
-
     public WishListDTO addWishList(WishListDTO wishListDTO, Long userId) {
         UserDTO userDTO = userService.findById(userId);
         User user = userDTO.toUser();
-        validateIfProductExists(userId, wishListDTO.getProductId(), user.getEmail());
+        validateIfProductAndOptionExists(userId, wishListDTO.getProductId(),
+            wishListDTO.getOptionId());
+
+        validateProductId(wishListDTO.getProductId());
         validateOptionId(wishListDTO.getProductId(), wishListDTO.getOptionId());
 
         Product product = toProductByProductIdAndSetOption(wishListDTO.getProductId());
@@ -80,13 +62,17 @@ public class WishListService {
         Option option = optionDTO.toOption(product);
 
         WishList wishList = new WishList(user, product, wishListDTO.getNum(), option);
-        user.addWishList(wishList);
-        product.addWishList(wishList);
         wishListRepository.save(wishList);
         return WishListDTO.fromWishList(wishList);
     }
 
-    public void validateOptionId(long productId, long optionId) {
+    private void validateProductId(long productId){
+        if(productService.existsByProductId(productId)){
+            throw new IllegalArgumentException(productId + " 상품은 존재하지 않습니다.");
+        }
+    }
+
+    private void validateOptionId(long productId, long optionId) {
         if (!optionService.existsByOptionIdAndProductId(optionId,
             productId)) {
             throw new IllegalArgumentException(
@@ -94,22 +80,41 @@ public class WishListService {
         }
     }
 
-    public WishListDTO updateWishList(long userId, long productId, WishListDTO wishListDTO) {
-        validateIfProductNotExists(userId, productId);
+    public WishListDTO updateWishList(long userId, long wishListId, WishListDTO wishListDTO) {
+        validateIfWishListNotExists(userId, wishListId);
+        validateIfProductAndOptionExistsAndNotThis(userId, wishListDTO.getProductId(),
+            wishListDTO.getOptionId(), wishListId);
 
-        WishList wishList = wishListRepository.findByUserIdAndProductId(userId, productId);
-        validateOptionId(productId, wishListDTO.getOptionId());
+        WishList wishList = wishListRepository.findById(wishListId).orElseThrow(() -> new NotFoundIdException("없는 위시리스트입니다."));
 
-        Product product = toProductByProductIdAndSetOption(productId);
+        validateProductId(wishListDTO.getProductId());
+        validateOptionId(wishListDTO.getProductId(), wishListDTO.getOptionId());
+
+        Product product = toProductByProductIdAndSetOption(wishListDTO.getProductId());
 
         OptionDTO newOptionDTO = optionService.findOptionById(wishListDTO.getOptionId());
         Option newOption = newOptionDTO.toOption(product);
 
+        wishList.setProduct(product);
         wishList.setOption(newOption);
         wishList.setNum(wishListDTO.getNum());
-        newOption.addWishList(wishList);
+
         wishListRepository.save(wishList);
         return WishListDTO.fromWishList(wishList);
+    }
+
+    private void validateIfProductAndOptionExistsAndNotThis(long userId, long productId, long optionId,
+        long wishListId){
+        if (wishListRepository.existsByUserIdAndProductIdAndOptionIdAndIdNot(userId,
+            productId, optionId, wishListId)) {
+            throw new IllegalArgumentException(userId + "의 위시리스트에 존재하는 상품 옵션입니다.");
+        }
+    }
+
+    private void validateIfWishListNotExists(long userId, long wishListId){
+        if(!wishListRepository.existsByIdAndUserId(wishListId, userId)){
+            throw new IllegalArgumentException(userId + "의 위시리스트에는 " + wishListId + " 위시리스트가 존재하지 않습니다.");
+        }
     }
 
     private Product toProductByProductIdAndSetOption(long productId) {
@@ -122,34 +127,24 @@ public class WishListService {
         return product;
     }
 
-    private void validateIfProductNotExists(long userId, long productId) {
-        if (!wishListRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new IllegalArgumentException(
-                userService.findById(userId).email() + "의 위시리스트에는 " + productService.getProductById(
-                    productId).getName()
-                    + " 상품이 존재하지 않습니다.");
-        }
-    }
-
-    private void validateIfProductExists(long userId, long productId, String email){
-        if (wishListRepository.existsByUserIdAndProductId(userId,
-            productId)) {
-            throw new IllegalArgumentException(email + "의 위시리스트에 존재하는 상품입니다.");
+    private void validateIfProductAndOptionExists(long userId, long productId, long optionId) {
+        if (wishListRepository.existsByUserIdAndProductIdAndOptionId(userId,
+            productId, optionId)) {
+            throw new IllegalArgumentException(userId + "의 위시리스트에 존재하는 상품 옵션입니다.");
         }
     }
 
     @Transactional
-    public void deleteWishList(long userId, long productId) {
-        if (!wishListRepository.existsByUserIdAndProductId(userId, productId)) {
-            throw new IllegalArgumentException(
-                userService.findById(userId).email() + "의 위시리스트에는 " + productService.getProductById(
-                    productId).getName()
-                    + " 상품이 존재하지 않습니다.");
+    public void findOrderAndDeleteIfExists(long userId, long productId, long optionId) {
+        if (!wishListRepository.existsByUserIdAndProductIdAndOptionId(userId, productId,
+            optionId)) {
+            return;
         }
-        WishList wishList = wishListRepository.findByUserIdAndProductId(userId, productId);
-        wishList.getOption().removeWishList(wishList);
-        wishList.getUser().removeWishList(wishList);
-        wishList.getProduct().removeWishList(wishList);
-        wishListRepository.deleteByUserIdAndProductId(userId, productId);
+        wishListRepository.deleteByUserIdAndProductIdAndOptionId(userId, productId, optionId);
+    }
+
+    public void deleteWishListByWishListId(long userId, long wishListId){
+        validateIfWishListNotExists(userId, wishListId);
+        wishListRepository.deleteById(wishListId);
     }
 }

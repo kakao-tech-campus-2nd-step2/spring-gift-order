@@ -45,10 +45,6 @@ public class ProductDTO {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public int getPrice() {
         return price;
     }

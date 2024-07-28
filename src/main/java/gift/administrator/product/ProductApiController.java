@@ -57,10 +57,9 @@ public class ProductApiController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable("id") Long id,
         @Valid @RequestBody ProductDTO productDTO) {
-        productDTO.setId(id);
-        productService.existsByNameAndId(productDTO.getName(), productDTO.getId());
+        productService.existsByNameAndId(productDTO.getName(), id);
 
-        ProductDTO result = productService.updateProduct(productDTO);
+        ProductDTO result = productService.updateProduct(productDTO, id);
         return ResponseEntity.ok().body(result);
     }
 

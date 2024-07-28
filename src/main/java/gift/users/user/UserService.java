@@ -17,18 +17,23 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public Long findByKakaoIdAndRegisterIfNotExists(String kakaoId) {
-        if (!userRepository.existsByKakaoId(kakaoId)) {
-            userRepository.save(new User(kakaoId));
+    public Long findBySnsIdAndSnsAndRegisterIfNotExists(String snsId, String sns) {
+        if (!userRepository.existsBySnsIdAndSns(snsId, sns)) {
+            userRepository.save(new User(snsId, sns));
         }
-        User user = userRepository.findByKakaoId(kakaoId);
+        User user = userRepository.findBySnsIdAndSns(snsId, sns);
         return user.getId();
     }
 
-    public String loginGiveToken(String userId) {
-        String token = jwtUtil.generateToken(userId);
-        if (token != null) {
-            return "access-token: " + token;
+    public String findSns(long userId){
+        User user = findUserById(userId);
+        return user.getSns();
+    }
+
+    public String loginGiveJwt(String userId) {
+        String jwtToken = jwtUtil.generateToken(userId);
+        if (jwtToken != null) {
+            return "access-token: " + jwtToken;
         }
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰 생성 실패");
     }
@@ -54,7 +59,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
         }
         UserDTO userDTO = findUserByEmail(email);
-        return loginGiveToken(userDTO.id().toString());
+        return loginGiveJwt(userDTO.id().toString());
     }
 
     public boolean registerUser(UserDTO userDTO) {
@@ -66,9 +71,13 @@ public class UserService {
         return true;
     }
 
+    private User findUserById(long id){
+        return userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundIdException("없는 회원 아이디입니다."));
+    }
+
     public UserDTO findById(long id) {
-        return UserDTO.fromUser(userRepository.findById(id)
-            .orElseThrow(() -> new NotFoundIdException("없는 회원 아이디입니다.")));
+        return UserDTO.fromUser(findUserById(id));
     }
 
     public UserDTO findUserByEmail(String email) {

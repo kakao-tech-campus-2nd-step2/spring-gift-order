@@ -89,7 +89,7 @@ public class CategoryApiControllerTest {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", "image.jpg", "");
         doNothing().when(categoryService).existsByNameThrowException(any());
-        given(categoryService.addCategory(categoryDTO)).willReturn(categoryDTO);
+        given(categoryService.addCategory(any(CategoryDTO.class))).willReturn(categoryDTO);
 
         //when
         ResultActions resultActions = mvc.perform(
@@ -98,7 +98,8 @@ public class CategoryApiControllerTest {
                 .content(objectMapper.writeValueAsString(categoryDTO)));
 
         //then
-        resultActions.andExpect(status().isCreated());
+        resultActions.andExpect(status().isCreated())
+            .andExpect(content().json(objectMapper.writeValueAsString(categoryDTO)));
     }
 
     @Test
@@ -125,7 +126,7 @@ public class CategoryApiControllerTest {
         //given
         CategoryDTO categoryDTO = new CategoryDTO(1L, "상품권", "#ff11ff", "image.jpg", "");
         doNothing().when(categoryService).existsByNameAndId(anyString(), anyLong());
-        given(categoryService.updateCategory(any(CategoryDTO.class))).willReturn(categoryDTO);
+        given(categoryService.updateCategory(any(CategoryDTO.class), 1L)).willReturn(categoryDTO);
 
         //when
         ResultActions resultActions = mvc.perform(

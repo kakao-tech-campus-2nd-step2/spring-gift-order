@@ -1,6 +1,5 @@
 package gift.users.wishlist;
 
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,11 +8,11 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
 
     Page<WishList> findAllByUserId(long id, Pageable pageable);
 
-    List<WishList> findAllByUserId(long id);
+    void deleteByUserIdAndProductIdAndOptionId(long userId, long productId, long optionId);
 
-    WishList findByUserIdAndProductId(long userId, long productId);
+    boolean existsByIdAndUserId(long wishListId, long userId);
 
-    Boolean existsByUserIdAndProductId(long userId, long productId);
+    boolean existsByUserIdAndProductIdAndOptionId(long userId, long productId, long optionId);
 
-    void deleteByUserIdAndProductId(long userId, long productId);
+    boolean existsByUserIdAndProductIdAndOptionIdAndIdNot(long userId, long productId, long optionId, long wishListId);
 }

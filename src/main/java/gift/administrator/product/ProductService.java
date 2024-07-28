@@ -4,7 +4,6 @@ import gift.administrator.category.Category;
 import gift.administrator.category.CategoryService;
 import gift.administrator.option.Option;
 import gift.administrator.option.OptionDTO;
-import gift.administrator.option.OptionService;
 import gift.error.NotFoundIdException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,13 +25,11 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
-    private final OptionService optionService;
 
     public ProductService(ProductRepository productRepository,
-        CategoryService categoryService, OptionService optionService) {
+        CategoryService categoryService) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
-        this.optionService = optionService;
     }
 
     public Page<ProductDTO> getAllProducts(int page, int size, String sortBy, Direction direction) {
@@ -80,20 +77,27 @@ public class ProductService {
         return ProductDTO.fromProduct(savedProduct);
     }
 
-    public ProductDTO updateProduct(ProductDTO productDTO) {
+    public ProductDTO updateProduct(ProductDTO productDTO, Long productId) {
 
-        Product existingProduct = findByProductId(productDTO.getId());
-        existsByNameAndIdNotThrowException(productDTO.getName(), productDTO.getId());
+        Product existingProduct = findByProductId(productId);
+        existsByNameAndIdNotThrowException(productDTO.getName(), productId);
         Category newCategory = updateCategory(productDTO.getCategoryId(), existingProduct);
-
-        optionService.deleteAllWhenUpdatingProduct(existingProduct.getOptions(), existingProduct);
-        List<Option> options = optionDTOListToOptionList(productDTO.getOptions(), existingProduct);
-        existingProduct.addOptions(options);
 
         existingProduct.update(productDTO.getName(), productDTO.getPrice(),
             productDTO.getImageUrl(), newCategory);
+
+        List<Option> oldOptions = new ArrayList<>(existingProduct.getOptions());
+        existingProduct.removeOptions(oldOptions);
+
+        List<Option> options = optionDTOListToOptionList(productDTO.getOptions(), existingProduct);
+        existingProduct.addOptions(options);
+
         Product savedProduct = productRepository.save(existingProduct);
         return ProductDTO.fromProduct(savedProduct);
+    }
+
+    public boolean existsByProductId(long productId){
+        return !productRepository.existsById(productId);
     }
 
     private void existsByNameAndIdNotThrowException(String name, long productId) {
@@ -108,8 +112,6 @@ public class ProductService {
 
     private Category updateCategory(long categoryId, Product product) {
         Category newCategory = getCategoryById(categoryId);
-        Category oldCategory = product.getCategory();
-        oldCategory.removeProduct(product);
         product.setCategory(newCategory);
         return newCategory;
     }

@@ -45,7 +45,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("전부 찾기")
-    void findAll(){
+    void findAll() {
         //given
         Option expected = new Option("L", 3, product);
         Option option1 = new Option("XL", 3, null);
@@ -72,7 +72,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("옵션 아이디로 전부 찾기")
-    void findAllById(){
+    void findAllById() {
         //given
         Option expected = new Option("L", 3, product);
         Option option1 = new Option("XL", 3, null);
@@ -100,7 +100,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("상품 아이디로 전부 찾기")
-    void findAllByProductId(){
+    void findAllByProductId() {
         //given
         Option expected = new Option("L", 3, product);
         Option option1 = new Option("XL", 3, null);
@@ -127,7 +127,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("옵션 아이디로 하나 찾기")
-    void findById(){
+    void findById() {
         //given
         Option expected = new Option("L", 3, product);
 
@@ -143,11 +143,11 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("옵션 아이디로 하나 찾을 때 아이디 존재하지 않음")
-    void findByIdNotFound(){
+    void findByIdNotFound() {
         //given
 
         //when
-        Optional<Option> actual = optionRepository.findById(option.getId()+1);
+        Optional<Option> actual = optionRepository.findById(option.getId() + 1);
 
         //then
         assertThat(actual).isNotPresent();
@@ -155,7 +155,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("옵션 저장하기")
-    void save(){
+    void save() {
         //given
         Option expected = new Option("L", 3, product);
 
@@ -171,7 +171,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("옵션 아이디로 삭제하기")
-    void deleteById(){
+    void deleteById() {
         //given
         product = productRepository.save(product);
 
@@ -185,7 +185,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("상품 아이디와 옵션 아이디로 존재 여부 확인 시 존재할 때")
-    void existsByIdAndProductId(){
+    void existsByIdAndProductId() {
         //given
         product = productRepository.save(product);
 
@@ -198,7 +198,7 @@ public class OptionRepositoryTest {
 
     @Test
     @DisplayName("상품 아이디와 옵션 아이디로 존재 여부 확인시 존재하지 않을 때")
-    void existsByIdAndProductIdButNotExists(){
+    void existsByIdAndProductIdButNotExists() {
         //given
         product = productRepository.save(product);
         Option option1 = new Option("L", 3, null);
@@ -213,5 +213,49 @@ public class OptionRepositoryTest {
 
         //then
         assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("옵션 이름과 상품 아이디로 존재하지만 옵션 아이디는 존재하지 않음")
+    void existsByNameAndProductIdAndIdNot() {
+        //given
+        product = productRepository.save(product);
+
+        //when
+        boolean actual = optionRepository.existsByNameAndProductIdAndIdNot(option.getName(),
+            product.getId(), option.getId() + 1);
+
+        //then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("옵션 이름과 상품 아이디로 존재하지 않거나 옵션 아이디가 존재함")
+    void existsByNameAndProductIdAndIdNotReturnsFalse() {
+        //given
+        product = productRepository.save(product);
+
+        //when
+        boolean actual = optionRepository.existsByNameAndProductIdAndIdNot(option.getName(),
+            product.getId(), option.getId());
+
+        //then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("상품 아이디로 개수 전부 세기")
+    void countAllByProductId() {
+        //given
+        product = productRepository.save(product);
+        Option option1 = new Option("XL", 3, null);
+        option1.setProduct(product);
+        optionRepository.save(option1);
+
+        //when
+        int actual = optionRepository.countAllByProductId(product.getId());
+
+        //then
+        assertThat(actual).isEqualTo(2);
     }
 }

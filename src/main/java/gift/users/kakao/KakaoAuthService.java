@@ -1,6 +1,7 @@
 package gift.users.kakao;
 
 import gift.error.KakaoAuthenticationException;
+import gift.token.TokenService;
 import gift.users.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +21,16 @@ public class KakaoAuthService {
     private final KakaoProperties kakaoProperties;
     private final RestClient.Builder restClientBuilder;
     private final UserService userService;
+    private final TokenService tokenService;
 
     private static final String HEADER_NAME = "Authorization";
 
     public KakaoAuthService(KakaoProperties kakaoProperties, RestClient.Builder restClientBuilder,
-        UserService userService) {
+        UserService userService, TokenService tokenService) {
         this.kakaoProperties = kakaoProperties;
         this.restClientBuilder = restClientBuilder;
         this.userService = userService;
+        this.tokenService = tokenService;
     }
 
     public String getKakaoLoginUrl() {
@@ -40,13 +43,17 @@ public class KakaoAuthService {
     }
 
     public String kakaoCallBack(String code) {
-        String token = getKakaoToken(code);
+
+        KakaoTokenDTO kakaoTokenDTO = getKakaoTokenDTO(code);
+        String token = getKakaoToken(kakaoTokenDTO);
         Long userId = getKakaoUser(token);
-        return userService.loginGiveToken(userId.toString());
+
+        tokenService.saveToken(userId, kakaoTokenDTO, "kakao");
+        return userService.loginGiveJwt(userId.toString());
     }
 
     private Long getKakaoUser(String token) {
-        logger.info("Getting kakao userInfo with token: {}", token);
+        logger.info("Getting kakao userInfo with token: {}", "token");
 
         ResponseEntity<KakaoUserDTO> response;
         try {
@@ -56,7 +63,7 @@ public class KakaoAuthService {
                 .retrieve()
                 .toEntity(KakaoUserDTO.class);
         } catch(RestClientException e){
-            logger.info("Failed to receive kakao userInfo: {}", e.getMessage());
+            logger.error("Failed to receive kakao userInfo.");
             throw new KakaoAuthenticationException("카카오 사용자 값을 서버에서 가져오는 데에 실패했습니다.");
         }
 
@@ -69,10 +76,10 @@ public class KakaoAuthService {
             throw new KakaoAuthenticationException("카카오 사용자 정보 값이 비어있습니다.");
         }
 
-        return userService.findByKakaoIdAndRegisterIfNotExists(kakaoUserDTO.id().toString());
+        return userService.findBySnsIdAndSnsAndRegisterIfNotExists(kakaoUserDTO.id().toString(), "kakao");
     }
 
-    private String getKakaoToken(String code) {
+    private KakaoTokenDTO getKakaoTokenDTO(String code){
         logger.info("Getting kakao token with code: {}", code);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
@@ -89,13 +96,16 @@ public class KakaoAuthService {
                 .retrieve()
                 .toEntity(KakaoTokenDTO.class);
         } catch(RestClientException e){
-            logger.info("Failed to recieve kakao token: {}", e.getMessage());
+            logger.error("Failed to recieve kakao token");
             throw new KakaoAuthenticationException("카카오 토큰 값을 서버에서 가져오는 데에 실패했습니다.");
         }
 
         logger.info("Response received from kakao token request: {}", response.getStatusCode());
 
-        KakaoTokenDTO kakaoTokenDTO = response.getBody();
+        return response.getBody();
+    }
+
+    private String getKakaoToken(KakaoTokenDTO kakaoTokenDTO) {
 
         if (kakaoTokenDTO == null) {
             logger.error("Kakao token response body is null.");

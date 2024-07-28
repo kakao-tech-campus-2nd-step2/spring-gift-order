@@ -2,7 +2,6 @@ package gift.administrator.product;
 
 import gift.administrator.category.Category;
 import gift.administrator.option.Option;
-import gift.users.wishlist.WishList;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,6 @@ public class Product {
     private String name;
     @Column(nullable = false)
     private String imageUrl;
-    @OneToMany(mappedBy = "product")
-    private List<WishList> wishes = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -30,7 +27,9 @@ public class Product {
     public Product() {
     }
 
-    public Product(String name, int price, String imageUrl, Category category, List<Option> options) {
+    public Product(Long id, String name, int price, String imageUrl, Category category,
+        List<Option> options) {
+        this.id = id;
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -38,8 +37,8 @@ public class Product {
         this.options = options;
     }
 
-    public Product(Long id, String name, int price, String imageUrl, Category category, List<Option> options) {
-        this.id = id;
+    public Product(String name, int price, String imageUrl, Category category,
+        List<Option> options) {
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;
@@ -70,10 +69,6 @@ public class Product {
         return imageUrl;
     }
 
-    public List<WishList> getWishes() {
-        return wishes;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -82,18 +77,8 @@ public class Product {
         this.category = category;
     }
 
-    public void setOption(List<Option> options){
+    public void setOption(List<Option> options) {
         this.options = options;
-    }
-
-    public void addWishList(WishList wishList) {
-        wishes.add(wishList);
-        wishList.setProduct(this);
-    }
-
-    public void removeWishList(WishList wishList) {
-        wishes.remove(wishList);
-        wishList.setProduct(null);
     }
 
     public void addOption(Option option) {
@@ -102,7 +87,7 @@ public class Product {
     }
 
     public void addOptions(List<Option> options) {
-        for(Option option : options){
+        for (Option option : options) {
             addOption(option);
         }
     }
@@ -113,12 +98,12 @@ public class Product {
     }
 
     public void removeOptions(List<Option> options) {
-        for(Option option : options){
+        for (Option option : options) {
             removeOption(option);
         }
     }
 
-    public List<Option> getOptions(){
+    public List<Option> getOptions() {
         return options;
     }
 }

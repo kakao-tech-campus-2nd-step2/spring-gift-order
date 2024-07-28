@@ -121,6 +121,32 @@ public class CategoryRepositoryTest {
     }
 
     @Test
+    @DisplayName("카테고리 아이디로 찾기")
+    void existsById() {
+        //Given
+        categoryRepository.save(category);
+
+        //When
+        boolean actual = categoryRepository.existsById(category.getId());
+
+        //Then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 카테고리 아이디로 카테고리를 찾으면 false 리턴")
+    void notExistsById() {
+        //Given
+        categoryRepository.save(category);
+
+        //When
+        boolean actual = categoryRepository.existsById(category.getId() + 1);
+
+        //Then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
     @DisplayName("카테고리 이름으로 찾기")
     void existsByName() {
         //Given
@@ -141,6 +167,32 @@ public class CategoryRepositoryTest {
 
         //When
         boolean actual = categoryRepository.existsByName("이춘식");
+
+        //Then
+        assertThat(actual).isEqualTo(false);
+    }
+
+    @Test
+    @DisplayName("카테고리 이름은 존재하지만 카테고리 아이디는 존재하지 않음")
+    void existsByNameAndIdNot() {
+        //Given
+        categoryRepository.save(category);
+
+        //When
+        boolean actual = categoryRepository.existsByNameAndIdNot(category.getName(), category.getId() + 1);
+
+        //Then
+        assertThat(actual).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("카테고리 이름이 존재하지 않거나 카테고리 아이디가 존재함")
+    void existsByNameAndIdNotReturnsFalse() {
+        //Given
+        categoryRepository.save(category);
+
+        //When
+        boolean actual = categoryRepository.existsByNameAndIdNot(category.getName(), category.getId());
 
         //Then
         assertThat(actual).isEqualTo(false);

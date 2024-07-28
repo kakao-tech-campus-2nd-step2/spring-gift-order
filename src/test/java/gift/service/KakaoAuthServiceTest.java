@@ -2,8 +2,12 @@ package gift.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -11,8 +15,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import gift.error.KakaoAuthenticationException;
+import gift.token.TokenService;
 import gift.users.kakao.KakaoAuthService;
 import gift.users.kakao.KakaoProperties;
+import gift.users.kakao.KakaoTokenDTO;
 import gift.users.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +38,7 @@ public class KakaoAuthServiceTest {
     private KakaoAuthService kakaoAuthService;
     private UserService userService = mock(UserService.class);
     private RestClient.Builder restClientBuilder;
+    private TokenService tokenService = mock(TokenService.class);
     @Autowired
     private KakaoProperties kakaoProperties;
 
@@ -47,7 +54,7 @@ public class KakaoAuthServiceTest {
             });
         server = MockRestServiceServer.bindTo(restClientBuilder).build();
         kakaoAuthService = new KakaoAuthService(kakaoProperties, restClientBuilder,
-            userService);
+            userService, tokenService);
     }
 
     @Test
@@ -66,8 +73,9 @@ public class KakaoAuthServiceTest {
             .andExpect(method(POST))
             .andRespond(withSuccess(userResponse, MediaType.APPLICATION_JSON));
 
-        when(userService.findByKakaoIdAndRegisterIfNotExists("1")).thenReturn(1L);
-        when(userService.loginGiveToken("1")).thenReturn("user_token");
+        given(userService.findBySnsIdAndSnsAndRegisterIfNotExists(anyString(), anyString())).willReturn(1L);
+        given(userService.loginGiveJwt(anyString())).willReturn("user_token");
+        doNothing().when(tokenService).saveToken(anyLong(), any(KakaoTokenDTO.class), anyString());
 
         //when
         String result = kakaoAuthService.kakaoCallBack(code);

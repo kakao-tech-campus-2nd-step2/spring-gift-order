@@ -35,10 +35,6 @@ public class OptionDTO {
         this.productId = productId;
     }
 
-    public void subtract(int quantity) {
-        this.quantity -= quantity;
-    }
-
     public Long getId(){
         return id;
     }

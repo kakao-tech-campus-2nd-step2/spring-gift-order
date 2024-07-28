@@ -44,9 +44,8 @@ public class CategoryApiController {
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(@PathVariable("id") Long id,
         @Valid @RequestBody CategoryDTO categoryDTO) {
-        categoryDTO.setId(id);
-        categoryService.existsByNameAndId(categoryDTO.getName(), categoryDTO.getId());
-        CategoryDTO result = categoryService.updateCategory(categoryDTO);
+        categoryService.existsByNameAndId(categoryDTO.getName(), id);
+        CategoryDTO result = categoryService.updateCategory(categoryDTO, id);
         return ResponseEntity.ok(result);
     }
 

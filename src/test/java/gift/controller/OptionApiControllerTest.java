@@ -44,10 +44,10 @@ public class OptionApiControllerTest {
             .build();
         objectMapper = new ObjectMapper();
         Category category = new Category("상품권", null, null, null);
-        Option option = new Option(1L, "L", 3, null);
+        Option option = new Option("L", 3, null);
         List<Option> options = new ArrayList<>(List.of(option));
-        Product product = new Product(1L, "라이언", 1000, "image.jpg", category, options);
-        optionDTO1 = new OptionDTO(2L, "XL", 5, 1L);
+        Product product = new Product("라이언", 1000, "image.jpg", category, options);
+        optionDTO1 = new OptionDTO("XL", 5, 1L);
         option.setProduct(product);
         optionDTO = OptionDTO.fromOption(option);
     }

@@ -37,9 +37,9 @@ public class CategoryService {
             .orElseThrow(() -> new NotFoundIdException("카테고리 아이디를 찾을 수 없습니다."));
     }
 
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
-        Category category = findByCategoryId(categoryDTO.getId());
-        if (categoryRepository.existsByNameAndIdNot(categoryDTO.getName(), categoryDTO.getId())) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, long categoryId) {
+        Category category = findByCategoryId(categoryId);
+        if (categoryRepository.existsByNameAndIdNot(categoryDTO.getName(), categoryId)) {
             throw new IllegalArgumentException("존재하는 이름입니다.");
         }
         category.update(categoryDTO.getName(), categoryDTO.getColor(), categoryDTO.getImageUrl(),
@@ -54,7 +54,7 @@ public class CategoryService {
         categoryRepository.deleteById(id);
     }
 
-    public boolean existsByName(String name) {
+    private boolean existsByName(String name) {
         return categoryRepository.existsByName(name);
     }
 
@@ -64,8 +64,7 @@ public class CategoryService {
         }
     }
 
-    public void existsByNameAndId(String name, long id)
-        throws NotFoundIdException {
+    public void existsByNameAndId(String name, long id) {
         if (existsByName(name) && !Objects.equals(getCategoryById(id).getName(), name)) {
             throw new IllegalArgumentException("존재하는 이름입니다.");
         }

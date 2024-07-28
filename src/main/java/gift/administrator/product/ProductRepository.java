@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Boolean existsByName(String name);
+    boolean existsByName(String name);
 
-    Boolean existsByNameAndIdNot(String name, long id);
+    boolean existsByNameAndIdNot(String name, long id);
 
     @Query("SELECT DISTINCT p.category.name FROM Product p WHERE p.category IS NOT NULL")
     List<String> findDistinctCategoryNamesWithProducts();

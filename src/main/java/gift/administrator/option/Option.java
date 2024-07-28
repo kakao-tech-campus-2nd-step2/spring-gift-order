@@ -1,8 +1,6 @@
 package gift.administrator.option;
 
 import gift.administrator.product.Product;
-import gift.users.wishlist.WishList;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,9 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Option {
@@ -28,8 +23,6 @@ public class Option {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
-    @OneToMany(mappedBy = "option", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<WishList> wishes = new ArrayList<>();
 
     public Option() {
     }
@@ -74,15 +67,5 @@ public class Option {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public void addWishList(WishList wishList) {
-        this.wishes.add(wishList);
-        wishList.setOption(this);
-    }
-
-    public void removeWishList(WishList wishList) {
-        wishes.remove(wishList);
-        wishList.setOption(null);
     }
 }
