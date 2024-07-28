@@ -43,7 +43,7 @@ public class AdminFilter implements Filter {
 
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
-            System.out.println("role = " + role);
+
             if (email == null || role == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;

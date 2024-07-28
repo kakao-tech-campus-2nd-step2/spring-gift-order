@@ -93,4 +93,9 @@
 
 # 3단계 - API 문서 만들기
 
-- [ ] api 문서 작성
+- [x] category
+- [x] option
+- [x] order
+- [x] product
+- [x] user
+- [x] wishlist

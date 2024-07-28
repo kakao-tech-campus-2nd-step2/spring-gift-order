@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 @Entity
@@ -7,10 +8,15 @@ import jakarta.persistence.*;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "카테고리 id", nullable = false, example = "1")
     private Long id;
+    @Schema(description = "카테고리명", nullable = false, example = "전자기기")
     private String name;
+    @Schema(description = "카테고리 색상", nullable = false, example = "#FFFFFF")
     private String color;
+    @Schema(description = "카테고리 이미지 url", nullable = false, example = "https://www.test.com")
     private String imageurl;
+    @Schema(description = "카테고리 설명", nullable = false, example = "카테고리 설명 입니다.")
     private String description;
 
     public Category() {

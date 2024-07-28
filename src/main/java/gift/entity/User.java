@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -9,9 +10,13 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "유저 id", nullable = false, example = "1")
     private Long id;
+    @Schema(description = "유저 이메일", nullable = false, example = "test@mail.com")
     private String email;
+    @Schema(description = "유저 비밀번호", nullable = false, example = "pa_sSWo_R_d")
     private String password;
+    @Schema(description = "유저 role", nullable = false, example = "USER")
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

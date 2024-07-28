@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 @Entity
@@ -7,11 +8,15 @@ import jakarta.persistence.*;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "주문 id", nullable = false, example = "1")
     private Long id;
-
+    @Schema(description = "상품 id", nullable = false, example = "1")
     private Long product_id;
+    @Schema(description = "옵션 id", nullable = false, example = "1")
     private Long option_id;
+    @Schema(description = "주문 수량", nullable = false, example = "5")
     private int quantity;
+    @Schema(description = "주문 메시지", nullable = false, example = "주문 메시지 입니다")
     private String message;
 
     @ManyToOne

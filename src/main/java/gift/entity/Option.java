@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -11,8 +12,11 @@ public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "옵션 id", nullable = false, example = "1")
     private Long id;
+    @Schema(description = "옵션명", nullable = false, example = "그레이 색상")
     private String name;
+    @Schema(description = "옵션 수량", nullable = false, example = "5")
     private int quantity;
 
     @ManyToOne

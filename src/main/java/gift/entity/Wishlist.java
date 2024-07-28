@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -10,7 +11,9 @@ import java.util.List;
 public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "위시리스트 id", nullable = false, example = "1")
     private Long id;
+    @Schema(description = "위시리스트 이메일", nullable = false, example = "test@mail.com")
     private String email;
 
     @OneToMany(mappedBy = "wishlist", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -11,10 +12,15 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "상품 id", nullable = false, example = "1")
     private Long id;
+    @Schema(description = "상품명", nullable = false, example = "상품명 입니다")
     private String name;
+    @Schema(description = "상품 가격", nullable = false, example = "10000")
     private int price;
+    @Schema(description = "상품 이미지 url", nullable = false, example = "https://www.test.com")
     private String imageurl;
+    @Schema(description = "카테고리 id", nullable = false, example = "1")
     private Long category_id;
 
     @ManyToOne
