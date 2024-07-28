@@ -66,12 +66,12 @@ public class OrderTest{
 
 
     @Test
-    void updateQuantityTest() {
+    void addQuantityTest() {
         Order order = new Order(option, member, 5, orderDateTime, "주문1 메세지");
-        Quantity quantity = new Quantity(10);
-        order.updateQuantity(quantity);
+        Quantity delataQuantity = new Quantity(3);
+        order.addQuantity(delataQuantity);
 
-        assertThat(order.getQuantity().getValue()).isEqualTo(10);
+        assertThat(order.getQuantity().getValue()).isEqualTo(8);
     }
 
 }
