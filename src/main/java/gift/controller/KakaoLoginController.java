@@ -1,8 +1,12 @@
 package gift.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import gift.dto.KakaoInfoDto;
 import gift.model.member.KakaoProperties;
+import gift.model.member.Member;
 import gift.service.KakaoService;
-import org.springframework.http.HttpStatus;
+import gift.service.MemberService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +20,7 @@ public class KakaoLoginController {
     private final KakaoProperties kakaoProperties;
     private final KakaoService kakaoService;
 
-    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoService kakaoService){
+    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoService kakaoService,MemberService memberService){
         this.kakaoProperties = kakaoProperties;
         this.kakaoService = kakaoService;
     }
@@ -32,8 +36,29 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<String> callback(@RequestParam("code") String code) {
+    public ResponseEntity<String> callback(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
+
+        KakaoInfoDto kakaoInfoDto = kakaoService.getUserInfo(accessToken);
+        String email = kakaoInfoDto.email();
+        Member kakaoMember = kakaoService.registerOrGetKakaoMember(email);
+
+        session.setAttribute("loginMember", kakaoMember);
+        session.setMaxInactiveInterval(60 * 30);
+        session.setAttribute("kakaoToken", accessToken);
+
         return ResponseEntity.ok("Access Token: " + accessToken);
+    }
+
+    @GetMapping("/kakao/logout")
+    public String kakaoLogout(HttpSession session) {
+        String accessToken = (String) session.getAttribute("kakaoToken");
+
+        if(accessToken != null && !"".equals(accessToken)) {
+            kakaoService.kakaoDisconnect(accessToken);
+            session.removeAttribute("kakaoToken");
+            session.removeAttribute("loginMember");
+        }
+        return "redirect:/";
     }
 }

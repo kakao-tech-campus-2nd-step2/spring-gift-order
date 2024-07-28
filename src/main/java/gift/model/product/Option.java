@@ -46,6 +46,13 @@ public class Option {
         throw new RuntimeException("Not enough product available");
     }
 
+    public boolean isProductNotEnough(int purchaseAmount){
+        if(purchaseAmount >= amount){
+            return true;
+        }
+        return false;
+    }
+
     public void updateAmount(int purchaseAmount){
         this.amount = amount - purchaseAmount;
     }
