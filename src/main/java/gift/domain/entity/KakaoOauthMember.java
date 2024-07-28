@@ -18,6 +18,9 @@ public class KakaoOauthMember {
     @Column(nullable = false, unique = true)
     private Integer kakaoIdentifier;
 
+    @Column
+    private String accessToken;
+
     @OneToOne
     @JoinColumn(unique = true)
     private Member member;
@@ -25,8 +28,9 @@ public class KakaoOauthMember {
     protected KakaoOauthMember() {
     }
 
-    public KakaoOauthMember(Integer kakaoIdentifier, Member member) {
+    public KakaoOauthMember(Integer kakaoIdentifier, String accessToken, Member member) {
         this.kakaoIdentifier = kakaoIdentifier;
+        this.accessToken = accessToken;
         this.member = member;
     }
 
@@ -38,8 +42,16 @@ public class KakaoOauthMember {
         return kakaoIdentifier;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     public Member getMember() {
         return member;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     @Override

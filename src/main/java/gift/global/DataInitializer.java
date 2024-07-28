@@ -96,7 +96,7 @@ public class DataInitializer {
         }
 
         KakaoOauthMember[] kakaoMembers = {
-            new KakaoOauthMember(12345, members[3])};
+            new KakaoOauthMember(12345, "tokenValue", members[3])};
         for (int i = 0; i < kakaoMembers.length; i++) {
             kakaoMembers[i] = kakaoOauthMemberRepository.save(kakaoMembers[i]);
         }

@@ -8,18 +8,18 @@ import jakarta.validation.constraints.NotNull;
 public class KakaoOauthMemberRequest extends MemberRequest {
 
     @NotNull
-    protected final String kakaoAccessToken;
+    protected final String accessToken;
 
-    public KakaoOauthMemberRequest(String email, String kakaoAccessToken) {
+    public KakaoOauthMemberRequest(String email, String accessToken) {
         super(Type.KAKAO, email);
-        this.kakaoAccessToken = kakaoAccessToken;
+        this.accessToken = accessToken;
     }
 
-    public String getKakaoAccessToken() {
-        return kakaoAccessToken;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public KakaoOauthMember toEntity(Member member, Integer kakaoId) {
-        return new KakaoOauthMember(kakaoId, member);
+    public KakaoOauthMember toEntity(Member member, Integer kakaoIdentifier) {
+        return new KakaoOauthMember(kakaoIdentifier, accessToken, member);
     }
 }

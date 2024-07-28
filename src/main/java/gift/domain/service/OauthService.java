@@ -50,6 +50,7 @@ public class OauthService {
                 .getBody();
 
         } catch (Exception e) {
+            //TODO: 200 응답이 아닐 때를 조금 더 세분화시키기 (https://github.com/kakao-tech-campus-2nd-step2/spring-gift-order/pull/267#discussion_r1692966327)
             throw new TokenUnexpectedErrorException();
         }
     }
