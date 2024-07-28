@@ -35,4 +35,27 @@ public class Order {
         this.message = message;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public Option getOption() {
+        return option;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }
