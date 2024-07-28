@@ -95,7 +95,7 @@ public class KakaoService {
         sendMessage(kakaoToken.getAccessToken(), messageTemplate);
     }
 
-    private String createOrderMessage(Order order) throws JsonProcessingException {
+    private String createOrderMessage(Order order) throws Exception {
         StringBuilder message = new StringBuilder();
         message.append("주문 내역:\n");
         for (OrderItem item : order.getOrderItems()) {
@@ -111,7 +111,11 @@ public class KakaoService {
         templateObject.put("link", link);
         templateObject.put("button_title", "자세히 보기");
 
-        return objectMapper.writeValueAsString(templateObject);
+        try {
+            return objectMapper.writeValueAsString(templateObject);
+        } catch (JsonProcessingException e) {
+            throw new Exception("Error while creating order message", e);
+        }
     }
 
     private void sendMessage(String accessToken, String messageTemplate) throws Exception {
