@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class WishlistController {
 
     private final WishlistService service;
+    private final JwtUtil jwtUtil;
 
-    public WishlistController(WishlistService service) {
+    public WishlistController(WishlistService service, JwtUtil jwtUtil) {
         this.service = service;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("/wishlist")
@@ -23,7 +25,7 @@ public class WishlistController {
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam(defaultValue = "1") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize) {
-        Long memberId = JwtUtil.getBearTokenAndMemberId(authorizationHeader);
+        Long memberId = jwtUtil.getMemberIdFromAuthorizationHeader(authorizationHeader);
 
         Page<Wish> allWishlistsPaged = service.getWishProductList(memberId, pageNumber-1, pageSize);
 
@@ -32,7 +34,7 @@ public class WishlistController {
 
     @PostMapping("/wishlist/{productId}")
     public ResponseEntity<Void> addToWishlist(@PathVariable("productId") Long productId, @RequestHeader("Authorization") String authorizationHeader) {
-        Long memberId = JwtUtil.getBearTokenAndMemberId(authorizationHeader);
+        Long memberId = jwtUtil.getMemberIdFromAuthorizationHeader(authorizationHeader);
 
         service.addWishProduct(memberId, productId);
         return ResponseEntity.ok().build();

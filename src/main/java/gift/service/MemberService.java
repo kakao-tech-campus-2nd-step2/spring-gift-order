@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MemberService {
 
-    private final JwtUtil jwtUtil;
+    private final JwtHelper jwtHelper;
     private final MemberRepository repository;
 
-    public MemberService(MemberRepository repository, JwtUtil jwtUtil) {
+    public MemberService(MemberRepository repository, JwtHelper jwtHelper) {
         this.repository = repository;
-        this.jwtUtil = jwtUtil;
+        this.jwtHelper = jwtHelper;
     }
 
     public String login(Member member) {
@@ -28,10 +28,18 @@ public class MemberService {
     }
 
     public String createJwtToken(Long memberId, String email) {
-        return jwtUtil.generateToken(memberId, email);
+        return jwtHelper.generateToken(memberId, email);
     }
 
     public Member getMemberById(Long id) {
         return repository.findById(id).orElseThrow( () -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다. "));
+    }
+
+    public Member getMemberByEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다. "));
+    }
+
+    public boolean hasMemberByEmail(String email) {
+        return repository.findByEmail(email).isPresent();
     }
 }
