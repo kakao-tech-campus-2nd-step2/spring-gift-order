@@ -21,9 +21,8 @@ public class WishlistController {
     }
 
     @PostMapping("/{productId}")
-    public ResponseEntity<Void> addWishlist(@PathVariable("productId") Long id, @LoginMember User user) {
-        WishlistDTO wishlistDTO = new WishlistDTO(user.getEmail(), id);
-        wishlistService.addWishlist(wishlistDTO);
+    public ResponseEntity<Void> addWishlist(@PathVariable("productId") Long productId, @LoginMember User user) {
+        wishlistService.addWishlist(user, productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -31,13 +30,13 @@ public class WishlistController {
     public ResponseEntity<Page<ProductDTO>> getWishlist(@LoginMember User user,
                                                         @RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "5") int size) {
-        Page<ProductDTO> products = wishlistService.getProductsFromWishlist(user.getEmail(), page, size);
+        Page<ProductDTO> products = wishlistService.getProductsFromWishlist(user, page, size);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteWishlist(@PathVariable("productId") Long id, @LoginMember User user) {
-        wishlistService.deleteWishlist(user.getEmail(), id);
+    public ResponseEntity<Void> deleteWishlist(@PathVariable("productId") Long productId, @LoginMember User user) {
+        wishlistService.deleteWishlist(user, productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
