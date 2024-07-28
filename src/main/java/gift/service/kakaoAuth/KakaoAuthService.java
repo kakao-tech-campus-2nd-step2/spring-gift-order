@@ -1,6 +1,9 @@
 package gift.service.kakaoAuth;
 
+import gift.service.member.MemberService;
+import gift.web.dto.MemberDto;
 import gift.web.dto.Token;
+import gift.web.exception.MemberNotFoundException;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +18,7 @@ public class KakaoAuthService {
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
+    private final MemberService memberService;
 
     @Value("${kakao.token-post-url}")
     private String kakaoTokenPostUrl;
@@ -25,9 +29,24 @@ public class KakaoAuthService {
     @Value("${kakao.auth-setting-url}")
     private String kakaoAuthSettingUrl;
 
-    public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties) {
+    public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties,
+        MemberService memberService) {
         this.restClient = restClient;
         this.kakaoProperties = kakaoProperties;
+        this.memberService = memberService;
+    }
+
+    public boolean isSignedUp(KakaoInfo kakaoInfo) {
+        try {
+            MemberDto memberDto = memberService.getMemberByEmail(kakaoInfo.email());
+        } catch (MemberNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public MemberDto getMemberInfo(KakaoInfo kakaoInfo) {
+        return memberService.getMemberByEmail(kakaoInfo.email());
     }
 
     public String getKakaoAuthUrl() {

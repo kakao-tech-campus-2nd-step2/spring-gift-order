@@ -43,22 +43,14 @@ public class LoginController {
 
     @GetMapping("/login/kakao-callback")
     public String kakaoAuthCallback(@RequestParam String code, RedirectAttributes rttr) {
-        System.out.println(code);
         Token token = kakaoAuthService.receiveToken(code);
-
-        System.out.println(token);
         KakaoInfo kakaoInfo = kakaoAuthService.getMemberInfoFromKakaoServer(token);
 
-        MemberDto memberDto = null;
-
-        try {
-            memberDto = memberService.getMemberByEmail(kakaoInfo.email());
-        } catch (MemberNotFoundException e) {
-            rttr.addFlashAttribute("kakaoInfo", kakaoInfo);
-            return "redirect:/register-social";
+        if(kakaoAuthService.isSignedUp(kakaoInfo)) {
+            rttr.addAttribute("token", new Token(jwtUtils.createJWT(kakaoAuthService.getMemberInfo(kakaoInfo))));
         }
-        rttr.addAttribute("token", new Token(jwtUtils.createJWT(memberDto)));
-        return "redirect:/";
+        rttr.addFlashAttribute("kakaoInfo", kakaoInfo);
+        return "redirect:/register-social";
     }
 
     @GetMapping("/register-social")
