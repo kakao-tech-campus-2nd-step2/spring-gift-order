@@ -11,6 +11,9 @@ import java.time.Duration;
 @Configuration
 public class RestClientBuilderConfig {
 
+    private static final int CONNECT_TIMEOUT_MILLISECOND = 2000;
+    private static final int READ_TIMEOUT_MILLISECOND = 2000;
+
     @Bean
     public RestClient.Builder restClientBuilder() {
         return RestClient.builder()
@@ -19,8 +22,8 @@ public class RestClientBuilderConfig {
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(Duration.ofMillis(2000));
-        factory.setReadTimeout(Duration.ofMillis(2000));
+        factory.setConnectTimeout(Duration.ofMillis(CONNECT_TIMEOUT_MILLISECOND));
+        factory.setReadTimeout(Duration.ofMillis(READ_TIMEOUT_MILLISECOND));
 
         return factory;
     }
