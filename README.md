@@ -582,7 +582,7 @@ Content-Type: application/json
 
 #### 모델 설계
 
-- [ ] 주문을 표현하는 도메인 객체
+- [x] 주문을 표현하는 도메인 객체
   - 주문 구성요소
     - id: int (pk)
       - 주문의 고유번호
@@ -594,9 +594,9 @@ Content-Type: application/json
       - 주문한 시각
     - message: 주문 메시지
 
-- [ ] 주문을 저장하는 데이터베이스 연동
-  - [ ] Jpa Repository
-  - [ ] 엔티티 클래스 및 예제 데이터 구비
+- [x] 주문을 저장하는 데이터베이스 연동
+  - [x] Jpa Repository
+  - [x] 엔티티 클래스 및 예제 데이터 구비
 
 #### 기능 설계(컨트롤러 및 서비스 설계)
 

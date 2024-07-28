@@ -5,12 +5,14 @@ import gift.domain.entity.KakaoOauthMember;
 import gift.domain.entity.LocalMember;
 import gift.domain.entity.Member;
 import gift.domain.entity.Option;
+import gift.domain.entity.Order;
 import gift.domain.entity.Product;
 import gift.domain.entity.Wish;
 import gift.domain.repository.CategoryRepository;
 import gift.domain.repository.KakaoOauthMemberRepository;
 import gift.domain.repository.LocalMemberRepository;
 import gift.domain.repository.OptionRepository;
+import gift.domain.repository.OrderRepository;
 import gift.domain.repository.ProductRepository;
 import gift.domain.repository.MemberRepository;
 import gift.domain.repository.WishRepository;
@@ -33,8 +35,9 @@ public class DataInitializer {
         KakaoOauthMemberRepository kakaoMember,
         WishRepository wish,
         CategoryRepository category,
-        OptionRepository option) {
-        return args -> insertInitialData(product, member, localMember, kakaoMember, wish, category, option);
+        OptionRepository option,
+        OrderRepository order) {
+        return args -> insertInitialData(product, member, localMember, kakaoMember, wish, category, option, order);
     }
 
     @Transactional
@@ -45,7 +48,8 @@ public class DataInitializer {
         KakaoOauthMemberRepository kakaoOauthMemberRepository,
         WishRepository wishRepository,
         CategoryRepository categoryRepository,
-        OptionRepository optionRepository
+        OptionRepository optionRepository,
+        OrderRepository orderRepository
     ) {
         Category[] categories = {
             new Category("교환권", "#6c95d1", "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png", ""),
@@ -110,5 +114,13 @@ public class DataInitializer {
             wishes[i] = wishRepository.save(wishes[i]);
         }
 
+        Order[] orders = {
+            new Order(members[1], options[1], 5, "경비실로 부탁드립니다."),
+            new Order(members[1], options[3], 8, "안전하게 부탁드립니다."),
+            new Order(members[3], options[4], 3, "빠른 배송 부탁드립니다.")
+        };
+        for (int i = 0; i < orders.length; i++) {
+            orders[i] = orderRepository.save(orders[i]);
+        }
     }
 }

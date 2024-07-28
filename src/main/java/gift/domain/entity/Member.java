@@ -2,6 +2,7 @@ package gift.domain.entity;
 
 import gift.global.WebConfig.Constants.Domain.Member.Permission;
 import gift.global.WebConfig.Constants.Domain.Member.Type;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,7 +10,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member {
@@ -35,10 +39,15 @@ public class Member {
     @OneToOne(mappedBy = "member")
     private KakaoOauthMember kakaoOauthMember;
 
+    @OneToMany(mappedBy = "member", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Order> orders;
+
+
     public Member(String email, Permission permission, Type userType) {
         this.email = email;
         this.permission = permission;
         this.userType = userType;
+        this.orders = new ArrayList<>();
     }
 
     protected Member() {
@@ -66,6 +75,10 @@ public class Member {
 
     public LocalMember getLocalMember() {
         return localMember;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public void setId(Long id) {
