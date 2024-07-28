@@ -9,44 +9,43 @@ import gift.domain.user.entity.User;
 import gift.domain.user.repository.OauthTokenJpaRepository;
 import gift.domain.user.repository.UserJpaRepository;
 import gift.exception.InvalidUserInfoException;
-import gift.external.api.kakao.KakaoApiProvider;
 import gift.external.api.kakao.dto.KakaoToken;
 import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class KakaoLoginService {
+public class KakaoLoginService implements OauthLoginService {
 
-    private final KakaoApiProvider kakaoApiProvider;
+    private final OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider;
     private final UserJpaRepository userJpaRepository;
     private final OauthTokenJpaRepository oauthTokenJpaRepository;
     private final JwtProvider jwtProvider;
 
     public KakaoLoginService(
-        KakaoApiProvider kakaoApiProvider,
+        OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider,
         UserJpaRepository userJpaRepository,
         OauthTokenJpaRepository oauthTokenJpaRepository,
         JwtProvider jwtProvider
     ) {
-        this.kakaoApiProvider = kakaoApiProvider;
+        this.oauthApiProvider = oauthApiProvider;
         this.userJpaRepository = userJpaRepository;
         this.oauthTokenJpaRepository = oauthTokenJpaRepository;
         this.jwtProvider = jwtProvider;
     }
 
     public String getAuthCodeUrl() {
-        return kakaoApiProvider.getAuthCodeUrl();
+        return oauthApiProvider.getAuthCodeUrl();
     }
 
     @Transactional
     public JwtToken login(String code) {
-        KakaoToken kakaoToken = kakaoApiProvider.getToken(code);
+        KakaoToken kakaoToken = oauthApiProvider.getToken(code);
         String accessToken = kakaoToken.accessToken();
         String refreshToken = kakaoToken.refreshToken();
 
-        kakaoApiProvider.validateAccessToken(accessToken);
-        KakaoUserInfo userInfo = kakaoApiProvider.getUserInfo(accessToken);
+        oauthApiProvider.validateAccessToken(accessToken);
+        KakaoUserInfo userInfo = oauthApiProvider.getUserInfo(accessToken);
 
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();

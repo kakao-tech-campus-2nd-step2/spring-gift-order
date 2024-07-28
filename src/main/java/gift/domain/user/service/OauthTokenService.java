@@ -2,23 +2,25 @@ package gift.domain.user.service;
 
 import gift.domain.user.entity.AuthProvider;
 import gift.domain.user.entity.OauthToken;
-import gift.domain.user.repository.OauthTokenJpaRepository;
 import gift.domain.user.entity.User;
+import gift.domain.user.repository.OauthTokenJpaRepository;
 import gift.exception.InvalidAuthException;
-import gift.external.api.kakao.KakaoApiProvider;
 import gift.external.api.kakao.dto.KakaoToken;
+import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OauthTokenService {
 
     private final OauthTokenJpaRepository oauthTokenJpaRepository;
-    private final KakaoApiProvider kakaoApiProvider;
+    private final OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider;
 
-    public OauthTokenService(OauthTokenJpaRepository oauthTokenJpaRepository,
-        KakaoApiProvider kakaoApiProvider) {
+    public OauthTokenService(
+        OauthTokenJpaRepository oauthTokenJpaRepository,
+        OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider
+    ) {
         this.oauthTokenJpaRepository = oauthTokenJpaRepository;
-        this.kakaoApiProvider = kakaoApiProvider;
+        this.oauthApiProvider = oauthApiProvider;
     }
 
     public OauthToken getOauthToken(User user, AuthProvider provider) {
@@ -28,7 +30,7 @@ public class OauthTokenService {
     }
 
     private OauthToken renew(OauthToken oauthToken) {
-        KakaoToken kakaoToken = kakaoApiProvider.renewToken(oauthToken.getRefreshToken());
+        KakaoToken kakaoToken = oauthApiProvider.renewToken(oauthToken.getRefreshToken());
 
         oauthToken.updateInfo(kakaoToken.accessToken(), kakaoToken.refreshToken());
         return oauthTokenJpaRepository.save(oauthToken);

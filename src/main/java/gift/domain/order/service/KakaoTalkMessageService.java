@@ -1,29 +1,36 @@
 package gift.domain.order.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.domain.order.dto.OrderResponse;
 import gift.domain.user.entity.AuthProvider;
 import gift.domain.user.entity.OauthToken;
-import gift.domain.user.service.OauthTokenService;
-import gift.domain.order.dto.OrderResponse;
 import gift.domain.user.entity.User;
-import gift.external.api.kakao.KakaoApiProvider;
+import gift.domain.user.service.OauthApiProvider;
+import gift.domain.user.service.OauthTokenService;
 import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.external.api.kakao.dto.FeedObjectRequest.Button;
 import gift.external.api.kakao.dto.FeedObjectRequest.Content;
 import gift.external.api.kakao.dto.FeedObjectRequest.Link;
+import gift.external.api.kakao.dto.KakaoToken;
+import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KakaoTalkMessageService {
 
-    private final KakaoApiProvider kakaoApiProvider;
+    private final OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider;
     private final OauthTokenService oauthTokenService;
+    private final ObjectMapper objectMapper;
 
     public KakaoTalkMessageService(
-        KakaoApiProvider kakaoApiProvider,
-        OauthTokenService oauthTokenService
+        OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider,
+        OauthTokenService oauthTokenService,
+        ObjectMapper objectMapper
     ) {
-        this.kakaoApiProvider = kakaoApiProvider;
+        this.oauthApiProvider = oauthApiProvider;
         this.oauthTokenService = oauthTokenService;
+        this.objectMapper = objectMapper;
     }
 
     public Integer sendMessageToMe(User user, OrderResponse orderResponse) {
@@ -46,6 +53,11 @@ public class KakaoTalkMessageService {
 
         OauthToken oauthToken = oauthTokenService.getOauthToken(user, AuthProvider.KAKAO);
 
-        return kakaoApiProvider.sendMessageToMe(oauthToken.getAccessToken(), templateObject);
+        try {
+            String serialized = objectMapper.writeValueAsString(templateObject);
+            return oauthApiProvider.sendMessageToMe(oauthToken.getAccessToken(), serialized);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
