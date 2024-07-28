@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.common.annotation.RedissonLock;
 import gift.common.exception.EntityNotFoundException;
 import gift.controller.dto.request.OptionRequest;
 import gift.controller.dto.response.OptionResponse;
@@ -118,13 +117,6 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
         Option option = product.findOptionByOptionId(optionId);
         return OptionResponse.from(option);
-    }
-
-    @RedissonLock(value = "#id + ':' + #optionId")
-    public int subtractQuantity(Long id, Long optionId, int amount) {
-        Product product = productRepository.findProductAndOptionByIdFetchJoin(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
-        return product.subtractOptionQuantity(optionId, amount);
     }
 
     private void checkProductExist(Long id) {

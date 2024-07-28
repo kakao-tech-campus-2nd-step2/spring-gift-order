@@ -6,11 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record KakaoProperties(
         String clientId,
         String redirectUrl,
-        String loginUrl,
         String adminRedirectUrl,
         String tokenUrl,
         String memberInfoUrl,
+        String loginUrl,
         String adminLoginUrl,
         String logoutUrl,
-        String refreshUrl
+        String refreshUrl,
+        String selfMessageUrl
 ) {}
