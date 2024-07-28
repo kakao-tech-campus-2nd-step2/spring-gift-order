@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
 @Entity
 @Table(
     name = "users",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"email"}, name = "uk_users")
+    uniqueConstraints = @UniqueConstraint(columnNames = {"email"}, name = "uk_users" )
 )
 public class User {
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(\\S+)$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^(.+)@(\\S+)$" );
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,10 +36,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column(nullable = false, columnDefinition = "boolean default false" )
     private Boolean isKakao;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 100)
     private String accessToken;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,6 +65,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public Set<UserRole> getRoles() {
