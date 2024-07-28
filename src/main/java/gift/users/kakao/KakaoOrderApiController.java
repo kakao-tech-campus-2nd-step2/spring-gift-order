@@ -2,6 +2,8 @@ package gift.users.kakao;
 
 import gift.error.KakaoOrderException;
 import gift.users.user.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "order API", description = "order related API")
 public class KakaoOrderApiController {
 
     private final KakaoOrderService kakaoOrderService;
@@ -25,6 +28,7 @@ public class KakaoOrderApiController {
     }
 
     @PostMapping("/{userId}")
+    @Operation(summary = "kakao ordering", description = "카카오 아이디로 가입된 회원의 아이디로 주문을 하고, 카카오 메시지를 보냅니다.")
     public ResponseEntity<KakaoOrderDTO> kakaoOrder(@PathVariable("userId") long userId,
         @Valid @RequestBody KakaoOrderDTO kakaoOrderDTO){
 

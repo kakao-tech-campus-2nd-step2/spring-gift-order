@@ -1,6 +1,8 @@
 package gift.users.kakao;
 
 import gift.error.KakaoAuthenticationException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/oauth")
+@Tag(name = "kakaoLogin API", description = "kakao login related API")
 public class KakaoAuthApiController {
 
     private final KakaoAuthService kakaoAuthService;
@@ -20,6 +23,7 @@ public class KakaoAuthApiController {
     }
 
     @GetMapping("/authorize")
+    @Operation(summary = "get kakao login page", description = "카카오 로그인 페이지를 가져옵니다.")
     public void kakaoLogin(HttpServletResponse response) {
         String kakaoLoginUrl = kakaoAuthService.getKakaoLoginUrl();
         try {
@@ -30,6 +34,7 @@ public class KakaoAuthApiController {
     }
 
     @GetMapping("/token")
+    @Operation(summary = "get kakao login callback", description = "카카오 로그인 콜백을 해서 사용자 로그인/회원가입을 진행합니다.")
     public ResponseEntity<String> kakaoCallBack(@RequestParam("code") String code) {
         String jwtToken = kakaoAuthService.kakaoCallBack(code);
         return ResponseEntity.ok(jwtToken);
