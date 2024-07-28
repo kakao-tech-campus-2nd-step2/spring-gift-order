@@ -84,4 +84,8 @@ public class ExternalAPIService {
             logger.error("토큰 가져오기 실패, 상태코드: " + response.getStatusCode());
         }
     }
+
+    public void sendKakaoMessageToMe() {
+
+    }
 }
