@@ -9,7 +9,6 @@ import gift.kakao.login.dto.KakaoUserInfoResponse;
 import gift.kakao.login.dto.LinkObject;
 import gift.kakao.login.dto.TemplateObject;
 import gift.user.repository.UserRepository;
-import gift.user.service.UserService;
 import gift.utility.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
