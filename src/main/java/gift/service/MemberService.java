@@ -11,11 +11,11 @@ import java.util.List;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final TokenService tokenService;
+    private final BasicTokenService basicTokenService;
 
-    public MemberService(MemberRepository memberRepository, TokenService tokenService) {
+    public MemberService(MemberRepository memberRepository, BasicTokenService basicTokenService) {
         this.memberRepository = memberRepository;
-        this.tokenService = tokenService;
+        this.basicTokenService = basicTokenService;
     }
 
     public MemberResponseDto save(String email, String password) {
@@ -60,5 +60,9 @@ public class MemberService {
             return true;
         }
         throw new AuthenticationException("Invalid password");
+    }
+
+    public Member getById(Long memberId) {
+        return memberRepository.findById(memberId).get();
     }
 }

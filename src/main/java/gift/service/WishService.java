@@ -19,18 +19,23 @@ public class WishService {
     private final WishRepository wishRepository;
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
-    private final TokenService tokenService;
+    private final BasicTokenService basicTokenService;
 
     public WishService(WishRepository wishRepository,
                        ProductRepository productRepository,
                        MemberRepository memberRepository,
-                       TokenService tokenService) {
+                       BasicTokenService basicTokenService) {
 
         this.wishRepository = wishRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
-        this.tokenService = tokenService;
+        this.basicTokenService = basicTokenService;
 
+    }
+
+    public Wish findByProductIdAndMemberId(Long productId, Long memberId) {
+        Wish wish = wishRepository.findByProductIdAndMemberId(productId, memberId);
+        return wish;
     }
 
     public WishResponseDto save(Long productId, String tokenValue) {
@@ -45,7 +50,7 @@ public class WishService {
 
     public List<WishResponseDto> getAll(String tokenValue) {
         Long memberId = translateIdFrom(tokenValue);
-        List<Wish> wishes = wishRepository.findAllByMember_id(memberId);
+        List<Wish> wishes = wishRepository.findAllByMemberId(memberId);
         List<WishResponseDto> wishResponseDtos = wishes.stream().map(this::fromEntity).toList();
         return wishResponseDtos;
     }
@@ -59,21 +64,13 @@ public class WishService {
         return Base64.getEncoder().encodeToString(userId.toString().getBytes());
     }
 
-    public boolean delete(Long id, String token) throws IllegalAccessException {
-
-        Long userId = translateIdFrom(token);
+    public void delete(Long id) throws IllegalAccessException {
         Wish candidateWish = wishRepository.findById(id).get();
-        Long wishUserId = candidateWish.getMemberId();
-
-        if (userId.equals(wishUserId)) {
-            wishRepository.delete(candidateWish);
-            return true;
-        }
-        return false;
+        wishRepository.delete(candidateWish);
     }
 
     private Long translateIdFrom(String tokenValue) {
-        return tokenService.getUserIdByDecodeTokenValue(tokenValue);
+        return basicTokenService.getUserIdByDecodeTokenValue(tokenValue);
     }
 
     public Page<WishResponseDto> getWishes(Pageable pageable) {

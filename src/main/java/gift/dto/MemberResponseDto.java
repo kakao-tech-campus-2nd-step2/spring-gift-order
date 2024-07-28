@@ -5,8 +5,8 @@ import gift.entity.Member;
 public class MemberResponseDto {
 
     private Long id;
-    private String email;
-    private String password;
+    private final String email;
+    private final String password;
 
     private String token;
 
