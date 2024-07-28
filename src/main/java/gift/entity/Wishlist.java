@@ -2,6 +2,7 @@ package gift.entity;
 
 import gift.dto.WishlistResponse;
 import gift.exception.InvalidOptionException;
+import gift.exception.UnauthorizedException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +42,10 @@ public class Wishlist {
 		return id;
 	}
 	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public User getUser() {
 		return user;
 	}
@@ -58,6 +63,12 @@ public class Wishlist {
 			throw new InvalidOptionException("Quantity cannot be less than ZERO.");
 		}
 		this.quantity = quantity;
+	}
+	
+	public void validateUserPermission(User user) {
+		if (!this.user.equals(user)) {
+			throw new UnauthorizedException("You do not have permission to perform this action on the wishlist item.");
+		}
 	}
 	
 	public WishlistResponse toDto() {
