@@ -56,9 +56,6 @@ public class Option {
     }
 
     public void subtract(int count){
-        if (quantity < count){
-            throw new IllegalArgumentException("현재 남은 옵션 개수보다 많습니다.");
-        }
         this.quantity -= count;
     }
 

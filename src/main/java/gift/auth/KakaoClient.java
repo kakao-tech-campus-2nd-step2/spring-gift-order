@@ -1,6 +1,7 @@
 package gift.auth;
 
 import gift.auth.dto.KakaoAccessToken;
+import gift.auth.dto.KakaoMessage;
 import gift.auth.dto.KakaoProperties;
 import gift.auth.dto.KakaoUserInfo;
 import java.net.URI;
@@ -16,6 +17,7 @@ public class KakaoClient {
 
     private final static String KAKAO_URL = "https://kauth.kakao.com/oauth/token";
     private final static String KAKAO_USER_URL = "https://kapi.kakao.com/v2/user/me";
+    private final static String KAKAO_MESSAGE_URL = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
     private final RestClient client;
     private final KakaoProperties properties;
 
@@ -45,6 +47,18 @@ public class KakaoClient {
             .retrieve()
             .toEntity(KakaoUserInfo.class)
             .getBody();
+    }
+
+    public void sendMessage(String accessToken, String message) {
+        var body = KakaoMessage.toBody(message);
+
+        client.post()
+            .uri(URI.create(KAKAO_MESSAGE_URL))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
     }
 
     public KakaoProperties getProperties(){
