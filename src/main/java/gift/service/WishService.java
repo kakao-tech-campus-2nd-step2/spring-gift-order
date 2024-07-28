@@ -28,6 +28,7 @@ public class WishService{
 
     public void deleteWish(Product product) {
         Wish wish = wishRepository.findByProduct(product);
+
         if(wish != null) {
             wish.setDeleted(true);
         }

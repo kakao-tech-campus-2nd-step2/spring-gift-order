@@ -28,4 +28,5 @@ public class OptionService {
     public Option getOption(Long optionId) {
         return optionRepository.findById(optionId).orElseThrow();
     }
+
 }
