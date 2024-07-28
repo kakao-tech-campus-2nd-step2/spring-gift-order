@@ -31,7 +31,7 @@ public class Option {
     @JoinColumn
     private Product product;
 
-    private Option() {}
+    protected Option() {}
 
     public Option(Name name, Quantity quantity, Product product) {
         name.checkNameLength(NAME_MAX_LENGTH);
