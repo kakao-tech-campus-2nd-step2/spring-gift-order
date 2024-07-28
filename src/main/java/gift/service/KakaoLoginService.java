@@ -4,6 +4,7 @@ import gift.dto.JwtResponse;
 import gift.dto.KakaoProfileDTO;
 import gift.dto.KakaoTokenDTO;
 import gift.dto.MemberDTO;
+import gift.exception.InvalidKakaoTokenException;
 import gift.repository.KakaoTokenRepository;
 import gift.util.JwtProvider;
 import gift.util.KakaoProperties;
@@ -13,6 +14,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -55,20 +57,28 @@ public class KakaoLoginService {
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUri());
         body.add("code", code);
-        return client.post()
-            .uri(URI.create(KAKAO_OAUTH_TOKEN_URL))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .retrieve()
-            .body(KakaoTokenDTO.class);
+        try {
+            return client.post()
+                .uri(URI.create(KAKAO_OAUTH_TOKEN_URL))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .body(KakaoTokenDTO.class);
+        } catch (HttpClientErrorException e) {
+            throw new InvalidKakaoTokenException(e.getStatusCode(), e.getMessage());
+        }
     }
 
     private KakaoProfileDTO getKakaoProfile(String kakaoAccessToken) {
         var client = RestClient.builder(restTemplate).build();
-        return client.get()
-            .uri(URI.create(KAKAO_PROFILE_URL))
-            .header("Authorization", "Bearer " + kakaoAccessToken)
-            .retrieve()
-            .body(KakaoProfileDTO.class);
+        try {
+            return client.get()
+                .uri(URI.create(KAKAO_PROFILE_URL))
+                .header("Authorization", "Bearer " + kakaoAccessToken)
+                .retrieve()
+                .body(KakaoProfileDTO.class);
+        } catch (HttpClientErrorException e) {
+            throw new InvalidKakaoTokenException(e.getStatusCode(), e.getMessage());
+        }
     }
 }
