@@ -11,35 +11,28 @@ import org.springframework.validation.BindingResult;
 import gift.entity.User;
 import gift.exception.InvalidUserException;
 import gift.exception.UnauthorizedException;
-import gift.exception.UserNotFoundException;
-import gift.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class AuthService {
+public class AuthService implements TokenHandler{
 	
-	private final UserRepository userRespository;
+	private final UserService userService;
 	
-	public AuthService(UserRepository userRespository) {
-		this.userRespository = userRespository;
+	public AuthService(UserService userService) {
+		this.userService = userService;
 	}
 	
 	private final String secret = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
 	
-	public void createUser(User user, BindingResult bindingResult) {
-		validateBindingResult(bindingResult);
-		userRespository.save(user);
-	}
-	
 	public User searchUser(String email, BindingResult bindingResult) {
 		validateBindingResult(bindingResult);       
-        return findByEmail(email);
+        return userService.findByEmail(email);
 	}
 	
 	public Map<String, String> loginUser(User user, BindingResult bindingResult){
 		User registeredUser = searchUser(user.getEmail(), bindingResult);
-		validatePassword(user.getPassword(), registeredUser.getPassword());
+		registeredUser.validatePassword(user.getPassword());
 		String token = grantAccessToken(registeredUser);
 		return loginResponse(token);
 	}
@@ -52,6 +45,7 @@ public class AuthService {
 		    .compact();
 	}
 	
+	@Override
 	public String parseToken(String token) {
         try {
             return Jwts.parser()
@@ -65,6 +59,11 @@ public class AuthService {
         }
     }
 	
+	@Override
+	public String getTokenSuffix() {
+		return "-itself";
+	}
+	
 	private void validateBindingResult(BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			String errorMessage = bindingResult
@@ -74,20 +73,9 @@ public class AuthService {
 		}
 	}
 	
-	private void validatePassword(String inputPassword, String storedPassword) {
-		if (!inputPassword.equals(storedPassword)) {
-			throw new InvalidUserException("The email doesn't or thr password is incorrect.", HttpStatus.FORBIDDEN);
-		}
-	}
-	
 	private Map<String, String> loginResponse(String token){
 		Map<String, String> response = new HashMap<>();
-		response.put("token", token);
+		response.put("access_token", token);
 		return response;
-	}
-	
-	private User findByEmail(String email) {
-		return userRespository.findByEmail(email)
-	    		.orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found"));
 	}
 }
