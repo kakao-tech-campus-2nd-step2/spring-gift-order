@@ -1,7 +1,6 @@
 package gift.controller;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -18,7 +17,6 @@ import gift.model.Category;
 import gift.model.Product;
 import gift.security.LoginMemberArgumentResolver;
 import gift.service.CategoryService;
-import gift.service.MemberService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

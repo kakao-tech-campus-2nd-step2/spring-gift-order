@@ -5,13 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gift.model.Category;
 import gift.model.Option;
 import gift.model.Product;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.List;
-import java.util.Optional;
 
 @DataJpaTest
 class OptionRepositoryTest {

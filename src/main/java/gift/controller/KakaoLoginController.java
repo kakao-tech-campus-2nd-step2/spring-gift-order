@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.ApiResponse;
 import gift.model.HttpResult;
-import gift.model.Member;
 import gift.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
