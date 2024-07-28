@@ -1,6 +1,6 @@
 package gift.user.service;
 
-import gift.user.client.KakaoLoginClient;
+import gift.user.client.KakaoApiClient;
 import gift.user.dto.request.UserLoginRequest;
 import gift.user.dto.request.UserRegisterRequest;
 import gift.user.dto.response.UserResponse;
@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoUserService {
 
-    private final KakaoLoginClient kakaoLoginClient;
+    private final KakaoApiClient kakaoApiClient;
     private final UserService userService;
     private final UserJpaRepository userRepository;
 
-    public KakaoUserService(KakaoLoginClient kakaoLoginClient, UserService userService,
+    public KakaoUserService(KakaoApiClient kakaoApiClient, UserService userService,
         UserJpaRepository userRepository) {
-        this.kakaoLoginClient = kakaoLoginClient;
+        this.kakaoApiClient = kakaoApiClient;
         this.userService = userService;
         this.userRepository = userRepository;
     }
 
     public UserResponse loginKakaoUser(String code) {
-        var token = kakaoLoginClient.getKakaoTokenResponse(code).accessToken();
-        var userInfo = kakaoLoginClient.getKakaoUserId(token);
+        var token = kakaoApiClient.getKakaoTokenResponse(code).accessToken();
+        var userInfo = kakaoApiClient.getKakaoUserId(token);
         String email = userInfo.id() + "@kakao.com";
         String password = "";
 

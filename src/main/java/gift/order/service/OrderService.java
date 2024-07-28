@@ -13,7 +13,7 @@ import gift.product.entity.Product;
 import gift.product.option.entity.Option;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.option.service.OptionService;
-import gift.user.client.KakaoLoginClient;
+import gift.user.client.KakaoApiClient;
 import gift.user.entity.User;
 import gift.user.repository.UserJpaRepository;
 import gift.wish.repository.WishRepository;
@@ -30,20 +30,20 @@ public class OrderService {
     private final OrderJpaRepository orderRepository;
     private final WishRepository wishRepository;
     private final KakaoProperties kakaoProperties;
-    private final KakaoLoginClient kakaoLoginClient;
+    private final KakaoApiClient kakaoApiClient;
     private final UserJpaRepository userJpaRepository;
 
 
     public OrderService(OptionService optionService, OptionJpaRepository optionRepository,
         OrderJpaRepository orderRepository, WishRepository wishRepository,
-        KakaoProperties kakaoProperties, KakaoLoginClient kakaoLoginClient,
+        KakaoProperties kakaoProperties, KakaoApiClient kakaoApiClient,
         UserJpaRepository userJpaRepository) {
         this.optionService = optionService;
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
         this.wishRepository = wishRepository;
         this.kakaoProperties = kakaoProperties;
-        this.kakaoLoginClient = kakaoLoginClient;
+        this.kakaoApiClient = kakaoApiClient;
         this.userJpaRepository = userJpaRepository;
     }
 
@@ -74,7 +74,7 @@ public class OrderService {
 
         System.out.println(user.getAccessToken());
 
-        kakaoLoginClient.sendMessage(user.getAccessToken(), kakaoMessageRequest);
+        kakaoApiClient.sendMessage(user.getAccessToken(), kakaoMessageRequest);
 
         return OrderResponse.from(saved);
     }
