@@ -13,5 +13,5 @@
     - [x] 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
     - [x] 메시지는 메시지 템플릿의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.
 # step1 피드백
-- [ ] ConfigurationProperties 생성자로 바인딩
-- [ ] JSONObject 추상환된 클래스로 변경
+- [x] ConfigurationProperties 생성자로 바인딩
+- [x] JSONObject 추상환된 클래스로 변경

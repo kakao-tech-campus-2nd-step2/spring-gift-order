@@ -1,10 +1,7 @@
 package gift.oauth;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import java.net.URI;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -12,22 +9,24 @@ import org.springframework.web.client.RestClient;
 
 @Service
 public class OauthService {
-    @Value("${kakao.client-id}")
-    private String clientId;
-    @Value("${kakao.redirect-url}")
-    private String redirectUri;
 
-    public LinkedMultiValueMap<String, String> getRequestBody(String code){
+    private final KakaoOAuthConfigProperties configProperties;
+
+    public OauthService(KakaoOAuthConfigProperties configProperties) {
+        this.configProperties = configProperties;
+    }
+
+    public LinkedMultiValueMap<String, String> getRequestBody(String code) {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
+        body.add("client_id", configProperties.getClientId());
+        body.add("redirect_uri", configProperties.getRedirectUrl());
         body.add("code", code);
 
         return body;
     }
 
-    public KakaoToken getKakaoToken(String code){
+    public KakaoToken getKakaoToken(String code) {
         RestClient client = RestClient.builder().build();
         String url = "https://kauth.kakao.com/oauth/token";
 
@@ -40,19 +39,11 @@ public class OauthService {
             .retrieve()
             .toEntity(String.class);
 
-
         return extractKakaoToken(response.getBody());
     }
 
-    public KakaoToken extractKakaoToken(String responseBody){
-        JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-        String accessToken = jsonObject.get("access_token").getAsString();
-        String tokenType = jsonObject.get("token_type").getAsString();
-        String refreshToken = jsonObject.get("refresh_token").getAsString();
-        int expiresIn = jsonObject.get("expires_in").getAsInt();
-        String scope = jsonObject.get("scope").getAsString();
-        int refreshTokenExpiresIn = jsonObject.get("refresh_token_expires_in").getAsInt();
-
-        return new KakaoToken(accessToken,tokenType,refreshToken,expiresIn,scope,refreshTokenExpiresIn);
+    public KakaoToken extractKakaoToken(String responseBody) {
+        Gson gson = new Gson();
+        return gson.fromJson(responseBody, KakaoToken.class);
     }
 }
