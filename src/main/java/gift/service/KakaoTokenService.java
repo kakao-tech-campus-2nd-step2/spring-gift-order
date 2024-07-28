@@ -3,6 +3,7 @@ package gift.service;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import gift.dto.response.KakaoTokenResponse;
 import gift.entity.KakaoToken;
 import gift.exception.CustomException;
 import gift.repository.KakaoTokenRepository;
@@ -14,6 +15,7 @@ public class KakaoTokenService {
     
     private KakaoTokenRepository kakaoTokenRepository;
     private JwtUtil jwtUtil;
+    private KakaoApiService kakaoApiService;
 
     public KakaoTokenService(KakaoTokenRepository kakaoTokenRepository, JwtUtil jwtUtil){
         this.kakaoTokenRepository = kakaoTokenRepository;
@@ -21,10 +23,10 @@ public class KakaoTokenService {
     }
 
     @Transactional
-    public void saveKakaoToken(String email, String accessToken){
+    public void saveKakaoToken(String email, KakaoTokenResponse kakaoTokenResponse){
 
         if(kakaoTokenRepository.findByEmail(email).isEmpty()){
-            KakaoToken kakaoToken = new KakaoToken(email, accessToken);
+            KakaoToken kakaoToken = new KakaoToken(email, kakaoTokenResponse.getAccessToken(), kakaoTokenResponse.getRefreshToken());
             kakaoTokenRepository.save(kakaoToken);
         }
     }
@@ -37,5 +39,12 @@ public class KakaoTokenService {
             .orElseThrow(() -> new CustomException("KakaoToken is not exists", HttpStatus.NOT_FOUND));
         
         return kakaoToken.getAccessToken();
+    }
+
+    public void refreshToken(KakaoToken kakaoToken){
+        if(kakaoToken.isExpired()){
+            kakaoApiService.refreshToken(kakaoToken.getRefreshToken());
+        }
+        
     }
 }

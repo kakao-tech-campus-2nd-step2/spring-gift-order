@@ -41,8 +41,8 @@ public class KakaoLoginController {
 
         KakaoUserInfoResponse kakaoUserInfoResponse = kakaoApiService.getUserInfo(response.getAccessToken());
         
-        //temporary
-        kakaoTokenService.saveKakaoToken(kakaoUserInfoResponse.getId() + "@kakao.com", response.getAccessToken());
+        //temporary email
+        kakaoTokenService.saveKakaoToken(kakaoUserInfoResponse.getId() + "@kakao.com", response);
         
         return new ResponseEntity<>(response.getAccessToken(), HttpStatus.OK);
     }

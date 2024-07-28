@@ -17,6 +17,7 @@ import gift.dto.request.MessageRequest;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.dto.response.MessageResponse;
+import gift.dto.response.RefreshTokenResponse;
 import gift.exception.CustomException;
 
 
@@ -59,6 +60,44 @@ public class KakaoApiService {
 
                 String jsonBody = response.getBody();
                 return objectMapper.readValue(jsonBody, KakaoTokenResponse.class);
+
+            } else if(response.getStatusCode().is4xxClientError()){
+                throw new CustomException("Bad Request " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
+            } else if(response.getStatusCode().is5xxServerError()){
+                throw new CustomException("System error " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));
+            } else {
+                throw new CustomException("Unexpected response error " + response.getBody(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (CustomException e) {
+            throw new CustomException(e.getMessage(), e.getHttpStatus());
+        } catch (JsonProcessingException e){
+            throw new CustomException("Error parsing token response", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public RefreshTokenResponse refreshToken(String refreshToken){
+
+        var url = "https://kauth.kakao.com/oauth/token";
+
+        var body = new LinkedMultiValueMap<String, String>();
+        body.add("grant_type", "refresh_token");
+        body.add("client_id", kakaoProperties.getApiKey());
+        body.add("refresh_token", refreshToken);
+        try {
+
+            ResponseEntity<String> response = client.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .toEntity(String.class);
+                
+            if(response.getStatusCode().is2xxSuccessful()){
+
+                String jsonBody = response.getBody();
+                return objectMapper.readValue(jsonBody, RefreshTokenResponse.class);
 
             } else if(response.getStatusCode().is4xxClientError()){
                 throw new CustomException("Bad Request " + response.getBody(), HttpStatus.valueOf(response.getStatusCode().value()));

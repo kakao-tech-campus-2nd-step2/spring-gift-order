@@ -22,14 +22,29 @@ public class KakaoToken {
     @Column(nullable = false)
     private String accessToken;
 
-    public KakaoToken(String email, String accessToken){
+    @Column(nullable = false)
+    private String refreshToken;
+
+    public KakaoToken(String email, String accessToken, String refreshToken){
         this.email = email;
         this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
     }
 
     public String getAccessToken(){
         return accessToken;
     }
-    
-    
+
+    public String getRefreshToken(){
+        return refreshToken;
+    }
+
+    public boolean isExpired(){
+        
+        //if(expire_in > duration){ 
+        // return true;
+        // }
+
+        return false;
+    }
 }
