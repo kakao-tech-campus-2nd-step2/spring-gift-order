@@ -33,9 +33,7 @@ public class OrderController {
             throw new CustomException("Unvalid Token!", HttpStatus.BAD_REQUEST);
         }
 
-        OrderResponse orderResponse = orderService.orderOption(orderRequest);
-        orderService.deleteWishListByOrder(jwtUtil.extractToken(authorizationHeader), orderResponse.getOptionId());
-        orderService.sendKakaoMessage(jwtUtil.extractToken(authorizationHeader), orderResponse);
+        OrderResponse orderResponse = orderService.makeOrder(jwtUtil.extractToken(authorizationHeader), orderRequest);
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }

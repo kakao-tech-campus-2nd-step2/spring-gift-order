@@ -32,8 +32,23 @@ public class OrderService {
         this.wishListService = wishListService;
         this.kakaoTokenService = kakaoTokenService;
     }
-    
+
     @Transactional
+    public OrderResponse makeOrder(String token, OrderRequest orderRequest){
+
+        try {
+            OrderResponse orderResponse = orderOption(orderRequest);
+            deleteWishListByOrder(token, orderResponse.getOptionId());
+            sendKakaoMessage(token, orderResponse);
+            return orderResponse;
+        } catch (CustomException e) {
+            throw new CustomException(e.getMessage(), e.getHttpStatus());
+        } catch (Exception e) {
+            throw new CustomException("unexpected exception during makeing order", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+            
+    }
+    
     public OrderResponse orderOption(OrderRequest orderRequest){
 
         Option option = optionService.subtractQuantity(orderRequest.getOptionId(), orderRequest.getQuantity());
@@ -49,14 +64,12 @@ public class OrderService {
             savedOrder.getOrderTime());
     }
 
-    @Transactional
     public void deleteWishListByOrder(String token, Long optionId){
 
         Product product = optionService.findProductByOptionId(optionId);
         wishListService.deleteWishList(token, product.getId());
     }
 
-    @Transactional
     public void sendKakaoMessage(String token, OrderResponse orderResponse){
 
         String kakaoToken = kakaoTokenService.findKakaoToken(token);
