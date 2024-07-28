@@ -34,9 +34,9 @@ class CategoryServiceTest {
         String imageUrl = "이미지url";
         String description = "설명";
         String description2 = "설명2";
-        var request = new CategoryRequest.Create(name, color, imageUrl, description);
+        var request = new CategoryRequest.CreateCategory(name, color, imageUrl, description);
         Long id = categoryService.save(request);
-        var request2 = new CategoryRequest.Update(id, name, color, imageUrl, description2);
+        var request2 = new CategoryRequest.UpdateCategory(id, name, color, imageUrl, description2);
 
         // when
         categoryService.updateById(request2);

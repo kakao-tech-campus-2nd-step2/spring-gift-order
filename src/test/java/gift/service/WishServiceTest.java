@@ -38,7 +38,7 @@ class WishServiceTest {
         Long productId = 1L;
         int productCount = 11;
         Long memberId = 1L;
-        var request = new WishRequest.Create(productId);
+        var request = new WishRequest.CreateWish(productId);
         given(productRepository.existsById(eq(productId)))
                 .willReturn(false);
 
@@ -55,7 +55,7 @@ class WishServiceTest {
         Long productId = 1L;
         int productCount = 11;
         Long memberId = 1L;
-        var request = new WishRequest.Create(productId);
+        var request = new WishRequest.CreateWish(productId);
         given(productRepository.existsById(eq(productId)))
                 .willReturn(true);
         given(wishRepository.existsByProductIdAndMemberId(eq(productId), eq(memberId)))

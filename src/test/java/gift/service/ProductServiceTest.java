@@ -32,7 +32,7 @@ class ProductServiceTest {
         String name = "name";
         int quantity = 2;
         Long productId = 1L;
-        var request = new OptionRequest.Create(name, quantity, productId);
+        var request = new OptionRequest.CreateOption(name, quantity, productId);
         given(productRepository.existsById(eq(productId)))
                 .willReturn(false);
 

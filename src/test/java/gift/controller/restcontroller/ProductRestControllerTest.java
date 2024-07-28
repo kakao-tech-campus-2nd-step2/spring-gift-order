@@ -50,10 +50,10 @@ class ProductRestControllerTest {
 
     @Test
     void create() {
-        List<OptionRequest.Init> options = List.of(new OptionRequest.Init("oName", 100), new OptionRequest.Init("oName1", 1100));
+        List<OptionRequest.InitOption> options = List.of(new OptionRequest.InitOption("oName", 100), new OptionRequest.InitOption("oName1", 1100));
         Category category = categoryRepository.save(new Category("상품권", "#123", "url", ""));
         var url = "http://localhost:" + port + "/api/v1/product";
-        var request = new ProductRequest.Create("product", 1_000, "Url", category.getId(), options);
+        var request = new ProductRequest.CreateProduct("product", 1_000, "Url", category.getId(), options);
         var requestEntity = new RequestEntity<>(request, HttpMethod.POST, URI.create(url));
         var actual = restTemplate.exchange(requestEntity, String.class);
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.CREATED);

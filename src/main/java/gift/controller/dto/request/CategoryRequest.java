@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public class CategoryRequest {
 
-    public record Create(
+    public record CreateCategory(
             @NotBlank
             String name,
             @NotBlank
@@ -16,7 +16,7 @@ public class CategoryRequest {
     ) {
     }
 
-    public record Update(
+    public record UpdateCategory(
             @Min(1)
             Long id,
             @NotBlank

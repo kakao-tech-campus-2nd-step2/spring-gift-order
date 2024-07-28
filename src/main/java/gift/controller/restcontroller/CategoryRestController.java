@@ -6,6 +6,7 @@ import gift.controller.dto.response.ProductResponse;
 import gift.service.CategoryService;
 import gift.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -29,7 +30,9 @@ public class CategoryRestController {
     }
     @PostMapping("/category")
     @Operation(summary = "카테고리 저장", description = "카테고리를 저장합니다.")
-    public ResponseEntity<Long> createCategory(@Valid @RequestBody CategoryRequest.Create request
+    @ApiResponse(responseCode = "201")
+    public ResponseEntity<Long> createCategory(
+            @Valid @RequestBody CategoryRequest.CreateCategory request
     ) {
         Long id = categoryService.save(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(id);
@@ -45,7 +48,7 @@ public class CategoryRestController {
     @PutMapping("/category")
     @Operation(summary = "카테고리 수정", description = "카테고리를 수정합니다.")
     public ResponseEntity<Void> updateCategory(
-            @Valid @RequestBody CategoryRequest.Update request
+            @Valid @RequestBody CategoryRequest.UpdateCategory request
     ) {
         categoryService.updateById(request);
         return ResponseEntity.ok().build();

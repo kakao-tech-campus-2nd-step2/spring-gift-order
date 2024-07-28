@@ -4,13 +4,13 @@ import jakarta.validation.constraints.Min;
 
 public class WishRequest {
 
-    public record Create(
+    public record CreateWish(
             @Min(1)
             Long productId
     ) {
     }
 
-    public record Update(
+    public record UpdateWish(
             @Min(1)
             Long id,
             @Min(1)

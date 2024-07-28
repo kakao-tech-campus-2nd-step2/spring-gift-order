@@ -6,6 +6,7 @@ import gift.controller.dto.response.PagingResponse;
 import gift.controller.dto.response.ProductResponse;
 import gift.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -49,8 +50,9 @@ public class ProductRestController {
 
     @PostMapping("/product")
     @Operation(summary = "상품 추가", description = "상품을 추가합니다.")
+    @ApiResponse(responseCode = "201")
     public ResponseEntity<Long> createProduct(
-            @Valid @RequestBody ProductRequest.Create request
+            @Valid @RequestBody ProductRequest.CreateProduct request
     ) {
         Long id = productService.save(request.toDto());
         return ResponseEntity.created(URI.create("/api/v1/product" + id)).body(id);
@@ -59,7 +61,7 @@ public class ProductRestController {
     @PutMapping("/product")
     @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     public ResponseEntity<Void> updateProduct(
-            @Valid @RequestBody ProductRequest.Update request
+            @Valid @RequestBody ProductRequest.UpdateProduct request
     ) {
         productService.updateProduct(request.toDto());
         return ResponseEntity.ok().build();

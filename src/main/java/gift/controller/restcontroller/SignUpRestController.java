@@ -4,6 +4,7 @@ import gift.common.enums.Role;
 import gift.controller.dto.request.SignUpRequest;
 import gift.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class SignUpRestController {
 
     @PostMapping("/sign-up")
     @Operation(summary = "회원가입", description = "회원가입을 시도합니다.")
+    @ApiResponse(responseCode = "201")
     public ResponseEntity<Void> signUp(@Valid @RequestBody SignUpRequest request) {
         memberService.signUp(request.email(), request.password(), Role.USER);
         return ResponseEntity.status(HttpStatus.CREATED).build();

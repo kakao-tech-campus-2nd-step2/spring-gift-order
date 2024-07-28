@@ -29,7 +29,7 @@ public class WishService {
     }
 
     @Transactional
-    public void update(WishRequest.Update request, Long memberId) {
+    public void update(WishRequest.UpdateWish request, Long memberId) {
         Wish wish = wishRepository.findByIdFetchJoin(request.id())
                 .orElseThrow(() -> new EntityNotFoundException("Wish with id " + request.id() + " Does not exist"));
         wish.checkWishByMemberId(memberId);
@@ -42,7 +42,7 @@ public class WishService {
     }
 
     @Transactional
-    public void save(WishRequest.Create request, int productCount, Long memberId) {
+    public void save(WishRequest.CreateWish request, int productCount, Long memberId) {
         checkProductByProductId(request.productId());
         checkDuplicateWish(request.productId(), memberId);
         Member member = memberRepository.getReferenceById(memberId);
