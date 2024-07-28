@@ -27,7 +27,8 @@ public class RestDocsConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new MockAuthApiInterceptor());
+        registry.addInterceptor(new MockAuthApiInterceptor())
+            .excludePathPatterns("/api/join","/api/login");
     }
 
     @Override

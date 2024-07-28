@@ -9,6 +9,7 @@ import gift.model.Member;
 import gift.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,12 +36,13 @@ public class LoginController {
 
         Member joinedMember = memberService.join(joinRequest.email(), joinRequest.password());
         jwtService.addTokenInHeader(joinedMember, response);
+        JoinResponse joinResponse = new JoinResponse(joinRequest.email(), "회원가입이 완료되었습니다.");
 
-        return ResponseEntity.ok(new JoinResponse(joinRequest.email(), "회원가입이 완료되었습니다."));
+        return new ResponseEntity<>(joinResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/api/login")
-    public void login(@RequestBody @Valid LoginRequest loginRequest,
+    public ResponseEntity<Void> login(@RequestBody @Valid LoginRequest loginRequest,
         BindingResult bindingResult, HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
@@ -50,6 +52,7 @@ public class LoginController {
         Member loginedMember = memberService.login(loginRequest.email(), loginRequest.password());
         jwtService.addTokenInHeader(loginedMember, response);
 
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
