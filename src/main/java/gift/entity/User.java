@@ -1,5 +1,8 @@
 package gift.entity;
 
+import org.springframework.http.HttpStatus;
+
+import gift.exception.InvalidUserException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,11 +40,21 @@ public class User {
 		return id;
 	}
 	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public String getEmail() {
 		return email;
 	}
 	
 	public String getPassword() {
 		return password;
+	}
+	
+	public void validatePassword(String inputPassword) {
+		if (!inputPassword.equals(this.password)) {
+			throw new InvalidUserException("The email doesn't or thr password is incorrect.", HttpStatus.FORBIDDEN);
+		}
 	}
 }
