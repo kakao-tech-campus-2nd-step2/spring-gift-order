@@ -14,14 +14,18 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     @NotNull
     private String name;
+
     @NotNull
     private String color;
+
     @Column(name = "imageurl")
     @NotNull
     private String imageUrl;
+
     @NotNull
     private String description;
 
