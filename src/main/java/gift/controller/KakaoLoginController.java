@@ -23,7 +23,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/kakao")
-    public ResponseEntity<JwtResponse> kakaoLogin(@RequestParam("code") String code) {
+    public ResponseEntity<JwtResponse> loginByKakao(@RequestParam("code") String code) {
         // 1. 인가 코드 받기 (code)
 
         try {
