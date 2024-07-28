@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
 import gift.domain.Member;
 import gift.domain.WishList;
+import gift.domain.getTokenDto;
 import gift.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -47,9 +48,11 @@ public class KakaoService {
 
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "d10bca9343a675e1c7e772e899667311");
+        body.add("client_id", client_id);
         body.add("redirect_uri", "http://localhost:8080/api/kakao/code");
         body.add("code", code);
+
+       // var body = new getTokenDto("authorization_code",client_id,"http://localhost:8080/api/kakao/code",code);
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
@@ -58,7 +61,8 @@ public class KakaoService {
         ResponseEntity<KakaoLoginResponse> response = restTemplate.exchange(request, KakaoLoginResponse.class);
 
         headers = new HttpHeaders();
-        headers.add("Authorization",response.getBody().access_token() );
+        headers.add("Authorization",response.getBody().access_token());
+        System.out.println(response.getBody().access_token());
         return getUserInformation(response.getBody().access_token());
     }
 
