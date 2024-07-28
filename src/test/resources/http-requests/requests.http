@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8080
-@token =eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW9sYmluQGV4YW1wbGUuY29tIn0.5H5vKV5TqY2PepHu3b7rP2rA7E52Qnw3mxsKiPybD8o
+@token =eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjIxNjExNzIsImV4cCI6MTcyMjE2NDc3Mn0.P5_9T0ejgs8EBYNz4W2_XsPYD2xre5zEnBgWbjepsum5n3B0fzvbraDoqDy36xiX9eMcAnZMleYc5lwf4DxFDA
 
 ### 모든 상품 조회
 GET {{baseUrl}}/api/products?page=0&size=10
@@ -92,9 +92,7 @@ POST {{baseUrl}}/api/wishlist/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{
-  "userId": "seolbin@example.com"
-}
+{}
 
 ### 위시리스트 조회
 GET {{baseUrl}}/api/wishlist
@@ -164,7 +162,7 @@ Authorization: Bearer {{token}}
 {
   "optionId": 1,
   "quantity": 1,
-  "message": "주문을 처리해주세요."
+  "message": "Please handle this order with care."
 }
 
 ### 주문 생성 (유효하지 않은 데이터 - 옵션 수량 부족)
