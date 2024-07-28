@@ -87,6 +87,20 @@ public class KakaoService {
         return jwtToken;
     }
 
+    public void sendKakaoMessage(String accessToken, OrderResponseDTO orderResponseDTO) {
+        String url = kakaoProperties.sendMessageUrl();
+        final LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", TemplateObject(orderResponseDTO.id(),
+            orderResponseDTO.optionId(), orderResponseDTO.quantity(), orderResponseDTO.orderDateTime().toString(),orderResponseDTO.message()));
+        ResponseEntity<String> response = restClient.post()
+            .uri(URI.create(url))
+            .header(HttpHeaders.AUTHORIZATION, "Bearer "+accessToken)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
+    }
+
     private String TemplateObject(Long id, Long optionId, Long quantity, String orderDateTime, String message) {
         return "{"
             + "\"object_type\":\"text\","
