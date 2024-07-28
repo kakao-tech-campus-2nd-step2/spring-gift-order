@@ -398,14 +398,29 @@ Content-Type: application/json
 #### 모델 설계
 
 - [x] 멤버를 표현하는 도메인 객체
-  - 멤버의 구성요소
-    - id: int (primary key, unique, not null)
-      - 멤버를 구분하는 pk로, 내부적으로만 사용됨
-    - email: string (unique, not null)
-    - password: string
-      - 해시함수를 한번 거친다.
-    - permission: string
-      - `user`, `admin` 중 하나가 가능
+  - 멤버는 기본적으로 이메일(email)과 권한(permission)을 가지며, 유형에 따라 구분됨 
+    - 멤버의 기본 구성요소    
+      1. id: int (primary key, unique, not null)
+         - 멤버를 구분하는 pk로, 내부적으로만 사용됨    
+      2. email: string (unique, not null)
+         - 멤버 유형에 관계없이 이메일은 중복될 수 없음
+      3. permission: string
+         - `member`, `admin` 중 하나가 가능
+      4. userType: string
+         - 멤버는 반드시 오로지 한 유형에만 속해야 함
+         - `local`, `kakao` 중 하나가 가능
+    - Local Member만 가지는 구성요소
+      1. password: string
+         - 해시함수를 한번 거쳐 저장됨
+      2. member_id: int (fk, not null)
+         - 기본 멤버를 지칭하는 요소
+    - Kakao Member만 가지는 구성요소
+      1. kakao_identifier: int
+         - 카카오 계정을 고유하게 식별하는 값
+      2. access_token: string
+         - 카카오 api 접근시 필요한 임시 토큰으로 서버에서 저장
+      3. member_id: int (fk, not null)
+        - 기본 멤버를 지칭하는 요소
 - [x] 멤버를 저장하는 데이터베이스 연동
   - [x] Jpa Repository
   - [x] 엔티티 클래스 및 예제 데이터 구비
@@ -992,10 +1007,28 @@ Content-Type: application/json
 
 #### 회원가입 API/Request/Body
 
+- 회원 종류에 따라 서로 다른 요청을 해아 한다.
+
+##### 일반 회원인 경우
+
 ```json
 {
+  "user-type": "local",
   "email": "admin@email.com",
   "password": "password"
+}
+```
+
+##### 카카오 회원인 경우
+
+- 요청 전 카카로 로그인을 통해 `access_token`을 발급받아야 한다.
+  - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
+
+```json
+{
+  "user-type": "kakao",
+  "email": "kakao_user@kakao.com",
+  "access-token": "your-access-token-is-here"
 }
 ```
 
@@ -1031,10 +1064,28 @@ Content-Type: application/json
 
 #### 로그인 API/Request/Body
 
+- 회원 종류에 따라 서로 다른 요청을 해아 한다.
+
+##### 일반 회원인 경우
+
 ```json
 {
+  "user-type": "local",
   "email": "admin@email.com",
   "password": "password"
+}
+```
+
+##### 카카오 회원인 경우
+
+- 요청 전 카카로 로그인을 통해 `access_token`을 발급받아야 한다.
+  - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
+
+```json
+{
+  "user-type": "kakao",
+  "email": "kakao_user@kakao.com",
+  "access-token": "your-access-token-is-here"
 }
 ```
 
@@ -1265,7 +1316,7 @@ Content-Type: application/json
   ```
 
 - 비로그인 상태로 위시리스트 도메인 API를 사용할 경우, 서버는 401 Auauthorized 응답을 반환한다.
-- 
+
 </details>
 
 ---
