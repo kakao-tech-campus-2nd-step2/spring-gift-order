@@ -7,6 +7,8 @@ import gift.dto.RequestOrderDto;
 import gift.services.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +23,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderRequestStateDTO> addOrder(RequestOrderDto requestOrderDto,
-        String token) {
+    public ResponseEntity<OrderRequestStateDTO> addOrder(@RequestBody RequestOrderDto requestOrderDto,
+        @RequestHeader("Authorization") String token) {
         OrderDto orderDto = orderService.addOrder(requestOrderDto, token);
         return ResponseEntity.ok().body(new OrderRequestStateDTO(
             RequestStatus.success,
