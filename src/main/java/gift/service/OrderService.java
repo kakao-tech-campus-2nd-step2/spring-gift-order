@@ -36,8 +36,6 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
-
-
     public Order order(String token, OrderRequest orderRequest) throws IllegalAccessException, JsonProcessingException {
         Order order = storeData(token, orderRequest);
         sandOrderMessage(token, orderRequest);
@@ -49,11 +47,9 @@ public class OrderService {
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.add("Authorization", token);
-
         Map<String, Object> link = new HashMap<>();
         link.put("web_url", "https://developers.kakao.com");
         link.put("mobile_web_url", "https://developers.kakao.com");
-
         Option option = optionRepository.getById(orderRequest.optionId());
         Menu menu = option.getMenu();
         Member member = kakaoService.getUserInformation(token.replace("Bearer ",""));

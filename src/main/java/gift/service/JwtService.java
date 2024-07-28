@@ -19,7 +19,6 @@ public class JwtService {
     public JwtService() {
     }
 
-
     public String createJWT(String id) {
         return Jwts.builder()
                 .claim("id", id)

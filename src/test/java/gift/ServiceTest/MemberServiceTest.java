@@ -43,7 +43,6 @@ public class MemberServiceTest {
     public void joinTest() {
         MemberRequest memberRequest = new MemberRequest("testId", "testPassword","김민지");
         Member member = new Member("testId","testPassword","김민지",new LinkedList<WishList>());
-
         Mockito.when(memberRepository.save(any(Member.class))).thenReturn(member);
         Mockito.when(memberRepository.existsById("testId")).thenReturn(false);
 

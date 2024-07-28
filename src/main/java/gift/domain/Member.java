@@ -30,7 +30,6 @@ public class Member {
         this.name = name;
     }
 
-
     public String getPassword() {
         return password;
     }

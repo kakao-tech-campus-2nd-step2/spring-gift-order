@@ -37,7 +37,6 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).body("로그인 성공");
     }
 
-
     @PostMapping("/changePassword")
     public ResponseEntity changePassword(
             @RequestBody MemberRequest memberRequest
