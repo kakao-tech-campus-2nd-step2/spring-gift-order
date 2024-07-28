@@ -31,13 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "상품 api", description = "상품 api입니다")
 public class ProductController {
     private final ProductService productService;
-    private final OptionService optionService;
     private final AuthService authService;
 
-    public ProductController(ProductService productService, OptionService optionService,
-        AuthService authService) {
+    public ProductController(ProductService productService, AuthService authService) {
         this.productService = productService;
-        this.optionService = optionService;
         this.authService = authService;
     }
 
