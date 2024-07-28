@@ -5,7 +5,7 @@ import static gift.util.ResponseEntityUtil.responseError;
 
 import gift.dto.betweenClient.JwtDTO;
 import gift.dto.betweenClient.member.MemberDTO;
-import gift.exception.BadRequestExceptions.EmailAlreadyHereException;
+import gift.exception.BadRequestExceptions.UserNotFoundException;
 import gift.service.MemberService;
 import gift.util.JwtUtil;
 import jakarta.validation.Valid;
@@ -51,16 +51,9 @@ public class MemberController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid MemberDTO memberDTO) {
-        String token;
-        try {
-            memberDTO.setAccountType("basic");
-            memberService.register(memberDTO);
-            token = jwtUtil.generateToken(memberDTO);
-        } catch (RuntimeException e) {
-            if(e instanceof EmailAlreadyHereException)
-                return responseError(e, HttpStatus.CONFLICT);
-            return responseError(e);
-        }
+        memberDTO.setAccountType("basic");
+        memberService.register(memberDTO);
+        String token = jwtUtil.generateToken(memberDTO);
         return new ResponseEntity<>(new JwtDTO(token), HttpStatus.CREATED);
     }
 
@@ -78,8 +71,10 @@ public class MemberController {
             memberDTO.setAccountType("basic");
             memberService.login(memberDTO);
             token = jwtUtil.generateToken(memberDTO);
-        } catch (RuntimeException e) {
+        } catch (UserNotFoundException e) {
             return responseError(e, HttpStatus.FORBIDDEN);
+        } catch (RuntimeException e){
+            return responseError(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(new JwtDTO(token), HttpStatus.OK);
     }

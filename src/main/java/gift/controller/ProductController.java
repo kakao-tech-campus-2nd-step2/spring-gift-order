@@ -1,7 +1,5 @@
 package gift.controller;
 
-import static gift.util.ResponseEntityUtil.responseError;
-
 import gift.constants.ResponseMsgConstants;
 import gift.dto.betweenClient.product.ProductPostRequestDTO;
 import gift.dto.betweenClient.product.ProductResponseDTO;
@@ -48,40 +46,22 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ResponseDTO> addProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
-        try {
-            productService.addProduct(productPostRequestDTO);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.CREATED);
+        productService.addProduct(productPostRequestDTO);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable @Min(1) @NotNull Long id) {
-        try {
-            productService.deleteProduct(id);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.NO_CONTENT);
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO> updateProduct(@PathVariable @Min(1) @NotNull Long id,
             @RequestBody @Valid ProductRequestDTO productRequestDTO) {
-        try {
-            productService.updateProduct(id, productRequestDTO);
-
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.OK);
+        productService.updateProduct(id, productRequestDTO);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.OK);
     }
-
-
 }

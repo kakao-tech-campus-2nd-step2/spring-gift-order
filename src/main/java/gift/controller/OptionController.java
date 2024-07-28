@@ -1,7 +1,5 @@
 package gift.controller;
 
-import static gift.util.ResponseEntityUtil.responseError;
-
 import gift.constants.ResponseMsgConstants;
 import gift.dto.betweenClient.option.OptionRequestDTO;
 import gift.dto.betweenClient.ResponseDTO;
@@ -35,42 +33,25 @@ public class OptionController {
 
     @GetMapping
     public ResponseEntity<?> getOneProductIdAllOptions(@PathVariable Long productId) {
-        try {
-            return new ResponseEntity<>(optionService.getOneProductIdAllOptions(productId), HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+        return new ResponseEntity<>(optionService.getOneProductIdAllOptions(productId), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ResponseDTO> addOption(@PathVariable Long productId, @Valid @RequestBody OptionRequestDTO optionRequestDTO) {
-        try {
-            optionService.addOption(productId, optionRequestDTO);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+        optionService.addOption(productId, optionRequestDTO);
         return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.CREATED);
     }
 
     @PutMapping("/{optionId}")
     public ResponseEntity<ResponseDTO> updateOption(@PathVariable Long productId, @PathVariable Long optionId,
             @RequestBody OptionRequestDTO optionRequestDTO) {
-        try {
-            optionService.updateOption(productId, optionId, optionRequestDTO);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+        optionService.updateOption(productId, optionId, optionRequestDTO);
         return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.OK);
     }
 
     @DeleteMapping("/{optionId}")
-    public ResponseEntity<ResponseDTO> deleteOption(@PathVariable Long productId,
-            @PathVariable Long optionId) {
-        try {
-            optionService.deleteOption(productId, optionId);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+    public ResponseEntity<ResponseDTO> deleteOption(@PathVariable Long productId, @PathVariable Long optionId) {
+        optionService.deleteOption(productId, optionId);
         return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.NO_CONTENT);
     }
 }

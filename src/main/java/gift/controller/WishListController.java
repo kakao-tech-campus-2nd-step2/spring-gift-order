@@ -1,7 +1,5 @@
 package gift.controller;
 
-import static gift.util.ResponseEntityUtil.responseError;
-
 import gift.annotation.LoginMember;
 import gift.constants.ResponseMsgConstants;
 import gift.dto.betweenClient.member.MemberDTO;
@@ -40,35 +38,22 @@ public class WishListController {
 
     @GetMapping
     public String getWishes(Model model, @LoginMember MemberDTO memberDTO, Pageable pageable) {
-        try {
-            Page<WishDTO> wishDTOPage = wishListService.getWishList(memberDTO, pageable);
-            model.addAttribute("wishDTOPage", wishDTOPage);
-        } catch (RuntimeException e) {
-            responseError(e);
-        }
+        Page<WishDTO> wishDTOPage = wishListService.getWishList(memberDTO, pageable);
+        model.addAttribute("wishDTOPage", wishDTOPage);
         return "getWishes";
     }
 
     @PostMapping
     public ResponseEntity<ResponseDTO> addWishes(@RequestBody @Valid ProductRequestDTO productRequestDTO,
             @LoginMember MemberDTO memberDTO) {
-        try {
-            wishListService.addWishes(memberDTO, productRequestDTO);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.CREATED);
+        wishListService.addWishes(memberDTO, productRequestDTO);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDTO> deleteWishes(@PathVariable @Min(1) @NotNull Long id,
             @LoginMember MemberDTO memberDTO) {
-        try {
-            wishListService.removeWishListProduct(memberDTO, id);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+        wishListService.removeWishListProduct(memberDTO, id);
         return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
                 HttpStatus.NO_CONTENT);
     }
@@ -76,12 +61,7 @@ public class WishListController {
     @PutMapping("/{quantity}")
     public ResponseEntity<ResponseDTO> setWishes(@PathVariable @Min(0) @NotNull Integer quantity, @LoginMember MemberDTO MemberDTO,
             @RequestBody @Valid ProductRequestDTO productRequestDTO) {
-        try {
-            wishListService.setWishListNumber(MemberDTO, productRequestDTO, quantity);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.OK);
+        wishListService.setWishListNumber(MemberDTO, productRequestDTO, quantity);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.OK);
     }
 }

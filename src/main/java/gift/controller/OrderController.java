@@ -1,7 +1,5 @@
 package gift.controller;
 
-import static gift.util.ResponseEntityUtil.responseError;
-
 import gift.annotation.LoginMember;
 import gift.dto.betweenClient.member.MemberDTO;
 import gift.dto.betweenClient.order.OrderRequestDTO;
@@ -41,22 +39,18 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> order(@LoginMember MemberDTO memberDTO, @RequestBody OrderRequestDTO orderRequestDTO) {
-        try {
-            String accessToken = memberService.getMemberAccessToken(memberDTO.getEmail());
+        String accessToken = memberService.getMemberAccessToken(memberDTO.getEmail());
 
-            optionService.subtractOptionQuantity(orderRequestDTO.optionId(),
-                    orderRequestDTO.quantity());
+        optionService.subtractOptionQuantity(orderRequestDTO.optionId(),
+                orderRequestDTO.quantity());
 
-            Map<String, String> orderInfo = optionService.getOptionInfoForOrder(
-                    orderRequestDTO.optionId());
+        Map<String, String> orderInfo = optionService.getOptionInfoForOrder(
+                orderRequestDTO.optionId());
 
-            wishListService.removeWishListProduct(memberDTO, Long.valueOf(orderInfo.get("productId")));
-            kakaoTokenService.sendMsgToMe(accessToken, orderInfo, orderRequestDTO.message());
-            OrderResponseDTO orderResponseDTO = orderService.saveOrderHistory(orderRequestDTO);
+        wishListService.removeWishListProduct(memberDTO, Long.valueOf(orderInfo.get("productId")));
+        kakaoTokenService.sendMsgToMe(accessToken, orderInfo, orderRequestDTO.message());
+        OrderResponseDTO orderResponseDTO = orderService.saveOrderHistory(orderRequestDTO);
 
-            return new ResponseEntity<>(orderResponseDTO, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
+        return new ResponseEntity<>(orderResponseDTO, HttpStatus.CREATED);
     }
 }
