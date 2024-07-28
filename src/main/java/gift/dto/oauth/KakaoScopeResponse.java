@@ -9,6 +9,7 @@ public record KakaoScopeResponse(
     @Schema(description = "권한 리스트")
     List<Scope> scopes
 ) {
+
     @Schema(description = "권한 데이터")
     public record Scope(
         @Schema(description = "권한 ID", example = "account_email")
@@ -20,5 +21,7 @@ public record KakaoScopeResponse(
 
         @Schema(description = "동의 여부", example = "true")
         boolean agreed
-    ) {}
+    ) {
+
+    }
 }

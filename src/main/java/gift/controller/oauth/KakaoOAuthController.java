@@ -10,6 +10,7 @@ import gift.dto.oauth.KakaoUnlinkResponse;
 import gift.dto.oauth.KakaoUserResponse;
 import gift.service.MemberService;
 import gift.service.oauth.KakaoOAuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping("/oauth/kakao")
