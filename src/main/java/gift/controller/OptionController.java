@@ -57,11 +57,11 @@ public class OptionController {
         Option option = optionService.getOptionByName(optionName);
         Option newoption = new Option()
     }*/
-/*
+
     @GetMapping("/{id}")
     public ResponseEntity<Option> getOptionById(@PathVariable("id") Long id){
-        List<Option> option = optionService.getOptionByProductId(id);
+        Optional<Option> option = optionService.getOptionById(id);
         return option.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-*/
+
 }

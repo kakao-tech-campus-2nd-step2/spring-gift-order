@@ -53,6 +53,10 @@ public class OptionService {
         return optionRepository.findAll();
     }
 
+    public Optional<Option> getOptionById(Long id) {
+        return optionRepository.findById(id);
+    }
+
     public boolean existsOptionById(Long id) {
         return optionRepository.existsById(id);
     }

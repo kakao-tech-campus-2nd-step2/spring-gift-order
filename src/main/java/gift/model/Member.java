@@ -25,6 +25,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = true)
+    private String accessToken;
+
+    @Column(nullable = true)
+    private String kakaoToken;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WishList> wishlists = new ArrayList<>();
 
@@ -61,4 +67,19 @@ public class Member {
         this.password = password;
     }
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public String getKakaoToken() {
+        return kakaoToken;
+    }
+
+    public void setKakaoToken(String kakaoToken) {
+        this.kakaoToken = kakaoToken;
+    }
 }
