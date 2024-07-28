@@ -28,7 +28,5 @@ public class UrlTest {
         var request = new RequestEntity<>(body,headers, HttpMethod.POST, URI.create(url));
         var response = client.exchange(request,String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        System.out.println(response);
-
     }
 }

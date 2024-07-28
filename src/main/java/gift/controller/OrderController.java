@@ -21,7 +21,6 @@ public class OrderController {
             @RequestHeader("Authorization") String token,
             @RequestBody OrderRequest orderRequest
             ) throws IllegalAccessException, JsonProcessingException {
-        System.out.println("오더");
         return ResponseEntity.ok().body(orderService.order(token,orderRequest));
     }
 }

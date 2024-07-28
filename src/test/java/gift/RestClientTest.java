@@ -28,6 +28,5 @@ public class RestClientTest {
                 .retrieve()
                 .toEntity(String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        System.out.println(response);
     }
 }

@@ -31,7 +31,6 @@ public class KakaoController {
             @RequestParam("code") String code
     ){
         Member member = kakaoService.getToken(code);
-        System.out.println(member);
         return ResponseEntity.ok().body(member);
     }
 

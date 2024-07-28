@@ -23,7 +23,6 @@ public class MemberControllerTest {
         String authorizationHeader = headers.getFirst(HttpHeaders.AUTHORIZATION);
 
         assertThat(authorizationHeader).isNotNull();
-        System.out.println("Authorization Header: " + authorizationHeader);
     }
 
 }
