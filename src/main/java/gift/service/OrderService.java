@@ -52,7 +52,7 @@ public class OrderService {
         option.subtractQuantity(request.getQuantity());
         user.subtractWishNumber(request.getQuantity(), product);
 
-        if (kakaoProperties.checkKakaoLogin()) { //kakaologin을 수행하지 않으면 카카오 메시지를 보내지 않음
+        if (kakaoProperties.isKakaoLoginCompleted()) { //kakaologin이 수행되지 않으면 accessToken이 지정되지 않아 메시지를 보내지 않음
             kakaoMessageService.sendOrderMessage(order);
         }
 
