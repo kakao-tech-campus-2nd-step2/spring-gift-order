@@ -46,7 +46,7 @@
 package gift.controller;
 
 import gift.service.KakaoMessageService;
-import gift.service.KakaoMessageServiceImpl;
+import gift.service.impl.KakaoMessageServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
