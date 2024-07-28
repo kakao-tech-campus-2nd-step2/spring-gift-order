@@ -50,4 +50,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
             ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, e.getMessage()));
     }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<?> handleKakaoApiException(KakaoApiException e) {
+        return ResponseEntity.status(e.getStatusCode()).body(
+            ProblemDetail.forStatusAndDetail(e.getStatusCode(), e.getMessage()));
+    }
 }

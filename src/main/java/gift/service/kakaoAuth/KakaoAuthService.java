@@ -41,7 +41,7 @@ public class KakaoAuthService {
 
     public Token receiveToken(String code) {
         var body = kakaoProperties.createBody(code);
-        System.out.println(kakaoTokenPostUrl);
+
         var response = restClient.post()
             .uri(URI.create(kakaoTokenPostUrl))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
