@@ -85,4 +85,9 @@ public class KakaoAuthService {
         String queryString = String.format("?response_type=code&client_id=%s&redirect_uri=%s", clientId, redirectUri);
         return url + queryString;
     }
+
+    public String getEmailFromAccessToken(String accessToken) {
+        KakaoUserDTO kakaoUserDTO = getKakaoUser(accessToken);
+        return kakaoUserDTO.getEmail();
+    }
 }
