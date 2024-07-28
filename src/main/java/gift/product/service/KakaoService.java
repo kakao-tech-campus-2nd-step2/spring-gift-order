@@ -1,9 +1,11 @@
 package gift.product.service;
 
-import static gift.product.exception.GlobalExceptionHandler.DID_NOT_RECEIVE_RESPONSE;
+import static gift.product.exception.GlobalExceptionHandler.INVALID_HTTP_REQUEST;
+import static gift.product.exception.GlobalExceptionHandler.NOT_RECEIVE_RESPONSE;
 import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
 
 import gift.product.exception.InvalidIdException;
+import gift.product.exception.RequestException;
 import gift.product.exception.ResponseException;
 import gift.product.model.Member;
 import gift.product.model.SnsMember;
@@ -13,6 +15,7 @@ import gift.product.util.JwtUtil;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Map;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,11 +24,18 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoService {
 
-    private final RestClient client = RestClient.builder().build();
     private final KakaoProperties properties;
     private final MemberRepository memberRepository;
     private final JwtUtil jwtUtil;
     private final SnsMemberRepository snsMemberRepository;
+    private final RestClient client = RestClient.builder()
+        .defaultStatusHandler(HttpStatusCode::is4xxClientError, (request, response) -> {
+            throw new RequestException(INVALID_HTTP_REQUEST);
+        })
+        .defaultStatusHandler(HttpStatusCode::is5xxServerError, (request, response) -> {
+            throw new ResponseException(NOT_RECEIVE_RESPONSE);
+        })
+        .build();
 
     public KakaoService(
         KakaoProperties properties,
@@ -62,7 +72,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new ResponseException(DID_NOT_RECEIVE_RESPONSE);
+            throw new ResponseException(NOT_RECEIVE_RESPONSE);
         return response.get("access_token").toString();
     }
 
@@ -74,7 +84,7 @@ public class KakaoService {
             .retrieve()
             .body(Map.class);
         if (response == null)
-            throw new ResponseException(DID_NOT_RECEIVE_RESPONSE);
+            throw new ResponseException(NOT_RECEIVE_RESPONSE);
         return (Long) response.get("id");
     }
 

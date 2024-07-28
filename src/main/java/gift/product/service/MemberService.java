@@ -1,12 +1,11 @@
 package gift.product.service;
 
 import gift.product.dto.MemberDTO;
+import gift.product.dto.TokenDTO;
 import gift.product.model.Member;
 import gift.product.repository.MemberRepository;
 import gift.product.util.JwtUtil;
 import gift.product.validation.MemberValidation;
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final MemberValidation memberValidation;
     private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
     public MemberService(
@@ -32,34 +32,16 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Map<String, String> signUp(MemberDTO memberDTO) {
+    public TokenDTO signUp(MemberDTO memberDTO) {
         System.out.println("[MemberService] signUp()");
         memberValidation.signUpValidation(memberDTO.getEmail());
-        Member member = convertDTOToMember(memberDTO);
-        memberRepository.save(member);
-        String token = jwtUtil.generateToken(member.getEmail());
-        return responseToken(token);
+        Member member = memberRepository.save(memberDTO.convertToDomain(passwordEncoder));
+        return new TokenDTO(jwtUtil.generateToken(member.getEmail()));
     }
 
-    public Map<String, String> login(MemberDTO memberDTO) {
+    public TokenDTO login(MemberDTO memberDTO) {
         System.out.println("[MemberService] login()");
         memberValidation.loginValidation(memberDTO);
-        String token = jwtUtil.generateToken(memberDTO.getEmail());
-        return responseToken(token);
-    }
-
-    public Map<String, String> responseToken(String token) {
-        System.out.println("[MemberService] responseToken()");
-        Map<String, String> response = new HashMap<>();
-        response.put("token", token);
-        return response;
-    }
-
-    public Member convertDTOToMember(MemberDTO memberDTO) {
-        System.out.println("[MemberService] convertDTOToMember()");
-        return new Member(
-                memberDTO.getEmail(),
-                passwordEncoder.encode(memberDTO.getPassword())
-        );
+        return new TokenDTO(jwtUtil.generateToken(memberDTO.getEmail()));
     }
 }

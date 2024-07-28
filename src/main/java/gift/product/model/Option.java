@@ -3,6 +3,7 @@ package gift.product.model;
 import static gift.product.exception.GlobalExceptionHandler.CANNOT_SUBTRACT_ZERO_OR_NEGATIVE;
 import static gift.product.exception.GlobalExceptionHandler.SUBTRACT_EXCEED_QUANTITY;
 
+import gift.product.exception.InstanceValueException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -59,15 +60,15 @@ public class Option {
         return product;
     }
 
-    public boolean isSameName(String name) {
-        return this.name.equals(name);
+    public boolean isSameName(Option option) {
+        return this.name.equals(option.getName());
     }
 
     public void subtractQuantity(int amountToSubtract) {
         if(amountToSubtract < 1)
-            throw new IllegalArgumentException(CANNOT_SUBTRACT_ZERO_OR_NEGATIVE);
+            throw new InstanceValueException(CANNOT_SUBTRACT_ZERO_OR_NEGATIVE);
         if(this.quantity < amountToSubtract)
-            throw new IllegalArgumentException(SUBTRACT_EXCEED_QUANTITY);
+            throw new InstanceValueException(SUBTRACT_EXCEED_QUANTITY);
         this.quantity -= quantity;
     }
 }

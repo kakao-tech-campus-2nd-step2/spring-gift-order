@@ -49,7 +49,7 @@ public class AdminCategoryController {
             model.addAttribute("categoryDTO", categoryDTO);
             return "category-form";
         }
-        categoryService.registerCategory(new Category(categoryDTO.getName()));
+        categoryService.registerCategory(categoryDTO.convertToDomain());
         return "redirect:/admin/category";
     }
 

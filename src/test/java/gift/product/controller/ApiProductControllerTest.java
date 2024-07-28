@@ -1,9 +1,11 @@
 package gift.product.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import gift.product.dto.ProductDTO;
+import gift.product.model.Category;
+import gift.product.model.Product;
 import gift.product.service.ProductService;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
@@ -35,10 +37,10 @@ public class ApiProductControllerTest {
     @Test
     public void testShowProductList() throws Exception {
         Pageable pageable = PageRequest.of(0, 10);
-        ProductDTO productDTO = new ProductDTO("상품", 1000, "image", 1L);
-        Page<ProductDTO> productDTOPage = new PageImpl<>(Collections.singletonList(productDTO), pageable, 1);
+        Product product = new Product(1L, "상품", 1000, "image", any(Category.class));
+        Page<Product> productPage = new PageImpl<>(Collections.singletonList(product), pageable, 1);
 
-        Mockito.when(productService.getAllProducts(pageable)).thenReturn(productDTOPage);
+        Mockito.when(productService.getAllProducts(pageable)).thenReturn(productPage);
 
         ResultActions result = mockMvc.perform(
             MockMvcRequestBuilders.get("/api/product/list")

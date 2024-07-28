@@ -26,16 +26,16 @@ public class CategoryService {
         this.categoryValidation = categoryValidation;
     }
 
-    public void registerCategory(Category category) {
+    public Category registerCategory(Category category) {
         System.out.println("[CategoryService] registerCategory()");
         categoryValidation.registerCategory(category);
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
-    public void updateCategory(Category category) {
+    public Category updateCategory(Category category) {
         System.out.println("[CategoryService] updateCategory()");
         categoryValidation.updateCategory(category);
-        categoryRepository.save(category);
+        return categoryRepository.save(category);
     }
 
     public void deleteCategory(Long id) {

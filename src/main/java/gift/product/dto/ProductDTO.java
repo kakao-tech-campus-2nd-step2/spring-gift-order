@@ -1,5 +1,10 @@
 package gift.product.dto;
 
+import static gift.product.exception.GlobalExceptionHandler.NOT_EXIST_ID;
+
+import gift.product.exception.InvalidIdException;
+import gift.product.model.Product;
+import gift.product.repository.CategoryRepository;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -39,28 +44,57 @@ public class ProductDTO {
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public int getPrice() {
         return price;
     }
+
     public void setPrice(int price) {
         this.price = price;
     }
+
     public String getImageUrl() {
         return imageUrl;
     }
+
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
     public Long getCategoryId() {
         return categoryId;
     }
+
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public Product convertToDomain(CategoryRepository categoryRepository) {
+        return new Product(
+            name,
+            price,
+            imageUrl,
+            categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
+        );
+    }
+
+    public Product convertToDomain(Long id, CategoryRepository categoryRepository) {
+        return new Product(
+            id,
+            name,
+            price,
+            imageUrl,
+            categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new InvalidIdException(NOT_EXIST_ID))
+        );
     }
 }

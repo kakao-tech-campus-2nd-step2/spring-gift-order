@@ -1,27 +1,21 @@
 package gift.product.dto;
 
+import gift.product.model.Member;
+import gift.product.model.Option;
+import gift.product.model.Order;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public class OrderDTO {
+public class OrderRequestDTO {
+
     @NotNull
     private Long optionId;
     @Positive
     private int quantity;
     private String message;
 
-    public OrderDTO(Long optionId, int quantity, String message) {
-        this.optionId = optionId;
-        this.quantity = quantity;
-        this.message = message;
-    }
-
     public Long getOptionId() {
         return optionId;
-    }
-
-    public void setOptionId(Long optionId) {
-        this.optionId = optionId;
     }
 
     public int getQuantity() {
@@ -39,4 +33,14 @@ public class OrderDTO {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public Order convertToDomain(Option option, Member orderer) {
+        return new Order(
+            option,
+            quantity,
+            message,
+            orderer
+        );
+    }
+
 }
