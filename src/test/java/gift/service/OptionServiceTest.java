@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OptionServiceTest {
-
     @Mock
     private OptionsRepository optionsRepository;
 
@@ -208,7 +207,6 @@ class OptionServiceTest {
         when(optionsRepository.findByProduct_Id(productId)).thenReturn(Optional.of(options));
         when(optionsRepository.save(any(Options.class))).thenReturn(options);
         when(optionRepository.searchQuantityById(optionId)).thenReturn(updatedOption.getQuantity());
-
 
         // Then
         assertThrows(IllegalArgumentException.class, () -> optionService.deductQuantity(productId, optionId));
