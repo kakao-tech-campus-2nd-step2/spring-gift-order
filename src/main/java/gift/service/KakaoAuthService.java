@@ -1,5 +1,4 @@
 package gift.service;
 
-public interface KakaoAuthService {
-    String getAccessToken(String authorizationCode);
+public interface KakaoAuthService extends AuthService {
 }
