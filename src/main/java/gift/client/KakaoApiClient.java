@@ -9,6 +9,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class KakaoApiClient {
@@ -51,12 +52,12 @@ public class KakaoApiClient {
         List<Exception> exceptions = new ArrayList<>();
         while (retryCount < maxRetries) {
             try {
-                return restClient
-                        .get()
-                        .uri(USER_INFO_REQUEST_URI)
-                        .header("Authorization", String.format("Bearer %s", token))
-                        .retrieve()
-                        .body(KakaoUserInfoResponse.class)
+                return Objects.requireNonNull(restClient
+                                .get()
+                                .uri(USER_INFO_REQUEST_URI)
+                                .header("Authorization", String.format("Bearer %s", token))
+                                .retrieve()
+                                .body(KakaoUserInfoResponse.class))
                         .kakaoAccount()
                         .email();
             } catch (Exception e) {
