@@ -1,6 +1,7 @@
 package gift.domain.user;
 
 import gift.domain.BaseTimeEntity;
+import gift.domain.user.kakao.KaKaoToken;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -95,5 +96,10 @@ public class User extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, email, password);
+    }
+
+    public void updateKaKaoToken(KaKaoToken kaKaoToken) {
+        this.accessToken = kaKaoToken.accessToken();
+        this.refreshToken = kaKaoToken.refreshToken();
     }
 }

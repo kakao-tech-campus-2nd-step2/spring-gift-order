@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -67,12 +68,15 @@ public class KaKaoService {
         throw new BusinessException(ErrorCode.FORBIDDEN, "사용자 권한이 없습니다.");
     }
 
+    @Transactional
     public User loginOrRegister(KaKaoToken kaKaoToken) {
         String email = getEmailFromKaKaoServer(kaKaoToken.accessToken());
         if (!userRepository.existsByEmail(email)) {
             return createKaKaoUser(email, kaKaoToken);
         }
-        return userRepository.findByEmail(email);
+        User user = userRepository.findByEmail(email);
+        user.updateKaKaoToken(kaKaoToken);
+        return user;
     }
 
     private String getEmailFromKaKaoServer(String accessToken) {
