@@ -7,3 +7,4 @@
 
 include::productApi.adoc[]
 include::categoryApi.adoc[]
+include::optionsApi.adoc[]
