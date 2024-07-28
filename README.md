@@ -18,4 +18,4 @@
 # step2 피드백
 - [x] Objectmapper, Gson 직렬화 도구 비교 학습
 - [x] LinkedMultiValueMap 과 Map 비교 학습
-- [ ] RestClient timeout 설정
+- [x] RestClient timeout 설정
