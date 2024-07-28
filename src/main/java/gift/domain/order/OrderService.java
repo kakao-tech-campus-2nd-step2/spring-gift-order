@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -86,11 +87,13 @@ public class OrderService {
 
         // (나에게) 메시지 전송
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-        ResponseEntity<Object> response = restTemplate.exchange(SEND_ME_URL, HttpMethod.POST,
-            requestEntity, Object.class);
-
-        // 응답
-        System.out.println("Response: " + response.getBody());
+        try {
+            ResponseEntity<Object> response = restTemplate.exchange(SEND_ME_URL, HttpMethod.POST,
+                requestEntity, Object.class);
+            System.out.println("Response: " + response.getBody());
+        } catch (HttpClientErrorException e) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED, "카카오톡 엑세스 토큰이 유효하지 않습니다.");
+        }
     }
 
     // 나에게 메시지 보내기 DOCS 에 나와 있는 데이터 형식
