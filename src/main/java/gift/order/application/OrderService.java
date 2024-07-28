@@ -43,8 +43,8 @@ public class OrderService {
         wishesService.removeWishIfPresent(memberId, productId);
 
         Member member = memberService.getMemberByIdOrThrow(memberId);
-
         memberService.checkKakaoUserAndToken(member);
+
         kakaoClient.sendMessageToMe(
                 member.getKakaoAccessToken(),
                 request.message(),

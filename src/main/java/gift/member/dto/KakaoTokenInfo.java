@@ -10,6 +10,8 @@ public class KakaoTokenInfo {
 
     private String kakaoRefreshToken;
 
+    private static final long EXPECTED_DELAY = 2L;
+
     protected KakaoTokenInfo() {
     }
 
@@ -33,11 +35,12 @@ public class KakaoTokenInfo {
         return kakaoRefreshToken;
     }
 
-    public boolean isExpired(LocalDateTime localDateTime) {
-        return accessTokenExpiredAt.isAfter(localDateTime);
+    public boolean isExpired() {
+        return accessTokenExpiredAt.isAfter(LocalDateTime.now()
+                                                         .plusSeconds(EXPECTED_DELAY));
     }
 
-    public void update(KakaoTokenInfo kakaoTokenInfo) {
+    public void refresh(KakaoTokenInfo kakaoTokenInfo) {
         this.kakaoAccessToken = kakaoTokenInfo.getKakaoAccessToken();
         this.accessTokenExpiredAt = kakaoTokenInfo.getAccessTokenExpiredAt();
         this.kakaoRefreshToken = kakaoTokenInfo.getKakaoRefreshToken();

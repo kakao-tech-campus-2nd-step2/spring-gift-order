@@ -77,16 +77,16 @@ public class Member {
         password = memberDto.password();
     }
 
-    public void updateTokenInfo(KakaoTokenInfo tokenInfo) {
-        kakaoTokenInfo.update(tokenInfo);
+    public void refreshKakaoTokens(KakaoTokenInfo tokenInfo) {
+        kakaoTokenInfo.refresh(tokenInfo);
     }
 
-    public boolean isKakaoTokenInfoNotNull() {
-        return kakaoTokenInfo != null;
+    public boolean isNotKakaoUser() {
+        return kakaoTokenInfo == null;
     }
 
-    public boolean isTokenExpired(LocalDateTime localDateTime) {
-        return kakaoTokenInfo.isExpired(localDateTime);
+    public boolean isTokenExpired() {
+        return kakaoTokenInfo.isExpired();
     }
 
 }
