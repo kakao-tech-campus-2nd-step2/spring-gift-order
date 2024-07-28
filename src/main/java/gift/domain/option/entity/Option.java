@@ -2,7 +2,9 @@ package gift.domain.option.entity;
 
 import gift.domain.option.exception.OptionNameValidException;
 import gift.domain.option.exception.OptionQuantityValidException;
+import gift.domain.order.entity.Orders;
 import gift.domain.product.entity.Product;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.util.List;
 
 @Entity
@@ -27,7 +30,8 @@ public class Option {
 
     @Column
     private int quantity;
-
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Orders> orders;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;

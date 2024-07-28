@@ -21,10 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.TestPropertySource;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(properties = {
+    "spring.sql.init.mode=never"
+})
 class ProductControllerTest {
 
     @LocalServerPort
@@ -97,7 +101,7 @@ class ProductControllerTest {
         var requestEntity = new RequestEntity<>(request, HttpMethod.PUT, URI.create(url));
 
         var actual = restTemplate.exchange(requestEntity, String.class);
-        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
     @Test

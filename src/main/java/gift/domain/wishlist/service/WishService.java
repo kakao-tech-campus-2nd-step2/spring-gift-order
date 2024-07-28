@@ -12,7 +12,6 @@ import gift.domain.wishlist.entity.Wish;
 import gift.domain.wishlist.exception.WishDuplicateException;
 import gift.domain.wishlist.exception.WishNotFoundException;
 import gift.domain.wishlist.repository.WishRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +49,7 @@ public class WishService {
         Product product = productRepository.findById(wishRequest.getProductId())
             .orElseThrow(() -> new ProductNotFoundException("해당 상품이 존재하지 않습니다."));
 
-        if (wishRepository.findByProductAndMember(product, member).isPresent()) {
+        if (wishRepository.existsByProductAndMember(product, member)) {
             throw new WishDuplicateException("중복된 위시리스트 입니다.");
         }
 

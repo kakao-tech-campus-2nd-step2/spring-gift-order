@@ -5,6 +5,7 @@ import gift.domain.option.dto.OptionResponse;
 import gift.domain.option.entity.Option;
 import gift.domain.option.exception.OptionNotFoundException;
 import gift.domain.option.repository.OptionRepository;
+import gift.domain.order.repository.OrderRepository;
 import gift.domain.product.entity.Product;
 import gift.domain.product.exception.ProductNotFoundException;
 import gift.domain.product.repository.ProductRepository;
@@ -24,13 +25,18 @@ public class OptionService {
         this.productRepository = productRepository;
     }
 
-    public List<OptionResponse> getProductOptions(Long id) {
-        Product savedProduct = productRepository.findById(id)
+    public List<OptionResponse> getProductOptions(Long productId) {
+        Product savedProduct = productRepository.findById(productId)
             .orElseThrow(() -> new OptionNotFoundException("[상품 옵션 조회] 찾는 상품이 없습니다."));
         List<Option> savedOptions = optionRepository.findAllByProduct(savedProduct);
         return savedOptions.stream().map(
                 (option) -> new OptionResponse(option.getId(), option.getName(), option.getQuantity()))
             .toList();
+    }
+
+    public Option getOption(Long id) {
+        return optionRepository.findById(id)
+            .orElseThrow(() -> new OptionNotFoundException("찾는 옵션이 존재하지 않습니다."));
     }
 
     @Transactional

@@ -24,16 +24,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final OptionRepository optionRepository;
 
     private final OptionService optionService;
 
     public ProductService(ProductRepository productRepository,
         CategoryRepository categoryRepository,
-        OptionRepository optionRepository, OptionService optionService) {
+        OptionService optionService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.optionRepository = optionRepository;
         this.optionService = optionService;
     }
 
@@ -81,7 +79,7 @@ public class ProductService {
         Product savedProduct = productRepository
             .findById(id)
             .orElseThrow(() -> new ProductNotFoundException("찾는 상품이 존재하지 않습니다."));
-        optionRepository.deleteByProduct(savedProduct);
+
         productRepository.delete(savedProduct);
     }
 

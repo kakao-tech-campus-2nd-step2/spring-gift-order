@@ -2,15 +2,14 @@ package gift.oauth.service;
 
 import gift.domain.member.entity.Member;
 import gift.domain.member.repository.MemberRepository;
-import gift.kakaoApi.service.KakaoApiService;
 import gift.kakaoApi.dto.userInfo.KakaoAccount;
+import gift.kakaoApi.service.KakaoApiService;
 import gift.util.JwtUtil;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class OAuthService {
 
     private final MemberRepository memberRepository;
@@ -26,19 +25,21 @@ public class OAuthService {
     }
 
     public String getAccessToken(String code) {
-        String accessToken = kakaoApiService.getKakaoToken(code).accessToken();
-        return jwtUtil.generateToken(registerOrLoginKakoMember(accessToken));
+        String kakaoAccessToken = kakaoApiService.getKakaoToken(code).accessToken();
+        return jwtUtil.generateToken(registerOrLoginKakoMember(kakaoAccessToken));
 
     }
 
-    private Member registerOrLoginKakoMember(String accessToken) {
-        KakaoAccount kakaoAccount = kakaoApiService.getKakaoAccount(accessToken).kakaoAccount();
-        Optional<Member> member = memberRepository.findByEmail(kakaoAccount.email());
+    public Member registerOrLoginKakoMember(String kakaoAccessToken) {
 
-        return member.orElseGet(
-            () -> memberRepository.save(new Member(kakaoAccount.email(), "", accessToken)));
+        KakaoAccount kakaoAccount = kakaoApiService.getKakaoAccount(kakaoAccessToken)
+            .kakaoAccount();
+        Member member = memberRepository.findByEmail(kakaoAccount.email())
+            .orElseGet(() -> new Member(kakaoAccount.email(), ""));
 
+        member.updateKakaoAccessToken(kakaoAccessToken);
+
+        return memberRepository.save(member);
     }
-
 }
 

@@ -2,8 +2,6 @@ package gift.domain.order.service;
 
 import gift.domain.member.entity.Member;
 import gift.domain.option.entity.Option;
-import gift.domain.option.exception.OptionNotFoundException;
-import gift.domain.option.repository.OptionRepository;
 import gift.domain.option.service.OptionService;
 import gift.domain.order.dto.OrderRequest;
 import gift.domain.order.dto.OrderResponse;
@@ -11,8 +9,8 @@ import gift.domain.order.entity.Orders;
 import gift.domain.order.repository.OrderRepository;
 import gift.domain.wishlist.entity.Wish;
 import gift.domain.wishlist.repository.WishRepository;
-import gift.kakaoApi.exceptiion.KakaoMessageException;
 import gift.kakaoApi.service.KakaoApiService;
+import gift.oauth.service.OAuthService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -23,20 +21,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class OrderService {
 
-    private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final OrderRepository orderRepository;
     private final KakaoApiService kakaoApiService;
     private final OptionService optionService;
+    private final OAuthService oauthService;
 
-    public OrderService(OptionRepository optionRepository, WishRepository wishRepository,
-        OrderRepository orderRepository, KakaoApiService kakaoApiService,
-        OptionService optionService) {
-        this.optionRepository = optionRepository;
+    public OrderService(WishRepository wishRepository, OrderRepository orderRepository,
+        KakaoApiService kakaoApiService, OptionService optionService, OAuthService oauthService) {
         this.wishRepository = wishRepository;
         this.orderRepository = orderRepository;
         this.kakaoApiService = kakaoApiService;
         this.optionService = optionService;
+        this.oauthService = oauthService;
     }
 
     @Transactional
@@ -51,11 +48,15 @@ public class OrderService {
         optionService.subtractQuantity(order.getOption().getId(), order.getQuantity());
         removeIfInWishlist(order.getMember(), order.getOption());
 
-        if (!(kakaoApiService.sendKakaoMessage(order.getMember().getKakaoAccessToken(), order)
-            .resultCode()).equals(0)) {
-            throw new KakaoMessageException("메세지 전송 실패");
+        String kakaoAccessToken = order.getMember().getKakaoAccessToken();
+
+        if (kakaoAccessToken == null) {
+            return;
         }
-        ;
+
+        if (kakaoApiService.sendKakaoMessage(kakaoAccessToken, order)) {
+            oauthService.registerOrLoginKakoMember(kakaoAccessToken);
+        }
     }
 
     private void removeIfInWishlist(Member member, Option option) {
@@ -64,8 +65,7 @@ public class OrderService {
     }
 
     private Orders dtoToEntity(Member member, OrderRequest request) {
-        Option savedOption = optionRepository.findById(request.getOptionId())
-            .orElseThrow(() -> new OptionNotFoundException("해당하는 옵션이 존재하지 않습니다."));
+        Option savedOption = optionService.getOption(request.getOptionId());
         return new Orders(savedOption, member, request.getQuantity(),
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
             request.getMessage());

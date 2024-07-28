@@ -184,12 +184,10 @@ class ProductServiceTest {
         Product savedProduct = createProduct();
 
         doReturn(Optional.of(savedProduct)).when(productRepository).findById(any(Long.class));
-        doNothing().when(optionRepository).deleteByProduct(any(Product.class));
         // when
         productService.deleteProduct(id);
 
         // then
-        verify(optionRepository, times(1)).deleteByProduct(any(Product.class));
         verify(productRepository, times(1)).delete(any(Product.class));
     }
 

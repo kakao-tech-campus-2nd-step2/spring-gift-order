@@ -4,7 +4,7 @@ import gift.domain.member.exception.MemberAuthorizationException;
 import gift.domain.option.exception.OptionValidException;
 import gift.global.exception.DuplicateException;
 import gift.global.exception.NotFoundException;
-import gift.kakaoApi.exceptiion.KakaoLoginException;
+import gift.kakaoApi.exception.KakaoApiException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -44,10 +44,10 @@ public class GlobalExceptionHandler {
             .body(e.getMessage());
     }
 
-    @ExceptionHandler(KakaoLoginException.class)
-    public ResponseEntity<String> handleKakaoOAuthException(KakaoLoginException e) {
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<String> handleKakaoApiException(KakaoApiException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body("[" + e.getErrorCode() + "] " + e.getMessage());
+            .body(e.getMessage());
     }
 
     @ExceptionHandler(DuplicateException.class)
