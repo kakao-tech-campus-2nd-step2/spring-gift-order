@@ -35,7 +35,7 @@ public class OrderService {
     @Autowired
     private WishListService wishListService;
 
-    private RestClient client = RestClient.builder().build();
+    private final RestClient client = RestClient.builder().build();
 
     public OrderEntity getOrderEntity(Long id) {
         return orderRepository.findById(id).orElseThrow();
@@ -52,7 +52,8 @@ public class OrderService {
 
         try {
             wishListService.deleteWishListByUserIdAndProductId(productOptionEntity.getProductEntity().getId(), memberDTO.id());
-        }catch (ProductNotFoundException e){}
+        } catch (ProductNotFoundException e) {
+        }
 
         var orderEntity = orderMapper.toOrderEntity(orderDTO, memberDTO.id(), false);
 

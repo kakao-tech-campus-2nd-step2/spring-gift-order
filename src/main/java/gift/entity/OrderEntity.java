@@ -35,6 +35,7 @@ public class OrderEntity {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
     public Long getId() {
         return id;
     }

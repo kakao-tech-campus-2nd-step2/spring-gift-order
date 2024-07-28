@@ -29,7 +29,7 @@ public class ProductOptionService {
      * @param id 옵션을 조회할 상품의 ID
      */
     @Transactional(readOnly = true)
-    public List<ProductOptionDTO> getProductOptions(Long id){
+    public List<ProductOptionDTO> getProductOptions(Long id) {
         var productEntity = productService.getProductEntity(id);
         return productEntity.getProductOptions().stream()
                 .map(productOptionMapper::toProductOptionDTO).toList();
@@ -42,7 +42,7 @@ public class ProductOptionService {
      * @param productId        상품 옵션을 추가할 상품의 ID
      */
     @Transactional
-    public ProductOptionDTO addProductOption(Long productId, ProductOptionDTO productOptionDTO){
+    public ProductOptionDTO addProductOption(Long productId, ProductOptionDTO productOptionDTO) {
         var productEntity = productService.getProductEntity(productId);
 
         if (productEntity.getProductOptions().stream()
@@ -62,7 +62,7 @@ public class ProductOptionService {
      * @param id 삭제할 상품 옵션의 ID
      */
     @Transactional
-    public void deleteProductOption(Long id){
+    public void deleteProductOption(Long id) {
         if (!productService.isProdutExit(id)) {
             throw new ProductNotFoundException("옵션이 존재하지 않습니다");
         }

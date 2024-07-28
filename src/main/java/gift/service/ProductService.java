@@ -1,12 +1,9 @@
 package gift.service;
 
 import gift.DTO.ProductDTO;
-import gift.DTO.ProductOptionDTO;
 import gift.entity.ProductEntity;
 import gift.exception.ProductNotFoundException;
 import gift.mapper.ProductMapper;
-import gift.mapper.ProductOptionMapper;
-import gift.repository.ProductOptionRepository;
 import gift.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -44,14 +41,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDTO getProduct(Long id) {
         var productEntity = productRepository.findById(id)
-            .orElseThrow(()-> new ProductNotFoundException("상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new ProductNotFoundException("상품이 존재하지 않습니다."));
         return productMapper.toProductDTO(productEntity);
     }
 
     @Transactional(readOnly = true)
     public ProductEntity getProductEntity(Long id) {
         return productRepository.findById(id)
-            .orElseThrow(()-> new ProductNotFoundException("상품이 존재하지 않습니다."));
+                .orElseThrow(() -> new ProductNotFoundException("상품이 존재하지 않습니다."));
     }
 
     /**

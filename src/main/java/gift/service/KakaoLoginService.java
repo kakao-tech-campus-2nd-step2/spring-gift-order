@@ -1,11 +1,11 @@
 package gift.service;
 
 import gift.DTO.KakaoProfile;
+import gift.DTO.KakaoProperties;
 import gift.DTO.KakaoToken;
 import gift.DTO.MemberDTO;
 import gift.auth.DTO.TokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import gift.DTO.KakaoProperties;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,7 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class KakaoLoginService {
 
-    private static String KAKAO_API_URL = "https://kapi.kakao.com";
+    private static final String KAKAO_API_URL = "https://kapi.kakao.com";
 
     @Autowired
     private KakaoProperties kakaoProperties;
@@ -30,7 +30,7 @@ public class KakaoLoginService {
                 + kakaoProperties.redirectUrl() + "&client_id=" + kakaoProperties.restApiKey();
     }
 
-    public KakaoToken getToken(String code){
+    public KakaoToken getToken(String code) {
         System.out.println("code = " + code);
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");

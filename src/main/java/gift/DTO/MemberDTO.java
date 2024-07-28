@@ -25,6 +25,7 @@ public record MemberDTO(
     public MemberDTO(long id, String email, String password) {
         this(id, email, password, null);
     }
+
     public MemberDTO(String email, String password) {
         this(null, email, password, null);
     }
@@ -32,6 +33,7 @@ public record MemberDTO(
     public MemberDTO(String email, String password, String kakaoAccessToken) {
         this(null, email, password, kakaoAccessToken);
     }
+
     /**
      * 사용자 ID 반환 메서드
      *

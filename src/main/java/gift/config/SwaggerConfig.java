@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 public class SwaggerConfig {
@@ -24,8 +24,9 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(apiInfo())
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-                .security(Arrays.asList(securityRequirement));
+                .security(Collections.singletonList(securityRequirement));
     }
+
     public Info apiInfo() {
         return new Info()
                 .title("kakao tech camp step2")

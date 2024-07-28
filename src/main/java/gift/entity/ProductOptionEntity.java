@@ -2,13 +2,12 @@ package gift.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.hibernate.query.Order;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 제품 옵션 엔티티. 데이터베이스 테이블과 매핑된다.

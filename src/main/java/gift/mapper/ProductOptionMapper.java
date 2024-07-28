@@ -48,7 +48,7 @@ public class ProductOptionMapper {
         );
     }
 
-    public ProductOptionEntity toProductOptionEntity(ProductOptionDTO productOptionDTO, ProductEntity productEntity){
+    public ProductOptionEntity toProductOptionEntity(ProductOptionDTO productOptionDTO, ProductEntity productEntity) {
         return toProductOptionEntity(productOptionDTO, productEntity, true);
     }
 
