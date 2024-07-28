@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Controller
-@RequestMapping("/api")
+@RequestMapping
 public class KakaoController {
 
     @Value("${kakao.api-key}")
