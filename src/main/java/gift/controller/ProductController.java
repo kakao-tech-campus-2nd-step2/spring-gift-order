@@ -94,20 +94,4 @@ public class ProductController {
                                     @Valid @RequestBody ProductDTO productDTO) {
         return productService.updateProduct(id, productDTO);
     }
-
-    @GetMapping("/{id}/options")
-    public List<ProductOptionDTO> getProductOption(@PathVariable Long id) {
-        return productService.getProductOptions(id);
-    }
-
-    @PostMapping("/{id}/options")
-    public ProductOptionDTO createProductOption(@PathVariable Long id,
-                                                @Valid @RequestBody ProductOptionDTO productOptionDTO) {
-        return productService.addProductOption(id, productOptionDTO);
-    }
-
-    @DeleteMapping("/{id}/options/{optionId}")
-    public void deleteProductOption(@PathVariable Long id, @PathVariable Long optionId) {
-        productService.deleteProductOption(optionId);
-    }
 }
