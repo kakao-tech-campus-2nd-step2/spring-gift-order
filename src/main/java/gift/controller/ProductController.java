@@ -4,6 +4,7 @@ import gift.dto.ProductRequest;
 import gift.dto.ProductResponse;
 import gift.service.ProductService;
 import gift.service.CategoryService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,7 +37,11 @@ public class ProductController {
                                  @RequestParam(defaultValue = "10") int size,
                                  @RequestParam(defaultValue = "id") String sortBy,
                                  @RequestParam(defaultValue = "asc") String direction,
-                                 Model model) {
+                                 Model model, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Page<ProductResponse> productPage = productService.findAll(PageRequest.of(page, size, sort));
         model.addAttribute("productPage", productPage);
@@ -47,7 +52,11 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/edit")
-    public String getProduct(@PathVariable long id, Model model) {
+    public String getProduct(@PathVariable long id, Model model, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         ProductResponse product = productService.findById(id);
         model.addAttribute("product", product);
         model.addAttribute("productRequest", new ProductRequest(product.getName(), product.getPrice(), product.getImageUrl(), product.getCategoryId()));
@@ -56,14 +65,22 @@ public class ProductController {
     }
 
     @GetMapping("/new")
-    public String addProductForm(Model model) {
+    public String addProductForm(Model model, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         model.addAttribute("productRequest", new ProductRequest("", 0, "", 1L));
         model.addAttribute("categories", categoryService.findAll());
         return "addForm";
     }
 
     @PostMapping
-    public String addProduct(@Valid @ModelAttribute ProductRequest productRequest, BindingResult bindingResult, Model model) {
+    public String addProduct(@Valid @ModelAttribute ProductRequest productRequest, BindingResult bindingResult, Model model, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.findAll());
             return "addForm";
@@ -79,7 +96,11 @@ public class ProductController {
     }
 
     @PostMapping("/{id}")
-    public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute ProductRequest productRequest, BindingResult bindingResult, Model model) {
+    public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute ProductRequest productRequest, BindingResult bindingResult, Model model, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("product", new ProductResponse(id, productRequest.name(), productRequest.price(), productRequest.imageUrl(), null, null));
             model.addAttribute("categories", categoryService.findAll());
@@ -97,14 +118,22 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteProduct(@PathVariable Long id) {
+    public String deleteProduct(@PathVariable Long id, HttpServletRequest request) {
+        if (!"ADMIN".equals(request.getAttribute("role"))) {
+            return "redirect:/unauthorized";
+        }
+
         productService.delete(id);
         return "redirect:/api/products";
     }
 
     @PostMapping("/delete-batch")
     @ResponseBody
-    public String deleteBatch(@RequestBody Map<String, List<Long>> request) {
+    public String deleteBatch(@RequestBody Map<String, List<Long>> request, HttpServletRequest httpRequest) {
+        if (!"ADMIN".equals(httpRequest.getAttribute("role"))) {
+            return "Unauthorized";
+        }
+
         productService.deleteBatch(request.get("ids"));
         return "Success";
     }
