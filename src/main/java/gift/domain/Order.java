@@ -15,16 +15,16 @@ public class Order {
     private Long id;
     private Long optionId;
     private int quantity;
-    private LocalDateTime orderDateTime;
+    private LocalDateTime createdAt;
     private String message;
 
     public Order() {
     }
 
-    public Order(Long optionId, int quantity, LocalDateTime orderDateTime, String message) {
+    public Order(Long optionId, int quantity, LocalDateTime createdAt, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
-        this.orderDateTime = orderDateTime;
+        this.createdAt = createdAt;
         this.message = message;
     }
 
@@ -32,7 +32,7 @@ public class Order {
         this.optionId = optionId;
         this.quantity = quantity;
         this.message = message;
-        this.orderDateTime = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -47,8 +47,8 @@ public class Order {
         return quantity;
     }
 
-    public LocalDateTime getOrderDateTime() {
-        return orderDateTime;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public String getMessage() {
