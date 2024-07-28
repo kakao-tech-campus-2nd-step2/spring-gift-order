@@ -69,11 +69,12 @@ public class KakaoAuthService {
     }
 
     // 사용자 등록 or 조회
-    public Member registerOrGetMember(KakaoUserDTO kakaoUserDTO) {
+    public Member registerOrGetMember(KakaoUserDTO kakaoUserDTO, String accessToken) {
         return memberRepository.findByEmail(kakaoUserDTO.getEmail())
             .orElseGet(() -> {
                 // 카카오 로그인을 통해 가입한 회원의 경우 임의로 비밀번호 생성
                 Member newMember = new Member(kakaoUserDTO.getEmail(), "kakao");
+                newMember.setToken(accessToken);
                 memberRepository.save(newMember);
                 return newMember;
             });
