@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "주문 Api(카카오 로그인 필요)")
+@Tag(name = "Order Api(카카오 로그인 필요)")
 @RestController
 @RequestMapping("/order")
 public class OrderController {

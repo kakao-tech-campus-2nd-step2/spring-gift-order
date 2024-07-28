@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "위시 리스트 Api")
+@Tag(name = "Wish List Api")
 @RestController
 public class WishListController {
 

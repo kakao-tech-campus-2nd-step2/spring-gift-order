@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "상품 옵션 Api")
+@Tag(name = "Product Option Api")
 @RestController
 @RequestMapping("/option")
 public class OptionController {

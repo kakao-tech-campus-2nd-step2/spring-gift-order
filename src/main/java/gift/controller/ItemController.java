@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "상품 Api")
+@Tag(name = "Product Api")
 @RestController
 @RequestMapping("/product")
 public class ItemController {
