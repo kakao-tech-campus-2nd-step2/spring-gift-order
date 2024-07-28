@@ -15,6 +15,10 @@ public class Token {
         return new Token(value);
     }
 
+    public static Token fromBearer(String value) {
+        return new Token(value.replace("Bearer ", ""));
+    }
+
     public String getValue() {
         return value;
     }
