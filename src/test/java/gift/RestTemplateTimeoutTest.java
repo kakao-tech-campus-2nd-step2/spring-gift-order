@@ -31,10 +31,11 @@ public class RestTemplateTimeoutTest {
         // when
         mockServer.expect(requestTo(url))
                 .andRespond(delayedResponse(Duration.ofSeconds(10)));
-
-        // then
+        
         ResourceAccessException e = assertThrows(ResourceAccessException.class,
                 () -> restTemplate.getForObject(url, String.class));
+
+        // then
         assertThat(e.getMessage()).isEqualTo("Timeout");
 
     }
