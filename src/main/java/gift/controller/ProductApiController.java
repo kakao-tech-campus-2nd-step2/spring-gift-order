@@ -37,13 +37,8 @@ public class ProductApiController {
     @CheckRole("ROLE_ADMIN")
     @GetMapping("/api/products")
     public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<ProductResponse> dtoList;
-        List<Product> productsList = productService.getAllProducts();
-
-        dtoList = productsList.stream()
-            .map(ProductResponse::new)
-            .toList();
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+        List<ProductResponse> dto = productService.getAllProducts();
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @CheckRole("ROLE_ADMIN")
