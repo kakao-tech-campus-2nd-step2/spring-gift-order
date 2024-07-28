@@ -4,6 +4,7 @@ import gift.dto.OptionResponseDto;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.repository.OptionRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +31,15 @@ public class OptionService {
         }
         return null;
     }
-
+    @Transactional
     public void subtract(Option option, Long quantity) {
-        Option actualOption = optionRepository.findById(option.getId()).get();
+        Option actualOption = optionRepository.findById(option.getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다."));
+
+        if (actualOption.getQuantity() < quantity) {
+            throw new IllegalStateException("재고가 부족합니다.");
+        }
+
         Long afterSubtractQuantity = actualOption.getQuantity() - quantity;
         Option newOption = new Option(actualOption.getId(), actualOption.getName(), afterSubtractQuantity, actualOption.getProduct());
         optionRepository.save(newOption);

@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.OptionResponseDto;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.entity.Order;
@@ -22,7 +23,9 @@ public class OrderService {
 
         var option = optionService.getOptionById(orderRequestDto.getOptionId());
 
-        return OrderResponseDto.fromEntity(orderRepository.save(new Order(option, orderRequestDto.getQuantity(), LocalDateTime.now(), orderRequestDto.getMessage())));
+        OrderResponseDto orderResponseDto= OrderResponseDto.fromEntity(orderRepository.save(new Order(option, orderRequestDto.getQuantity(), LocalDateTime.now(), orderRequestDto.getMessage())));
+        optionService.subtract(option, orderResponseDto.getQuantity());
+        return orderResponseDto;
     }
 
 }
