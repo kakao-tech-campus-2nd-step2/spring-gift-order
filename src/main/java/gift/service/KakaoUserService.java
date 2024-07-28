@@ -1,23 +1,20 @@
 package gift.service;
 
-import gift.domain.KakaoProperties;
+import gift.dto.KakaoProperties;
 import gift.exception.KakaoOAuthException;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClient;
-
-import java.net.URI;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KakaoUserService {
     private final KakaoProperties properties;
-    private final RestClient client;
+    private final RestTemplate restTemplate;
 
     public KakaoUserService(KakaoProperties properties) {
         this.properties = properties;
-        this.client = RestClient.builder().build();
+        this.restTemplate = new RestTemplate();
     }
 
     public String getAuthorizeUrl() {
@@ -34,15 +31,8 @@ public class KakaoUserService {
         body.add("code", code);
 
         try {
-            var response = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .toEntity(String.class);
-
-            return response.getBody();
-        } catch (HttpStatusCodeException e) {
+            return restTemplate.postForObject(url, body, String.class);
+        } catch (HttpClientErrorException e) {
             throw new KakaoOAuthException(e.getStatusCode().toString(), e.getStatusCode());
         }
     }
