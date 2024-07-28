@@ -18,6 +18,7 @@ import gift.repository.MemberRepository;
 import gift.util.HashUtil;
 import gift.util.JwtUtil;
 import java.net.URI;
+import java.util.HashMap;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,20 @@ import org.springframework.web.client.RestClient;
 public class AuthService {
 
     private final MemberRepository memberRepository;
+    private final HashMap<String, KakaoToken> tokenMap = new HashMap<>();
     private final KakaoConfig kakaoConfig;
 
     public AuthService(MemberRepository memberRepository, KakaoConfig kakaoConfig) {
         this.memberRepository = memberRepository;
         this.kakaoConfig = kakaoConfig;
+    }
+
+    public void saveToken(String memberId, KakaoToken token) {
+        tokenMap.put(memberId, token);
+    }
+
+    public KakaoToken getToken(String memberId) {
+        return tokenMap.get(memberId);
     }
 
     public Token login(LoginRequest member) {

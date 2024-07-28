@@ -1,5 +1,6 @@
 package gift.controller.auth;
 
+import gift.config.LoginUser;
 import gift.exception.UnauthorizedException;
 import gift.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,13 +40,17 @@ public class AuthController {
     }
 
     @GetMapping("/authorize")
-    public void getAuthorizationCode(HttpServletResponse response) throws IOException {
+    public void getAuthorizationCode(@LoginUser LoginResponse member, HttpServletResponse response)
+        throws IOException {
+        response.setHeader("memberId", "" + member.id());
         response.sendRedirect(authService.getAuthorizationUrl());
     }
 
     @GetMapping("/kakaoLogin")
-    public ResponseEntity<KakaoToken> loginWithKakao(@RequestParam String code) {
+    public ResponseEntity<KakaoToken> loginWithKakao(@RequestHeader("memberId") String memberId,
+        @RequestParam String code) {
         KakaoToken token = authService.getKakaoToken(code);
+        authService.saveToken(memberId, token);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token.accessToken());
         return ResponseEntity.status(HttpStatus.OK).headers(headers)
