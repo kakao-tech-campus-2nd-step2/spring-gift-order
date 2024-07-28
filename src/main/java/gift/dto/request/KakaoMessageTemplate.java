@@ -10,7 +10,7 @@ public class KakaoMessageTemplate {
     private String text;
 
     @JsonProperty("link")
-    private Link link = new Link("https://developers.kakao.com", "https://developers.kakao.com");
+    private Link link = new Link();
 
     @JsonProperty("button_title")
     private String buttonTitle = "자세히 보기";
@@ -19,13 +19,10 @@ public class KakaoMessageTemplate {
         this.text = text;
     }
 
-    private record Link(
-            @JsonProperty("web_url")
-            String webUrl,
-
-            @JsonProperty("mobile_web_url")
-            String mobileWebUrl
-    ) {
+    private static class Link {
+        @JsonProperty("web_url")
+        String webUrl = "https://developers.kakao.com";
+        @JsonProperty("mobile_web_url")
+        String mobileWebUrl = "https://developers.kakao.com";
     }
 }
-
