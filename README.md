@@ -107,10 +107,10 @@ Content-Type: application/json
 - [x] 옵션 상품 불러오기 - Option을 불러와 productId 사용
 - [x] 옵션 상품 id로 위시리스트 존재 확인
   - [x] 위시리스트에 존재하는 경우 위시리스트에서 해당 상품 삭제
-- [ ] 카카오 메시지 api에 order message를 보내도록 요청
-  - [ ] 카카오 로그인시 카카오 token 저장 필요
+- [x] 카카오 메시지 api에 order message를 보내도록 요청
+  - [x] 카카오 로그인시 카카오 token 저장 필요
     * user entity에 token 필드 추가
-  - [ ] 메시지 템플릿 request 형식에 맞게 데이터 가공
+  - [x] 메시지 템플릿 request 형식에 맞게 데이터 가공
 
 
 
