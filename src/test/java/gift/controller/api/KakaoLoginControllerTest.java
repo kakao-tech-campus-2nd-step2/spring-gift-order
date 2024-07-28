@@ -1,6 +1,6 @@
 package gift.controller.api;
 
-import gift.dto.response.JwtTokenResponse;
+import gift.dto.response.JwtResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.service.KakaoApiService;
 import gift.service.MemberService;
@@ -35,15 +35,15 @@ class KakaoLoginControllerTest {
         KakaoTokenResponse kakaoTokenResponse = mock(KakaoTokenResponse.class);
         String email = "test@example.com";
         Long memberId = 1L;
-        JwtTokenResponse jwtTokenResponse = new JwtTokenResponse("jwtToken");
+        JwtResponse jwtResponse = new JwtResponse("jwtToken");
 
         when(kakaoApiService.getKakaoToken(code)).thenReturn(kakaoTokenResponse);
         when(kakaoApiService.getMemberEmail(kakaoTokenResponse.accessToken())).thenReturn(email);
         when(memberService.findMemberIdByEmail(email)).thenReturn(memberId);
-        when(tokenService.generateJwtToken(memberId)).thenReturn(jwtTokenResponse);
+        when(tokenService.generateJwt(memberId)).thenReturn(jwtResponse);
 
         //When
-        ResponseEntity<JwtTokenResponse> responseEntity = controller.getJwtToken(code);
+        ResponseEntity<JwtResponse> responseEntity = controller.getJwtToken(code);
 
         //Then
         assertThat(responseEntity).isNotNull();

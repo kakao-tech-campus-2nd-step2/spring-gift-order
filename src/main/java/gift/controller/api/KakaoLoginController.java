@@ -1,6 +1,6 @@
 package gift.controller.api;
 
-import gift.dto.response.JwtTokenResponse;
+import gift.dto.response.JwtResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.service.KakaoApiService;
 import gift.service.MemberService;
@@ -24,15 +24,15 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<JwtTokenResponse> getJwtToken(@RequestParam("code") String code) {
+    public ResponseEntity<JwtResponse> getJwtToken(@RequestParam("code") String code) {
         KakaoTokenResponse kakaoToken = kakaoApiService.getKakaoToken(code);
 
         String email = kakaoApiService.getMemberEmail(kakaoToken.accessToken());
         Long memberId = memberService.findMemberIdByEmail(email);
 
-        JwtTokenResponse JwtTokenResponse = tokenService.generateJwtToken(memberId);
+        JwtResponse JwtResponse = tokenService.generateJwt(memberId);
         tokenService.saveKakaoAccessToken(memberId, kakaoToken);
 
-        return ResponseEntity.ok().body(JwtTokenResponse);
+        return ResponseEntity.ok().body(JwtResponse);
     }
 }

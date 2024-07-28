@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.dto.response.JwtTokenResponse;
+import gift.dto.response.JwtResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.repository.KakaoAccessTokenRepository;
 import io.jsonwebtoken.JwtException;
@@ -22,7 +22,7 @@ public class TokenService {
         this.kakaoAccessTokenRepository = kakaoAccessTokenRepository;
     }
 
-    public JwtTokenResponse generateJwtToken(Long registeredMemberId) {
+    public JwtResponse generateJwt(Long registeredMemberId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION_IN_MS);
         String tokenValue = Jwts.builder()
@@ -30,7 +30,7 @@ public class TokenService {
                 .expiration(expiryDate)
                 .signWith(KEY)
                 .compact();
-        return new JwtTokenResponse(tokenValue);
+        return new JwtResponse(tokenValue);
     }
 
     public Long getMemberId(String tokenValue) {

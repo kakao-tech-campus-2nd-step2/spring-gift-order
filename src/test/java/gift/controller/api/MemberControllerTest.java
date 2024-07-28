@@ -2,7 +2,7 @@ package gift.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.MemberRequest;
-import gift.dto.response.JwtTokenResponse;
+import gift.dto.response.JwtResponse;
 import gift.service.MemberService;
 import gift.service.TokenService;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,10 +64,10 @@ class MemberControllerTest {
     void registerMember() throws Exception {
         //Given
         MemberRequest registerRequest = new MemberRequest("test@test.com", "1234");
-        JwtTokenResponse jwtTokenResponse = new JwtTokenResponse("{access_token}");
+        JwtResponse jwtResponse = new JwtResponse("{access_token}");
 
         when(memberService.register(registerRequest)).thenReturn(1L);
-        when(tokenService.generateJwtToken(1L)).thenReturn(jwtTokenResponse);
+        when(tokenService.generateJwt(1L)).thenReturn(jwtResponse);
 
         //When
         mockMvc.perform(RestDocumentationRequestBuilders
@@ -100,10 +100,10 @@ class MemberControllerTest {
     void loginMember() throws Exception {
         //Given
         MemberRequest loginRequest = new MemberRequest("test@test.com", "1234");
-        JwtTokenResponse jwtTokenResponse = new JwtTokenResponse("{access_token}");
+        JwtResponse jwtResponse = new JwtResponse("{access_token}");
 
         when(memberService.login(loginRequest)).thenReturn(1L);
-        when(tokenService.generateJwtToken(1L)).thenReturn(jwtTokenResponse);
+        when(tokenService.generateJwt(1L)).thenReturn(jwtResponse);
 
         //When
         mockMvc.perform(RestDocumentationRequestBuilders

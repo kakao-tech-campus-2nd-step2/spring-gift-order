@@ -1,7 +1,7 @@
 package gift.controller.api;
 
 import gift.dto.request.MemberRequest;
-import gift.dto.response.JwtTokenResponse;
+import gift.dto.response.JwtResponse;
 import gift.service.MemberService;
 import gift.service.TokenService;
 import jakarta.validation.Valid;
@@ -22,16 +22,16 @@ public class MemberController {
     }
 
     @PostMapping("/members/register")
-    public ResponseEntity<JwtTokenResponse> registerMember(@Valid @RequestBody MemberRequest request) {
+    public ResponseEntity<JwtResponse> registerMember(@Valid @RequestBody MemberRequest request) {
         Long registeredMemberId = memberService.register(request);
-        JwtTokenResponse token = tokenService.generateJwtToken(registeredMemberId);
+        JwtResponse token = tokenService.generateJwt(registeredMemberId);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/members/login")
-    public ResponseEntity<JwtTokenResponse> loginMember(@Valid @RequestBody MemberRequest request) {
+    public ResponseEntity<JwtResponse> loginMember(@Valid @RequestBody MemberRequest request) {
         Long registeredMemberId = memberService.login(request);
-        JwtTokenResponse token = tokenService.generateJwtToken(registeredMemberId);
+        JwtResponse token = tokenService.generateJwt(registeredMemberId);
         return ResponseEntity.ok(token);
     }
 }
