@@ -39,6 +39,7 @@ public class Order {
 
         this.option = option;
         this.quantity = quantity;
+        this.member = member;
         this.orderDateTime = orderDateTime;
         this.message = message;
     }
