@@ -17,7 +17,6 @@ import gift.dto.request.MessageRequest;
 import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.dto.response.MessageResponse;
-import gift.dto.response.OrderResponse;
 import gift.exception.CustomException;
 
 
@@ -113,13 +112,14 @@ public class KakaoApiService {
 
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
-        var templateObject = new LinkedMultiValueMap<String, Object>();
-        templateObject.add("object_type", "feed");
-        templateObject.add("content", createContent(messageRequest));
 
-        var body = new LinkedMultiValueMap<String, Object>();
-        body.add("template_object" , templateObject);
+        String templateObject = String.format(
+                "{\"object_type\": \"text\", \"text\": \"%s\", \"link\": {\"web_url\": \"testUrl\", \"mobile_web_url\": \"testMobileUrl\"}, \"button_title\": \"선물 확인\"}",
+                messageRequest.getProduct().getName() + "order Complete"
+        );
 
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObject);
 
         try {
             ResponseEntity<String> response = client.post()
@@ -146,18 +146,6 @@ public class KakaoApiService {
         } catch (Exception e) {
             throw new CustomException("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private LinkedMultiValueMap<String, String> createContent(MessageRequest messageRequest){
-        
-        OrderResponse orderResponse = messageRequest.getOrderResponse();
-        
-        var content = new LinkedMultiValueMap<String, String>();
-        content.add("title", "Order complete");
-        content.add("description", orderResponse.getMessage());
-        content.add("image_url", messageRequest.getProduct().getImageUrl());
-        content.add("link", "http://localhost:8080");
-        return content;
     }
 
     private LinkedMultiValueMap<String, String> createBody(String code) {

@@ -75,7 +75,7 @@ public class OrderService {
         String kakaoToken = kakaoTokenService.findKakaoToken(token);
         
         Product product = optionService.findProductByOptionId(orderResponse.getOptionId());
-        MessageRequest messageRequest = new MessageRequest(kakaoToken, orderResponse, product);
+        MessageRequest messageRequest = new MessageRequest(kakaoToken, product);
         MessageResponse messageResponse = kakaoApiService.sendMessage(messageRequest);
         if(messageResponse.getCode() != 0){
             throw new CustomException("fail to send message", HttpStatus.BAD_REQUEST);
