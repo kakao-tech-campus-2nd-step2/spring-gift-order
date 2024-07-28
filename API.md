@@ -417,9 +417,7 @@ Content-Type: application/json
 ## Option API
 ### Endpoint: `/options`
 <details>
-<summary>GET: 옵션 목록 조회</
-
-summary>
+<summary>GET: 옵션 목록 조회</summary>
 
 #### Request:
 ```http
@@ -887,9 +885,7 @@ Content-Type: application/json
 </details>
 
 <details>
-<summary>POST: 새로운 제품
-
-추가</summary>
+<summary>POST: 새로운 제품 추가</summary>
 
 #### Request:
 ```http
