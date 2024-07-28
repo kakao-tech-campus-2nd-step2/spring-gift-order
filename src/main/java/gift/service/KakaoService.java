@@ -2,7 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.KakaoProperties;
+import gift.config.KakaoProperties;
 import gift.domain.KakaoProfile;
 import gift.domain.KakaoToken;
 import gift.domain.Order;

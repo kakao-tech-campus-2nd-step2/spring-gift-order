@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;

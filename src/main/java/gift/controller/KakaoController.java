@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.auth.KakaoProperties;
+import gift.config.KakaoProperties;
 import gift.domain.Token;
 import gift.service.KakaoService;
 import jakarta.servlet.http.HttpServletResponse;
