@@ -37,8 +37,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(Long memberId, OrderRequest orderRequest) {
-        Product product = productRepository.findProductByOptionId(orderRequest.optionId())
-                        .orElseThrow(()->new EntityNotFoundException("Product with option_id " + orderRequest.optionId() + " not found"));
+        Product product = productRepository.findProductAndOptionByIdFetchJoin(orderRequest.productId())
+                .orElseThrow(() -> new EntityNotFoundException("Product with id " + orderRequest.productId() + " not found"));
         Option option = product.findOptionByOptionId(orderRequest.optionId());
         Orders orders = orderRepository.save(new Orders(product.getId(), option.getId(), memberId,
                 product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
