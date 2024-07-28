@@ -28,9 +28,7 @@ public class Option {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    public Option() {
-
-    }
+    public Option() {}
 
     public Long getId() {
         return id;
@@ -54,6 +52,10 @@ public class Option {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public void setProduct(Product product) {

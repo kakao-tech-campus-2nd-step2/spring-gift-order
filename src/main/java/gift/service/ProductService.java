@@ -30,6 +30,10 @@ public class ProductService {
         return productRepository.findById(id).orElse(null);
     }
 
+    public Option getOptionById(Long optionId) {
+        return optionRepository.findById(optionId).orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
+    }
+
     public void addProduct(Product product) {
         productRepository.save(product);
     }
