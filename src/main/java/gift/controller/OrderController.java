@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -19,9 +23,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest, @RequestHeader("Authorization") String authorizationHeader) {
-        String kakaoToken = authorizationHeader.replace("Bearer ", "");
-        OrderResponse orderResponse = orderService.createOrder(orderRequest, kakaoToken);
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest, HttpServletRequest request) {
+        Map<String, Object> kakaoUserInfo = (Map<String, Object>) request.getAttribute("kakaoUserInfo");
+        OrderResponse orderResponse = orderService.createOrder(orderRequest, kakaoUserInfo);
         return ResponseEntity.status(201).body(orderResponse);
     }
 }
