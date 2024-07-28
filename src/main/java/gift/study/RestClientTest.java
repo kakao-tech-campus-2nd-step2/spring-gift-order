@@ -1,18 +1,11 @@
 package gift.study;
 
 import static org.assertj.core.api.Assertions.*;
-
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Prop;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
