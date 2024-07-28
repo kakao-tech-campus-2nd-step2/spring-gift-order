@@ -63,14 +63,19 @@ public class KakaoTokenService {
         }
     }
 
-    public void sendKakaoMessage(OrderResponse orderResponse) throws JSONException {
-        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"; // 카카오톡 메시지 전송 API URL
-        String token = "Bearer {token}"; // 실제 토큰으로 교체 어떤식으로 할 지 생각하기 (어디에 저장할까?)
+    public void processOrder(OrderResponse orderResponse) throws JSONException {
         Option option = optionService.getOption(orderResponse.getOptionId());
         String messageTemplate = String.format(
                 "주문이 완료되었습니다! \n옵션: %s\n수량: %d\n주문 시간: %s\n메시지: %s",
                 option.getName(), orderResponse.getQuantity(), orderResponse.getOrderDateTime(), orderResponse.getMessage()
         );
+
+        sendKakaoMessage(messageTemplate); // 생성한 메시지를 전달
+    }
+
+    public void sendKakaoMessage(String messageTemplate) throws JSONException {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"; // 카카오톡 메시지 전송 API URL
+        String token = "Bearer {token}"; // 실제 토큰으로 교체
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("template_object", createKakaoTemplate(messageTemplate));
