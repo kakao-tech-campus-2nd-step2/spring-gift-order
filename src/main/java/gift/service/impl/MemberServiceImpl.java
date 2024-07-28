@@ -1,7 +1,8 @@
-package gift.service;
+package gift.service.impl;
 
 import gift.model.Member;
 import gift.repository.MemberRepository;
+import gift.service.MemberService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.mindrot.jbcrypt.BCrypt;

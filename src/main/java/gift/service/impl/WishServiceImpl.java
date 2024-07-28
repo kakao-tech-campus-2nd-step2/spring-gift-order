@@ -1,7 +1,8 @@
-package gift.service;
+package gift.service.impl;
 
 import gift.model.Wish;
 import gift.repository.WishRepository;
+import gift.service.WishService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

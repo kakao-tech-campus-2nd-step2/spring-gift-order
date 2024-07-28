@@ -3,6 +3,7 @@ package gift.service;
 import gift.model.Product;
 import gift.exception.ProductNotFoundException;
 import gift.repository.ProductRepository;
+import gift.service.impl.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package gift.service;
+package gift.service.impl;
 
 import gift.exception.ForbiddenWordException;
 import gift.exception.ProductNotFoundException;
@@ -8,6 +8,7 @@ import gift.model.Product;
 import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
+import gift.service.ProductService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;

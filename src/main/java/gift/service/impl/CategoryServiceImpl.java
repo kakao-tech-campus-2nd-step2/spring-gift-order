@@ -1,8 +1,8 @@
-package gift.service;
+package gift.service.impl;
 
 import gift.model.Category;
 import gift.repository.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import gift.service.CategoryService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
