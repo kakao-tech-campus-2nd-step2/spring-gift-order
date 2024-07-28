@@ -25,10 +25,13 @@ public class KakaoToken {
     @Column(nullable = false)
     private String refreshToken;
 
-    public KakaoToken(String email, String accessToken, String refreshToken){
+    private int expiresIn;
+
+    public KakaoToken(String email, String accessToken, String refreshToken, int expiresIn){
         this.email = email;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
     }
 
     public String getAccessToken(){
@@ -41,7 +44,7 @@ public class KakaoToken {
 
     public boolean isExpired(){
         
-        //if(expire_in > duration){ 
+        //if(expiresIn > duration){ 
         // return true;
         // }
 

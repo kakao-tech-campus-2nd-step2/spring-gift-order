@@ -26,7 +26,7 @@ public class KakaoTokenService {
     public void saveKakaoToken(String email, KakaoTokenResponse kakaoTokenResponse){
 
         if(kakaoTokenRepository.findByEmail(email).isEmpty()){
-            KakaoToken kakaoToken = new KakaoToken(email, kakaoTokenResponse.getAccessToken(), kakaoTokenResponse.getRefreshToken());
+            KakaoToken kakaoToken = new KakaoToken(email, kakaoTokenResponse.getAccessToken(), kakaoTokenResponse.getRefreshToken(), kakaoTokenResponse.getExpiresIn());
             kakaoTokenRepository.save(kakaoToken);
         }
     }
