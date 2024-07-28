@@ -7,6 +7,8 @@ import gift.service.KakaoMessageService;
 import gift.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +19,8 @@ import java.io.IOException;
 @Controller
 @RequestMapping
 public class KakaoController {
+
+    private static final Logger logger = LoggerFactory.getLogger(KakaoController.class);
 
     @Value("${kakao.api-key}")
     private String apiKey;
@@ -51,6 +55,8 @@ public class KakaoController {
 
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String bearerToken, @RequestBody OrderRequest orderRequest) {
+        logger.info("Received sendMessageToMe request with Authorization: {}", bearerToken);
+        logger.info("OrderRequest: {}", orderRequest);
         // Authorization 헤더에서 Bearer 토큰을 추출
         String accessToken = bearerToken.replace("Bearer ", "");
         OrderResponse orderResponse = orderService.createOrder(orderRequest, accessToken);
