@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.DTO.ProductOptionDTO;
+import gift.entity.ProductOptionEntity;
 import gift.exception.ProductNotFoundException;
 import gift.mapper.ProductOptionMapper;
 import gift.repository.ProductOptionRepository;
@@ -81,5 +82,11 @@ public class ProductOptionService {
         productOptionEntity.setName(productOptionDTO.name());
         productOptionEntity.setQuantity(productOptionDTO.quantity());
         productOptionRepository.save(productOptionEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public ProductOptionEntity getProductOptionEntity(Long id) {
+        return productOptionRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("옵션이 존재하지 않습니다"));
     }
 }

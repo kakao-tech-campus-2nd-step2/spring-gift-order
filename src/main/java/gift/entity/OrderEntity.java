@@ -1,6 +1,7 @@
 package gift.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,12 +21,55 @@ public class OrderEntity {
     private ProductOptionEntity productOptionEntity;
 
     @Column(nullable = false)
+    @Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
+    private Long quantity;
 
+    @Column(nullable = false)
+    private String message;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+    public Long getId() {
+        return id;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public ProductOptionEntity getProductOptionEntity() {
+        return productOptionEntity;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setProductOptionEntity(ProductOptionEntity productOptionEntity) {
+        this.productOptionEntity = productOptionEntity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
 
