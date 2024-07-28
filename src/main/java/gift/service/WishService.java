@@ -33,8 +33,8 @@ public class WishService {
 
     }
 
-    public Wish findByProductIdAndMemberId(Long productId,Long memberId) {
-        Wish wish = wishRepository.findByProductIdAndMemberId(productId,memberId);
+    public Wish findByProductIdAndMemberId(Long productId, Long memberId) {
+        Wish wish = wishRepository.findByProductIdAndMemberId(productId, memberId);
         return wish;
     }
 

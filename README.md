@@ -22,7 +22,7 @@
 
 * 참고 * 
 아래 예시와 같이 HTTP 메시지를 주고받도록 구현
-- [ ] 토큰으로 누가 주문했는지 찾아야함... 
+- [x] 토큰으로 누가 주문했는지 찾아야함... 
 Request
 POST /api/orders HTTP/1.1
 Authorization: Bearer {token}

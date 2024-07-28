@@ -42,9 +42,9 @@ public class Order {
     }
 
     public Order(Option option, Long quantity, LocalDateTime orderDateTime, String message) {
-        this.option=option;
-        this.quantity =quantity;
-        this.orderDateTime=orderDateTime;
+        this.option = option;
+        this.quantity = quantity;
+        this.orderDateTime = orderDateTime;
         this.message = message;
     }
 
@@ -64,11 +64,11 @@ public class Order {
     }
 
     public Order(Option option, Long quantity, LocalDateTime orderDateTime, String message, Member member) {
-        this.option=option;
-        this.quantity=quantity;
+        this.option = option;
+        this.quantity = quantity;
         this.orderDateTime = orderDateTime;
-        this.message =message;
-        this.member= member;
+        this.message = message;
+        this.member = member;
     }
 
     public Long getId() {

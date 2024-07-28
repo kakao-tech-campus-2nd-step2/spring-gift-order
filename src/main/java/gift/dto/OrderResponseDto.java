@@ -18,6 +18,7 @@ public class OrderResponseDto {
         this.orderDateTime = orderDateTime;
         this.message = message;
     }
+
     public OrderResponseDto(Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
@@ -26,8 +27,9 @@ public class OrderResponseDto {
     }
 
     public static OrderResponseDto fromEntity(Order order) {
-        return new OrderResponseDto(order.getId(),order.getQuantity(), order.getOrderDateTime(),order.getMessage());
+        return new OrderResponseDto(order.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
+
     public Long getId() {
         return id;
     }

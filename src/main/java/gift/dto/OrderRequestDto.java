@@ -1,7 +1,7 @@
 package gift.dto;
 
 public class OrderRequestDto {
-    private Long optionId ;
+    private Long optionId;
     private Long quantity;
     private String message;
 

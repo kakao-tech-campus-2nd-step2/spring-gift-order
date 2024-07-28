@@ -1,7 +1,6 @@
 package gift.controller;
 
 import gift.dto.KakaoMessageResponseDto;
-import gift.dto.OrderRequestDto;
 import gift.service.ExternalAPIService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +20,8 @@ public class KakaoApiController {
     }
 
     @PostMapping("/message")
-    public ResponseEntity<KakaoMessageResponseDto> sendKakaoMessageToMe(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody KakaoMessageRequestDto kakaoMessageRequestDto){
-        String token = authorizationHeader.replace("Basic ","");
-        return externalAPIService.sendKakaoMessageToMe(token,kakaoMessageRequestDto);
+    public ResponseEntity<KakaoMessageResponseDto> sendKakaoMessageToMe(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader, @RequestBody KakaoMessageRequestDto kakaoMessageRequestDto) {
+        String token = authorizationHeader.replace("Basic ", "");
+        return externalAPIService.sendKakaoMessageToMe(token, kakaoMessageRequestDto);
     }
 }

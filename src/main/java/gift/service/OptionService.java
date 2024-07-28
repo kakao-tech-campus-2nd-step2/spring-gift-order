@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class OptionService {
     private final OptionRepository optionRepository;
@@ -31,6 +32,7 @@ public class OptionService {
         }
         return null;
     }
+
     @Transactional
     public void subtract(Option option, Long quantity) {
         Option actualOption = optionRepository.findById(option.getId())

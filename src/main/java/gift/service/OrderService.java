@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.dto.OptionResponseDto;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.entity.Order;
@@ -28,10 +27,10 @@ public class OrderService {
         var option = optionService.getOptionById(orderRequestDto.getOptionId());
         var member = memberService.getById(orderMemberId);
 
-        OrderResponseDto orderResponseDto= OrderResponseDto.fromEntity(orderRepository.save(new Order(option, orderRequestDto.getQuantity(), LocalDateTime.now(), orderRequestDto.getMessage(), member)));
+        OrderResponseDto orderResponseDto = OrderResponseDto.fromEntity(orderRepository.save(new Order(option, orderRequestDto.getQuantity(), LocalDateTime.now(), orderRequestDto.getMessage(), member)));
 
         optionService.subtract(option, orderResponseDto.getQuantity());
-        var wish = wishService.findByProductIdAndMemberId(option.getProduct().getId(),orderMemberId);
+        var wish = wishService.findByProductIdAndMemberId(option.getProduct().getId(), orderMemberId);
 
         if (wish != null) {
             wishService.delete(wish.getId());
