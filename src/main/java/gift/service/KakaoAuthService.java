@@ -3,6 +3,7 @@ package gift.service;
 import java.net.URI;
 import java.util.Map;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -19,19 +20,19 @@ import gift.exception.UnauthorizedException;
 import gift.repository.UserRepository;
 
 @Service
-public class KakaoAuthService {
+public class KakaoAuthService implements TokenHandler{
 
     @Value("${kakao.client-id}")
-    private String clientId;
+    public String clientId;
 
     @Value("${kakao.redirect-uri}")
-    private String redirectUri;
+    public String redirectUri;
 
     @Value("${kakao.auth-url}")
-    private String authUrl;
+    public String authUrl;
     
     @Value("${kakao.token-info-url}")
-    private String tokenInfoUrl;
+    public String tokenInfoUrl;
     
     public String getClientId() {
         return clientId;
@@ -51,11 +52,12 @@ public class KakaoAuthService {
 
     public Map<String, String> getAccessToken(String authorizationCode) {
         RequestEntity<MultiValueMap<String, String>> request = authRequest(authorizationCode);
-        ResponseEntity<Map<String, String>> response = ErrorHandling(request);
+        ResponseEntity<Map<String, String>> response = errorHandling(request,
+        		new ParameterizedTypeReference<Map<String, String>>() {});
         Map<String, String> token = response.getBody();
         
         String accessToken = token.get("access_token");
-        processUserLogin(accessToken);
+        registerUser(accessToken);
         
         return token;
     }
@@ -76,37 +78,38 @@ public class KakaoAuthService {
         return body;
     }
 
-    private ResponseEntity<Map<String, String>> ErrorHandling(RequestEntity<MultiValueMap<String, String>> request) {
-        return restTemplate.exchange(request, new ParameterizedTypeReference<Map<String, String>>() {});
+    public <T> ResponseEntity<T> errorHandling(RequestEntity<?> request, ParameterizedTypeReference<T> responseType) {
+        return restTemplate.exchange(request, responseType);
     }
     
-    public String parseKakaoToken(String token) {
+    @Override
+    public String parseToken(String token) {
         RequestEntity<Void> request = tokenInfoRequest(token);
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(request, new ParameterizedTypeReference<Map<String, Object>>() {});
-
+        ResponseEntity<Map<String, Object>> response = errorHandling(request,
+        		new ParameterizedTypeReference<Map<String, Object>>() {});
         Map<String, Object> body = response.getBody();
         if (body == null || !body.containsKey("kakao_account")) {
             throw new UnauthorizedException("Invalid or expired token");
         }
 
         Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("kakao_account");
-        if (kakaoAccount == null || !kakaoAccount.containsKey("email")) {
-            throw new UnauthorizedException("Email not found in token");
-        }
         return (String) kakaoAccount.get("email");
     }
     
-    private void processUserLogin(String accessToken) {
-        String email = parseKakaoToken("Bearer " + accessToken);
-        findOrRegisterUser(email);
+    @Override
+    public String getTokenSuffix() {
+    	return "-kakao";
     }
 
-    private User findOrRegisterUser(String email) {
-        return userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User(email, "default_password123");
-            userRepository.save(newUser);
-            return newUser;
-        });
+    private void registerUser(String accessToken) {
+    	String email = parseToken("Bearer " + accessToken);
+    	String password = grantRandomPassword();
+    	User newUser = new User(email, password);
+        userRepository.save(newUser);
+    }
+    
+    private String grantRandomPassword() {
+    	return RandomStringUtils.random(15);
     }
     
     private RequestEntity<Void> tokenInfoRequest(String token) {
