@@ -44,6 +44,11 @@ public class Member {
     public Long getId() {
         return id;
     }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     public String getEmail() {
         return email;
     }
