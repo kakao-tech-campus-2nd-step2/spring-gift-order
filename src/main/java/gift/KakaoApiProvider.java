@@ -66,8 +66,8 @@ public class KakaoApiProvider {
     }
 
     private String generateOrderText(OrderResponseDto orderResponseDto) {
-        String productName = "test";
-        String optionName = "test";
+        String productName = orderResponseDto.productName();
+        String optionName = orderResponseDto.optionName();
         int num = orderResponseDto.quantity();
 
         return productName + "[" + optionName + "]" + " 상품이 " + num + "개 주문되었습니다.";

@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.dto.OrderRequestDto;
+import gift.dto.OrderResponseDto;
 import gift.repository.OrderRepository;
 import gift.vo.Member;
 import gift.vo.Option;
@@ -23,13 +24,19 @@ public class OrderService {
         this.memberService = memberService;
     }
 
+    private Option getOptionByOptionId(Long optionId) {
+        return optionService.getOption(optionId);
+    }
+
+    private Member getMemberByMemberId(Long memberId) {
+        return memberService.getMemberById(memberId);
+    }
+
     private void removeWish(Long wishId) {
         wishlistService.deleteWishProduct(wishId);
     }
 
-    private void checkWishAndRemove(Long memberId, Long optionId) {
-        Member member = memberService.getMemberById(memberId);
-        Option option = optionService.getOption(optionId);
+    private void checkWishAndRemove(Member member, Option option) {
         Product product = option.getProduct();
         Long foundWishId = wishlistService.hasFindWishByMemberAndProduct(member, product);
         if (foundWishId != null) {
@@ -37,11 +44,18 @@ public class OrderService {
         }
     }
 
-    public Order createOrder(Long memberId, OrderRequestDto orderRequestDto) {
+    public OrderResponseDto createOrder(Long memberId, OrderRequestDto orderRequestDto) {
         optionService.subtractOptionQuantity(orderRequestDto.optionId(), orderRequestDto.quantity());
         Order savedOrder = orderRepository.save(orderRequestDto.toOrder(memberId));
-        checkWishAndRemove(memberId, savedOrder.getOptionId());
-        return savedOrder;
+
+        Member member = getMemberByMemberId(memberId);
+        Option option = getOptionByOptionId(savedOrder.getOptionId());
+        Product product = option.getProduct();
+
+        checkWishAndRemove(member, option);
+        OrderResponseDto orderResponseDto = OrderResponseDto.toOrderResponseDto(savedOrder, product.getName(), option.getName());
+
+        return orderResponseDto;
     }
 
 }

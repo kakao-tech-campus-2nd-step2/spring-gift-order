@@ -9,14 +9,18 @@ public record OrderResponseDto (
         Long optionId,
         int quantity,
         LocalDateTime orderDateTime,
-        String message
+        String message,
+        String productName,
+        String optionName
 ) {
-    public static OrderResponseDto toOrderResponseDto(Order order) {
+    public static OrderResponseDto toOrderResponseDto(Order order, String productName, String optionName) {
         return new OrderResponseDto(
                 order.getId(),
                 order.getOptionId(),
                 order.getQuantity(),
                 order.getOrderDateTime(),
-                order.getMessage());
+                order.getMessage(),
+                productName,
+                optionName);
     }
 }
