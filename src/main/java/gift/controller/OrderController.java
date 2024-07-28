@@ -35,11 +35,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public String addOrder(@PathVariable("optionId") Long optionId, @RequestBody @Valid OrderRequestDTO orderRequestDTO, @LoginMember Member member) {
+    public String addOrder(@PathVariable("optionId") Long optionId,
+        @RequestBody @Valid OrderRequestDTO orderRequestDTO, @LoginMember Member member) {
         if (member == null) {
             return "redirect:/members/login";
         }
-        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderRequestDTO, member.getEmail());
+        OrderResponseDTO orderResponseDTO = orderService.createOrder(orderRequestDTO,
+            member.getEmail());
         String accessToken = orderRequestDTO.accessToken();
         kakaoService.sendKakaoMessage(accessToken, orderResponseDTO);
         return "redirect:/admin/products";

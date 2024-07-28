@@ -53,7 +53,8 @@ public class ProductService {
         Product existingProduct = productRepository.findById(id).orElse(null);
         if (existingProduct != null) {
             Category category = categoryService.findCategoryById(productDTO.categoryId());
-            existingProduct.updateProduct(productDTO.name(),productDTO.price(),category,productDTO.imageUrl());
+            existingProduct.updateProduct(productDTO.name(), productDTO.price(), category,
+                productDTO.imageUrl());
             productRepository.save(existingProduct);
         }
     }

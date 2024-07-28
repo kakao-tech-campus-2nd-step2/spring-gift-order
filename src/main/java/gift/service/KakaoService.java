@@ -76,14 +76,15 @@ public class KakaoService {
             String name = email.split("@")[0];
             String password = name + name;
             MemberDTO memberDTO = new MemberDTO(name, email, password);
-            member = new Member(null, memberDTO.name(), memberDTO.email(), memberDTO.password(), "user");
+            member = new Member(null, memberDTO.name(), memberDTO.email(), memberDTO.password(),
+                "user");
             memberRepository.save(member);
         }
         return member;
     }
 
     public String generateToken(String email, String role) {
-        String jwtToken = jwtUtil.generateToken(email,role);
+        String jwtToken = jwtUtil.generateToken(email, role);
         return jwtToken;
     }
 
@@ -91,20 +92,23 @@ public class KakaoService {
         String url = kakaoProperties.sendMessageUrl();
         final LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("template_object", TemplateObject(orderResponseDTO.id(),
-            orderResponseDTO.optionId(), orderResponseDTO.quantity(), orderResponseDTO.orderDateTime().toString(),orderResponseDTO.message()));
+            orderResponseDTO.optionId(), orderResponseDTO.quantity(),
+            orderResponseDTO.orderDateTime().toString(), orderResponseDTO.message()));
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(url))
-            .header(HttpHeaders.AUTHORIZATION, "Bearer "+accessToken)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
             .toEntity(String.class);
     }
 
-    private String TemplateObject(Long id, Long optionId, Long quantity, String orderDateTime, String message) {
+    private String TemplateObject(Long id, Long optionId, Long quantity, String orderDateTime,
+        String message) {
         return "{"
             + "\"object_type\":\"text\","
-            + "\"text\":\"주문 정보:\\n주문 ID: " + id + "\\n옵션 ID: " + optionId + "\\n수량: " + quantity + "\\n주문 시간: " + orderDateTime + "\\n메시지: " + message + "\","
+            + "\"text\":\"주문 정보:\\n주문 ID: " + id + "\\n옵션 ID: " + optionId + "\\n수량: " + quantity
+            + "\\n주문 시간: " + orderDateTime + "\\n메시지: " + message + "\","
             + "\"link\":{\"web_url\":\"http://localhost:8080/admin/products\",\"mobile_web_url\":\"http://localhost:8080/admin/products\"}"
             + "}";
     }

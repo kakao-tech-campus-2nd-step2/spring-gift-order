@@ -20,7 +20,8 @@ public class OrderService {
     private final MemberService memberService;
     private final WishlistService wishlistService;
 
-    public OrderService(OrderRepository orderRepository, OptionService optionService, MemberService memberService,
+    public OrderService(OrderRepository orderRepository, OptionService optionService,
+        MemberService memberService,
         WishlistService wishlistService) {
         this.orderRepository = orderRepository;
         this.optionService = optionService;
@@ -34,10 +35,13 @@ public class OrderService {
         Member member = memberService.findMemberByEmail(email);
         Long quantity = orderRequestDTO.quantity();
         optionService.subtractQuantity(option.getId(), quantity);
-        Order order = new Order(null, option, quantity, LocalDateTime.now(), orderRequestDTO.message(), member);
+        Order order = new Order(null, option, quantity, LocalDateTime.now(),
+            orderRequestDTO.message(), member);
         orderRepository.save(order);
         wishlistService.removeWishlist(member.getEmail(), option.getProduct().getId());
-        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(order.getId(), order.getOption().getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
+        OrderResponseDTO orderResponseDTO = new OrderResponseDTO(order.getId(),
+            order.getOption().getId(), order.getQuantity(), order.getOrderDateTime(),
+            order.getMessage());
         return orderResponseDTO;
     }
 

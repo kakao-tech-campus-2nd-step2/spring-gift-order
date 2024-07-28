@@ -13,6 +13,7 @@ public record KakaoProperties(
     String userInfoUrl,
     String sendMessageUrl
 ) {
+
     public String generateLoginUrl() {
         return String.format("%s?response_type=code&client_id=%s&redirect_uri=%s",
             authUrl, clientId, redirectUrl);

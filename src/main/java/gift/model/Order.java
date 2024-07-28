@@ -35,9 +35,11 @@ public class Order {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    protected Order() {}
+    protected Order() {
+    }
 
-    public Order(Long id, Option option, Long quantity, LocalDateTime orderDateTime, String message, Member member) {
+    public Order(Long id, Option option, Long quantity, LocalDateTime orderDateTime, String message,
+        Member member) {
         this.id = id;
         this.option = option;
         this.quantity = quantity;

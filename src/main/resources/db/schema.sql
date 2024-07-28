@@ -44,12 +44,12 @@ CREATE TABLE options
 
 CREATE TABLE orders
 (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    option_id BIGINT NOT NULL ,
-    quantity BIGINT NOT NULL ,
-    order_date_time TIMESTAMP NOT NULL ,
-    message VARCHAR(255) ,
-    member_id BIGINT NOT NULL ,
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    option_id       BIGINT    NOT NULL,
+    quantity        BIGINT    NOT NULL,
+    order_date_time TIMESTAMP NOT NULL,
+    message         VARCHAR(255),
+    member_id       BIGINT    NOT NULL,
     FOREIGN KEY (option_id) REFERENCES options (id),
     FOREIGN KEY (member_id) REFERENCES member (id)
 );
