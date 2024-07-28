@@ -4,6 +4,7 @@ import gift.client.KakaoApiClient;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KakaoAuthService {
@@ -21,8 +22,11 @@ public class KakaoAuthService {
     }
 
     public String getAuthorizationUri() {
-        return "https://kauth.kakao.com/oauth/authorize?response_type=code" +
-                "&client_id=" + kakaoProperties.getClientId() +
-                "&redirect_uri=" + kakaoProperties.getRedirectUri();
+        return UriComponentsBuilder.fromHttpUrl("https://kauth.kakao.com/oauth/authorize")
+                .queryParam("response_type", "code")
+                .queryParam("client_id", kakaoProperties.getClientId())
+                .queryParam("redirect_uri", kakaoProperties.getRedirectUri())
+                .build()
+                .toUriString();
     }
 }
