@@ -17,7 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
-@Service("kakaoAuthServiceImpl")
+@Service
 public class KakaoAuthServiceImpl implements KakaoAuthService {
 
     @Value("${kakao.client-id}")
@@ -67,7 +67,9 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.getBody());
-            String email = rootNode.path("kakao_account").path("email").asText();
+            JsonNode kakaoAccount = rootNode.path("kakao_account");
+            String email = kakaoAccount.path("email").asText();
+
             return new UserInfo(email);
         } catch (Exception e) {
             throw new RuntimeException("Failed to get user info", e);
