@@ -2,6 +2,8 @@ package gift.category.controller;
 
 import gift.category.domain.CategoryDTO;
 import gift.category.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/categories")
+@Tag(name = "category")
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -25,26 +28,31 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "category list 받기")
     public ResponseEntity<List<CategoryDTO>> findAll(){
         return new ResponseEntity<>(categoryService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "id로 category 받아오기")
     public ResponseEntity<Optional<CategoryDTO>> findById(@PathVariable("id") Long CategoryId){
         return new ResponseEntity<>(categoryService.findById(CategoryId), HttpStatus.OK);
     }
 
     @PostMapping
+    @Operation(summary = "category 정보 저장")
     public ResponseEntity<CategoryDTO> save(@RequestBody CategoryDTO categoryDTO){
         return new ResponseEntity<>(categoryService.save(categoryDTO), HttpStatus.OK);
     }
 
     @PutMapping
+    @Operation(summary = "category 정보 업데이트")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO){
         return new ResponseEntity<>(categoryService.update(categoryDTO), HttpStatus.OK);
     }
 
     @DeleteMapping
+    @Operation(summary = "category 정보 삭제")
     public ResponseEntity<CategoryDTO> deleteCategory(@RequestBody CategoryDTO categoryDTO){
         return new ResponseEntity<>(HttpStatus.OK);
     }
