@@ -58,6 +58,13 @@ public class WishlistRepositoryTest {
         Member member = mapper.memberDtoToEntity(member1);
         memberJpaRepository.save(member);
 
+        Category category = new Category(1L, "category1");
+        categoryJpaRepository.save(category);
+
+        ProductDto productDto1 = new ProductDto(1L, "productDto1", 1L, 1000, "http://localhost:8080/image1.jpg", false);
+        Product product = mapper.productDtoToEntity(productDto1);
+        productJpaRepository.save(product);
+
         OptionDto optionDto = new OptionDto(1L, 1L, "option1", 1000, 1);
         Option option = mapper.optionDtoToEntity(optionDto);
         optionJpaRepository.save(option);
@@ -75,6 +82,17 @@ public class WishlistRepositoryTest {
 
     @Test
     public void testAddWishlist() {
+        MemberDto member1 = new MemberDto(1L, "1234@naver.com", "1234", "1234", false);
+        Member member = mapper.memberDtoToEntity(member1);
+        memberJpaRepository.save(member);
+
+        Category category = new Category(1L, "category1");
+        categoryJpaRepository.save(category);
+
+        ProductDto productDto1 = new ProductDto(1L, "productDto1", 1L, 1000, "http://localhost:8080/image1.jpg", false);
+        Product product = mapper.productDtoToEntity(productDto1);
+        productJpaRepository.save(product);
+
         WishlistDto wishlistDto = new WishlistDto(1L, 1L, 1, 0, "test", 1000, 1L);
         Wishlist wishlist = mapper.wishlistDtoToEntity(wishlistDto);
         Wishlist savedwishlist = wishlistJpaRepository.save(wishlist);
