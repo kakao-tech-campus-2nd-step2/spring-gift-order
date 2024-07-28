@@ -11,11 +11,11 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import gift.domain.KakaoToken;
+import gift.dto.JwtResponse;
 import gift.dto.MemberDTO;
 import gift.repository.KakaoTokenRepository;
 import gift.util.JwtProvider;
 import gift.util.KakaoProperties;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
@@ -70,10 +70,10 @@ public class KakaoLoginServiceTest {
         given(jwtProvider.createAccessToken(any(MemberDTO.class))).willReturn(token);
 
         // when
-        Map<String, String> response = kakaoLoginService.login("testCode");
+        JwtResponse jwtResponse = kakaoLoginService.login("testCode");
 
         // then
         then(kakaoTokenRepository).should().save(any(KakaoToken.class));
-        assertThat(response.get("token:")).isEqualTo(token);
+        assertThat(jwtResponse.token()).isEqualTo(token);
     }
 }

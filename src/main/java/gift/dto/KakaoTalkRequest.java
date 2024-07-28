@@ -1,23 +1,33 @@
 package gift.dto;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
 public record KakaoTalkRequest(
+    @NotNull
     String object_type,
+
+    @NotNull
     Content content,
+
     ItemContent item_content
 ) {
 
     public record Content(
+        @NotNull
         String title,
+
         String image_url,
+
+        @NotNull
         Link link
     ) {
 
     }
 
     public record Link(
+        @NotNull
         String web_url
     ) {
 
