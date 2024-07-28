@@ -89,4 +89,14 @@ public class ProductOptionService {
         return productOptionRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("옵션이 존재하지 않습니다"));
     }
+
+    @Transactional
+    public void updateProductOptionQuantity(Long id, long l) {
+        if (l < 0) {
+            throw new IllegalArgumentException("수량은 0 이상이어야 합니다.");
+        }
+        var productOptionEntity = productOptionRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("옵션이 존재하지 않습니다"));
+        productOptionEntity.setQuantity(l);
+    }
 }

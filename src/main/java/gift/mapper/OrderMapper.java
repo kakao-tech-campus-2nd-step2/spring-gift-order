@@ -1,5 +1,6 @@
 package gift.mapper;
 
+import gift.DTO.MemberDTO;
 import gift.DTO.OrderDTO;
 import gift.entity.OrderEntity;
 import gift.service.ProductOptionService;
@@ -18,11 +19,12 @@ public class OrderMapper {
                 orderEntity.getProductOptionEntity().getId(),
                 orderEntity.getQuantity(),
                 orderEntity.getCreatedAt(),
-                orderEntity.getMessage()
+                orderEntity.getMessage(),
+                orderEntity.getMemberId()
         );
     }
 
-    public OrderEntity toOrderEntity(OrderDTO orderDTO, boolean idRequired) {
+    public OrderEntity toOrderEntity(OrderDTO orderDTO, Long memberId, boolean idRequired) {
         Long id = null;
         if (idRequired) {
             id = orderDTO.id();
@@ -33,6 +35,7 @@ public class OrderMapper {
         orderEntity.setProductOptionEntity(productOptionService.getProductOptionEntity(orderDTO.optionId()));
         orderEntity.setQuantity(orderDTO.quantity());
         orderEntity.setMessage(orderDTO.message());
+        orderEntity.setMemberId(memberId);
 
         return orderEntity;
     }

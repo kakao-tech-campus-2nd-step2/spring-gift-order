@@ -27,6 +27,9 @@ public class OrderEntity {
     @Column(nullable = false)
     private String message;
 
+    @Column(nullable = false)
+    private Long memberId;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -38,6 +41,22 @@ public class OrderEntity {
 
     public String getMessage() {
         return message;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(Long memberId) {
+        this.memberId = memberId;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public ProductOptionEntity getProductOptionEntity() {

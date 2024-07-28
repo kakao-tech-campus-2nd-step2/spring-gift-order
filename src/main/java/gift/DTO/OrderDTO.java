@@ -16,10 +16,12 @@ public record OrderDTO(
         LocalDateTime orderDate,
 
         @NotNull(message = "메시지는 null이 될 수 없습니다.")
-        String message
+        String message,
+
+        Long memberId
 
 ) {
-    public OrderDTO(Long optionId, Long quantity, String message) {
-        this(null, optionId, quantity, null, message);
+    public OrderDTO(Long optionId, Long quantity, String message, Long memberId) {
+        this(null, optionId, quantity, null, message, memberId);
     }
 }
