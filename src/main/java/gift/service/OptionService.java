@@ -52,12 +52,10 @@ public class OptionService {
         optionsRepository.save(options);
     }
 
-    @Transactional
-    public int deductQuantity(int product_id, int id) {
-        var options = findByProduct_Id(product_id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품입니다."));
+    public int deductQuantity(int id, int quantity) {
         var currentQuantity = optionRepository.searchQuantityById(id);
-        if (currentQuantity > 0) {
-            optionRepository.updateQuantityById(id, currentQuantity - 1);
+        if (currentQuantity - quantity > 0) {
+            optionRepository.updateQuantityById(id, currentQuantity - quantity);
         } else {
             throw new IllegalArgumentException("남은 수량이 없습니다.");
         }
@@ -68,9 +66,7 @@ public class OptionService {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new NoSuchElementException("Option not found with id: " + optionId));
 
-        Options options = optionsRepository.findByOptionListContaining(option)
+        return optionsRepository.findProductIdByOptionListContaining(option)
                 .orElseThrow(() -> new NoSuchElementException("Options not found for option id: " + optionId));
-
-        return options.getProduct().getId();
     }
 }
