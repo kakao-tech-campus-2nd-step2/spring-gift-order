@@ -10,7 +10,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class FilterConfiguration {
 
@@ -57,7 +56,6 @@ public class FilterConfiguration {
         filterRegistrationBean.setOrder(4);
         filterRegistrationBean.addUrlPatterns("/members/login");
         filterRegistrationBean.addUrlPatterns("/members/login/oauth/kakao");
-
 
         return filterRegistrationBean;
     }

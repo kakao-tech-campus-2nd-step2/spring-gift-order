@@ -4,7 +4,6 @@ import static gift.exception.exceptionMessage.ExceptionMessage.CATEGORY_NAME_DUP
 
 public class NameDuplicationException extends RuntimeException{
 
-
     public NameDuplicationException(){
         super(CATEGORY_NAME_DUPLICATION);
     }

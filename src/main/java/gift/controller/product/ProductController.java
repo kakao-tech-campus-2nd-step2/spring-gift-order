@@ -24,7 +24,6 @@ public class ProductController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
-
     private final OptionService optionService;
 
     public ProductController(ProductService productService,
@@ -90,7 +89,6 @@ public class ProductController {
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable("id") Long id,
                            Model model){
-
         ProductResponseDto productDto = productService.findProductById(id);
         List<CategoryResponseDto> categories = categoryService.findAllCategories();
 
@@ -111,7 +109,6 @@ public class ProductController {
     public String delete(@PathVariable("id") Long id){
         productService.deleteProduct(id);
         return "redirect:/products";
-
     }
 
 }

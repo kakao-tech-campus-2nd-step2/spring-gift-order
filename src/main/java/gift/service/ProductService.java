@@ -37,7 +37,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto addProduct(ProductRequestDto productDto, OptionRequestDto optionRequestDto){
+    public ProductResponseDto addProduct(ProductRequestDto productDto, OptionRequestDto optionRequestDto) {
         checkNameInKakao(productDto);
 
         Category category = categoryRepository.findById(productDto.categoryId()).orElseThrow(() -> new EntityNotFoundException("해당 카테고리는 존재하지 않습니다."));
@@ -58,27 +58,27 @@ public class ProductService {
         return ProductResponseDto.from(savedProduct);
     }
 
-    public ProductResponseDto findProductById(Long id){
+    public ProductResponseDto findProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
 
         return ProductResponseDto.from(product);
     }
 
-    public List<ProductResponseDto> findAllProducts(){
+    public List<ProductResponseDto> findAllProducts() {
         return productRepository.findAll().stream()
                 .map(ProductResponseDto::from)
                 .collect(Collectors.toList());
     }
 
-    public List<ProductResponseDto> findProducts(Pageable pageable){
+    public List<ProductResponseDto> findProducts(Pageable pageable) {
         return productRepository.findAll(pageable).stream()
                 .map(ProductResponseDto::from)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(Long id, ProductRequestDto productRequestDto){
+    public ProductResponseDto updateProduct(Long id, ProductRequestDto productRequestDto) {
         checkNameInKakao(productRequestDto);
 
         Product findProduct = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
@@ -90,7 +90,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto deleteProduct(Long id){
+    public ProductResponseDto deleteProduct(Long id) {
         Product findProduct = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
 
         productRepository.delete(findProduct);
@@ -99,7 +99,7 @@ public class ProductService {
     }
 
     private void checkNameInKakao(ProductRequestDto productDto) {
-        if(productDto.name().contains("카카오")){
+        if (productDto.name().contains("카카오")) {
             throw new KakaoInNameException();
         }
     }

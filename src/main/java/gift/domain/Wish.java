@@ -21,7 +21,6 @@ public class Wish extends TimeStamp {
     @Column(nullable = false)
     private int count;
 
-
     public Wish() {
     }
 

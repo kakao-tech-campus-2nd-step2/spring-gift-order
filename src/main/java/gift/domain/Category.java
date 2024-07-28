@@ -3,7 +3,6 @@ package gift.domain;
 import gift.dto.request.CategoryRequestDto;
 import gift.utils.TimeStamp;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ public class Category extends TimeStamp {
     public Long getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }

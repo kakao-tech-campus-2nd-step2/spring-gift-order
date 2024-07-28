@@ -24,10 +24,10 @@ public class TokenService {
     }
 
     @Transactional
-    public String tokenSave(String token, String email){
+    public String tokenSave(String token, String email) {
         Optional<AuthToken> tokenByEmail = tokenRepository.findTokenByEmail(email);
 
-        if(tokenByEmail.isPresent()){
+        if (tokenByEmail.isPresent()) {
             throw new EmailDuplicationException(ALREADY_TOKEN_GET_EMAIL);
         }
 
@@ -36,18 +36,18 @@ public class TokenService {
         return token;
     }
 
-    public AuthToken findToken(String token){
+    public AuthToken findToken(String token) {
         return tokenRepository.findAuthTokenByToken(token)
                 .orElseThrow(UnAuthorizationException::new);
     }
 
-    public AuthToken findTokenById(Long tokenId){
+    public AuthToken findTokenById(Long tokenId) {
         return tokenRepository.findById(tokenId)
                 .orElseThrow(UnAuthorizationException::new);
     }
 
     @Transactional
-    public AuthToken oauthTokenSave(TokenInformation tokenInfo, String email){
+    public AuthToken oauthTokenSave(TokenInformation tokenInfo, String email) {
         UUID uuid = UUID.randomUUID();
 
         AuthToken authToken = new AuthToken.Builder()
@@ -64,7 +64,7 @@ public class TokenService {
     }
 
     @Transactional
-    public AuthToken updateToken(Long tokenId, TokenInformation tokenInfo){
+    public AuthToken updateToken(Long tokenId, TokenInformation tokenInfo) {
         AuthToken findToken = findTokenById(tokenId);
 
         findToken.update(tokenInfo);

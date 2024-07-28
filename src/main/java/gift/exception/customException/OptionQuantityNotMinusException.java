@@ -8,7 +8,6 @@ public class OptionQuantityNotMinusException extends RuntimeException{
         super(OPTION_QUANTITY_NOT_MINUS);
     }
 
-
     public OptionQuantityNotMinusException(String message) {
         super(message);
     }

@@ -24,13 +24,13 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<CategoryResponseDto> findAllCategories(){
+    public List<CategoryResponseDto> findAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(CategoryResponseDto::from)
                 .collect(Collectors.toList());
     }
 
-    public CategoryResponseDto findOneCategoryById(Long id){
+    public CategoryResponseDto findOneCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
@@ -38,7 +38,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponseDto saveCategory(CategoryRequestDto categoryRequestDto){
+    public CategoryResponseDto saveCategory(CategoryRequestDto categoryRequestDto) {
         categoryRepository.findCategoryByName(categoryRequestDto.name())
                 .ifPresent(e -> {
                     throw new NameDuplicationException();
@@ -52,7 +52,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponseDto updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto){
+    public CategoryResponseDto updateCategory(Long categoryId, CategoryRequestDto categoryRequestDto) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
@@ -67,7 +67,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponseDto deleteCategory(Long categoryId){
+    public CategoryResponseDto deleteCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(CATEGORY_NOT_FOUND));
 
