@@ -40,6 +40,26 @@ public class Order {
 		this.orderDateTime = LocalDateTime.now();
 	}
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+	
+	public Option getOption() {
+		return option;
+	}
+	
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	
 	public void setOrderDateTime(LocalDateTime orderDateTime) {
 		this.orderDateTime = orderDateTime;
 	}
