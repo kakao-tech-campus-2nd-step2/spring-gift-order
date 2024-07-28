@@ -5,6 +5,8 @@ public class OrderRequestDTO {
     private int quantity;
     private String message;
 
+    public OrderRequestDTO() {}
+
     public OrderRequestDTO(Long optionId, int quantity, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
