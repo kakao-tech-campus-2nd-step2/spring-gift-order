@@ -8,8 +8,11 @@
 
 ## 2단계 구현 사항
 - 주문하기 mvc 구현
-- 메시지 전송 서비스 추가
-- 테스트 코드
+- 카카오 인증, 나에게 메시지 보내기 서비스 각각 생성
+
+## 3단계 구현 사항
+- 2단계 피드백 반영
+- API 명세 작성
 
 
 ## 현재 코드 구조
@@ -62,8 +65,9 @@
         │       │   └── WishRepository.java
         │       ├── service
         │       │   ├── CategoryService.java
+        │       │   ├── KakaoAuthService.java
+        │       │   ├── KakaoMessageService.java
         │       │   ├── KakaoProperties.java
-        │       │   ├── KakaoService.java
         │       │   ├── MemberService.java
         │       │   ├── OrderService.java
         │       │   ├── ProductService.java
@@ -81,6 +85,7 @@
             └── templates
                 ├── add.html
                 ├── edit.html
+                ├── home.html
                 ├── list.html
                 ├── login.html
                 └── view.html             
@@ -102,4 +107,6 @@
                 │    ├── ProductReposiroryTest.java
                 │    └── WishRepositoryTest.java
                 └── service
-                     └── KakaoServiceTest.java
+                     ├── CategoryServiceTest.java
+                     ├── MemberServiceTest.java
+                     └── ProductSerivceTest.java
