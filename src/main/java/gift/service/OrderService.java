@@ -41,7 +41,6 @@ public class OrderService {
             }
 
             productService.subtractOptionQuantity(option.getProduct().getId(), option.getName(), itemRequest.getQuantity());
-
             OrderItem orderItem = new OrderItem(order, product, option, itemRequest.getQuantity());
 
             order.getOrderItems().add(orderItem);
