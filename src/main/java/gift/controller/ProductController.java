@@ -11,6 +11,9 @@ import gift.repository.ProductRepository;
 import gift.service.CategoryService;
 import gift.service.OptionService;
 import gift.service.ProductService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/products")
+@Api(tags = "Product Management")
 public class ProductController {
 
     @Autowired
@@ -48,8 +52,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public String getProducts(@RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "5") int size, Model model) {
+    @ApiOperation(value = "Get all products", notes = "Retrieve all products with pagination")
+    public String getProducts(@ApiParam(value = "Page number", required = false, defaultValue = "0") @RequestParam(defaultValue = "0") int page,
+        @ApiParam(value = "Page size", required = false, defaultValue = "5") @RequestParam(defaultValue = "5") int size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> productPage = productService.getAllProducts(pageable);
         List<Category> categories = categoryService.getAllCategories();
@@ -60,12 +65,13 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public String addProduct(@RequestParam String name,
-        @RequestParam int price,
-        @RequestParam String imageUrl,
-        @RequestParam Long categoryId,
-        @RequestParam List<String> optionNames,
-        @RequestParam List<Long> optionQuantities,
+    @ApiOperation(value = "Add a new product", notes = "Creates a new product with the given details")
+    public String addProduct(@ApiParam(value = "Product name", required = true) @RequestParam String name,
+        @ApiParam(value = "Product price", required = true) @RequestParam int price,
+        @ApiParam(value = "Product image URL", required = true) @RequestParam String imageUrl,
+        @ApiParam(value = "Category ID", required = true) @RequestParam Long categoryId,
+        @ApiParam(value = "Option names", required = true) @RequestParam List<String> optionNames,
+        @ApiParam(value = "Option quantities", required = true) @RequestParam List<Long> optionQuantities,
         RedirectAttributes redirectAttributes) {
         Category category = categoryService.getCategoryById(categoryId);
         Product product = new Product(name, price, imageUrl, category);
@@ -85,14 +91,15 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    public String updateProduct(@RequestParam String name,
-                                @RequestParam int price,
-                                @RequestParam String imageUrl,
-                                @RequestParam Long categoryId,
-                                @ModelAttribute Product product,
-                                @ModelAttribute Option option,
-                                @RequestParam("optionNames") List<String> optionNames,
-                                @RequestParam("optionQuantities") List<Long> optionQuantities,
+    @ApiOperation(value = "Update an existing product", notes = "Updates the details of an existing product")
+    public String updateProduct(@ApiParam(value = "Product name", required = true) @RequestParam String name,
+        @ApiParam(value = "Product price", required = true) @RequestParam int price,
+        @ApiParam(value = "Product image URL", required = true) @RequestParam String imageUrl,
+        @ApiParam(value = "Category ID", required = true) @RequestParam Long categoryId,
+        @ModelAttribute Product product,
+        @ModelAttribute Option option,
+        @ApiParam(value = "Option names", required = true) @RequestParam("optionNames") List<String> optionNames,
+        @ApiParam(value = "Option quantities", required = true) @RequestParam("optionQuantities") List<Long> optionQuantities,
                                 RedirectAttributes redirectAttributes) {
 
         List<Option> options = new ArrayList<>();
@@ -115,7 +122,8 @@ public class ProductController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Long id,
+    @ApiOperation(value = "Delete a product", notes = "Deletes the product with the given ID")
+    public String deleteProduct(@ApiParam(value = "Product ID", required = true) @PathVariable("id") Long id,
         RedirectAttributes redirectAttributes) {
         productService.deleteProduct(id);
         redirectAttributes.addFlashAttribute("message", "Product deleted successfully!");
@@ -123,7 +131,8 @@ public class ProductController {
     }
 
     @GetMapping("/view/{id}")
-    public String getProductDetails(@PathVariable("id") Long id, Model model,
+    @ApiOperation(value = "Get product details", notes = "Retrieve the details of a specific product by ID")
+    public String getProductDetails(@ApiParam(value = "Product ID", required = true) @PathVariable("id") Long id, Model model,
         RedirectAttributes redirectAttributes) {
         Optional<Product> product = productService.getProductById(id);
         if (product.isPresent()) {
@@ -138,7 +147,8 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    @ApiOperation(value = "Get a product by ID", notes = "Retrieve a specific product by its ID")
+    public ResponseEntity<Product> getProductById(@ApiParam(value = "Product ID", required = true) @PathVariable Long id) {
         Optional<Product> product = productService.getProductById(id);
         return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
