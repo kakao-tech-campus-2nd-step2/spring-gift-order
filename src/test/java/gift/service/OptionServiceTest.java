@@ -95,7 +95,7 @@ public class OptionServiceTest {
         when(optionRepository.save(any(Option.class)))
             .thenReturn(option);
 
-        optionService.subtractQuantity(name, 50);
+        optionService.subtractQuantity(option.getId(), 50);
         
         verify(optionRepository, times(1)).delete(option);
         verify(optionRepository, times(1)).save(optionCaptor.capture());
