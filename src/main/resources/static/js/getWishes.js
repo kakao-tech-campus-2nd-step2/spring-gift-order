@@ -2,7 +2,13 @@ window.onload = function() {
   const token = localStorage.getItem('token');
   if (token) {
     const payload = token.split('.')[1];
-    const decodedPayload = atob(payload);
+    let decodedPayload = atob(payload);
+    const bytes = new Uint8Array(decodedPayload.length);
+    for (let i = 0; i < decodedPayload.length; i++) {
+      bytes[i] = decodedPayload.charCodeAt(i);
+    }
+
+    decodedPayload = new TextDecoder().decode(bytes);
     const payloadObject = JSON.parse(decodedPayload);
     const name = payloadObject.name;
     document.getElementById('username').textContent = name + '님';

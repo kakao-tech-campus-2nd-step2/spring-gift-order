@@ -25,7 +25,7 @@ class MemberServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        memberDTO = new MemberDTO("1234@1234.com", "1234");
+        memberDTO = new MemberDTO("1234@1234.com", "1234", "basic");
     }
 
     @Test

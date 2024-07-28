@@ -52,7 +52,7 @@ class WishListServiceTest {
     void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
 
-        memberDTO = new MemberDTO("1234@1234.com", "1234");
+        memberDTO = new MemberDTO("1234@1234.com", "1234", "basic");
         productRequestDTO = new ProductRequestDTO(1L, "제품", 1000,
                 "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png",
                 "기타");

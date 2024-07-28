@@ -30,7 +30,7 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("회원가입")
     void save() {
-        Member expected = new Member("12345@12345.com", "1", "홍길동", "default_user");
+        Member expected = new Member("12345@12345.com", "1", "basic", "홍길동", "user");
         Member actual = memberRepository.save(expected);
 
         assertAll(
@@ -38,15 +38,15 @@ class MemberRepositoryTest {
                 () -> assertThat(actual.getName()).isEqualTo("홍길동"),
                 () -> assertThat(actual.getEmail()).isEqualTo("12345@12345.com"),
                 () -> assertThat(actual.getPassword()).isEqualTo("1"),
-                () -> assertThat(actual.getRole()).isEqualTo("default_user")
+                () -> assertThat(actual.getRole()).isEqualTo("user")
         );
     }
 
     @Test
     @DisplayName("모든 유저 불러오기")
     void findAll(){
-        Member expected1 = memberRepository.save(new Member("12345@12345.com", "1", "홍길동", "default_user"));
-        Member expected2 = memberRepository.save(new Member("22345@12345.com", "2", "홍길동", "default_user"));
+        Member expected1 = memberRepository.save(new Member("12345@12345.com", "1", "basic", "홍길동", "user"));
+        Member expected2 = memberRepository.save(new Member("22345@12345.com", "2", "basic", "홍길동", "user"));
 
         List<Member> actualList = memberRepository.findAll();
 
@@ -56,15 +56,15 @@ class MemberRepositoryTest {
     @Test
     @DisplayName("조건에 맞는 유저 수 세기 (db 무결성 검증용)")
     void countByEmail(){
-        memberRepository.save(new Member("12345@12345.com", "1", "홍길동", "default_user"));
-        memberRepository.save(new Member("22345@12345.com", "2", "홍길동", "default_user"));
+        memberRepository.save(new Member("12345@12345.com", "1", "basic", "홍길동", "user"));
+        memberRepository.save(new Member("22345@12345.com", "2", "basic", "홍길동", "user"));
         assertThat(memberRepository.countByEmail("12345@12345.com")).isEqualTo(1);
     }
 
     @Test
     @DisplayName("이메일로 한명 찾기")
     void findOne(){
-        memberRepository.save(new Member("12345@12345.com", "1", "홍길동", "default_user"));
+        memberRepository.save(new Member("12345@12345.com", "1", "basic", "홍길동", "user"));
 
         assertThat(memberRepository.findByEmail("12345@12345.com")).isNotNull();
     }
