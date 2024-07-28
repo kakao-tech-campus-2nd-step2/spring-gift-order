@@ -38,7 +38,7 @@ dependencies {
     //implementation 'org.springframework.boot:spring-boot-starter-security'
     //implementation 'org.springframework.security:spring-security-test'
 
-    //implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
     // Json
     implementation group: 'org.json', name: 'json', version: '20090211'
