@@ -6,6 +6,8 @@ import gift.Service.ProductService;
 
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Tag(name = "Product", description = "상품 관련 api")
 public class ProductController {
 
     private final ProductService productService;
@@ -29,6 +32,7 @@ public class ProductController {
     }
 
     @GetMapping("/api/products")
+    @Operation(summary = "모든 상품 조회", description = "모든 상품을 조회합니다.")
     public String getAllProductsByRoot(Model model,
                                        @RequestParam(value = "page", defaultValue = "0") int page,
                                        @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -41,6 +45,7 @@ public class ProductController {
     }
 
     @GetMapping("/products")
+    @Operation(summary = "모든 상품 조회", description = "모든 상품을 조회합니다.")
     public String getAllProductsByUser(Model model,
                                        @RequestParam(value = "page", defaultValue = "0") int page,
                                        @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -53,6 +58,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/api/products/create", method = {RequestMethod.GET, RequestMethod.POST})
+    @Operation(summary = "상품 추가", description = "상품 추가 화면을 보여주고 상품을 추가합니다.")
     public String createProduct(@Valid @ModelAttribute ProductDto productDto, HttpServletRequest request, Model model) {
         if ("GET".equalsIgnoreCase(request.getMethod())) {
             model.addAttribute("product", new ProductDto());
@@ -67,6 +73,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/api/products/update/{id}", method = {RequestMethod.GET, RequestMethod.POST})
+    @Operation(summary = "상품 수정", description = "상품 수정 화면을 보여주고 상품을 수정합니다.")
     public String updateProductById(@PathVariable Long id, @Valid @ModelAttribute ProductDto productDtoDetails, HttpServletRequest request, Model model) {
         if ("GET".equalsIgnoreCase(request.getMethod())) {
             Optional<ProductDto> optionalProduct = productService.getProductById(id);
@@ -81,6 +88,7 @@ public class ProductController {
     }
 
     @PostMapping("/api/products/delete/{id}")
+    @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
     public String deleteProduct(@PathVariable Long id, Model model) {
         Optional<ProductDto> optionalProduct = productService.getProductById(id);
         model.addAttribute("product", optionalProduct.get());

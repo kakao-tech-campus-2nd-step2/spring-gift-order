@@ -5,6 +5,8 @@ import gift.Model.KakaoAccessTokenDto;
 import gift.Model.KakaoMemberDto;
 import gift.Model.MemberDto;
 import gift.Service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 @RestController
+@Tag(name = "Kakao Login", description = "카카오 로그인 관련 api")
 public class KakaoOAuthController {
 
     @Value("${kakao.clientId}")
@@ -27,6 +30,7 @@ public class KakaoOAuthController {
     private MemberService memberService;
 
     @GetMapping("/oauth/authorize")
+    @Operation(summary = "카카오 로그인 화면", description = "카카오 로그인 화면을 보여줍니다.")
     public void authorize(HttpServletResponse response) throws IOException {
         var url = "https://kauth.kakao.com/oauth/authorize";
         var redirectUri = "http://localhost:8080/auth/kakao/callback";
@@ -38,6 +42,7 @@ public class KakaoOAuthController {
 
 
     @GetMapping("/auth/kakao/callback")
+    @Operation(summary = "카카오 로그인 수행", description = "인가 코드를 통해 로그인을 수행합니다.")
     public ResponseEntity<?> callBack(@RequestParam("code") String code, HttpServletResponse response) throws Exception {
         //인가 코드로 토큰 받아오기
         String accessToken = getAccessToken(code);
@@ -82,6 +87,7 @@ public class KakaoOAuthController {
 
     }
 
+    @Operation(summary = "토큰 발급", description = "토큰을 발급받습니다.")
     public String getAccessToken(String code) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();

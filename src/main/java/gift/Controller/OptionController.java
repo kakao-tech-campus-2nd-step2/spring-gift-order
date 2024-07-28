@@ -6,6 +6,8 @@ import gift.Model.OptionDto;
 import gift.Model.OrderRequestDto;
 import gift.Service.KakaoTalkService;
 import gift.Service.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
+@Tag(name = "Option", description = "옵션 관련 api")
 public class OptionController {
 
     private final OptionService optionService;
@@ -29,6 +32,7 @@ public class OptionController {
     }
 
     @GetMapping("/api/products/options/{productId}")
+    @Operation(summary = "옵션 표출", description = "상품에 대한 옵션을 보여줍니다.")
     public ResponseEntity<List<OptionDto>> getAllOptionsByProductId(@PathVariable Long productId) {
         List<OptionDto> options = optionService.getAllOptionsByProductId(productId);
         if (options.isEmpty()) {
@@ -38,6 +42,7 @@ public class OptionController {
     }
 
     @GetMapping("/api/products/options/add/{productId}")
+    @Operation(summary = "옵션 추가 화면", description = "옵션 추가 화면을 보여줍니다.")
     public String addOption(Model model, @PathVariable("productId") long productId) {
         OptionDto optionDto = new OptionDto();
         optionDto.setProductId(productId);
@@ -46,6 +51,7 @@ public class OptionController {
     }
 
     @PostMapping("/api/products/options/add")
+    @Operation(summary = "옵션 추가", description = "상품에 대한 옵션을 추가합니다.")
     public String addOption(@ModelAttribute OptionDto optionDto, Model model, @RequestParam("productId") long productId) {
         model.addAttribute("optionDto", optionDto);
         optionDto.setProductId(productId);
@@ -54,6 +60,7 @@ public class OptionController {
     }
 
     @GetMapping("/api/products/options/{productId}/{optionId}/update")
+    @Operation(summary = "옵션 수정 화면", description = "옵션 수정 화면을 보여줍니다.")
     public String updateOption(Model model, @PathVariable long productId, @PathVariable long optionId) {
         OptionDto optionDto = optionService.getOptionById(optionId);
         model.addAttribute("optionDto", optionDto);
@@ -61,6 +68,7 @@ public class OptionController {
     }
 
     @PostMapping("/api/products/options/{productId}/{optionId}/update")
+    @Operation(summary = "옵션 수정", description = "상품에 대한 옵션을 수정합니다.")
     public ResponseEntity<?> updateOption(@PathVariable long productId, @PathVariable long optionId, @ModelAttribute OptionDto optionDto, Model model) {
         try {
             model.addAttribute("optionDto", optionDto);
@@ -76,6 +84,7 @@ public class OptionController {
     }
 
     @DeleteMapping("/api/products/options/{optionId}/delete")
+    @Operation(summary = "옵션 삭제", description = "상품에 대한 옵션을 삭제합니다.")
     public ResponseEntity<?> deleteOption(@PathVariable long optionId) {
         try {
             optionService.deleteOption(optionId);
@@ -88,6 +97,7 @@ public class OptionController {
     }
 
     @PostMapping("/option/purchase")
+    @Operation(summary = "위시리스트 구매", description = "위시리스트에 있는 상품을 구매합니다.")
     public ResponseEntity<String> purchaseWishlist(@LoginMemberResolver MemberDto memberDto, @RequestBody List<OrderRequestDto> orderRequestDtoList, HttpServletRequest request) {
         for (OrderRequestDto orderRequestDto : orderRequestDtoList) {
             orderRequestDto.setMemberId(memberDto.getId());
