@@ -1,6 +1,5 @@
 package gift.Exception;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -21,39 +20,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<Map<String, String>> handleForbiddenException (ForbiddenException e){
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<Map<String, String>> handleForbiddenException(BusinessException e) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", e.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(NotValidTokenException.class)
-    public ResponseEntity<Map<String, String>> handleNotValidTokenException(NotValidTokenException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(NullTokenException.class)
-    public ResponseEntity<Map<String, String>> handleNullTokenException(NullTokenException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<Map<String, String>> handleTokenExpiredException(TokenExpiredException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidTokenException(InvalidTokenException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
@@ -63,47 +34,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OptionValidationException.class)
-    public ResponseEntity<Map<String, String>> handleOptionValidationException(OptionValidationException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(OptionNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleOptionNotFoundException(OptionNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleProductNotFoundException(ProductNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(CategoryNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleMemberNotFoundException(MemberNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(WishNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleCategoryNotFoundException(WishNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException e) {
@@ -111,39 +41,5 @@ public class GlobalExceptionHandler {
         errors.put("error", e.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler(KaKaoBadRequestException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequestException(KaKaoBadRequestException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(KaKaoServerErrorException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequestException(KaKaoServerErrorException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(OrderNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleOrderNotFoundException(OrderNotFoundException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(JsonRunTimeException.class)
-    public ResponseEntity<Map<String, String>> handleJsonRunTimeException(JsonRunTimeException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(InvalidEditTypeException.class)
-    public ResponseEntity<Map<String, String>> handleJsonRunTimeException(InvalidEditTypeException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-    }
 }
+
