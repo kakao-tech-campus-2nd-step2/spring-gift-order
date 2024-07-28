@@ -6,3 +6,4 @@
 :seclinks:
 
 include::productApi.adoc[]
+include::categoryApi.adoc[]
