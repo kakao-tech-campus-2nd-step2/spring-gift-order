@@ -39,7 +39,7 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(@Parameter(hidden = true) @LoginUser User user,
         @Valid @RequestBody OrderRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(orderService.createOrder(user.getId(), request));
+            .body(orderService.createOrder(user, request));
     }
 
     @GetMapping
