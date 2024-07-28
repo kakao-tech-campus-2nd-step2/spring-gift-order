@@ -8,6 +8,7 @@ import gift.doamin.product.entity.Option;
 import gift.doamin.product.repository.OptionRepository;
 import gift.doamin.user.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -20,12 +21,15 @@ public class OrderService {
         this.orderRepository = orderRepository;
     }
 
+    @Transactional
     public OrderResponse makeOrder(User user, OrderRequest orderRequest) {
         Option option = optionRepository.findById(orderRequest.getOptionId()).orElseThrow(() ->
             new IllegalArgumentException("해당 옵션이 존재하지 않습니다."));
         Order order = new Order(user, user, option, orderRequest.getQuantity(),
             orderRequest.getMessage());
         order = orderRepository.save(order);
+
+        option.subtract(orderRequest.getQuantity());
 
         return new OrderResponse(order);
     }
