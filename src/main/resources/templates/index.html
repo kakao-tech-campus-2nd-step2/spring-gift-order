@@ -197,7 +197,8 @@
               <select class="form-control" name="categoryId"
                       required th:id="'editProductCategory_' + ${product.id}">
                 <tr th:each="category : ${categories}">
-                  <option th:selected="${category.id == product.category.id}" th:text="${category.name}"
+                  <option th:selected="${category.id == product.category.id}"
+                          th:text="${category.name}"
                           th:value="${category.id}"></option>
                 </tr>
               </select>

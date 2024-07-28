@@ -40,6 +40,7 @@ public class User extends BaseTimeEntity {
         this.password = password;
         this.role = UserRole.USER;
     }
+
     public User(String email, String password, String accessToken, String refreshToken) {
         this.email = email;
         this.password = password;

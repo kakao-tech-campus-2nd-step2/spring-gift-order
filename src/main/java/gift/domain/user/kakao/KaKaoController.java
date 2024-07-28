@@ -19,6 +19,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping("/api/users/oauth")
 @Tag(name = "KaKao", description = "KaKao API")
 public class KaKaoController {
+
     private final KaKaoService kaKaoService;
 
     public KaKaoController(KaKaoService kaKaoService) {

@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderRestController {
 
     private final OrderService orderService;
+
     @Autowired
     public OrderRestController(OrderService orderService) {
         this.orderService = orderService;
     }
+
     @PostMapping
     @Operation(summary = "카카오 주문하기, 주문 후 메시지 전송")
     public void order(

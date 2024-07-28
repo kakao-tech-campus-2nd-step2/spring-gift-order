@@ -7,13 +7,6 @@ public record TemplateObject(
     String button_title
 ) {
 
-    public record Link(
-        String web_url,
-        String mobile_web_url
-    ) {
-
-    }
-
     public TemplateObject(String text) {
         this(
             "text",
@@ -23,5 +16,12 @@ public record TemplateObject(
                 "https://developers.kakao.com"
             ),
             "check button");
+    }
+
+    public record Link(
+        String web_url,
+        String mobile_web_url
+    ) {
+
     }
 }

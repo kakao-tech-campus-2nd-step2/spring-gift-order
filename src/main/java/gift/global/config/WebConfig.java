@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
             .addPathPatterns("/api/users/cart/**") // RestController
             .addPathPatterns("/users/cart/**") // Controller
-                    .addPathPatterns("/api/orders/**"); // RestController
+            .addPathPatterns("/api/orders/**"); // RestController
 
     }
 }

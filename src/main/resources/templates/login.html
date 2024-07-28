@@ -5,7 +5,8 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
   <title>Login Page</title>
   <!-- 부트스트랩 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet">
   <style>
     /* 추가적인 커스텀 스타일링 */
     body {
@@ -90,7 +91,7 @@
   });
 
   // 페이지 로드 시 code 파라미터를 추출하여 JWT 발급 요청
-  window.onload = function() {
+  window.onload = function () {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
 
