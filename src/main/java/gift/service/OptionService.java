@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OptionService {
@@ -61,6 +62,7 @@ public class OptionService {
         optionRepository.save(option);
     }
 
+    @Transactional
     public void subtractOptionQuantity(Long optionId, Long requestQuantity) {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new BusinessException("해당 id에 대한 옵션이 없습니다."));

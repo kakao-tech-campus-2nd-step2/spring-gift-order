@@ -53,6 +53,6 @@ public class Option {
     }
 
     public void subtract(Long requestQuantity) {
-        this.quantity -= quantity;
+        this.quantity -= requestQuantity;
     }
 }
