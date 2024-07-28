@@ -1,6 +1,5 @@
 package gift.domain.user.entity;
 
-import gift.auth.AuthProvider;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

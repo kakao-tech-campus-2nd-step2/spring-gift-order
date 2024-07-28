@@ -1,33 +1,34 @@
 package gift.domain.user.service;
 
-import gift.auth.AuthProvider;
 import gift.auth.jwt.JwtProvider;
 import gift.auth.jwt.JwtToken;
-import gift.auth.oauth.entity.OauthToken;
-import gift.auth.oauth.repository.OauthTokenJpaRepository;
+import gift.domain.user.entity.AuthProvider;
+import gift.domain.user.entity.OauthToken;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
+import gift.domain.user.repository.OauthTokenJpaRepository;
 import gift.domain.user.repository.UserJpaRepository;
 import gift.exception.InvalidUserInfoException;
 import gift.external.api.kakao.KakaoApiProvider;
 import gift.external.api.kakao.dto.KakaoToken;
 import gift.external.api.kakao.dto.KakaoUserInfo;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
-public class KakaoLoginManager {
+@Service
+public class KakaoLoginService {
 
     private final KakaoApiProvider kakaoApiProvider;
     private final UserJpaRepository userJpaRepository;
     private final OauthTokenJpaRepository oauthTokenJpaRepository;
     private final JwtProvider jwtProvider;
 
-    public KakaoLoginManager(
+    public KakaoLoginService(
         KakaoApiProvider kakaoApiProvider,
         UserJpaRepository userJpaRepository,
         OauthTokenJpaRepository oauthTokenJpaRepository,
-        JwtProvider jwtProvider)
-    {
+        JwtProvider jwtProvider
+    ) {
         this.kakaoApiProvider = kakaoApiProvider;
         this.userJpaRepository = userJpaRepository;
         this.oauthTokenJpaRepository = oauthTokenJpaRepository;
@@ -38,6 +39,7 @@ public class KakaoLoginManager {
         return kakaoApiProvider.getAuthCodeUrl();
     }
 
+    @Transactional
     public JwtToken login(String code) {
         KakaoToken kakaoToken = kakaoApiProvider.getToken(code);
         String accessToken = kakaoToken.accessToken();

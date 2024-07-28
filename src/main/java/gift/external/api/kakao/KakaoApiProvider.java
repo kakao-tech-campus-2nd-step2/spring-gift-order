@@ -3,10 +3,9 @@ package gift.external.api.kakao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.oauth.entity.OauthToken;
-import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.external.api.kakao.client.KakaoApiClient;
 import gift.external.api.kakao.client.KakaoAuthClient;
+import gift.external.api.kakao.dto.FeedObjectRequest;
 import gift.external.api.kakao.dto.KakaoToken;
 import gift.external.api.kakao.dto.KakaoUserInfo;
 import org.springframework.http.HttpHeaders;
@@ -68,11 +67,11 @@ public class KakaoApiProvider {
         return kakaoApiClient.getUserInfo(headers);
     }
 
-    public KakaoToken renewToken(OauthToken oauthToken) {
+    public KakaoToken renewToken(String refreshToken) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "refresh_token");
         body.add("client_id", kakaoProperties.clientId());
-        body.add("refresh_token", oauthToken.getRefreshToken());
+        body.add("refresh_token", refreshToken);
 
         return kakaoAuthClient.getAccessToken(body);
     }

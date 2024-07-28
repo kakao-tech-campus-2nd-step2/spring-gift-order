@@ -1,4 +1,4 @@
-package gift.auth;
+package gift.domain.user.entity;
 
 public enum AuthProvider {
     LOCAL,

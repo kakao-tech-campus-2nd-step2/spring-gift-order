@@ -7,7 +7,7 @@ import java.util.List;
 public record OrderResponse(
     Long id,
     List<OrderItemResponse> orderItems,
-    String message,
+    String recipientMessage,
     int totalPrice,
     LocalDateTime orderDateTime
 ) {
@@ -15,7 +15,7 @@ public record OrderResponse(
         return new OrderResponse(
             order.getId(),
             order.getOrderItems().stream().map(OrderItemResponse::from).toList(),
-            order.getMessage(),
+            order.getRecipientMessage(),
             order.getTotalPrice(),
             order.getOrderDateTime()
         );

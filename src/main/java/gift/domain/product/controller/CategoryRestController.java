@@ -1,7 +1,7 @@
 package gift.domain.product.controller;
 
 import gift.domain.product.dto.CategoryResponse;
-import gift.domain.product.service.CategoryManager;
+import gift.domain.product.service.CategoryService;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/categories")
 public class CategoryRestController {
 
-    private final CategoryManager categoryManager;
+    private final CategoryService categoryService;
 
-    public CategoryRestController(CategoryManager categoryManager) {
-        this.categoryManager = categoryManager;
+    public CategoryRestController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> readAll() {
-        List<CategoryResponse> categories = categoryManager.readAll();
+        List<CategoryResponse> categories = categoryService.readAll();
         return ResponseEntity.status(HttpStatus.OK).body(categories);
     }
 }

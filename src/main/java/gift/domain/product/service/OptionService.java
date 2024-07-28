@@ -16,17 +16,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class OptionManager {
+public class OptionService {
 
     private final OptionJpaRepository optionJpaRepository;
     private final ProductJpaRepository productJpaRepository;
 
-    public OptionManager(OptionJpaRepository optionJpaRepository, ProductJpaRepository productJpaRepository) {
+    public OptionService(
+        OptionJpaRepository optionJpaRepository,
+        ProductJpaRepository productJpaRepository
+    ) {
         this.optionJpaRepository = optionJpaRepository;
         this.productJpaRepository = productJpaRepository;
 
     }
 
+    @Transactional
     public void create(Product product, List<OptionRequest> optionRequests) {
         for (OptionRequest optionRequest : optionRequests) {
             Option option = optionRequest.toOption(product);
@@ -48,7 +52,6 @@ public class OptionManager {
         create(product, optionRequests);
     }
 
-    @Transactional
     public void deleteAllByProductId(long productId) {
         optionJpaRepository.deleteAllByProductId(productId);
     }

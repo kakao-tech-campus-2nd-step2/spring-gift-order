@@ -14,6 +14,7 @@ import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Product;
+import gift.domain.product.repository.CategoryJpaRepository;
 import gift.domain.product.repository.ProductJpaRepository;
 import gift.domain.wishlist.repository.WishlistJpaRepository;
 import java.util.List;
@@ -40,10 +41,10 @@ class ProductServiceTest {
     private ProductJpaRepository productJpaRepository;
 
     @MockBean
-    private CategoryManager categoryManager;
+    private CategoryJpaRepository categoryJpaRepository;
 
     @MockBean
-    private OptionManager optionManager;
+    private OptionService optionService;
 
     @MockBean
     private WishlistJpaRepository wishlistJpaRepository;
@@ -61,9 +62,9 @@ class ProductServiceTest {
         // given
         Product expected = PRODUCT_REQUEST_DTO.toProduct(category);
 
-        given(categoryManager.readById(anyLong())).willReturn(category);
+        given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.of(category));
         given(productJpaRepository.save(any(Product.class))).willReturn(expected);
-        doNothing().when(optionManager).create(any(Product.class), any());
+        doNothing().when(optionService).create(any(Product.class), any());
 
         // when
         ProductResponse actual = productService.create(PRODUCT_REQUEST_DTO);
@@ -159,7 +160,7 @@ class ProductServiceTest {
         Product expected = productRequest.toProduct(category);
 
         given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
-        given(categoryManager.readById(anyLong())).willReturn(category);
+        given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.of(category));
         given(productJpaRepository.save(any(Product.class))).willReturn(expected);
 
         // when

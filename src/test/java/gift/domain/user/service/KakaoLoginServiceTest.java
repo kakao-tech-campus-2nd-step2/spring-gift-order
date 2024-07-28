@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class KakaoLoginServiceTest {
 
     @Autowired
-    private KakaoLoginManager kakaoLoginManager;
+    private KakaoLoginService kakaoLoginService;
 
     @MockBean
     private KakaoApiProvider kakaoApiProvider;

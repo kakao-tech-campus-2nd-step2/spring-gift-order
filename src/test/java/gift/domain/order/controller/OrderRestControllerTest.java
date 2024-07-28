@@ -4,7 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.auth.jwt.JwtProvider;
 import gift.domain.order.service.OrderService;
 import gift.domain.product.entity.Category;

@@ -1,14 +1,13 @@
 package gift.domain.user.service;
 
-import gift.auth.AuthProvider;
+import gift.auth.jwt.JwtProvider;
 import gift.auth.jwt.JwtToken;
-import gift.domain.user.dto.UserResponse;
-import gift.domain.user.repository.UserJpaRepository;
-import gift.domain.user.dto.UserRequest;
 import gift.domain.user.dto.UserLoginRequest;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.entity.AuthProvider;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
-import gift.auth.jwt.JwtProvider;
+import gift.domain.user.repository.UserJpaRepository;
 import gift.exception.InvalidUserInfoException;
 import org.springframework.stereotype.Service;
 
@@ -47,11 +46,5 @@ public class UserService {
 
     public Role verifyRole(JwtToken jwtToken) {
         return jwtProvider.getAuthorization(jwtToken.token());
-    }
-
-    public UserResponse readByEmail(String email) {
-        User user = userJpaRepository.findByEmail(email)
-            .orElseThrow(() -> new InvalidUserInfoException("error.invalid.userinfo.email"));
-        return UserResponse.from(user);
     }
 }

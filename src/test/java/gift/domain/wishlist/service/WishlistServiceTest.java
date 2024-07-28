@@ -9,7 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.domain.product.repository.ProductJpaRepository;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Product;

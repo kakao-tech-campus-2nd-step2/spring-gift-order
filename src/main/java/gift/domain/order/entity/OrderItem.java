@@ -2,6 +2,8 @@ package gift.domain.order.entity;
 
 import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
+import gift.exception.InvalidOptionInfoException;
+import gift.exception.InvalidOrderException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,6 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -35,6 +39,23 @@ public class OrderItem {
     @Column(nullable = false)
     private int quantity;
 
+    private static final int OPTION_QUANTITY_MIN = 0;
+    private static final int OPTION_QUANTITY_MAX = 100000000;
+
+    @PrePersist
+    public void prePersist() {
+        validateProduct();
+        validateOption();
+        validateQuantity();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        validateProduct();
+        validateOption();
+        validateQuantity();
+    }
+
     protected OrderItem() {
     }
 
@@ -44,6 +65,24 @@ public class OrderItem {
         this.product = product;
         this.option = option;
         this.quantity = quantity;
+    }
+
+    private void validateProduct() {
+        if (product == null) {
+            throw new InvalidOrderException("error.invalid.order.product");
+        }
+    }
+
+    private void validateOption() {
+        if ((option == null) || (!product.hasOption(option.getId()))) {
+            throw new InvalidOrderException("error.invalid.order.option");
+        }
+    }
+
+    private void validateQuantity() {
+        if (quantity < OPTION_QUANTITY_MIN || quantity > OPTION_QUANTITY_MAX) {
+            throw new InvalidOptionInfoException("error.invalid.option.quantity");
+        }
     }
 
     public void setOrder(Order order) {

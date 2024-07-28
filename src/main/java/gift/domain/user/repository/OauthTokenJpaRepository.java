@@ -1,7 +1,7 @@
-package gift.auth.oauth.repository;
+package gift.domain.user.repository;
 
-import gift.auth.AuthProvider;
-import gift.auth.oauth.entity.OauthToken;
+import gift.domain.user.entity.AuthProvider;
+import gift.domain.user.entity.OauthToken;
 import gift.domain.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

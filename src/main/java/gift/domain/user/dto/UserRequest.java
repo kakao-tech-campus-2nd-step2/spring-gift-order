@@ -1,6 +1,6 @@
 package gift.domain.user.dto;
 
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import jakarta.validation.constraints.Email;

@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.product.dto.CategoryResponse;
 import gift.domain.product.entity.Category;
-import gift.domain.product.service.CategoryManager;
+import gift.domain.product.service.CategoryService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class CategoryRestControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CategoryManager categoryManager;
+    private CategoryService categoryService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -44,7 +44,7 @@ class CategoryRestControllerTest {
             new Category(3L, "뷰티", "#FFFFFF", "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png", "test"),
             new Category(4L, "패션", "#FFFFFF", "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png", "test")
         );
-        given(categoryManager.readAll()).willReturn(expected.stream().map(CategoryResponse::from).toList());
+        given(categoryService.readAll()).willReturn(expected.stream().map(CategoryResponse::from).toList());
         String expectedResult = objectMapper.writeValueAsString(expected);
 
         // when & then

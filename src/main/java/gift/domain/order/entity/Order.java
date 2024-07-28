@@ -33,7 +33,7 @@ public class Order {
     private List<OrderItem> orderItems = new ArrayList<>();;
 
     @Column
-    private String message;
+    private String recipientMessage;
 
     @Column(nullable = false)
     private int totalPrice;
@@ -45,20 +45,16 @@ public class Order {
     protected Order() {
     }
 
-    public Order(Long id, User user, String message, int totalPrice) {
+    public Order(Long id, User user, String recipientMessage, int totalPrice) {
         this.id = id;
         this.user = user;
-        this.message = message;
+        this.recipientMessage = recipientMessage;
         this.totalPrice = totalPrice;
     }
 
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setOrder(this);
-    }
-
-    public void removeOrderItem(OrderItem orderItem) {
-        orderItems.remove(orderItem);
     }
 
     public Long getId() {
@@ -73,8 +69,8 @@ public class Order {
         return orderItems;
     }
 
-    public String getMessage() {
-        return message;
+    public String getRecipientMessage() {
+        return recipientMessage;
     }
 
     public int getTotalPrice() {

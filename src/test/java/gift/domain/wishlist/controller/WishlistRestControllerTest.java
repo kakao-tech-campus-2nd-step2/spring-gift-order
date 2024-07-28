@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.auth.jwt.JwtProvider;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Product;

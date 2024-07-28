@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import gift.auth.jwt.JwtToken;
-import gift.domain.user.service.KakaoLoginManager;
+import gift.domain.user.service.KakaoLoginService;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class OauthLoginControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private KakaoLoginManager kakaoLoginManager;
+    private KakaoLoginService kakaoLoginService;
 
 
     @Test
@@ -33,7 +33,7 @@ class OauthLoginControllerTest {
     void login() throws Exception {
         // given
         JwtToken expected = new JwtToken("testToken");
-        given(kakaoLoginManager.login(anyString())).willReturn(expected);
+        given(kakaoLoginService.login(anyString())).willReturn(expected);
 
         // when & then
         mockMvc.perform(get("/oauth/login/kakao/callback?code=testCode"))

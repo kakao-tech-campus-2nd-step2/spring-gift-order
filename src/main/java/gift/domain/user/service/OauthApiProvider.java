@@ -1,4 +1,4 @@
-package gift.auth.oauth.service;
+package gift.domain.user.service;
 
 public interface OauthApiProvider {
 

@@ -6,7 +6,7 @@ import gift.domain.order.entity.OrderItem;
 import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
 import gift.domain.product.repository.ProductJpaRepository;
-import gift.domain.product.service.OptionManager;
+import gift.domain.product.service.OptionService;
 import gift.domain.user.entity.User;
 import gift.domain.wishlist.repository.WishlistJpaRepository;
 import gift.exception.InvalidOptionInfoException;
@@ -15,24 +15,26 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map.Entry;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
-public class OrderItemManager {
+public class OrderItemService {
 
     private final ProductJpaRepository productJpaRepository;
     private final WishlistJpaRepository wishlistJpaRepository;
-    private final OptionManager optionManager;
+    private final OptionService optionService;
 
-    public OrderItemManager(
+    public OrderItemService(
         ProductJpaRepository productJpaRepository,
         WishlistJpaRepository wishlistJpaRepository,
-        OptionManager optionManager
+        OptionService optionService
     ) {
         this.productJpaRepository = productJpaRepository;
         this.wishlistJpaRepository = wishlistJpaRepository;
-        this.optionManager = optionManager;
+        this.optionService = optionService;
     }
 
+    @Transactional
     public void create(User user, Order order, List<OrderItemRequest> orderItemRequests) {
         for (OrderItemRequest orderItemRequest : orderItemRequests) {
             Entry<Product, Option> item = buy(
@@ -55,7 +57,7 @@ public class OrderItemManager {
         if (!product.hasOption(optionId)) {
             throw new InvalidOptionInfoException("error.invalid.option.id");
         }
-        Option option = optionManager.subtractQuantity(optionId, quantity);
+        Option option = optionService.subtractQuantity(optionId, quantity);
 
         return new SimpleEntry<>(product, option);
     }

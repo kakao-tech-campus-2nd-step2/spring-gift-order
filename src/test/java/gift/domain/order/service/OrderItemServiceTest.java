@@ -13,7 +13,7 @@ import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Option;
 import gift.domain.product.entity.Product;
 import gift.domain.product.repository.ProductJpaRepository;
-import gift.domain.product.service.OptionManager;
+import gift.domain.product.service.OptionService;
 import gift.domain.user.entity.User;
 import gift.domain.wishlist.repository.WishlistJpaRepository;
 import java.util.List;
@@ -27,10 +27,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-class OrderItemManagerTest {
+class OrderItemServiceTest {
 
     @Autowired
-    private OrderItemManager orderItemManager;
+    private OrderItemService orderItemService;
 
     @MockBean
     private ProductJpaRepository productJpaRepository;
@@ -39,7 +39,7 @@ class OrderItemManagerTest {
     private WishlistJpaRepository wishlistJpaRepository;
 
     @MockBean
-    private OptionManager optionManager;
+    private OptionService optionService;
 
 
     @Test
@@ -63,13 +63,13 @@ class OrderItemManagerTest {
         );
 
         given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
-        given(optionManager.subtractQuantity(eq(1L), eq(70))).willReturn(options.get(0));
-        given(optionManager.subtractQuantity(eq(2L), eq(30))).willReturn(options.get(1));
-        given(optionManager.subtractQuantity(eq(3L), eq(50))).willReturn(options.get(2));
+        given(optionService.subtractQuantity(eq(1L), eq(70))).willReturn(options.get(0));
+        given(optionService.subtractQuantity(eq(2L), eq(30))).willReturn(options.get(1));
+        given(optionService.subtractQuantity(eq(3L), eq(50))).willReturn(options.get(2));
         doNothing().when(wishlistJpaRepository).deleteByUserAndProduct(any(User.class), any(Product.class));
 
         // when
-        orderItemManager.create(user, order, orderItemRequests);
+        orderItemService.create(user, order, orderItemRequests);
 
         // then
         assertThat(order.getOrderItems().size()).isEqualTo(3);

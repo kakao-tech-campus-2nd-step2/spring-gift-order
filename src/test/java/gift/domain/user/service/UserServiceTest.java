@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.auth.jwt.JwtToken;
 import gift.auth.jwt.JwtProvider;
 import gift.domain.user.repository.UserJpaRepository;

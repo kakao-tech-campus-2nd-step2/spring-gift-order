@@ -1,6 +1,6 @@
 package gift.domain.order.service;
 
-import gift.auth.AuthProvider;
+import gift.domain.user.entity.AuthProvider;
 import gift.domain.order.repository.OrderJpaRepository;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Option;
