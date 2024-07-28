@@ -13,5 +13,5 @@
 - [x] 카카오톡 메시지 전송
 
 ### api 문서 만들기
-- [ ] springdoc 의존성 추가
-- [ ] swagger config 정의하기
+- [x] springdoc 의존성 추가
+- [x] swagger config 정의하기
