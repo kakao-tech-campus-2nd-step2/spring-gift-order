@@ -143,5 +143,15 @@ th a {
   text-decoration-line: none;
 }
 
+.linkBox {
+  display: flex;
+}
 
-
+.api-doc-link {
+  font-family: "Jua", sans-serif;
+  color: #2b8bfb !important;
+  font-weight: bold;
+  margin-top: 55px;
+  margin-left: 20px;
+  font-size: 22px !important;
+}
