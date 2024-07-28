@@ -1,5 +1,6 @@
 package gift.dto;
 
+import gift.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -26,5 +27,9 @@ public class OrderRequest {
 
     public String getMessage() {
         return message;
+    }
+
+    public Integer getTotalPrice(Product product) {
+        return product.getPrice() * this.quantity;
     }
 }
