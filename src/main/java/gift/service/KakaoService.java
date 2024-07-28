@@ -11,12 +11,10 @@ import gift.dto.TokenResponseDto;
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
 import gift.util.JwtUtil;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -67,7 +65,6 @@ public class KakaoService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_KAKAO);
         }
         return parseToken(response.getBody());
-        //<200 OK OK,{"access_token":"eJ7Tu-TAR8JW4SXoOH6DLyp1UZfhVqC6AAAAAQo8JB8AAAGQ6ucoXLZbzBbpXusm","token_type":"bearer","refresh_token":"xA9fCgg9ClNRHsmjK11PFYVHSd0NpwDeAAAAAgo8JB8AAAGQ6ucoWbZbzBbpXusm","expires_in":21599,"scope":"talk_message","refresh_token_expires_in":5183999},
     }
 
     private KakaoToken parseToken(String response) {
@@ -83,13 +80,13 @@ public class KakaoService {
     }
 
     public TokenResponseDto generateToken(String accessToken) {
-        //TODO 유저 정보 조회 후
-        RestTemplate client = new RestTemplateBuilder().build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization","Bearer "+accessToken);
-        headers.set("Content-type",MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        var request = new RequestEntity<>(headers, HttpMethod.POST, URI.create(KAKAO_USER_INFO));
-        var response = client.exchange(request, String.class);
+        RestClient client = RestClient.builder().build();
+        var response = client.post()
+                .uri(URI.create(KAKAO_USER_INFO))
+                .header("Authorization","Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .retrieve()
+                .toEntity(String.class);
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new IllegalArgumentException("사용자 정보 조회 오류");
         }
@@ -99,14 +96,7 @@ public class KakaoService {
     }
 
     private Member registerMember(String body) {
-        Map<String, String> memberInfo = new HashMap<>();
-        try {
-            JsonNode rootNode = objectMapper.readTree(body);
-            memberInfo.put("email", rootNode.path("email").asText());
-            memberInfo.put("name", rootNode.path("name").asText());
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("사용자 정보를 가져오는 과정에서 오류가 발생하였습니다");
-        }
+        Map<String, String> memberInfo = getMemberInfo(body);
         Optional<Member> member = memberRepository.findByEmail(memberInfo.get("email"));
         if (member.isEmpty()) {
             Member signupMember = new Member(memberInfo.get("email"), memberInfo.get("name"), UUID.randomUUID().toString(),1);
@@ -114,6 +104,30 @@ public class KakaoService {
             return signupMember;
         }
         return member.get();
+    }
+
+    private Map<String, String> getMemberInfo(String body) {
+        Map<String, String> memberInfo = new HashMap<>();
+        try {
+            JsonNode rootNode = objectMapper.readTree(body);
+            memberInfo.put("email", rootNode.path("kakao_account").path("email").asText());
+            memberInfo.put("name", rootNode.path("properties").path("nickname").asText());
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("사용자 정보를 가져오는 과정에서 오류가 발생하였습니다");
+        }
+        return memberInfo;
+    }
+
+    public void unlink(String token) {
+        String logoutUri = "https://kapi.kakao.com/v1/user/unlink";
+        RestClient client = RestClient.builder().build();
+        var response = client.post()
+                .uri(URI.create(logoutUri))
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .retrieve()
+                .toEntity(String.class);
+        System.out.println(response.getBody());
     }
 }
 

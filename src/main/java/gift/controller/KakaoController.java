@@ -1,14 +1,13 @@
 package gift.controller;
 
 import gift.config.KakaoProperties;
+import gift.dto.ApiResponse;
 import gift.dto.KakaoToken;
 import gift.dto.TokenResponseDto;
 import gift.service.KakaoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -45,5 +44,11 @@ public class KakaoController {
         KakaoToken kakaoToken = kakaoService.getKakaoToken(kakaoCode);
         TokenResponseDto token = kakaoService.generateToken(kakaoToken.accessToken());
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/unlink")
+    public ResponseEntity<ApiResponse> logout(@RequestHeader("Authorization") String token) {
+        kakaoService.unlink(token);
+        return ResponseEntity.ok(new ApiResponse(HttpStatus.NO_CONTENT, "계정 연결해제 성공적"));
     }
 }
