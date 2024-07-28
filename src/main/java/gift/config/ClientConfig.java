@@ -1,5 +1,6 @@
 package gift.config;
 
+import gift.interceptor.LoggingInterceptor;
 import java.time.Duration;
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;
@@ -18,6 +19,7 @@ public class ClientConfig {
         ClientHttpRequestFactory factory = ClientHttpRequestFactories.get(settings);
         return RestClient.builder()
             .requestFactory(factory)
+            .requestInterceptor(new LoggingInterceptor())
             .build();
     }
 }
