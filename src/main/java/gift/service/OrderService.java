@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -43,6 +44,7 @@ public class OrderService {
         this.userService = userService;
     }
 
+    @Transactional
     public Order save(HttpSession session, OrderDTO orderDTO) {
         String email = (String) session.getAttribute("email");
 
@@ -81,6 +83,7 @@ public class OrderService {
         return orderRepository.findByUserId(user.getId());
     }
 
+    @Transactional
     public void delete(Long orderId, String email) {
         User user = userService.findOne(email);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));

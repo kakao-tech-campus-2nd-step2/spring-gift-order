@@ -9,6 +9,7 @@ import gift.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class OptionService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Option save(OptionDTO optionDTO, String email) {
         User user = userService.findOne(email);
         Option option = new Option(optionDTO);
@@ -43,6 +45,7 @@ public class OptionService {
         return optionRepository.findAll();
     }
 
+    @Transactional
     public Option update(Long id, OptionDTO optionDTO, String email) {
         if (!optionMatchesUser(id, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -54,6 +57,7 @@ public class OptionService {
         return optionRepository.save(option);
     }
 
+    @Transactional
     public void delete(Long id, String email) {
         if (!optionMatchesUser(id, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -65,6 +69,7 @@ public class OptionService {
         optionRepository.deleteById(id);
     }
 
+    @Transactional
     public Option subtract(Long id, int amount) {
         Option option = findById(id);
         if (amount <= 0) {

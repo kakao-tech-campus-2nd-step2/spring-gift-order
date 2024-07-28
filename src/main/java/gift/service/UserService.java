@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -44,12 +45,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User findOne(Long id) {
-        return userRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-
+    @Transactional
     public String signup(UserDTO userDTO) {
         // 이미 존재하는 이메일
         if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -108,6 +104,7 @@ public class UserService {
         return kakaoAccessToken;
     }
 
+    @Transactional
     public Map<String, String> getKakaoProfile(String kakaoAccessToken) {
         // 유저 정보 받아오기
         String userDataResponse = client.post()
