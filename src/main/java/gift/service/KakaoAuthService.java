@@ -18,7 +18,7 @@ public class KakaoAuthService {
         this.memberService = memberService;
     }
 
-    public MemberDTO logister(String code){
+    public MemberDTO loginOrRegister(String code){
         String accessToken = kakaoTokenService.getAccessToken(code);
         MemberDTO memberDTO = kakaoTokenService.getUserInfo(accessToken);
         try{
