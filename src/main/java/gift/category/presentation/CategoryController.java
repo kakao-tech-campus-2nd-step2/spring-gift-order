@@ -1,7 +1,6 @@
 package gift.category.presentation;
 
 import gift.category.application.CategoryService;
-import gift.category.application.CategoryServiceResponse;
 import gift.category.presentation.request.CategoryCreateRequest;
 import gift.category.presentation.request.CategoryUpdateRequest;
 import org.springframework.data.domain.Page;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("/api/categories")
-public class CategoryController {
+public class CategoryController implements CategoryApi{
 
     private final CategoryService categoryService;
 

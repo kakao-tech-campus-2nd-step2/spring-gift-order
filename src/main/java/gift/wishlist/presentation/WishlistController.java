@@ -1,5 +1,6 @@
 package gift.wishlist.presentation;
 
+import gift.member.presentation.request.ResolvedMember;
 import gift.wishlist.application.WishlistService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/wishlist")
-public class WishlistController {
+public class WishlistController implements WishlistApi {
     private final WishlistService wishlistService;
 
     public WishlistController(WishlistService wishlistService) {
@@ -16,17 +17,17 @@ public class WishlistController {
     }
 
     @PostMapping("")
-    public void add(@RequestAttribute("memberId") Long memberId, @RequestParam("productId") Long productId) {
-        wishlistService.save(memberId, productId);
+    public void add(ResolvedMember resolvedMember, @RequestParam("productId") Long productId) {
+        wishlistService.save(resolvedMember.id(), productId);
     }
 
     @GetMapping("")
     public ResponseEntity<Page<WishlistControllerResponse>> findAll(
-            @RequestAttribute("memberId") Long memberId,
+            ResolvedMember resolvedMember,
             Pageable pageable
     ) {
         return ResponseEntity.ok(
-                wishlistService.findAllByMemberId(memberId, pageable).map(WishlistControllerResponse::from)
+                wishlistService.findAllByMemberId(resolvedMember.id(), pageable).map(WishlistControllerResponse::from)
         );
     }
 
