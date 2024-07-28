@@ -44,18 +44,13 @@ public class KakaoAuthServiceTest {
 
     @Test
     void testKakaoLoginRedirect() {
-
         var url = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri;
-
 
         ResponseEntity<String> mockResponse = new ResponseEntity<>(HttpStatus.FOUND);
         when(restTemplate.getForEntity(URI.create(url), String.class)).thenReturn(mockResponse);
 
-
         ResponseEntity<String> response = restTemplate.getForEntity(URI.create(url), String.class);
-
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FOUND);
     }
-
 }

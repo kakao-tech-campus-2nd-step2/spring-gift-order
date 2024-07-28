@@ -1,3 +1,4 @@
+
 package gift.model;
 
 import jakarta.persistence.*;
@@ -23,6 +24,12 @@ public class Wish {
     public Wish() {
     }
 
+    public Wish(Member member, Product product, ProductOption productOption) {
+        this.member = member;
+        this.product = product;
+        this.productOption = productOption;
+    }
+
     public Long getId() {
         return id;
     }
@@ -31,20 +38,20 @@ public class Wish {
         return member;
     }
 
-    public void setMember(Member member) {
-        this.member = member;
-    }
-
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public ProductOption getProductOption() {
         return productOption;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public void setProductOption(ProductOption productOption) {

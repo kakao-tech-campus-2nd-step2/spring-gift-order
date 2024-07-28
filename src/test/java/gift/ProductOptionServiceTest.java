@@ -30,9 +30,7 @@ public class ProductOptionServiceTest {
 
     @Test
     public void testFindProductOptionById() {
-        ProductOption productOption = new ProductOption();
-        productOption.setId(1L);
-        productOption.setName("Option 1");
+        ProductOption productOption = new ProductOption(1L, "Option 1", 10);
 
         when(productOptionRepository.findById(anyLong())).thenReturn(Optional.of(productOption));
 
@@ -59,10 +57,7 @@ public class ProductOptionServiceTest {
         Long optionId = 1L;
         int initialQuantity = 10;
         int quantityToSubtract = 5;
-        ProductOption option = new ProductOption();
-        option.setId(optionId);
-        option.setName("Test Option");
-        option.setQuantity(initialQuantity);
+        ProductOption option = new ProductOption(optionId, "Test Option", initialQuantity);
 
         when(productOptionRepository.findById(optionId)).thenReturn(Optional.of(option));
 
@@ -91,10 +86,7 @@ public class ProductOptionServiceTest {
         Long optionId = 1L;
         int initialQuantity = 10;
         int quantityToSubtract = 15;
-        ProductOption option = new ProductOption();
-        option.setId(optionId);
-        option.setName("Test Option");
-        option.setQuantity(initialQuantity);
+        ProductOption option = new ProductOption(optionId, "Test Option", initialQuantity);
 
         when(productOptionRepository.findById(optionId)).thenReturn(Optional.of(option));
 

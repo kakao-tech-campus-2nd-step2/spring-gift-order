@@ -10,6 +10,8 @@ import gift.model.Wish;
 import gift.service.ProductOptionService;
 import gift.service.ProductService;
 import gift.service.WishService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/wishes")
+@Tag(name = "Wish API", description = "APIs related to wish operations")
 public class WishController {
 
     @Autowired
@@ -30,11 +33,13 @@ public class WishController {
     @Autowired
     private ProductOptionService productOptionService;
 
+    @Operation(summary = "위시 리스트 조회", description = "로그인한 사용자의 위시 리스트를 페이징하여 조회한다.")
     @GetMapping
     public Page<WishResponse> getWishes(@LoginMember Member member, Pageable pageable) {
         return wishService.getWishesByMemberId(member.getId(), pageable);
     }
 
+    @Operation(summary = "위시 추가", description = "로그인한 사용자의 위시 리스트에 상품을 추가한다.")
     @PostMapping
     public Wish addWish(@RequestBody WishRequest wishRequest, @LoginMember Member member) {
         Product product = productService.findById(wishRequest.getProductId());
@@ -49,6 +54,7 @@ public class WishController {
         return wishService.addWish(wish);
     }
 
+    @Operation(summary = "위시 삭제", description = "로그인한 사용자의 위시 리스트에서 상품을 삭제한다.")
     @DeleteMapping("/{wishId}")
     public void deleteWish(@PathVariable Long wishId, @LoginMember Member member) {
         wishService.deleteWish(wishId);

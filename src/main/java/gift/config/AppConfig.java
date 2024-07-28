@@ -11,6 +11,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class AppConfig {
 
+    private static final int TIMEOUT = 5000;
+
     @Bean
     public RestTemplate restTemplate(ObjectMapper objectMapper) {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
@@ -21,15 +23,15 @@ public class AppConfig {
     @Bean
     public SimpleClientHttpRequestFactory clientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(5000);
-        factory.setReadTimeout(5000);
+        factory.setConnectTimeout(TIMEOUT);
+        factory.setReadTimeout(TIMEOUT);
         return factory;
     }
 
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule()); // JavaTimeModule 등록
+        mapper.registerModule(new JavaTimeModule()); // JavaTimeModule registration
         return mapper;
     }
 }

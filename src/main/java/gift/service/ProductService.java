@@ -30,13 +30,7 @@ public class ProductService {
         validateProductOptions(product);
         productRepository.save(product);
         List<ProductOption> options = product.getOptions().stream()
-                .map(option -> {
-                    ProductOption newOption = new ProductOption();
-                    newOption.setName(option.getName());
-                    newOption.setQuantity(option.getQuantity());
-                    newOption.setProduct(product);
-                    return newOption;
-                })
+                .map(option -> new ProductOption(option.getName(), option.getQuantity(), product))
                 .collect(Collectors.toList());
         try {
             productOptionService.saveProductOptions(options);
@@ -54,13 +48,7 @@ public class ProductService {
         validateProductOptions(updatedProduct);
         productOptionService.deleteProductOptionsByProductId(updatedProduct.getId());
         List<ProductOption> options = updatedProduct.getOptions().stream()
-                .map(option -> {
-                    ProductOption newOption = new ProductOption();
-                    newOption.setName(option.getName());
-                    newOption.setQuantity(option.getQuantity());
-                    newOption.setProduct(updatedProduct);
-                    return newOption;
-                })
+                .map(option -> new ProductOption(option.getName(), option.getQuantity(), updatedProduct))
                 .collect(Collectors.toList());
         try {
             productOptionService.saveProductOptions(options);

@@ -4,6 +4,8 @@ import gift.auth.JwtTokenUtil;
 import gift.model.Member;
 import gift.service.KakaoAuthService;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
+@Tag(name = "Kakao API", description = "APIs related to Kakao login operations")
 public class KakaoLoginController {
 
     @Autowired
@@ -25,6 +28,7 @@ public class KakaoLoginController {
     private JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/kakao/callback")
+    @Operation(summary = "카카오 로그인 콜백", description = "카카오 로그인 후 리디렉션된 콜백을 처리")
     public String kakaoCallback(@RequestParam String code, Model model, HttpSession session) {
         String accessToken = kakaoAuthService.getAccessToken(code);
         session.setAttribute("accessToken", accessToken);

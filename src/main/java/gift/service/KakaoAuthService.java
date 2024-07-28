@@ -19,6 +19,8 @@ public class KakaoAuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(KakaoAuthService.class);
 
+    private static final String GRANT_TYPE = "authorization_code";
+
     @Value("${kakao.client-id}")
     private String clientId;
 
@@ -66,7 +68,7 @@ public class KakaoAuthService {
 
     private MultiValueMap<String, String> createRequestBody(String authorizationCode) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
+        body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", authorizationCode);

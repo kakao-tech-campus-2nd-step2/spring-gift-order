@@ -34,10 +34,7 @@ public class ProductServiceTest {
 
     @BeforeEach
     public void setup() {
-        product = new Product();
-        product.setName("Product Name");
-        product.setPrice(100);
-        product.setImageurl("https://cs.kakao.com/images/icon/img_kakaocs.png");
+        product = new Product("Product Name", 100, "https://cs.kakao.com/images/icon/img_kakaocs.png", null);
     }
 
     @Test

@@ -3,6 +3,8 @@ package gift.controller;
 import gift.auth.JwtTokenUtil;
 import gift.model.Member;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/members")
+@Tag(name = "Member API", description = "APIs related to member operations")
 public class MemberController {
 
     @Autowired
     private MemberService memberService;
 
+    @Operation(summary = "회원 가입", description = "새로운 회원을 등록한다.")
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody Member member, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -33,6 +37,7 @@ public class MemberController {
         }
     }
 
+    @Operation(summary = "로그인", description = "회원 로그인")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Member member) {
         Member authenticatedMember = memberService.authenticate(member.getEmail(), member.getPassword());

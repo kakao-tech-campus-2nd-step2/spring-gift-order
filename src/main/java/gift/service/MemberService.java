@@ -25,9 +25,7 @@ public class MemberService {
             throw new IllegalArgumentException("Email already exists");
         }
         String encodedPassword = password.isEmpty() ? "" : passwordEncoder.encode(password);
-        Member member = new Member();
-        member.setEmail(email);
-        member.setPassword(encodedPassword);
+        Member member = new Member(email, encodedPassword);
         return memberRepository.save(member);
     }
 
@@ -36,7 +34,7 @@ public class MemberService {
         if (memberRepository.findByEmail(member.getEmail()) != null) {
             throw new IllegalArgumentException("Email already exists");
         }
-        member.setPassword(passwordEncoder.encode(member.getPassword()));
+        member.encodePassword(passwordEncoder.encode(member.getPassword()));
         return memberRepository.save(member);
     }
 

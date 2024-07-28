@@ -12,6 +12,12 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KakaoMessageService {
 
+    private static final Logger logger = LoggerFactory.getLogger(KakaoMessageService.class);
+    private static final String HEADER_CONTENT_TYPE = "Content-Type";
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String HEADER_ADMIN_KEY = "Admin-Key";
+    private static final String TEMPLATE_OBJECT_PREFIX = "template_object=";
+
     @Value("${kakao.api-url}")
     private String apiUrl;
 
@@ -19,7 +25,6 @@ public class KakaoMessageService {
     private String adminKey;
 
     private final RestTemplate restTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(KakaoMessageService.class);
 
     public KakaoMessageService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -43,12 +48,12 @@ public class KakaoMessageService {
     private HttpHeaders createHeaders(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "Bearer " + accessToken);
-        headers.set("Admin-Key", adminKey);
+        headers.set(HEADER_AUTHORIZATION, "Bearer " + accessToken);
+        headers.set(HEADER_ADMIN_KEY, adminKey);
         return headers;
     }
 
     private String createRequestBody(String message) {
-        return "template_object=" + message;
+        return TEMPLATE_OBJECT_PREFIX + message;
     }
 }

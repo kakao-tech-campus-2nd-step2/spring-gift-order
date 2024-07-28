@@ -11,6 +11,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
@@ -19,14 +22,14 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        final String header = request.getHeader("Authorization");
+        final String header = request.getHeader(AUTHORIZATION_HEADER);
 
-        if (header == null || !header.startsWith("Bearer ")) {
+        if (header == null || !header.startsWith(BEARER_PREFIX)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
 
-        final String token = header.substring(7);
+        final String token = header.substring(BEARER_PREFIX.length());
         Claims claims = jwtTokenUtil.getClaims(token);
         String userId = claims.getSubject();
 

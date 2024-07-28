@@ -23,28 +23,31 @@ public class ProductOption {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    public Long getId() {
-        return id;
+    public ProductOption() {
     }
 
-    public void setId(Long id) {
+    public ProductOption(String name, int quantity, Product product) {
+        this.name = name;
+        this.quantity = quantity;
+        this.product = product;
+    }
+
+    public ProductOption(Long id, String name, int quantity) {
         this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
     }
 
     public Product getProduct() {

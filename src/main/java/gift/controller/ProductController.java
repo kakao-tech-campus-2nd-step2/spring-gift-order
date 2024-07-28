@@ -3,6 +3,8 @@ package gift.controller;
 import gift.model.Product;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/api/products")
+@Tag(name = "Product API", description = "APIs related to product operations")
 public class ProductController {
 
     private final ProductService productService;
@@ -29,12 +32,13 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "상품 추가", description = "새로운 상품을 등록한다.")
     @PostMapping
     public ResponseEntity<Object> addProduct(@Valid @RequestBody Product product, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
-        product.setCategory(categoryService.findById(product.getCategory().getId()));
+        product.setCategory(categoryService.findById(product.getCategoryId()));
         productService.save(product);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -54,21 +58,25 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        existingProduct.setCategory(categoryService.findById(updatedProduct.getCategory().getId()));
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setImageurl(updatedProduct.getImageurl());
-        existingProduct.setOptions(updatedProduct.getOptions());
+        existingProduct.updateProductDetails(
+                updatedProduct.getName(),
+                updatedProduct.getPrice(),
+                updatedProduct.getImageurl(),
+                categoryService.findById(updatedProduct.getCategoryId()),
+                updatedProduct.getOptions()
+        );
 
         productService.update(existingProduct);
         return new ResponseEntity<>(existingProduct, HttpStatus.OK);
     }
 
+    @Operation(summary = "상품 목록 조회", description = "상품 목록을 페이징하여 조회한다.")
     @GetMapping
     public ResponseEntity<Page<Product>> getAllProducts(Pageable pageable) {
         return productService.getAllProducts(pageable);
     }
 
+    @Operation(summary = "상품 조회", description = "ID로 상품을 조회한다.")
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.findById(id);
@@ -78,6 +86,7 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    @Operation(summary = "상품 삭제", description = "ID로 상품을 삭제한다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.delete(id);

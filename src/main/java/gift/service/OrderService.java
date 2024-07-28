@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Service
 public class OrderService {
 
+    private static final String ACCESS_TOKEN_KEY = "accessToken";
+
     @Autowired
     private OrderRepository orderRepository;
 
@@ -38,18 +40,13 @@ public class OrderService {
 
         productOptionService.subtractProductOptionQuantity(optionId, quantity);
 
-        Order order = new Order();
-        order.setProductOption(productOption);
-        order.setQuantity(quantity);
-        order.setMessage(message);
-        order.setMember(member);
-        order.setOrderDateTime(LocalDateTime.now());
+        Order order = new Order(productOption, member, quantity, message, LocalDateTime.now());
 
         wishService.deleteWishByProductOptionIdAndMemberId(optionId, member.getId());
 
         Order savedOrder = orderRepository.save(order);
 
-        String accessToken = (String) session.getAttribute("accessToken");
+        String accessToken = (String) session.getAttribute(ACCESS_TOKEN_KEY);
         if (accessToken != null) {
             kakaoMessageService.sendMessage(accessToken, createKakaoMessage(order));
         } else {
