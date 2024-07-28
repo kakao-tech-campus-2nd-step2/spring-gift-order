@@ -40,7 +40,7 @@ public class Order {
         this.message = message;
     }
 
-    public Order() {
+    protected Order() {
 
     }
 
