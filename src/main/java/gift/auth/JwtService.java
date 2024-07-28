@@ -19,6 +19,6 @@ public class JwtService {
     }
 
     public void addTokenInCookie(Member member, HttpServletResponse response) {
-        response.addCookie(new Cookie("jwtToken", jwtTokenProvider.generateToken(member)));
+        response.addCookie(new Cookie("access_token", jwtTokenProvider.generateToken(member)));
     }
 }

@@ -43,7 +43,7 @@ public class OAuth2LoginController {
 
     @GetMapping("/kakao/login/oauth2/code")
     @ResponseBody
-    public ResponseEntity<OAuth2TokenResponse> getToken(HttpServletRequest request,
+    public ResponseEntity<Void> getToken(HttpServletRequest request,
         HttpServletResponse response) {
         loginService.checkRedirectUriParams(request);
         String code = request.getParameter("code");
@@ -54,7 +54,7 @@ public class OAuth2LoginController {
         jwtService.addTokenInCookie(member, response);
 
         loginService.saveAccessToken(member.getId(), dto.accessToken());
-        return new ResponseEntity<>(dto, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

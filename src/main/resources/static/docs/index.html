@@ -687,6 +687,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_로그인_http_response">HTTP response</a></li>
 </ul>
 </li>
+<li><a href="#_카카오_로그인_후_토큰_반환">카카오 로그인 후 토큰 반환</a>
+<ul class="sectlevel2">
+<li><a href="#_카카오_로그인_후_토큰_반환_http_request">HTTP request</a></li>
+<li><a href="#_카카오_로그인_후_토큰_반환_http_response">HTTP response</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -1024,7 +1030,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Id of the category</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Category id</p></td>
 </tr>
 </tbody>
 </table>
@@ -1522,7 +1528,7 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
-Authorization: {ACCESS_TOKEN}
+Set-Cookie: access_token={ACCESS_TOKEN}
 Content-Type: application/json;charset=UTF-8
 Content-Length: 86
 
@@ -1559,7 +1565,30 @@ Host: localhost:8080
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
-Authorization: {ACCESS_TOKEN}</code></pre>
+Set-Cookie: access_token={ACCESS_TOKEN}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_카카오_로그인_후_토큰_반환">카카오 로그인 후 토큰 반환</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_카카오_로그인_후_토큰_반환_http_request">HTTP request</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /kakao/login/oauth2/code?code=KAKAO_AUTHORIZATION_CODE HTTP/1.1
+Host: localhost:8080</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_카카오_로그인_후_토큰_반환_http_response">HTTP response</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Set-Cookie: access_token={ACCESS_TOKEN}</code></pre>
 </div>
 </div>
 </div>
@@ -1568,7 +1597,7 @@ Authorization: {ACCESS_TOKEN}</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-28 18:43:10 +0900
+Last updated 2024-07-28 19:55:32 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>
