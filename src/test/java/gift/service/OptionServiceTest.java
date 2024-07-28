@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.dto.OptionRequest;
 import gift.dto.OptionSubtractRequest;
+import gift.dto.OrderRequest;
 import gift.exception.AlreadyExistsException;
 import gift.exception.NotFoundException;
 import gift.exception.OutOfStockException;
@@ -103,7 +104,7 @@ public class OptionServiceTest {
     @Test
     @DisplayName("subtractQuantity 성공 테스트")
     public void testSubtractQuantity_Success() {
-        OptionSubtractRequest request = new OptionSubtractRequest(1L, 5L);
+        OrderRequest request = new OrderRequest(1L, 5L, "asdf");
 
         optionService.subtractQuantity(request);
 
@@ -113,7 +114,7 @@ public class OptionServiceTest {
     @Test
     @DisplayName("subtractQuantity 수량 부족 테스트")
     public void testSubtractQuantity_OutOfStock() {
-        OptionSubtractRequest request = new OptionSubtractRequest(1L, 20L);
+        OrderRequest request = new OrderRequest(1L, 20L, "asdf");
 
         assertThrows(OutOfStockException.class, () -> optionService.subtractQuantity(request));
     }

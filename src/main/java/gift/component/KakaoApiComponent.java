@@ -1,11 +1,14 @@
 package gift.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.dto.KakaoProperties;
+import gift.dto.kakao.KakaoAccessTokenResponse;
+import gift.dto.kakao.KakaoMessageRequest;
+import gift.dto.kakao.KakaoProperties;
+import gift.dto.kakao.KakaoUserInfoResponse;
 import gift.exception.auth.UnauthorizedException;
 import org.apache.logging.log4j.util.InternalException;
+import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,25 +34,19 @@ public class KakaoApiComponent {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>() {
-        };
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectUrl());
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
-        ResponseEntity<String> response = restTemplate.exchange(request, String.class);
-        try {
-            JsonNode responseBody = objectMapper.readTree(response.getBody());
-            String scope = responseBody.get("scope") != null ? responseBody.get("scope").asText() : "";
-            if (!scope.contains("talk_message")) {
-                throw new UnauthorizedException("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
-            }
-            return responseBody.get("access_token") != null ? responseBody.get("access_token").asText() : "";
-        } catch (JsonProcessingException e) {
-            throw new InternalException("서버 내부 오류: " + e.getMessage());
+        ResponseEntity<KakaoAccessTokenResponse> response = restTemplate.exchange(request, KakaoAccessTokenResponse.class);
+
+        if (response.getBody().scope() == null || !response.getBody().scope().equals("talk_message")) {
+            throw new UnauthorizedException("[spring-gift] App disabled [talk_message] scopes for [TALK_MEMO_DEFAULT_SEND] API on developers.kakao.com. Enable it first.");
         }
+        return response.getBody().accessToken();
     }
 
     public String getMemberProfileId(String accessToken) {
@@ -59,14 +56,31 @@ public class KakaoApiComponent {
         headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
 
         HttpEntity<Object> kakaoProfileRequest = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, String.class);
+        ResponseEntity<KakaoUserInfoResponse> response = restTemplate.exchange(url, HttpMethod.POST, kakaoProfileRequest, KakaoUserInfoResponse.class);
 
-        try {
-            JsonNode jsonNode = objectMapper.readTree(response.getBody());
-            JsonNode id = jsonNode.get("id");
-            return id != null ? id.asText() : null;
-        } catch (Exception e) {
-            throw new InternalException("서버 내부 오류: " + e.getMessage());
-        }
+        return response.getBody().id().toString();
+    }
+
+    public void sendMessage(String accessToken, KakaoMessageRequest kakaoMessageRequest) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
+
+
+        JSONObject linkObj = new JSONObject();
+        linkObj.put("web_url", kakaoMessageRequest.webUrl());
+        linkObj.put("mobile_web_url", kakaoMessageRequest.mobileWebUrl());
+
+        JSONObject templateObj = new JSONObject();
+        templateObj.put("object_type", kakaoMessageRequest.objectType());
+        templateObj.put("text", kakaoMessageRequest.text());
+        templateObj.put("link", linkObj);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObj.toString());
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        restTemplate.exchange(url, HttpMethod.POST, request, String.class);
     }
 }

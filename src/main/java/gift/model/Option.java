@@ -1,5 +1,6 @@
 package gift.model;
 
+import gift.dto.OptionResponse;
 import gift.exception.OutOfStockException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -41,12 +42,15 @@ public class Option {
             product.getOptions().add(this);
         }
     }
+
     public Long getId() {
         return id;
     }
+
     public String getName() {
         return name;
     }
+
     public Long getQuantity() {
         return quantity;
     }
@@ -61,5 +65,14 @@ public class Option {
             throw new OutOfStockException("해당 옵션의 수량이 부족합니다.");
         }
         this.quantity = remainingQuantity;
+    }
+
+    public OptionResponse toDto() {
+        return new OptionResponse(
+                this.id,
+                this.name,
+                this.quantity,
+                this.product.getId()
+        );
     }
 }

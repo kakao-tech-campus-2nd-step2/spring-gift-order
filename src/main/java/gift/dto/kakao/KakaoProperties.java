@@ -1,4 +1,4 @@
-package gift.dto;
+package gift.dto.kakao;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
