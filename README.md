@@ -111,3 +111,14 @@
         "orderDateTime": "2024-07-21T10:00:00",
         "message": "Please handle this order with care."
     }
+
+<br/>
+<br/>
+
+# 3단계 - API 문서 만들기
+
+## 요구 사항 정의
+
+API 사양에 관해 편히 소통할 수 있는 방법 고민해 보고 구현하기
+
+Swagger로 API 명세서 작성
