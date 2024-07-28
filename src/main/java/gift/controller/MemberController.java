@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.entity.MemberEntity;
-import gift.domain.MemberDTO;
+import gift.dto.MemberDTO;
 import gift.service.JwtUtil;
 import gift.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.domain.ProductDTO;
-import gift.domain.WishListDTO;
+import gift.dto.ProductDTO;
+import gift.dto.WishListDTO;
 import gift.service.WishListService;
 import gift.service.JwtUtil;
 import jakarta.validation.constraints.Min;

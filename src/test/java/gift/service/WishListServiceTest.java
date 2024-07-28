@@ -1,7 +1,7 @@
 package gift.service;
 
-import gift.domain.ProductDTO;
-import gift.domain.WishListDTO;
+import gift.dto.ProductDTO;
+import gift.dto.WishListDTO;
 import gift.entity.MemberEntity;
 import gift.entity.ProductEntity;
 import gift.entity.WishListEntity;

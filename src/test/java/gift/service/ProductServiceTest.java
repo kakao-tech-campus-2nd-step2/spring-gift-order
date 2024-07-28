@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.domain.ProductDTO;
+import gift.dto.ProductDTO;
 import gift.entity.CategoryEntity;
 import gift.entity.ProductEntity;
 import gift.repository.CategoryRepository;

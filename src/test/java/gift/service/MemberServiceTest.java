@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.domain.MemberDTO;
+import gift.dto.MemberDTO;
 import gift.entity.MemberEntity;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;

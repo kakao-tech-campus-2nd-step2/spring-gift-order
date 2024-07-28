@@ -2,7 +2,7 @@ package gift.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import gift.domain.KakaoProperties;
+import gift.dto.KakaoProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

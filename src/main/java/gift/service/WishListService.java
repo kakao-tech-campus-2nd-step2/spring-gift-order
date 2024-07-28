@@ -1,10 +1,10 @@
 package gift.service;
 
-import gift.domain.ProductDTO;
+import gift.dto.ProductDTO;
 import gift.entity.MemberEntity;
 import gift.entity.ProductEntity;
 import gift.entity.WishListEntity;
-import gift.domain.WishListDTO;
+import gift.dto.WishListDTO;
 import gift.repository.WishListRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;

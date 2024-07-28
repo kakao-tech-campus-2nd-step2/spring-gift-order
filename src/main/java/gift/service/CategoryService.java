@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.domain.CategoryDTO;
+import gift.dto.CategoryDTO;
 import gift.entity.CategoryEntity;
 import gift.repository.CategoryRepository;
 import jakarta.transaction.Transactional;
