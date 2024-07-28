@@ -24,14 +24,16 @@ public class OrderService {
     private final WishRepository wishRepository;
 
     private final KakaoTokenService kakaoTokenService;
+    private final ProductService productService;
     private final KakaoApiCaller kakaoApiCaller;
 
-    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, MemberRepository memberRepository, WishRepository wishRepository, KakaoTokenService kakaoTokenService, KakaoApiCaller kakaoApiCaller) {
+    public OrderService(OrderRepository orderRepository, ProductRepository productRepository, MemberRepository memberRepository, WishRepository wishRepository, KakaoTokenService kakaoTokenService, ProductService productService, KakaoApiCaller kakaoApiCaller) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.memberRepository = memberRepository;
         this.wishRepository = wishRepository;
         this.kakaoTokenService = kakaoTokenService;
+        this.productService = productService;
         this.kakaoApiCaller = kakaoApiCaller;
     }
 
@@ -42,7 +44,7 @@ public class OrderService {
         Option option = product.findOptionByOptionId(orderRequest.optionId());
         Orders orders = orderRepository.save(new Orders(product.getId(), option.getId(), memberId,
                 product.getName(), option.getName(), product.getPrice(), orderRequest.quantity(), orderRequest.message()));
-        subtractQuantity(orders.getProductId(), orders.getOptionId(), orders.getQuantity());
+        productService.subtractQuantity(orders.getProductId(), orders.getOptionId(), orders.getQuantity());
         deleteWishIfExists(product.getId(), memberId);
         return OrderResponse.from(orders);
     }
@@ -52,13 +54,6 @@ public class OrderService {
         if (wishRepository.existsByProductIdAndMemberId(productId, memberId)) {
             wishRepository.deleteByProductIdAndMemberId(productId, memberId);
         }
-    }
-
-    @Transactional
-    public void subtractQuantity(Long productId, Long optionId, int amount) {
-        Product product = productRepository.findProductAndOptionByIdFetchJoin(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product with id " + productId + " not found"));
-        product.subtractOptionQuantity(optionId, amount);
     }
 
     public void sendKakaoMessage(Long memberId, Long orderId) {
