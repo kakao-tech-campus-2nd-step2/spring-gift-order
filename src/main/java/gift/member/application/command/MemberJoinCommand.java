@@ -1,7 +1,6 @@
 package gift.member.application.command;
 
 import gift.member.domain.Member;
-import gift.member.domain.OauthProvider;
 
 import static gift.member.domain.OauthProvider.COMMON;
 

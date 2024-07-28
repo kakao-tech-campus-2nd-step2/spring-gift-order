@@ -1,6 +1,5 @@
 package gift.member.application;
 
-import gift.auth.KakaoOauthProperty;
 import gift.auth.KakaoResponse;
 import gift.auth.KakaoService;
 import gift.auth.KakaoToken;
@@ -12,17 +11,10 @@ import gift.member.application.command.MemberLoginCommand;
 import gift.member.application.command.MemberPasswordUpdateCommand;
 import gift.member.domain.Member;
 import gift.member.domain.MemberRepository;
-import gift.member.presentation.request.ResolvedMember;
 import gift.wishlist.domain.WishlistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -51,8 +43,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateEmail(MemberEmailUpdateCommand command, ResolvedMember resolvedMember) {
-        Member member = getMember(resolvedMember);
+    public void updateEmail(MemberEmailUpdateCommand command, Long memberId) {
+        Member member = getMember(memberId);
 
         if (memberRepository.existsByEmail(command.email()))
             throw new DuplicateNameException("이미 사용중인 이메일입니다.");
@@ -61,8 +53,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updatePassword(MemberPasswordUpdateCommand command, ResolvedMember resolvedMember) {
-        memberRepository.findById(resolvedMember.id())
+    public void updatePassword(MemberPasswordUpdateCommand command, Long memberId) {
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("해당 회원이 존재하지 않습니다."))
                 .updatePassword(command.password());
     }
@@ -79,8 +71,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void delete(ResolvedMember resolvedMember) {
-        Member member = getMember(resolvedMember);
+    public void delete(Long memberId) {
+        Member member = getMember(memberId);
 
         if (member.getKakaoId() != null) {
             kakaoService.unlink(member.getKakaoId());
@@ -90,25 +82,26 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    private Member getMember(ResolvedMember resolvedMember) {
-        return memberRepository.findById(resolvedMember.id())
+    private Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NotFoundException("해당 회원이 존재하지 않습니다."));
     }
-
 
     @Transactional
     public Long kakaoLogin(String code) {
         KakaoToken token = kakaoService.fetchToken(code);
         KakaoResponse memberInfo = kakaoService.fetchMemberInfo(token.accessToken());
-        return findOrCreateMember(memberInfo);
+        Member newMember = findOrCreateMember(memberInfo);
+        kakaoService.saveToken(token, newMember);
+
+        return newMember.getId();
     }
 
-    private Long findOrCreateMember(KakaoResponse memberInfo) {
+    private Member findOrCreateMember(KakaoResponse memberInfo) {
         return memberRepository.findByKakaoId(memberInfo.id())
-                .map(Member::getId)
                 .orElseGet(() -> {
                     Member newMember = Member.ofKakao(memberInfo.id(), memberInfo.kakaoAccount().email());
-                    return memberRepository.save(newMember).getId();
+                    return memberRepository.save(newMember);
                 });
     }
 }

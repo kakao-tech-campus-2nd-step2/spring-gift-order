@@ -1,6 +1,5 @@
 package gift.order.application.command;
 
-import gift.option.application.command.OptionCreateCommand;
 import gift.option.application.command.OptionSubtractQuantityCommand;
 import gift.option.domain.Option;
 import gift.order.domain.Order;

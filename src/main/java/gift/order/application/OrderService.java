@@ -2,7 +2,6 @@ package gift.order.application;
 
 import gift.auth.KakaoMessageSend;
 import gift.auth.KakaoService;
-import gift.auth.KakaoToken;
 import gift.exception.type.NotFoundException;
 import gift.member.domain.Member;
 import gift.member.domain.MemberRepository;
@@ -15,8 +14,6 @@ import gift.order.domain.OrderRepository;
 import gift.wishlist.domain.WishlistRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 public class OrderService {

@@ -2,7 +2,6 @@ package gift.order.domain;
 
 import gift.option.domain.Option;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

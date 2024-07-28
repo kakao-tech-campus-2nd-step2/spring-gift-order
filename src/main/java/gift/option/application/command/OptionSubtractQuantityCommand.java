@@ -4,5 +4,4 @@ public record OptionSubtractQuantityCommand(
         Long id,
         Integer quantity
 ) {
-
 }
