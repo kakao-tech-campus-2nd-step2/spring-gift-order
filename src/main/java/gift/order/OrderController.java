@@ -4,10 +4,11 @@ import gift.annotation.LoginUser;
 import gift.jwt.JWTService;
 import gift.option.OptionResponse;
 import gift.option.OptionService;
-import gift.user.*;
+import gift.user.IntegratedUser;
+import gift.user.KakaoUser;
+import gift.user.UserService;
 import gift.wishList.WishList;
 import gift.wishList.WishListService;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,15 +20,12 @@ public class OrderController {
     private final OrderService orderService;
     private final WishListService wishListService;
     private final OptionService optionService;
-    private final UserService userService;
 
-    private final JWTService jwtService;
-    public OrderController(OrderService orderService, WishListService wishListService, OptionService optionService, UserService userService, JWTService jwtService) {
+    public OrderController(OrderService orderService, WishListService wishListService, OptionService optionService) {
         this.orderService = orderService;
         this.wishListService = wishListService;
         this.optionService = optionService;
-        this.userService = userService;
-        this.jwtService = jwtService;
+
     }
 
     @PostMapping("/api/orders")

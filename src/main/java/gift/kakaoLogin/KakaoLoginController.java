@@ -3,13 +3,14 @@ package gift.kakaoLogin;
 import gift.jwt.JWTService;
 import gift.product.ProductService;
 import gift.user.*;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Optional;
 
@@ -23,16 +24,14 @@ public class KakaoLoginController {
     private String REDIRECT_URI;
 
     private final KakaoLoginService kakaoLoginService;
-    private final ProductService productService;
     private final UserService userService;
     private final JWTService jwtService;
 
 
     private static final Logger log = LoggerFactory.getLogger(KakaoLoginController.class);
 
-    public KakaoLoginController(KakaoLoginService kakaoLoginService, ProductService productService, UserService userService, JWTService jwtService) {
+    public KakaoLoginController(KakaoLoginService kakaoLoginService, UserService userService, JWTService jwtService) {
         this.kakaoLoginService = kakaoLoginService;
-        this.productService = productService;
         this.userService = userService;
         this.jwtService = jwtService;
     }
