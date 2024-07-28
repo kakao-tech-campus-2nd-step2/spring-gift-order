@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.KakaoApiProvider;
 import gift.KakaoUserInfoResponse;
 import gift.OAuthToken;
-import gift.dto.OrderResponseDto;
+import gift.dto.KakaoMessageRequestDto;
 import gift.vo.Member;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -91,18 +91,18 @@ public class KakaoApiService {
         }
     }
 
-    public void sendKakaoMessage(String accessToken, OrderResponseDto orderResponseDto) {
+    public void sendKakaoMessage(String accessToken, KakaoMessageRequestDto kakaoMessageRequestDto) {
         HttpHeaders headers = kakaoApiProvider.makeHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBearerAuth(accessToken);
 
-        MultiValueMap<String, String> body = kakaoApiProvider.makeTemplateObject(orderResponseDto);
+        MultiValueMap<String, String> body = kakaoApiProvider.makeTemplateObject(kakaoMessageRequestDto);
 
         HttpEntity<MultiValueMap<String, String>> request =
                 new HttpEntity<>(body, headers);
 
         try {
-            String response = restTemplate.exchange(KakaoApiProvider.KAKAO_MESSAGE_API_URI, HttpMethod.POST, request, String.class).getBody();
+            restTemplate.exchange(KakaoApiProvider.KAKAO_MESSAGE_API_URI, HttpMethod.POST, request, String.class).getBody();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             throw ex;
         }

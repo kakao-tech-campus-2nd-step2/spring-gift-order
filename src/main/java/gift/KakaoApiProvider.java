@@ -3,7 +3,7 @@ package gift;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import gift.dto.OrderResponseDto;
+import gift.dto.KakaoMessageRequestDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -49,8 +49,8 @@ public class KakaoApiProvider {
         return body;
     }
 
-    public MultiValueMap<String, String> makeTemplateObject(OrderResponseDto orderResponseDto) {
-        String text = generateOrderText(orderResponseDto);
+    public MultiValueMap<String, String> makeTemplateObject(KakaoMessageRequestDto kakaoMessageRequestDto) {
+        String text = generateOrderText(kakaoMessageRequestDto);
 
         ObjectNode templateJson = objectMapper.createObjectNode();
         templateJson.put("object_type", "text");
@@ -65,10 +65,10 @@ public class KakaoApiProvider {
         return body;
     }
 
-    private String generateOrderText(OrderResponseDto orderResponseDto) {
-        String productName = orderResponseDto.productName();
-        String optionName = orderResponseDto.optionName();
-        int num = orderResponseDto.quantity();
+    private String generateOrderText(KakaoMessageRequestDto kakaoMessageRequestDto) {
+        String productName = kakaoMessageRequestDto.productName();
+        String optionName = kakaoMessageRequestDto.optionName();
+        int num = kakaoMessageRequestDto.quantity();
 
         return productName + "[" + optionName + "]" + " 상품이 " + num + "개 주문되었습니다.";
     }

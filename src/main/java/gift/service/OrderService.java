@@ -1,5 +1,6 @@
 package gift.service;
 
+import gift.dto.KakaoMessageRequestDto;
 import gift.dto.OrderRequestDto;
 import gift.dto.OrderResponseDto;
 import gift.repository.OrderRepository;
@@ -24,11 +25,11 @@ public class OrderService {
         this.memberService = memberService;
     }
 
-    private Option getOptionByOptionId(Long optionId) {
+    public Option getOptionByOptionId(Long optionId) {
         return optionService.getOption(optionId);
     }
 
-    private Member getMemberByMemberId(Long memberId) {
+    public Member getMemberByMemberId(Long memberId) {
         return memberService.getMemberById(memberId);
     }
 
@@ -44,7 +45,7 @@ public class OrderService {
         }
     }
 
-    public OrderResponseDto createOrder(Long memberId, OrderRequestDto orderRequestDto) {
+    public Order createOrder(Long memberId, OrderRequestDto orderRequestDto) {
         optionService.subtractOptionQuantity(orderRequestDto.optionId(), orderRequestDto.quantity());
         Order savedOrder = orderRepository.save(orderRequestDto.toOrder(memberId));
 
@@ -53,9 +54,8 @@ public class OrderService {
         Product product = option.getProduct();
 
         checkWishAndRemove(member, option);
-        OrderResponseDto orderResponseDto = OrderResponseDto.toOrderResponseDto(savedOrder, product.getName(), option.getName());
 
-        return orderResponseDto;
+        return savedOrder;
     }
 
 }
