@@ -23,7 +23,7 @@ public class Member {
     public Member() {
     }
 
-    public Member(String id, String password, String name,List<WishList> wishList) {
+    public Member(String id, String name, String password,List<WishList> wishList) {
         this.id = id;
         this.password = password;
         this.wishList = wishList;
