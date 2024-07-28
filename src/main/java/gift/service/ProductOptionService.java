@@ -30,7 +30,7 @@ public class ProductOptionService {
      */
     @Transactional(readOnly = true)
     public List<ProductOptionDTO> getProductOptions(Long id){
-        var productEntity = productOptionRepository.findById(id).get().getProductEntity();
+        var productEntity = productService.getProductEntity(id);
         return productEntity.getProductOptions().stream()
                 .map(productOptionMapper::toProductOptionDTO).toList();
     }
