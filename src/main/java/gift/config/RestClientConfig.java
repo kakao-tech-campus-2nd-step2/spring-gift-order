@@ -8,8 +8,8 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
-    @Bean(name = "customRestClient")
-    public RestClient restClientBuilder() {
+    @Bean
+    public RestClient restClient() {
         //Timeout 설정
         var factory = new HttpComponentsClientHttpRequestFactory();
         factory.setConnectTimeout(5000);
@@ -17,6 +17,4 @@ public class RestClientConfig {
 
         return RestClient.builder().requestFactory(factory).build();
     }
-
-
 }

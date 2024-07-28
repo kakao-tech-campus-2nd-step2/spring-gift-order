@@ -1,9 +1,9 @@
 package gift.util;
 
 import gift.common.properties.KakaoProperties;
+import gift.dto.OAuth.AuthTokenInfoResponse;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,13 +15,13 @@ import java.net.URI;
 import java.util.Map;
 
 @Component
-public class AuthUtil {
+public class KakaoApiCaller {
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
 
     @Autowired
-    public AuthUtil(KakaoProperties kakaoProperties, @Qualifier("customRestClient") RestClient restClient) {
+    public KakaoApiCaller(KakaoProperties kakaoProperties, RestClient restClient) {
         this.kakaoProperties = kakaoProperties;
         this.restClient = restClient;
     }
@@ -40,7 +40,20 @@ public class AuthUtil {
 
     public AuthTokenResponse getAccessToken(String authCode) {
         String url = kakaoProperties.tokenUrl();
-        MultiValueMap<String, String> params = createParams(authCode);
+        MultiValueMap<String, String> params = createParamsForAccessToken(authCode);
+        AuthTokenResponse resp = restClient.post()
+                .uri(URI.create(url))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(params)
+                .retrieve()
+                .body(AuthTokenResponse.class);
+
+        return resp;
+    }
+
+    public AuthTokenResponse refreshAccessToken(String refreshToken) {
+        String url = kakaoProperties.tokenUrl();
+        MultiValueMap<String, String> params = createParamsForRefreshToken(refreshToken);
         AuthTokenResponse resp = restClient.post()
                 .uri(URI.create(url))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -83,12 +96,32 @@ public class AuthUtil {
         return resp;
     }
 
-    private MultiValueMap<String, String> createParams(String authCode) {
+    public AuthTokenInfoResponse getTokenInfo(String accessToken) {
+        String url = "https://kapi.kakao.com/v1/user/access_token_info";
+        AuthTokenInfoResponse resp = restClient.get()
+                .uri(URI.create(url))
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .body(AuthTokenInfoResponse.class);
+
+        return resp;
+    }
+
+    private MultiValueMap<String, String> createParamsForAccessToken(String authCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoProperties.restAPiKey());
         params.add("redirect_uri", kakaoProperties.redirectUri());
         params.add("code", authCode);
+        return params;
+    }
+
+    private MultiValueMap<String, String> createParamsForRefreshToken(String refreshToken) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", kakaoProperties.restAPiKey());
+        params.add("redirect_uri", kakaoProperties.redirectUri());
+        params.add("refresh_token", refreshToken);
         return params;
     }
 

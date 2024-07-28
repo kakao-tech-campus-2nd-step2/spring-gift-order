@@ -1,5 +1,6 @@
 package gift.repository;
 
+import gift.common.enums.LoginType;
 import gift.exception.WishItemNotFoundException;
 import gift.model.category.Category;
 import gift.model.gift.Gift;
@@ -9,8 +10,7 @@ import gift.model.wish.Wish;
 import gift.repository.gift.GiftRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.*;
@@ -39,7 +39,7 @@ class WishRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = new User("test@example.com", "password");
+        user = new User("test@example.com", "password", LoginType.DEFAULT);
 
         userRepository.save(user);
 
@@ -55,6 +55,7 @@ class WishRepositoryTest {
     }
 
     @Test
+    @DisplayName("유저정보를 통한 위시리스트 조회가 잘 되는지 테스트")
     void testFindByUser() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Wish> wishes = wishRepository.findByUser(user, pageable);
@@ -65,6 +66,7 @@ class WishRepositoryTest {
     }
 
     @Test
+    @DisplayName("유저정보와 상품정보를 통한 위시리스트 조회가 잘 되는지 테스트")
     void testFindByUserAndGift() {
         Wish wish = wishRepository.findByUserAndGift(user, gift).orElseThrow(() -> new WishItemNotFoundException("해당 위시리스트 아이템을 찾을 수 없습니다."));
 
@@ -72,6 +74,7 @@ class WishRepositoryTest {
     }
 
     @Test
+    @DisplayName("위시리스트 삭제가 잘 되는지 테스트")
     void testDeleteByUserAndGift() {
         Wish wish = wishRepository.findByUserAndGift(user, gift).orElseThrow(() -> new WishItemNotFoundException("해당 위시리스트 아이템을 찾을 수 없습니다."));
 

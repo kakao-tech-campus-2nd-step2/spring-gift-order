@@ -1,11 +1,13 @@
 package gift.model.token;
 
+import gift.common.enums.TokenType;
 import gift.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class KakaoToken {
+public class OAuthToken {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,13 +23,18 @@ public class KakaoToken {
     @NotNull
     private String refreshToken;
 
-    protected KakaoToken() {
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private TokenType tokenType;
+
+    protected OAuthToken() {
     }
 
-    public KakaoToken(User user, String accessToken, String refreshToken) {
+    public OAuthToken(User user, String accessToken, String refreshToken, TokenType tokenType) {
         this.user = user;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.tokenType = tokenType;
     }
 
     public Long getId() {
@@ -44,6 +51,14 @@ public class KakaoToken {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public TokenType getTokenType() {
+        return tokenType;
+    }
+
+    public void updateAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public void updateTokens(String refreshToken, String accessToken) {

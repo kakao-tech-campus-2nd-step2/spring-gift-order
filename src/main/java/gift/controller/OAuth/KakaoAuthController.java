@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/kakao")
-public class KakaoAuthController {
+public class KakaoAuthController implements KakaoAuthSpecification {
 
     private final KakaoAuthService kakaoAuthService;
 
@@ -31,5 +31,4 @@ public class KakaoAuthController {
         String token = kakaoAuthService.register(code);
         return ResponseEntity.ok(Map.of("access_token", token));
     }
-
 }

@@ -1,9 +1,10 @@
 package gift.repository;
 
+import gift.common.enums.LoginType;
 import gift.model.user.User;
 import gift.repository.user.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.apache.juli.logging.Log;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -20,15 +21,16 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        User user1 = new User("test1@example.com", "password1");
-        User user2 = new User("test2@example.com", "password2");
+        User user1 = new User("test1@example.com", "password1", LoginType.DEFAULT);
+        User user2 = new User("test2@example.com", "password2", LoginType.DEFAULT);
         userRepository.save(user1);
         userRepository.save(user2);
     }
 
     @Test
-    void saveTest() {
-        User user = new User("abc@email.com", "1234");
+    @DisplayName("유저 정보가 잘 저장되는지 테스트")
+    void testSave() {
+        User user = new User("abc@email.com", "1234", LoginType.DEFAULT);
         User actual = userRepository.save(user);
 
         assertAll(
@@ -38,14 +40,15 @@ class UserRepositoryTest {
     }
 
     @Test
-    void findByEmailTest() {
-        // Given
+    @DisplayName("이메일로 유저찾기가 잘 실행되는지 테스트")
+    void testFindByEmail() {
+        // given
         String emailToFind = "test1@example.com";
 
-        // When
+        // when
         Optional<User> foundUser = userRepository.findByEmail(emailToFind);
 
-        // Then
+        // then
         assertAll(
                 () -> assertThat(foundUser).isPresent(),
                 () -> assertThat(foundUser.get().getEmail()).isEqualTo(emailToFind)

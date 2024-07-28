@@ -6,15 +6,16 @@ import gift.dto.order.OrderResponse;
 import gift.model.gift.Gift;
 import gift.model.option.Option;
 import gift.model.order.Order;
-import gift.model.token.KakaoToken;
+import gift.model.token.OAuthToken;
 import gift.model.user.User;
 import gift.repository.gift.GiftRepository;
 import gift.repository.option.OptionRepository;
 import gift.repository.order.OrderRepository;
-import gift.repository.token.KakaoTokenRepository;
+import gift.repository.token.OAuthTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
-import gift.util.AuthUtil;
+import gift.util.KakaoApiCaller;
+import gift.util.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
@@ -37,9 +38,12 @@ public class OrderService {
 
     private final UserRepository userRepository;
 
-    private final KakaoTokenRepository kakaoTokenRepository;
+    private final OAuthTokenRepository OAuthTokenRepository;
 
-    private final AuthUtil authUtil;
+    private final KakaoApiCaller kakaoApiCaller;
+
+    @Autowired
+    private TokenManager tokenManager;
 
     @Autowired
     public OrderService(OptionRepository optionRepository,
@@ -47,15 +51,15 @@ public class OrderService {
                         WishRepository wishRepository,
                         UserRepository userRepository,
                         OrderRepository orderRepository,
-                        KakaoTokenRepository kakaoTokenRepository,
-                        AuthUtil authUtil) {
+                        OAuthTokenRepository OAuthTokenRepository,
+                        KakaoApiCaller kakaoApiCaller) {
         this.optionRepository = optionRepository;
         this.giftRepository = giftRepository;
         this.wishRepository = wishRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
-        this.kakaoTokenRepository = kakaoTokenRepository;
-        this.authUtil = authUtil;
+        this.OAuthTokenRepository = OAuthTokenRepository;
+        this.kakaoApiCaller = kakaoApiCaller;
     }
 
     @Transactional
@@ -83,19 +87,23 @@ public class OrderService {
 
         Order order = new Order(option, orderRequest.quantity(), orderRequest.message());
         orderRepository.save(order);
-
-        sendMessage(orderRequest, user, gift, option);
         return OrderResponse.fromEntity(order);
     }
 
-    private void sendMessage(OrderRequest.Create orderRequest, User user, Gift gift, Option option) {
-        KakaoToken kakaoToken = kakaoTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
+    public void sendMessage(OrderRequest.Create orderRequest, User user, Long giftId) {
+        Gift gift = giftRepository.findById(giftId)
+                .orElseThrow(() -> new NoSuchElementException("해당 상품을 찾을 수 없습니다 id :  " + giftId));
+        Option option = optionRepository.findById(orderRequest.optionId())
+                .orElseThrow(() -> new NoSuchElementException("해당 옵션을 찾을 수 없습니다 id :  " + orderRequest.optionId()));
+        OAuthToken OAuthToken = OAuthTokenRepository.findByUser(user).orElseThrow(() -> new NoSuchElementException("사용자가 카카오토큰을 가지고있지않습니다!"));
+        OAuthToken = tokenManager.checkExpiredToken(OAuthToken);
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
-        authUtil.sendMessage(kakaoToken.getAccessToken(), message);
+        kakaoApiCaller.sendMessage(OAuthToken.getAccessToken(), message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {
+
         if (!gift.hasOption(optionId)) {
             throw new NoSuchElementException("해당 상품에 해당 옵션이 없습니다!");
         }

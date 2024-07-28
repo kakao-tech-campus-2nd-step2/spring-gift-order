@@ -6,14 +6,13 @@ import gift.service.option.OptionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/gifts")
-public class OptionController {
+public class OptionController implements OptionSpecification {
 
     private final OptionService optionService;
 
@@ -50,9 +49,9 @@ public class OptionController {
     }
 
     @PatchMapping("/options/{giftId}/{optionId}")
-    public ResponseEntity<String> substractOptionToGift(@PathVariable("giftId") Long giftId,
-                                                        @PathVariable("optionId") Long optionId,
-                                                        @RequestParam(name = "quantity") int quantity) {
+    public ResponseEntity<String> subtractOptionToGift(@PathVariable("giftId") Long giftId,
+                                                       @PathVariable("optionId") Long optionId,
+                                                       @RequestParam(name = "quantity") int quantity) {
         optionService.subtractOptionToGift(giftId, optionId, quantity);
         return ResponseEntity.ok(giftId + "번 상품에서" + optionId + "번 옵션 수량이" + quantity + "만큼 차감되었습니다!");
     }
