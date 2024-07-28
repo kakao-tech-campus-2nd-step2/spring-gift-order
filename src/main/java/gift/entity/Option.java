@@ -15,6 +15,10 @@ public class Option {
     private String name;
     private int quantity;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductOption> productOption = new ArrayList<>();
 
@@ -49,5 +53,17 @@ public class Option {
 
     public void subtract(int quantity) {
         this.quantity -= quantity;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

@@ -1,31 +1,27 @@
 package gift.controller.rest;
 
+import gift.entity.MessageResponseDTO;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.entity.ProductDTO;
 import gift.service.ProductService;
-import gift.util.ResponseUtility;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
-    private final ResponseUtility responseUtility;
 
-    @Autowired
-    public ProductController(ProductService productService, ResponseUtility responseUtility) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.responseUtility = responseUtility;
     }
 
     // http://localhost:8080/api/products?page=1&size=3
@@ -42,24 +38,27 @@ public class ProductController {
     }
 
     @PostMapping()
-    public ResponseEntity<Product> postProduct(@RequestBody @Valid ProductDTO form) {
-        Product result = productService.save(form);
+    public ResponseEntity<Product> postProduct(@RequestBody @Valid ProductDTO form, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        Product result = productService.save(form, email);
         return ResponseEntity.ok().body(result);
     }
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<Product> putProduct(@RequestBody @Valid ProductDTO form,
-                                              @PathVariable("id") Long id) {
-        Product result = productService.update(id, form);
+                                              @PathVariable("id") Long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        Product result = productService.update(id, form, email);
         return ResponseEntity.ok().body(result);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Map<String, String>> deleteProduct(@PathVariable("id") Long id) {
-        productService.delete(id);
+    public ResponseEntity<MessageResponseDTO> deleteProduct(@PathVariable("id") Long id, HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        productService.delete(id, email);
         return ResponseEntity
                 .ok()
-                .body(responseUtility.makeResponse("deleted successfully"));
+                .body(makeMessageResponse("Product deleted successfully"));
     }
 
     // option
@@ -70,20 +69,28 @@ public class ProductController {
     }
 
     @PostMapping("/{product_id}/options/{option_id}")
-    public ResponseEntity<Map<String, String>> postProductOptions(@PathVariable("product_id") Long product_id,
-                                                                  @PathVariable("option_id") Long option_id) {
-        productService.addProductOption(product_id, option_id);
+    public ResponseEntity<MessageResponseDTO> postProductOptions(@PathVariable("product_id") Long product_id,
+                                                                 @PathVariable("option_id") Long option_id,
+                                                                 HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        productService.addProductOption(product_id, option_id, email);
         return ResponseEntity
                 .ok()
-                .body(responseUtility.makeResponse("added successfully"));
+                .body(makeMessageResponse("Option added successfully"));
     }
 
     @DeleteMapping("/{product_id}/options/{option_id}")
-    public ResponseEntity<Map<String, String>> deleteProductOptions(@PathVariable("product_id") Long product_id,
-                                                                    @PathVariable("option_id") Long option_id) {
-        productService.deleteProductOption(product_id, option_id);
+    public ResponseEntity<MessageResponseDTO> deleteProductOptions(@PathVariable("product_id") Long product_id,
+                                                                   @PathVariable("option_id") Long option_id,
+                                                                   HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        productService.deleteProductOption(product_id, option_id, email);
         return ResponseEntity
                 .ok()
-                .body(responseUtility.makeResponse("deleted successfully"));
+                .body(makeMessageResponse("Option deleted successfully"));
+    }
+
+    private MessageResponseDTO makeMessageResponse(String message) {
+        return new MessageResponseDTO(message);
     }
 }

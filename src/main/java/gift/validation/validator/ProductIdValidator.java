@@ -24,7 +24,9 @@ public class ProductIdValidator implements ConstraintValidator<ProductIdConstrai
     @Override
     public boolean isValid(Long productId, ConstraintValidatorContext cxt) {
         Optional<Product> product = productRepository.findById(productId);
-        if (product.isEmpty()) return returnValidationResult("Such product doesn't exist", cxt);
+        if (product.isEmpty()) {
+            return returnValidationResult("Such product doesn't exist", cxt);
+        }
         return true;
     }
 

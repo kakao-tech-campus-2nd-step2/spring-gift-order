@@ -2,10 +2,13 @@ package gift.util;
 
 import gift.entity.Product;
 import gift.entity.ProductDTO;
+import gift.entity.UserDTO;
 import gift.entity.WishlistDTO;
 import gift.service.ProductService;
+import gift.service.UserService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,19 +22,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 public class ProductIdValidatorTest {
 
-    @Autowired
-    private Validator validator;
+    private String email;
+    private Product product;
+    private WishlistDTO wishlist;
 
     @Autowired
+    private Validator validator;
+    @Autowired
     private ProductService productService;
+    @Autowired
+    private UserService userService;
+
+    @BeforeEach
+    void setUp() {
+        email = "test@gmail.com";
+        userService.signup(new UserDTO(email, "test"));
+        product = productService.save(new ProductDTO("abc", 123, "www.test.com", 1L), email);
+        wishlist = new WishlistDTO(product.getId());
+    }
 
     @Test
     public void save_existingProductId() {
         //given
-        ProductDTO product = new ProductDTO("abc", 123, "www.test.com", 1L);
-        Product savedProduct = productService.save(product);
-
-        WishlistDTO wishList = new WishlistDTO(savedProduct.getId());
+        WishlistDTO wishList = new WishlistDTO(product.getId());
 
         //when
         Set<ConstraintViolation<WishlistDTO>> violations = validator.validate(wishList);
@@ -43,10 +56,7 @@ public class ProductIdValidatorTest {
     @Test
     public void save_nonexistentProductId() {
         //given
-        ProductDTO product = new ProductDTO("abc", 123, "www.test.com", 1L);
-        Product savedProduct = productService.save(product);
-
-        WishlistDTO wishList = new WishlistDTO(savedProduct.getId() + 1);
+        WishlistDTO wishList = new WishlistDTO(product.getId() + 1);
 
         //when
         Set<ConstraintViolation<WishlistDTO>> violations = validator.validate(wishList);

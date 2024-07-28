@@ -1,38 +1,73 @@
 package gift.controller.rest;
 
+import gift.entity.AccessTokenResponseDTO;
+import gift.entity.MessageResponseDTO;
 import gift.entity.UserDTO;
+import gift.entity.UserResponseDTO;
 import gift.service.UserService;
-import gift.util.UserUtility;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserUtility userUtility;
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserUtility userUtility, UserService userService) {
-        this.userUtility = userUtility;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> signup(@RequestBody @Valid UserDTO form) {
-        String accessToken = userService.signup(form);
-        return ResponseEntity.ok().body(userUtility.accessTokenToObject(accessToken));
+    public ResponseEntity<AccessTokenResponseDTO> signup(@RequestBody @Valid UserDTO userDTO, HttpSession session) {
+        String accessToken = userService.signup(userDTO);
+        session.setAttribute("email", userDTO.getEmail());
+        session.setAttribute("role", "USER");
+        return ResponseEntity.ok().body(makeAccessTokenResponse(accessToken));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody @Valid UserDTO form) {
+    public ResponseEntity<AccessTokenResponseDTO> login(@RequestBody @Valid UserDTO form, HttpSession session) {
         String accessToken = userService.login(form);
-        return ResponseEntity.ok().body(userUtility.accessTokenToObject(accessToken));
+        session.setAttribute("email", form.getEmail());
+        session.setAttribute("role", userService.findOne(form.getEmail()).getRole());
+        return ResponseEntity.ok().body(makeAccessTokenResponse(accessToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<MessageResponseDTO> logout(HttpSession session) {
+        session.invalidate();
+        return ResponseEntity.ok().body(new MessageResponseDTO("Logged out successfully"));
+    }
+
+    @PostMapping("/kakao")
+    public ResponseEntity<AccessTokenResponseDTO> kakaoLogin(@RequestBody Map<String, String> request, HttpSession session) {
+        String code = request.get("code");
+
+        String kakaoAccessToken = userService.kakaoLogin(code);
+        Map<String, String> response = userService.getKakaoProfile(kakaoAccessToken);
+
+        session.setAttribute("email", response.get("email"));
+        session.setAttribute("role", "USER");
+        session.setAttribute("kakaoAccessToken", kakaoAccessToken);
+
+        return ResponseEntity.ok().body(makeAccessTokenResponse(response.get("accessToken")));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> me(HttpSession session) {
+        String email = (String) session.getAttribute("email");
+        String role = (String) session.getAttribute("role");
+
+        UserResponseDTO res = new UserResponseDTO(email, role);
+        return ResponseEntity.ok().body(res);
+    }
+
+    private AccessTokenResponseDTO makeAccessTokenResponse(String accessToken) {
+        return new AccessTokenResponseDTO(accessToken);
     }
 }

@@ -31,15 +31,10 @@ public class UserUtility {
     public String makeAccessToken(User user) {
         String accessToken = Jwts.builder()
                 .claim("email", user.getEmail())
+                .claim("role", user.getRole())
                 .signWith(getSecretKey())
                 .compact();
         return accessToken;
-    }
-
-    public Object accessTokenToObject(String accessToken) {
-        Map<String, Object> obj = new HashMap<>();
-        obj.put("accessToken", accessToken);
-        return obj;
     }
 
     public Claims tokenParser(String accessToken) {

@@ -13,13 +13,13 @@ public class ProductDTO {
     @NotNull
     private String imageurl;
     @NotNull
-    private Long categoryid;
+    private Long category_id;
 
-    public ProductDTO(String name, Integer price, String imageurl, Long categoryid) {
+    public ProductDTO(String name, Integer price, String imageurl, Long category_id) {
         this.name = name;
         this.price = price;
         this.imageurl = imageurl;
-        this.categoryid = categoryid;
+        this.category_id = category_id;
     }
 
     public ProductDTO() {
@@ -50,10 +50,10 @@ public class ProductDTO {
     }
 
     public Long getCategoryid() {
-        return categoryid;
+        return category_id;
     }
 
-    public void setCategoryid(Long categoryid) {
-        this.categoryid = categoryid;
+    public void setCategoryid(Long category_id) {
+        this.category_id = category_id;
     }
 }

@@ -14,13 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
-public class JwtFilterTest {
+public class AdminFilterTest {
 
-    private String validToken;
-    private JwtFilter jwtFilter;
+    private AdminFilter adminFilter;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private FilterChain filterChain;
@@ -31,42 +32,48 @@ public class JwtFilterTest {
     private String tokenPrefix;
 
     @BeforeEach
-    void setup() {
-        jwtFilter = new JwtFilter(tokenPrefix, userUtility);
+    public void setUp() {
+        adminFilter = new AdminFilter(tokenPrefix, userUtility);
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         filterChain = mock(FilterChain.class);
-        validToken = userUtility.makeAccessToken(new User("test@naver.com", "test"));
     }
 
     @Test
-    void doFilterWithoutTokenTest() throws ServletException, IOException {
+    void 토큰_없이_필터_테스트() throws ServletException, IOException {
         // given
+        given(request.getHeader("Authorization")).willReturn(null);
+
         // when
-        when(request.getHeader("Authorization")).thenReturn(null);
-        jwtFilter.doFilter(request, response, filterChain);
+        adminFilter.doFilter(request, response, filterChain);
 
         // then
         verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 
     @Test
-    void doFilterWithValidTokenTest() throws ServletException, IOException {
+    void admin_토큰_필터_테스트() throws ServletException, IOException {
         // given
+        User admin = new User("admin@naver.com", "admin");
+        admin.setRole("ADMIN");
+        String adminToken = userUtility.makeAccessToken(admin);
+        given(request.getHeader("Authorization")).willReturn(tokenPrefix + adminToken);
+
         // when
-        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken);
-        jwtFilter.doFilter(request, response, filterChain);
+        adminFilter.doFilter(request, response, filterChain);
 
         // then
         verify(filterChain).doFilter(request, response);
     }
 
     @Test
-    void doFilterWithInvalidTokenTest() throws ServletException, IOException {
+    void user_토큰_필터_테스트() throws ServletException, IOException {
         // given
+        String userToken = userUtility.makeAccessToken(new User("test@naver.com", "test"));
+        given(request.getHeader("Authorization")).willReturn(tokenPrefix + userToken);
+
         // when
-        when(request.getHeader("Authorization")).thenReturn(tokenPrefix + validToken + "invalid");
-        jwtFilter.doFilter(request, response, filterChain);
+        adminFilter.doFilter(request, response, filterChain);
 
         // then
         verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");

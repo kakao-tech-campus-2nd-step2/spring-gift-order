@@ -4,7 +4,24 @@ create table users
 (
     id       bigint AUTO_INCREMENT PRIMARY KEY,
     email    varchar(50),
-    password varchar(50)
+    password varchar(255),
+    role     varchar(10)
+);
+-- default admin user
+INSERT INTO users (email, password, role)
+VALUES ('admin@naver.com', 'admin', 'ADMIN');
+
+-- order
+drop table if exists orders CASCADE;
+create table orders
+(
+    id         bigint AUTO_INCREMENT PRIMARY KEY,
+    product_id bigint,
+    option_id  bigint,
+    quantity   int,
+    message    varchar(255),
+    user_id    bigint,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 -- category
@@ -38,8 +55,10 @@ create table product
     name        varchar(255),
     price       int,
     imageurl    varchar(255),
-    categoryid  BIGINT,
-    wishlist_id BIGINT
+    category_id BIGINT,
+    wishlist_id BIGINT,
+    user_id     bigint,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 -- product_wishlist(중간 테이블)
@@ -59,8 +78,11 @@ create table option
 (
     id       bigint AUTO_INCREMENT PRIMARY KEY,
     name     varchar(50),
-    quantity int
+    quantity int,
+    user_id  bigint,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
+-- option default data
 INSERT INTO option (name, quantity)
 VALUES ('DefaultOption', 1);
 

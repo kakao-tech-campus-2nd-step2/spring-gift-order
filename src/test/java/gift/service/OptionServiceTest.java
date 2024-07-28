@@ -1,126 +1,133 @@
 package gift.service;
 
-import gift.entity.Option;
-import gift.entity.OptionDTO;
-import gift.entity.Product;
-import gift.entity.ProductDTO;
+import gift.entity.*;
 import gift.exception.ResourceNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
+@Transactional
 public class OptionServiceTest {
+
+    private String email;
+    private User user;
+    private Option option;
+
     @Autowired
     private OptionService optionService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private UserService userService;
 
-    @Test
-    void save() {
-        // given
-        OptionDTO actual = new OptionDTO("abc", 123);
+    @BeforeEach
+    void setUp() {
+        email = "test@gmail.com";
+        String password = "test";
+        userService.signup(new UserDTO(email, password));
+        user = userService.findOne(email);
 
-        // when
-        Option expect = optionService.save(actual);
-
-        // then
-        assertThat(expect).isNotNull();
+        option = optionService.save(new OptionDTO("abc", 10), email);
     }
 
     @Test
     void findById() {
         // given
-        OptionDTO actual = new OptionDTO("abc", 123);
-        Option saved = optionService.save(actual);
-
         // when
-        Option expect = optionService.findById(saved.getId());
+        Option expect = optionService.findById(option.getId());
 
         // then
         assertAll(
-                () -> assertThat(actual.getName()).isEqualTo(expect.getName()),
-                () -> assertThat(actual.getQuantity()).isEqualTo(expect.getQuantity())
+                () -> assertThat(option.getName()).isEqualTo(expect.getName()),
+                () -> assertThat(option.getQuantity()).isEqualTo(expect.getQuantity())
         );
     }
 
     @Test
     void update() {
         // given
-        OptionDTO option = new OptionDTO("abc", 123);
-        OptionDTO actual = new OptionDTO("def", 456);
-        Option saved = optionService.save(option);
+        OptionDTO update = new OptionDTO("def", 456);
 
         // when
-        Option expect = optionService.update(saved.getId(), actual);
+        Option expect = optionService.update(option.getId(), update, email);
 
         // then
         assertAll(
-                () -> assertThat(actual.getName()).isEqualTo(expect.getName()),
-                () -> assertThat(actual.getQuantity()).isEqualTo(expect.getQuantity())
+                () -> assertThat(expect.getName()).isEqualTo(update.getName()),
+                () -> assertThat(expect.getQuantity()).isEqualTo(update.getQuantity())
         );
     }
 
     @Test
     void delete() {
         // given
-        OptionDTO actual = new OptionDTO("abc", 123);
-        Option saved = optionService.save(actual);
-
         // when
-        optionService.delete(saved.getId());
+        optionService.delete(option.getId(), email);
 
         // then
         Exception exception = assertThrows(ResourceNotFoundException.class,
-                () -> optionService.findById(saved.getId()));
+                () -> optionService.findById(option.getId()));
         assertThat(exception.getMessage())
-                .isEqualTo("Option not found with id: " + saved.getId());
+                .isEqualTo("Option not found with id: " + option.getId());
+        assertThat(userService.findOne(email)).isNotNull();
     }
 
     @Test
-    void subtract_실패() {
+    void subtract_total_보다_amount가_더_많은_테스트() {
         // given
-        OptionDTO actual = new OptionDTO("abc", 10);
-        Option saved = optionService.save(actual);
-
         // when
         // then
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> optionService.subtract(saved.getId(), 100));
+                () -> optionService.subtract(option.getId(), 9999));
         assertThat(exception.getMessage()).isEqualTo("Not enough quantity");
+    }
+
+    @Test
+    void amount가_0_이하인_테스트() {
+        // given
+        // when
+        // then
+        assertThrows(IllegalArgumentException.class,
+                () -> optionService.subtract(option.getId(), 0));
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> optionService.subtract(option.getId(), -1));
+        assertThat(exception.getMessage()).isEqualTo("Invalid quantity");
     }
 
     @Test
     void subtract_성공() {
         // given
-        OptionDTO actual = new OptionDTO("abc", 10);
-        Option saved = optionService.save(actual);
+        int total = 2834;
+        int amount = 349;
+
+        option.setQuantity(total);
 
         // when
-        optionService.subtract(saved.getId(), 7);
-        Option expect = optionService.findById(saved.getId());
+        optionService.subtract(option.getId(), amount);
 
         // then
-        assertThat(expect.getQuantity()).isEqualTo(3);
+        assertThat(option.getQuantity()).isEqualTo(total - amount);
     }
 
     @Test
     void 같은_이름의_option이_product에_있을_때() {
         // given
-        Product product = productService.save(new ProductDTO("test", 123, "test.com", 1L));
-        Option option1 = optionService.save(new OptionDTO("test", 123));
-        Option option2 = optionService.save(new OptionDTO("test", 456));
+        Product product = productService.save(new ProductDTO("test", 123, "test.com", 1L), email);
+        Option sameNameOption = optionService.save(new OptionDTO("abc", 456), email);
 
         // when
-        productService.addProductOption(product.getId(), option1.getId());
+        productService.addProductOption(product.getId(), option.getId(), email);
 
         // then
         assertThrows(DataIntegrityViolationException.class,
-                () -> productService.addProductOption(product.getId(), option2.getId()));
+                () -> productService.addProductOption(product.getId(), sameNameOption.getId(), email));
     }
 }

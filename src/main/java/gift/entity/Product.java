@@ -15,14 +15,17 @@ public class Product {
     private String name;
     private int price;
     private String imageurl;
+    private Long category_id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductWishlist> productWishlist = new ArrayList<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductOption> productOption = new ArrayList<>();
-
-    private Long categoryid;
 
     public Product() {
     }
@@ -31,23 +34,30 @@ public class Product {
         this.name = product.getName();
         this.price = product.getPrice();
         this.imageurl = product.getImageurl();
-        this.categoryid = product.getCategoryid();
+        this.category_id = product.getCategoryid();
+    }
+
+    public Product(ProductDTO product, User user) {
+        this.name = product.getName();
+        this.price = product.getPrice();
+        this.imageurl = product.getImageurl();
+        this.category_id = product.getCategoryid();
+        this.user = user;
     }
 
     public Product(String name, int price, String imageurl, Long categoryid) {
         this.name = name;
         this.price = price;
         this.imageurl = imageurl;
-        this.categoryid = categoryid;
+        this.category_id = categoryid;
     }
 
-    public void setProductWithCategory(ProductDTO product) {
+    public void updateProduct(ProductDTO product) {
         this.name = product.getName();
         this.price = product.getPrice();
         this.imageurl = product.getImageurl();
-        this.categoryid = categoryid;
+        this.category_id = product.getCategoryid();
     }
-
 
     public void setId(Long id) {
         this.id = id;
@@ -66,7 +76,7 @@ public class Product {
     }
 
     public Long getCategoryid() {
-        return categoryid;
+        return category_id;
     }
 
     public Long getId() {
@@ -86,6 +96,14 @@ public class Product {
     }
 
     public void setCategoryid(Long categoryid) {
-        this.categoryid = categoryid;
+        this.category_id = categoryid;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

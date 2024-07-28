@@ -8,12 +8,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class JwtFilter implements Filter {
+public class AdminFilter implements Filter {
 
     private String tokenPrefix;
     private UserUtility userUtility;
 
-    public JwtFilter(String tokenPrefix, UserUtility userUtility) {
+    public AdminFilter(String tokenPrefix, UserUtility userUtility) {
         this.tokenPrefix = tokenPrefix;
         this.userUtility = userUtility;
     }
@@ -43,7 +43,13 @@ public class JwtFilter implements Filter {
 
             String email = claims.get("email", String.class);
             String role = claims.get("role", String.class);
+            System.out.println("role = " + role);
             if (email == null || role == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                return;
+            }
+
+            if (role.equals("USER")) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                 return;
             }
