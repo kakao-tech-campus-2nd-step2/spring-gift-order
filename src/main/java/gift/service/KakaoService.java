@@ -9,6 +9,7 @@ import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.util.JwtUtil;
 import java.net.URI;
+import java.util.Random;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -74,7 +75,7 @@ public class KakaoService {
         Member member = memberRepository.findByEmail(email);
         if (member == null) {
             String name = email.split("@")[0];
-            String password = name + name;
+            String password = generateRandomPassword();
             MemberDTO memberDTO = new MemberDTO(name, email, password);
             member = new Member(null, memberDTO.name(), memberDTO.email(), memberDTO.password(),
                 "user");
@@ -111,5 +112,18 @@ public class KakaoService {
             + "\\n주문 시간: " + orderDateTime + "\\n메시지: " + message + "\","
             + "\"link\":{\"web_url\":\"http://localhost:8080/admin/products\",\"mobile_web_url\":\"http://localhost:8080/admin/products\"}"
             + "}";
+    }
+
+    private String generateRandomPassword() {
+        int leftLimit = 48;
+        int rightLimit = 122;
+        int targetStringLength = 20;
+        Random random = new Random();
+        String generatedPassword = random.ints(leftLimit, rightLimit + 1)
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+            .limit(targetStringLength)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
+        return generatedPassword;
     }
 }
