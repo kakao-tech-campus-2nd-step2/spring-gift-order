@@ -8,7 +8,6 @@ import gift.entity.Wish;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishlistRepository;
-import gift.util.KakaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,19 +22,17 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final WishlistRepository wishlistRepository;
     private final RestClient restClient;
-    private final KakaoUtil kakaoUtil;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, RestClient restClient, KakaoUtil kakaoUtil) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, RestClient restClient) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.wishlistRepository = wishlistRepository;
         this.restClient = restClient;
-        this.kakaoUtil = kakaoUtil;
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest orderRequest, String kakaoToken) {
+    public OrderResponse createOrder(OrderRequest orderRequest, Map<String, Object> kakaoUserInfo) {
         Option option = optionRepository.findById(orderRequest.optionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
@@ -46,8 +43,7 @@ public class OrderService {
         option.setQuantity(option.getQuantity() - orderRequest.quantity());
         optionRepository.save(option);
 
-        Map<String, Object> userInfo = kakaoUtil.getUserInfo(kakaoToken);
-        Long memberId = Long.parseLong(userInfo.get("id").toString());
+        Long memberId = Long.parseLong(kakaoUserInfo.get("id").toString());
 
         Wish wish = wishlistRepository.findByMemberIdAndProductId(memberId, option.getProduct().getId())
                 .orElse(null);
@@ -63,13 +59,14 @@ public class OrderService {
         order.setMessage(orderRequest.message());
         orderRepository.save(order);
 
-        sendOrderMessage(order, kakaoToken);
+        sendOrderMessage(order, kakaoUserInfo);
 
         return new OrderResponse(order.getId(), option.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
     }
 
-    private void sendOrderMessage(Order order, String kakaoToken) {
+    private void sendOrderMessage(Order order, Map<String, Object> kakaoUserInfo) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+        String token = kakaoUserInfo.get("access_token").toString();
 
         String messageTemplate = "{\n" +
                 "  \"object_type\": \"text\",\n" +
@@ -85,7 +82,7 @@ public class OrderService {
             restClient
                     .post()
                     .uri(url)
-                    .header("Authorization", "Bearer " + kakaoToken)
+                    .header("Authorization", "Bearer " + token)
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .body("template_object=" + messageTemplate)
                     .retrieve()
