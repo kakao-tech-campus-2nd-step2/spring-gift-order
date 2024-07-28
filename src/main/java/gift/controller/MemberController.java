@@ -24,6 +24,8 @@ import static gift.domain.LoginType.NORMAL;
 @RequestMapping("/members")
 public class MemberController {
 
+    private static final String KAKAO_EMAIL_SUFFIX = "@kakao.com";
+
     private final MemberService memberService;
     private final TokenService tokenService;
     private final KakaoLoginService kakaoLoginService;
@@ -63,9 +65,9 @@ public class MemberController {
 
         KakaoProfileResponse profileResponse = kakaoLoginService.getUserProfile(tokenResponse.accessToken());
 
-        String email = profileResponse.kakaoAccount().profile().nickname() + "@kakao.com";
+        String email = profileResponse.kakaoAccount().profile().nickname() + KAKAO_EMAIL_SUFFIX;
 
-        if (email.equals("@kakao.com")) {
+        if (KAKAO_EMAIL_SUFFIX.equals(email)) {
             return new ResponseEntity<>(Map.of("error", "이메일을 가져올 수 없습니다."), HttpStatus.BAD_REQUEST);
         }
 
