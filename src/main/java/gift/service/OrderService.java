@@ -43,7 +43,7 @@ public class OrderService {
                 order.getMessage()
         );
 
-        kakaoService.sendKakaoMessage(response, accessToken);
+        kakaoService.sendmessage(response, accessToken);
 
         return response;
     }
