@@ -13,7 +13,6 @@ import gift.entity.User;
 import gift.entity.Wishlist;
 import gift.exception.InvalidProductException;
 import gift.exception.InvalidUserException;
-import gift.exception.UnauthorizedException;
 import gift.repository.ProductRepository;
 import gift.repository.WishlistRepository;
 
@@ -49,7 +48,7 @@ public class WishlistService {
 		validateBindingResult(bindingResult);
 		User user = userService.getUserFromToken(token);
         Wishlist deleteWishlist = findWishlistById(request.getProductId());
-        validateUserPermission(deleteWishlist, user);
+        deleteWishlist.validateUserPermission(user);
         wishlistRepository.delete(deleteWishlist);
 	}
 	
@@ -57,7 +56,7 @@ public class WishlistService {
 		validateBindingResult(bindingResult);
 		User user = userService.getUserFromToken(token);
         Wishlist updateWishlist = findWishlistById(request.getProductId());
-        validateUserPermission(updateWishlist, user);
+        updateWishlist.validateUserPermission(user);
         if (request.getQuantity() == 0) {
         	wishlistRepository.delete(updateWishlist);
         	return;
@@ -74,12 +73,6 @@ public class WishlistService {
 			throw new InvalidUserException(errorMessage, HttpStatus.BAD_REQUEST);
         }
     }
-	
-	private void validateUserPermission(Wishlist wishlist, User user) {
-		if (!wishlist.getUser().equals(user)) {
-			throw new UnauthorizedException("You do not have permission to perform this action on the wishlist item.");
-		}
-	}
 	
 	private Product findProductById(Long id) {
 		return productRepository.findById(id)
