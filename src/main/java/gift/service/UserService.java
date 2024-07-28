@@ -3,18 +3,22 @@ package gift.service;
 import gift.dto.TokenResponse;
 import gift.model.User;
 import gift.repository.UserRepository;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import gift.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public void createUser(User user) {
@@ -22,19 +26,22 @@ public class UserService {
     }
 
     public User loadOneUser(String email) {
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email).orElse(null);
     }
 
-    public String makeToken(User user) {
-        String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
-        return Jwts.builder()
-                .subject(user.getEmail())
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
+    @Transactional
+    public User loginOrRegisterUser(String email, String token) {
+        User user = userRepository.findByEmail(email).orElseGet(() -> {
+            User newUser = new User(email, UUID.randomUUID().toString());
+            newUser.setKakaoAccessToken(token);
+            return userRepository.save(newUser);
+        });
+        user.setKakaoAccessToken(token);
+        return userRepository.save(user);
     }
 
     public TokenResponse createTokenResponse(User user) {
-        String token = makeToken(user);
+        String token = jwtTokenProvider.createToken(user.getEmail());
         return new TokenResponse(token);
     }
 }
