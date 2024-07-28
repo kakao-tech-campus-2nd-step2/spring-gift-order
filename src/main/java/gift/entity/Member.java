@@ -9,15 +9,17 @@ import java.util.List;
 public class Member extends BaseEntity {
     private String email;
     private String password;
+    private String role;
 
     @OneToMany(mappedBy = "member")
     private List<Wish> wishes = new ArrayList<>();
 
     public Member() {}
 
-    public Member(String email, String password) {
+    public Member(String email, String password, String role) {
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public String getEmail() {
@@ -34,6 +36,14 @@ public class Member extends BaseEntity {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public List<Wish> getWishes() {
