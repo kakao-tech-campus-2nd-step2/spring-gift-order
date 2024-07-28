@@ -9,6 +9,7 @@ import gift.DTO.WishList;
 import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import gift.Repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ public class OrderService {
     this.kakaoApi = kakaoApi;
   }
 
+  @Transactional
   public OrderDto orderOption(OrderDto orderDto) {
     List<OptionDto> optionDtos = orderDto.getOptionDtos();
     for(OptionDto optionDto : optionDtos){
