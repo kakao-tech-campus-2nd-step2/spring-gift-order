@@ -3,6 +3,7 @@ package gift.service;
 import gift.domain.OrderDTO;
 import gift.entity.Order;
 import gift.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -15,24 +16,24 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final WishlistRepository wishlistRepository;
     private final MemberRepository memberRepository;
-    private final OptionsRepository optionsRepository;
     private final OptionService optionService;
     private final KakaoLoginService kakaoLoginService;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, MemberRepository memberRepository, OptionsRepository optionsRepository, OptionService optionService, KakaoLoginService kakaoLoginService) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishlistRepository wishlistRepository, MemberRepository memberRepository, OptionService optionService, KakaoLoginService kakaoLoginService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.wishlistRepository = wishlistRepository;
         this.memberRepository = memberRepository;
-        this.optionsRepository = optionsRepository;
         this.optionService = optionService;
         this.kakaoLoginService = kakaoLoginService;
     }
 
+    @Transactional
     public Order addOrder(String token, OrderDTO orderDTO) {
         var option = optionRepository.findById(orderDTO.optionId()).orElseThrow(NoSuchElementException::new);
         var timeStamp = new Timestamp(System.currentTimeMillis());
         var order = orderRepository.save(new Order(option, orderDTO.quantity(), timeStamp.toString(), orderDTO.message()));
+        optionService.deductQuantity(orderDTO.optionId(), orderDTO.quantity());
         deleteWishlist(token, orderDTO.optionId());
         kakaoLoginService.sendMessage(token, orderDTO.message());
         return order;
@@ -45,7 +46,7 @@ public class OrderService {
     }
 
     public Order findOrderById(int id) {
-        var order = orderRepository.findById(id).orElseThrow(NoSuchElementException::new);
-        return order;
+        return orderRepository.findById(id)
+                .orElseThrow(NoSuchElementException::new);
     }
 }
