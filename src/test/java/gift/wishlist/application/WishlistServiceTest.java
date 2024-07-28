@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
+import static gift.member.domain.OauthProvider.COMMON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -55,7 +56,7 @@ public class WishlistServiceTest {
         productId = 1L;
         wishlistId = 1L;
         memberEmail = "test@example.com";
-        member = new Member(memberId, memberEmail, "password");
+        member = new Member(memberId, memberEmail, "password", COMMON);
         product = new Product(productId, "Product", 1000, "image", new Category("name", "color", "description", "imageUrl"));
         wishlist = new Wishlist(wishlistId, member, product);
     }

@@ -2,8 +2,9 @@ package gift.wishlist.presentation;
 
 import gift.auth.TokenService;
 import gift.member.application.MemberService;
-import gift.wishlist.application.WishlistServiceResponse;
+import gift.member.presentation.request.ResolvedMember;
 import gift.wishlist.application.WishlistService;
+import gift.wishlist.application.WishlistServiceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +42,13 @@ public class WishlistControllerTest {
 
     private String token;
     private Long memberId;
+    private ResolvedMember resolvedMember;
 
     @BeforeEach
     public void setUp() {
         memberId = 1L;
         token = "testToken";
+        resolvedMember = new ResolvedMember(memberId);
         when(tokenService.extractMemberId(eq(token))).thenReturn(memberId);
     }
 
@@ -57,8 +60,8 @@ public class WishlistControllerTest {
         // When & Then
         mockMvc.perform(post("/api/wishlist")
                         .header("Authorization", "Bearer " + token)
-                        .param("productId", "1")
-                        .requestAttr("memberId", memberId))
+                        .requestAttr("resolvedMember", resolvedMember)
+                        .param("productId", "1"))
                 .andExpect(status().isOk());
 
         verify(wishlistService, times(1)).save(1L, 1L);
@@ -82,7 +85,7 @@ public class WishlistControllerTest {
         // When & Then
         mockMvc.perform(get("/api/wishlist")
                         .header("Authorization", "Bearer " + token)
-                        .requestAttr("memberId", 1L)
+                        .requestAttr("resolvedMember", resolvedMember)
                         .param("page", "0")
                         .param("size", "3"))
                 .andExpect(status().isOk())
@@ -96,7 +99,7 @@ public class WishlistControllerTest {
 
         mockMvc.perform(get("/api/wishlist")
                         .header("Authorization", "Bearer " + token)
-                        .requestAttr("memberId", 1L)
+                        .requestAttr("resolvedMember", resolvedMember)
                         .param("page", "1")
                         .param("size", "3"))
                 .andExpect(status().isOk())
@@ -127,6 +130,7 @@ public class WishlistControllerTest {
         // When & Then
         mockMvc.perform(get("/api/wishlist/{productId}", 1L)
                         .header("Authorization", "Bearer " + token)
+                        .requestAttr("resolvedMember", resolvedMember)
                         .param("page", "0")
                         .param("size", "3"))
                 .andExpect(status().isOk())
@@ -140,6 +144,7 @@ public class WishlistControllerTest {
 
         mockMvc.perform(get("/api/wishlist/{productId}", 1L)
                         .header("Authorization", "Bearer " + token)
+                        .requestAttr("resolvedMember", resolvedMember)
                         .param("page", "1")
                         .param("size", "3"))
                 .andExpect(status().isOk())
@@ -159,7 +164,8 @@ public class WishlistControllerTest {
 
         // When & Then
         mockMvc.perform(delete("/api/wishlist/{id}", 1L)
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + token)
+                        .requestAttr("resolvedMember", resolvedMember))
                 .andExpect(status().isOk());
 
         verify(wishlistService, times(1)).delete(1L);
