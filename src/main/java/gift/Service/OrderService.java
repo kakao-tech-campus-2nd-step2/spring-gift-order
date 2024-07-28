@@ -73,8 +73,13 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(
                 ()-> new OrderNotFoundException("해당하는 주문을 찾을 수 없습니다"));
         order.checkOrderBelongsToMember(member);
+        if (quantity > 0 ){
+            order.getOption().addQuantity(quantity);
+        }
+        if(quantity < 0){
+            order.getOption().subtract(quantity);
+        }
         order.updateQuantity(quantity);
-
     }
 
     @Transactional
@@ -82,6 +87,7 @@ public class OrderService {
         Order order = orderRepository.findById(orderId).orElseThrow(
                 () -> new OrderNotFoundException("해당하는 주문을 찾을 수 없습니다"));
         order.checkOrderBelongsToMember(member);
+        order.getOption().addQuantity(order.getQuantity().getValue());
         orderRepository.deleteById(orderId);
     }
 }
