@@ -13,12 +13,20 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
+    private MemberType memberType;
+
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
+    @Column(unique = true)
+    private Long kakaoId;
+
+    @Column
+    private String kakaoToken;
 
     public Member() {
 
@@ -28,9 +36,15 @@ public class Member {
         this.id = id;
     }
 
-    public Member(String email, String password) {
+    public Member(MemberType memberType, String email, String password) {
+        this.memberType = memberType;
         this.email = email;
         this.password = password;
+    }
+
+    public Member(MemberType memberType, Long kakaoId) {
+        this.memberType = memberType;
+        this.kakaoId = kakaoId;
     }
 
     public Long getId() {

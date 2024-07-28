@@ -11,6 +11,6 @@ public record MemberRequest(
 ) {
 
     public Member toMember() {
-        return new Member(email, password);
+        return new Member(MemberType.EMAIL, email, password);
     }
 }

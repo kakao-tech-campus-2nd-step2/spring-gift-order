@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.domain.member.Member;
 import gift.domain.member.MemberRequest;
+import gift.domain.member.MemberType;
 import gift.repository.MemberRepository;
 import gift.util.JwtUtil;
 import jakarta.transaction.Transactional;
@@ -39,5 +40,12 @@ public class MemberService {
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "이메일 혹은 비밀번호가 일치하지 않습니다");
         }
+    }
+
+    public String kakaoLogin(Long kakaoId) {
+        Optional<Member> memberOptional = memberRepository.findByKakaoId(kakaoId);
+        Member member = memberOptional.orElseGet(
+            () -> memberRepository.save(new Member(MemberType.KAKAO, kakaoId)));
+        return jwtUtil.generateToken(member);
     }
 }
