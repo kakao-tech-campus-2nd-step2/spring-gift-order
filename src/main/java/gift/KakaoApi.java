@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
 import gift.DTO.KakaoJwtTokenDto;
+import gift.DTO.OptionDto;
 import gift.DTO.OrderDto;
 import gift.Exception.UnauthorizedException;
 import org.springframework.http.HttpEntity;
@@ -58,28 +59,38 @@ public class KakaoApi {
     headers.setBearerAuth(kakaoJwtToken.getAccessToken());
 
     String body = "template_object=" + createTemplateObject(orderDto);
+    System.out.println(body);
     HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
     String response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class)
       .getBody();
   }
 
   public String createTemplateObject(OrderDto orderDto) {
+    StringBuilder itemsBuilder = new StringBuilder();
+
+    for (OptionDto optionDto : orderDto.getOptionDtos()) {
+      itemsBuilder.append("""
+        {"item":"%s","item_op":"%d개"},""".formatted(optionDto.getName(), optionDto.getQuantity()));
+    }
+
+    if (itemsBuilder.length() > 0) {
+      itemsBuilder.setLength(itemsBuilder.length() - 1);
+    }
+
     return """
       {
-      "object_type" : "feed",
-      "content" : {
-        "title" : "주문이 완료되었습니다.",
-        "image_url" : "imageUrl",
-        "description" : "상세설명입니다.",
-        "link" : {
+        "object_type" : "feed",
+        "content" : {
+          "title" : "주문이 완료되었습니다.",
+          "image_url" : "imageUrl",
+          "description" : "상세설명입니다.",
+          "link" : {
           }
         },
-      "item_content":{
-        "items":[
-            {"item":"%s","item_op":"%d개"}
-          ] 
+        "item_content": {
+          "items": [%s]
         }
-      } 
-      """.formatted(orderDto.getOptionDto().getName(), orderDto.getQuantity());
+      }
+      """.formatted(itemsBuilder.toString());
   }
 }

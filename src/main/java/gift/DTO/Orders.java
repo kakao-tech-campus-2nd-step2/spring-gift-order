@@ -6,7 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table
@@ -16,17 +18,17 @@ public class Orders {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "option_id")
-  private Option option;
+  @OneToMany
+  @JoinColumn(name = "options_id")
+  private List<Option> options;
   private int quantity;
 
   private String orderDateTime;
   private String message;
 
-  public Orders(Long id, Option option, int quantity, String orderDateTime, String message) {
+  public Orders(Long id, List<Option> options, int quantity, String orderDateTime, String message) {
     this.id = id;
-    this.option = option;
+    this.options = options;
     this.quantity = quantity;
     this.orderDateTime = orderDateTime;
     this.message = message;
@@ -39,8 +41,8 @@ public class Orders {
     return id;
   }
 
-  public Option getOption() {
-    return option;
+  public List<Option> getOptions() {
+    return options;
   }
 
   public int getQuantity() {
