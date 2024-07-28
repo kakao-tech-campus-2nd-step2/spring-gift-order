@@ -5,6 +5,8 @@ import gift.dto.MemberDTO;
 import gift.service.MemberService;
 import gift.util.JwtUtil;
 import gift.model.Member;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/members")
+@Tag(name = "멤버 관리 API", description = "멤버(사용자) 관리를 위한 API")
 public class MemberController {
 
     private final MemberService memberService;
@@ -27,12 +30,14 @@ public class MemberController {
     }
 
     @GetMapping("/new")
+    @Operation(summary = "회원 가입 폼 보기", description = "회원 가입 폼으로 이동합니다.")
     public String showRegistrationForm(Model model) {
         model.addAttribute("memberDTO", new MemberDTO("", "", ""));
         return "register_member_form";
     }
 
     @PostMapping
+    @Operation(summary = "회원 가입", description = "회원 가입합니다.")
     public String registerUser(@ModelAttribute @Valid MemberDTO memberDTO, BindingResult result,
         Model model) {
         if (result.hasErrors()) {
@@ -53,12 +58,14 @@ public class MemberController {
     }
 
     @GetMapping("/auth")
+    @Operation(summary = "로그인 폼 보기", description = "로그인 폼으로 이동합니다.")
     public String showLoginForm(Model model) {
         model.addAttribute("loginDTO", new LoginDTO("", ""));
         return "login_member_form";
     }
 
     @PostMapping("/auth")
+    @Operation(summary = "로그인", description = "로그인합니다.")
     public String loginUser(@ModelAttribute @Valid LoginDTO loginDTO, BindingResult result,
         Model model) {
         if (result.hasErrors()) {

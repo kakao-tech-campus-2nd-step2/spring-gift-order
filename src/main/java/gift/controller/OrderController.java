@@ -6,6 +6,8 @@ import gift.dto.OrderResponseDTO;
 import gift.model.Member;
 import gift.service.KakaoService;
 import gift.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/orders/{optionId}")
+@Tag(name = "주문 관리 API", description = "주문 관리를 위한 API")
 public class OrderController {
 
     private final OrderService orderService;
@@ -28,6 +31,7 @@ public class OrderController {
     }
 
     @GetMapping
+    @Operation(summary = "주문 폼 보기", description = "주문할 수 있는 폼으로 이동합니다.")
     public String showOrderForm(@PathVariable("optionId") Long optionId, Model model) {
         OrderRequestDTO orderRequestDTO = new OrderRequestDTO(optionId, 1L, "임시 메시지", null);
         model.addAttribute("orderRequestDTO", orderRequestDTO);
@@ -35,6 +39,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "주문하기", description = "주문을 합니다. 주문과 동시에 카카오톡 메시지를 보냅니다.")
     public String addOrder(@PathVariable("optionId") Long optionId,
         @RequestBody @Valid OrderRequestDTO orderRequestDTO, @LoginMember Member member) {
         if (member == null) {
