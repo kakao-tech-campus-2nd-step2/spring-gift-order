@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
 
     Page<Wishlist> findAllByMemberId(Long memberId, Pageable pageable);
+
+    List<Wishlist> findAllByMemberId(Long memberId);
 
     Page<Wishlist> findAllByProductId(Long productId, Pageable pageable);
 
