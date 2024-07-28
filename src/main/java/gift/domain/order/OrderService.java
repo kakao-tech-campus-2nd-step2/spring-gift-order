@@ -41,14 +41,14 @@ public class OrderService {
         JpaOptionRepository jpaOptionRepository,
         OptionService optionService,
         JpaCartItemRepository jpaCartItemRepository,
-        RestTemplateBuilder restTemplateBuilder,
+        RestTemplate restTemplate,
         ObjectMapper objectMapper,
         JpaUserRepository userRepository
     ) {
         optionRepository = jpaOptionRepository;
         this.optionService = optionService;
         cartItemRepository = jpaCartItemRepository;
-        restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.userRepository = userRepository;
     }
@@ -59,7 +59,8 @@ public class OrderService {
     @Transactional
     public void order(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
         // 해당 상품의 옵션의 수량을 차감
-        optionService.decreaseOptionQuantity(orderRequestDTO.optionId(), orderRequestDTO.quantity());
+        optionService.decreaseOptionQuantity(orderRequestDTO.optionId(),
+            orderRequestDTO.quantity());
 
         // 해당 상품이 (나의) 위시리스트에 있는 경우 위시 리스트에서 삭제
         removeFromWishList(userInfo.getId(), orderRequestDTO.optionId());

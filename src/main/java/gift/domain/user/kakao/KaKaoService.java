@@ -10,7 +10,6 @@ import gift.global.exception.ErrorCode;
 import java.net.URI;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,6 +24,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KaKaoService {
+
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private final ObjectMapper objectMapper;
@@ -35,12 +35,12 @@ public class KaKaoService {
     @Autowired
     public KaKaoService(
         JpaUserRepository userRepository,
-        RestTemplateBuilder restTemplateBuilder,
+        RestTemplate restTemplate,
         ObjectMapper objectMapper,
         KaKaoProperties kaKaoProperties
     ) {
         this.userRepository = userRepository;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.kaKaoProperties = kaKaoProperties;
     }
@@ -62,9 +62,9 @@ public class KaKaoService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return parseTokenResponse(response);
-        } else {
-            throw new BusinessException(ErrorCode.FORBIDDEN, "사용자 권한이 없습니다.");
         }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN, "사용자 권한이 없습니다.");
     }
 
     public User loginOrRegister(KaKaoToken kaKaoToken) {
