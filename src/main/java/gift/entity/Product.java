@@ -3,8 +3,12 @@ package gift.entity;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 import gift.dto.product.ModifyProductDTO;
+import gift.dto.product.ShowProductDTO;
+import gift.exception.exception.BadRequestException;
+import gift.exception.exception.UnAuthException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -21,6 +25,7 @@ public class Product {
     @NotBlank(message = "이름 공백 안됨")
     @Size(max = 15, message = "15글자까지만 가능")
     @Pattern(regexp = "^[a-zA-Z0-9()\\[\\]+\\-&/_]+$", message = "특수기호 안됨")
+    @Pattern(regexp = "^(?!.*카카오).*", message = "카카오는 md와 상담")
     @Column(nullable = false)
     String name;
     @Column(nullable = false)
@@ -46,6 +51,10 @@ public class Product {
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
+    }
+
+    public List<Option> getOptions() {
+        return this.options;
     }
 
     public String getCategoryName() {
@@ -96,5 +105,9 @@ public class Product {
         this.name = modifyProductDTO.name();
         this.price = modifyProductDTO.price();
         this.imageUrl = modifyProductDTO.imageUrl();
+    }
+
+    public ShowProductDTO toDTO() {
+        return new ShowProductDTO(id,name,price,imageUrl,getCategoryName());
     }
 }

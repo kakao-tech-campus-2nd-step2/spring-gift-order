@@ -4,6 +4,7 @@ package gift.controller;
 import gift.dto.product.ProductWithOptionDTO;
 import gift.service.ProductService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,9 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
+@RequiredArgsConstructor
 public class ProductAdminController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @GetMapping("/admin/products")
     public String adminProducts(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") int pageNum) {

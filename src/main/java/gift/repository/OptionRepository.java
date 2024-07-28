@@ -19,4 +19,10 @@ public interface OptionRepository extends JpaRepository<Option, Integer> {
 
     @Query("select o from Option o where o.option = :option")
     Optional<Option> findByOption(String option);
+
+    @Query("select o from Option o where o.product.name =:name and o.option = :option")
+    Optional<Option> findByProductNameAndOption(String name, String option);
+
+    @Query("delete from Option o where o.product.id = :id")
+    void deleteByProductId(int id);
 }

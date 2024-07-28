@@ -9,6 +9,8 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import io.jsonwebtoken.security.SignatureException;
+
 
 @RestControllerAdvice
 public class MyExceptionHandler {
@@ -24,43 +26,48 @@ public class MyExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     @ExceptionHandler(NotFoundException.class)
-    public String exception(NotFoundException e) {
+    public String NotFound(NotFoundException e) {
         return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     @ExceptionHandler(ServerInternalException.class)
-    public String exception(ServerInternalException e) {
-        return "서버 오류";
+    public String ServerInternal(ServerInternalException e) {
+        return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     @ExceptionHandler(UnAuthException.class)
-    public String exception(UnAuthException e) {
+    public String UnAuthorized(UnAuthException e) {
         return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(BadRequestException.class)
-    public String exception(BadRequestException e) {
+    public String BadRequest(BadRequestException e) {
         return e.getMessage();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
-    public String exception(ConstraintViolationException e) {
-        return "제약사항 요구 어긋남";
+    public String ConstaintViolation(ConstraintViolationException e) {
+        return "제약사항 어긋남";
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     @ExceptionHandler(ExpiredJwtException.class)
-    public String exception(ExpiredJwtException e) {
+    public String ExpiredJwt(ExpiredJwtException e) {
         return "인증이 잘못됨";
     }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    @ExceptionHandler(SignatureException.class)
+    public String SignatureException(SignatureException e){return "토큰이 변조됨";}
 }
 

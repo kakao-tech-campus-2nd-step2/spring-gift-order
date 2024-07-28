@@ -17,6 +17,7 @@ import gift.repository.CategoryRepository;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,14 +34,11 @@ import static java.util.Arrays.stream;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class ProductService {
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
-    private OptionRepository optionRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-
+    private final ProductRepository productRepository;
+    private final OptionRepository optionRepository;
+    private final CategoryRepository categoryRepository;
     public Page<ProductWithOptionDTO> getAllProductsWithOption(Pageable pageable) {
         return optionRepository.findAllWithOption(pageable);
     }
@@ -49,65 +47,48 @@ public class ProductService {
         return productRepository.findAllProduct(pageable);
     }
 
-    public void saveProduct(SaveProductDTO product) {
-        Category category = categoryRepository.findById(product.categoryId()).orElseThrow(() -> new NotFoundException("해당 카테고리가 없음"));
-        Product saveProduct = new Product(product.name(), product.price(), product.imageUrl(), category);
-        List<String> optionList = stream(product.option().split(",")).toList();
-        optionList = optionList.stream().distinct().collect(Collectors.toList());
+    @Transactional
+    public Product saveProduct(SaveProductDTO productDTO) {
+        Category category = categoryRepository.findById(productDTO.categoryId()).orElseThrow(() -> new NotFoundException("해당 카테고리가 없음"));
+        Optional<Product> optionalProduct = productRepository.findByNameAndCategory(productDTO.name(), category.getName());
+        Product product;
+        if(optionalProduct.isPresent()){
+            throw new BadRequestException("해당 카테고리에 같은 이름의 물품이 존재");
+        }  //product없음 product도 추가해야함
+        product = new Product(productDTO.name(), productDTO.price(), productDTO.imageUrl(), category);
+        final Product saveProduct = productRepository.save(product);
+        category.addProduct(product);
 
-        if (isValidProduct(saveProduct, optionList)) {
-            saveProduct = productRepository.save(saveProduct);
-            category.addProduct(saveProduct);
-            addOptionToProduct(optionList, saveProduct);
-        }
-    }
+        if(productDTO.option().isBlank()) throw new BadRequestException("하나의 옵션은 존재해야함");
+        List<String> optionList = stream(productDTO.option().split(",")).toList();
 
-    private void addOptionToProduct(List<String> optionList, Product product) {
         optionList.stream()
-                .map(str -> new Option(product, str))
+                .distinct()
+                .map(str -> new Option(saveProduct, str))
                 .filter(this::isValidOption)
-                .forEach(option -> optionRepository.save(option));
-    }
-
-    private boolean isValidProduct(@Validated Product product, List<String> optionList) {
-        if (optionList.isEmpty())
-            throw new BadRequestException("하나의 옵션은 필요");
-        if (product.getName().contentEquals("카카오"))
-            throw new UnAuthException("MD와 상담해주세요.");
-
-        Optional<Product> productOptional = productRepository.findById(product.getId());
-        return productOptional.map(value -> value.equals(product)).orElse(true);
+                .toList();
+        return product;
     }
 
     private boolean isValidOption(@Validated Option option) {
-        if (optionRepository.findById(option.getId()).isPresent())
-            throw new BadRequestException("이미 존재하는 옵션입니다.");
-        return true;
+        return optionRepository.findByProductNameAndOption(option.getProduct().getName(), option.getOption()).isEmpty();
     }
 
     public void deleteProduct(int id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("존재하지 않는 id입니다."));
         product.getCategory().deleteProduct(product);
-        optionRepository.deleteAll();
+        optionRepository.deleteByProductId(id);
         productRepository.deleteById(id);
     }
 
 
-    public String getProductByID(int id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 물건이 없습니다."));
-        ObjectMapper objectMapper = new ObjectMapper();
-        String jsonProduct = "";
+    public ShowProductDTO getProductByID(int id) {
+        return productRepository.findById(id).orElseThrow(() -> new NotFoundException("해당 물건이 없습니다.")).toDTO();
 
-        try {
-            jsonProduct = objectMapper.writeValueAsString(product);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return jsonProduct;
     }
 
     @Transactional
-    public void modifyProduct(ModifyProductDTO modifyProductDTO) {
+    public void updateProduct(ModifyProductDTO modifyProductDTO) {
         Product product = productRepository.findById(modifyProductDTO.id()).orElseThrow(() -> new NotFoundException("물건이 없습니다."));
         product.modifyProduct(modifyProductDTO);
     }

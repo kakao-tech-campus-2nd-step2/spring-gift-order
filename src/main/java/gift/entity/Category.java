@@ -1,7 +1,9 @@
 package gift.entity;
 
+import gift.dto.category.CategoryDTO;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class Category {
     String name;
 
     @OneToMany(mappedBy = "category")
-    List<Product> products;
+    List<Product> products = new ArrayList<>();
 
     public Category() {
     }
@@ -51,5 +53,8 @@ public class Category {
 
     public void updateCategoryName(String name) {
         this.name = name;
+    }
+    public CategoryDTO toDTO(){
+        return new CategoryDTO(this.id,this.name);
     }
 }

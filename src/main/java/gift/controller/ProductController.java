@@ -6,6 +6,7 @@ import gift.dto.product.SaveProductDTO;
 import gift.dto.product.ShowProductDTO;
 import gift.entity.Product;
 import gift.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,49 +19,40 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
-
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping("/api/products")
     public Page<ShowProductDTO> getProducts(@RequestParam(value = "page", defaultValue = "0") int pageNum) {
         Pageable pageable = PageRequest.of(pageNum, 2, Sort.by(Sort.Direction.ASC, "id"));
         return productService.getAllProducts(pageable);
-
     }
 
     @PostMapping("/api/products")
     @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
     public String addProduct(@RequestBody SaveProductDTO product) {
         productService.saveProduct(product);
-        return "redirect:api/products";
+        return "product 추가";
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/products/{Id}")
     public String deleteProduct(@PathVariable int Id) {
         productService.deleteProduct(Id);
-        return "redirect:api/products";
+        return "product 삭제";
     }
 
-    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/api/products")
-    public String modifyProduct(@RequestBody ModifyProductDTO product) {
-        productService.modifyProduct(product);
-        return "redirect:api/products";
+    public String updateProduct(@RequestBody ModifyProductDTO product) {
+        productService.updateProduct(product);
+        return "product 수정";
     }
 
-
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping("/api/product/{id}")
-    public String getProduct(@PathVariable int Id) {
-        String product = productService.getProductByID(Id);
-        return product;
+    public ShowProductDTO getProduct(@PathVariable int id) {
+        return productService.getProductByID(id);
     }
 }
 
