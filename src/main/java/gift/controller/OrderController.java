@@ -5,6 +5,8 @@ import gift.domain.Order;
 import gift.service.KakaoService;
 import gift.service.OrderService;
 import gift.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "Order", description = "주문 API")
 public class OrderController {
 
     private final OrderService orderService;
@@ -29,6 +32,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "주문 추가", description = "해당 회원이 해당 상품에 대한 주문 추가")
     public ResponseEntity<?> addOrder(HttpServletRequest request, @Valid @RequestBody Order order) throws JsonProcessingException {
         Long memberId = jwtUtil.extractMemberId(request);
         Order addedOrder = orderService.addOrder(memberId, order);
