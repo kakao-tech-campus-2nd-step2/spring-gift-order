@@ -13,9 +13,4 @@ public class LinkObject {
     public String getWebUrl() {
         return webUrl;
     }
-
-    public void setWebUrl(String webUrl) {
-        this.webUrl = webUrl;
-    }
-
 }
