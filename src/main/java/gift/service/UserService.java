@@ -2,9 +2,11 @@ package gift.service;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import gift.entity.KakaoErrorCode;
 import gift.entity.KakaoProperties;
 import gift.entity.User;
 import gift.entity.UserDTO;
+import gift.exception.KakaoException;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.UserRepository;
 import gift.util.UserUtility;
@@ -13,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,12 +48,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    public User findOne(Long id) {
-        return userRepository
-                .findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
-
+    @Transactional
     public String signup(UserDTO userDTO) {
         // 이미 존재하는 이메일
         if (userRepository.existsByEmail(userDTO.getEmail())) {
@@ -95,12 +94,19 @@ public class UserService {
         body.add("redirect_url", kakaoProperties.redirectUrl());
         body.add("code", code);
 
-        String accessTokenResponse = client.post()
-                .uri(URI.create("https://kauth.kakao.com/oauth/token"))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .body(String.class);
+        String accessTokenResponse;
+        try {
+            accessTokenResponse = client.post()
+                    .uri(URI.create("https://kauth.kakao.com/oauth/token"))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException e) {
+            String statusCode = e.getMessage().split(" ")[0];
+            KakaoErrorCode errorCode = KakaoErrorCode.determineKakaoErrorCode(statusCode);
+            throw new ResponseStatusException(errorCode.getStatus(), errorCode.getMessage());
+        }
 
         JsonObject jsonObject = JsonParser.parseString(accessTokenResponse).getAsJsonObject();
         String kakaoAccessToken = jsonObject.get("access_token").getAsString();
@@ -108,14 +114,22 @@ public class UserService {
         return kakaoAccessToken;
     }
 
+    @Transactional
     public Map<String, String> getKakaoProfile(String kakaoAccessToken) {
         // 유저 정보 받아오기
-        String userDataResponse = client.post()
-                .uri(URI.create("https://kapi.kakao.com/v2/user/me"))
-                .header("Authorization", "Bearer " + kakaoAccessToken)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .retrieve()
-                .body(String.class);
+        String userDataResponse;
+        try {
+            userDataResponse = client.post()
+                    .uri(URI.create("https://kapi.kakao.com/v2/user/me"))
+                    .header("Authorization", "Bearer " + kakaoAccessToken)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException e) {
+            String statusCode = e.getMessage().split(" ")[0];
+            KakaoErrorCode errorCode = KakaoErrorCode.determineKakaoErrorCode(statusCode);
+            throw new KakaoException(errorCode.getStatus(), errorCode.getMessage());
+        }
 
         JsonObject jsonObject = JsonParser.parseString(userDataResponse).getAsJsonObject();
         JsonObject kakaoObject = jsonObject.get("kakao_account").getAsJsonObject();

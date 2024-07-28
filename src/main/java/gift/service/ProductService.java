@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public class ProductService {
         return wishlists;
     }
 
+    @Transactional
     public Product save(ProductDTO productDTO, String email) {
         User user = userService.findOne(email);
 
@@ -65,6 +67,7 @@ public class ProductService {
         return product;
     }
 
+    @Transactional
     public Product update(Long id, ProductDTO productDTO, String email) {
         if (!productMatchesUser(id, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -81,6 +84,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @Transactional
     public void delete(Long id, String email) {
         if (!productMatchesUser(id, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -100,6 +104,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void addProductOption(Long productId, Long optionId, String email) {
         if (!productMatchesUser(productId, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -110,6 +115,7 @@ public class ProductService {
         productOptionRepository.save(new ProductOption(product, option, option.getName()));
     }
 
+    @Transactional
     public void deleteProductOption(Long productId, Long optionId, String email) {
         if (!productMatchesUser(productId, email)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");

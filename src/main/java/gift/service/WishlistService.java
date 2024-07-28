@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,7 @@ public class WishlistService {
         return products;
     }
 
+    @Transactional
     public void addWishlistProduct(String email, WishlistDTO wishlistDTO) {
         Long id = wishlistDTO.getProductId();
         Product product = productRepository.findById(id)
@@ -76,6 +78,7 @@ public class WishlistService {
 
     }
 
+    @Transactional
     public void deleteWishlist(String email, Long productId) {
         Optional<Wishlist> wishlist = wishlistRepository.findByEmail(email);
         if (wishlist.isEmpty()) {

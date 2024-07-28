@@ -1,8 +1,12 @@
 package gift.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class UserResponseDTO {
 
+    @Schema(description = "유저 이메일", nullable = false, example = "test@mail.com")
     private String email;
+    @Schema(description = "유저 role", nullable = false, example = "USER")
     private String role;
 
     public UserResponseDTO(String email, String role) {

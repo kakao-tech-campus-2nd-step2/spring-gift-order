@@ -1,6 +1,7 @@
 package gift.service;
 
 import gift.entity.*;
+import gift.exception.KakaoException;
 import gift.exception.ResourceNotFoundException;
 import gift.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,6 +46,7 @@ public class OrderService {
         this.userService = userService;
     }
 
+    @Transactional
     public Order save(HttpSession session, OrderDTO orderDTO) {
         String email = (String) session.getAttribute("email");
 
@@ -81,11 +85,12 @@ public class OrderService {
         return orderRepository.findByUserId(user.getId());
     }
 
+    @Transactional
     public void delete(Long orderId, String email) {
         User user = userService.findOne(email);
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         if (user.getId() != order.getUser().getId()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+            throw new KakaoException(HttpStatus.UNAUTHORIZED, "Unauthorized");
         }
         orderRepository.delete(order);
     }
@@ -93,13 +98,21 @@ public class OrderService {
     public void sendToMe(String kakaoAccessToken, OrderDTO order) {
         LinkedMultiValueMap<String, String> body = makeRequestBody(order);
 
-        String response = client.post()
-                .uri(URI.create("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
-                .header("Authorization", "Bearer " + kakaoAccessToken)
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .body(String.class);
+        String response;
+
+        try {
+            response = client.post()
+                    .uri(URI.create("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
+                    .header("Authorization", "Bearer " + kakaoAccessToken)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .body(String.class);
+        } catch (HttpClientErrorException e) {
+            String statusCode = e.getMessage().split(" ")[0];
+            KakaoErrorCode errorCode = KakaoErrorCode.determineKakaoErrorCode(statusCode);
+            throw new KakaoException(errorCode.getStatus(), errorCode.getMessage());
+        }
     }
 
     private LinkedMultiValueMap<String, String> makeRequestBody(OrderDTO order) {
