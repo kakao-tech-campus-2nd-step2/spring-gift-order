@@ -39,7 +39,7 @@ public class ApplicationExceptionAdvice {
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<MessageResponseDTO> handleConflict(ResponseStatusException e) {
+    public ResponseEntity<MessageResponseDTO> handleResponseError(ResponseStatusException e) {
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(new MessageResponseDTO(e.getMessage()));
