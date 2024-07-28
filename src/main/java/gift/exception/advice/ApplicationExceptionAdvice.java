@@ -32,7 +32,7 @@ public class ApplicationExceptionAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<MessageResponseDTO> handleUnauthorized(ResponseStatusException e) {
+    public ResponseEntity<MessageResponseDTO> handleUnauthorized(AuthenticationException e) {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(new MessageResponseDTO(e.getMessage()));
