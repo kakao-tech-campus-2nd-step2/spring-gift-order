@@ -44,3 +44,10 @@ Content-Type: application/json
     "message": "Please handle this order with care."
 }
 ```
+
+## Step3 - API 문서 만들기
+### 기능 요구 사항
+- API 사양에 관해 클라이언트와 어떻게 소통할 수 있을까? 어떻게 하면 편하게 소통할 수 있을지 고민해 보고 그 방법을 구현한다.
+
+### 기능 구현 사항
+- swagger 사용하여 API 문서 작성
