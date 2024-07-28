@@ -39,8 +39,8 @@ public class OAuthTokenFilter implements Filter {
 
         AuthToken authToken = (AuthToken) httpRequest.getAttribute("AuthToken");
 
-        if(authToken.getCreatedAt().plusSeconds(authToken.getAccessTokenTime()).isBefore(LocalDateTime.now())){
-            if(authToken.getCreatedAt().plusSeconds(authToken.getRefreshTokenTime()).isAfter(LocalDateTime.now())){
+        if(isOAuthAccessTokenExpired(authToken)){
+            if(isOAuthRefreshTokenValid(authToken)){
                 httpResponse.sendRedirect("/oauth/renew/kakao?token="+authToken.getId());
                 return;
             }
@@ -50,6 +50,14 @@ public class OAuthTokenFilter implements Filter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private boolean isOAuthRefreshTokenValid(AuthToken authToken) {
+        return authToken.getCreatedAt().plusSeconds(authToken.getRefreshTokenTime()).isAfter(LocalDateTime.now());
+    }
+
+    private boolean isOAuthAccessTokenExpired(AuthToken authToken) {
+        return authToken.getCreatedAt().plusSeconds(authToken.getTokenTime()).isBefore(LocalDateTime.now());
     }
 
 }

@@ -1,22 +1,22 @@
 package gift.service;
 
 import gift.domain.AuthToken;
+import gift.domain.TokenInformation;
 import gift.exception.customException.EmailDuplicationException;
 import gift.exception.customException.UnAuthorizationException;
 import gift.repository.token.TokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static gift.exception.exceptionMessage.ExceptionMessage.ALREADY_TOKEN_GET_EMAIL;
+import static gift.utils.TokenConstant.*;
 
 @Service
 @Transactional(readOnly = true)
 public class TokenService {
-
     private final TokenRepository tokenRepository;
 
     public TokenService(TokenRepository tokenRepository) {
@@ -47,25 +47,25 @@ public class TokenService {
     }
 
     @Transactional
-    public AuthToken oauthTokenSave(Map<String, String> tokenInfo, String email){
+    public AuthToken oauthTokenSave(TokenInformation tokenInfo, String email){
         UUID uuid = UUID.randomUUID();
 
         AuthToken authToken = new AuthToken.Builder()
                 .token(uuid.toString())
-                .tokenTime(Integer.parseInt(tokenInfo.get("expires_in")) - 1000)
+                .tokenTime(tokenInfo.getAccessTokenTime() - EXPIRATION_OFFSET)
                 .email(email)
-                .accessToken(String.valueOf(tokenInfo.get("access_token")))
-                .accessTokenTime(Integer.parseInt(tokenInfo.get("expires_in")))
-                .refreshToken(String.valueOf(tokenInfo.get("refresh_token")))
-                .refreshTokenTime(Integer.valueOf(tokenInfo.get("refresh_token_expires_in")))
+                .accessToken(tokenInfo.getAccessToken())
+                .accessTokenTime(tokenInfo.getAccessTokenTime())
+                .refreshToken(tokenInfo.getRefreshToken())
+                .refreshTokenTime(tokenInfo.getRefreshTokenTime())
                 .build();
 
         return tokenRepository.save(authToken);
     }
 
     @Transactional
-    public AuthToken updateToken(Map<String, String> tokenInfo){
-        AuthToken findToken = findTokenById(Long.valueOf(tokenInfo.get("id")));
+    public AuthToken updateToken(Long tokenId, TokenInformation tokenInfo){
+        AuthToken findToken = findTokenById(tokenId);
 
         findToken.update(tokenInfo);
 

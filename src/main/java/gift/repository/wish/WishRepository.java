@@ -22,4 +22,6 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 
     Page<Wish> findWishesByMemberEmail(String email, Pageable pageable);
 
+    Optional<Wish> findWishByProductIdAndMemberEmail(Long productId, String email);
+
 }

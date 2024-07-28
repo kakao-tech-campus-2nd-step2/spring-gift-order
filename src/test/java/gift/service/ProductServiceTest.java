@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static gift.exception.exceptionMessage.ExceptionMessage.CATEGORY_NOT_FOUND;
+import static gift.exception.exceptionMessage.ExceptionMessage.PRODUCT_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -47,7 +48,7 @@ class ProductServiceTest {
     private OptionService optionService;
 
     @Test
-    @DisplayName("상품 이름 카카오 포함 시 Exception 테스트")
+    @DisplayName("상품 저장, 수정 시 이름에 카카오 포함 Exception 테스트")
     void 상품_카카오_포함_테스트(){
         ProductRequestDto productRequestDto = new ProductRequestDto("테스트 카카오", 1000, "abc.png", 1L);
         OptionRequestDto optionRequestDto = new OptionRequestDto("TEST", 100);
@@ -60,11 +61,27 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품 저장 테스트")
-    void 상품_저장_테스트() throws Exception{
+    @DisplayName("상품 저장 시 카테고리 NOT FOUND EXCEPTION 테스트")
+    void 상품_저장_카테고리_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        ProductRequestDto inValidproductRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 2L);
+        OptionRequestDto optionRequestDto = new OptionRequestDto("TEST", 100);
+
+        given(categoryRepository.findById(inValidproductRequestDto.categoryId())).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> productService.addProduct(inValidproductRequestDto, optionRequestDto))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage("해당 카테고리는 존재하지 않습니다.")
+        );
+    }
+
+    @Test
+    @DisplayName("상품 정상 저장 테스트")
+    void 상품_정상_저장_테스트() throws Exception{
         //given
         ProductRequestDto productRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 1L);
-        ProductRequestDto inValidproductRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 2L);
         OptionRequestDto optionRequestDto = new OptionRequestDto("TEST", 100);
 
         Category category = new Category("상품권", "#0000");
@@ -82,7 +99,6 @@ class ProductServiceTest {
 
         given(productRepository.save(any(Product.class))).willReturn(product);
         given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
-        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
         ProductResponseDto productResponseDto = productService.addProduct(productRequestDto, optionRequestDto);
@@ -93,9 +109,6 @@ class ProductServiceTest {
                 () -> assertThat(productResponseDto.price()).isEqualTo(product.getPrice()),
                 () -> assertThat(productResponseDto.imageUrl()).isEqualTo(product.getImageUrl()),
                 () -> assertThat(productResponseDto.categoryResponseDto().name()).isEqualTo("상품권"),
-                () -> assertThatThrownBy(() -> productService.addProduct(inValidproductRequestDto, optionRequestDto))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage("해당 카테고리는 존재하지 않습니다."),
                 () -> verify(optionService, times(1)).saveOption(any(OptionRequestDto.class), any(Long.class))
         );
     }
@@ -142,14 +155,55 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품 수정 테스트")
-    void 상품_수정_테스트(){
+    @DisplayName("상품 수정 시 상품 NOT FOUND EXCEPTION 테스트")
+    void 상품_수정_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long nullId = 1L;
+        ProductRequestDto productRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 1L);
+
+        given(productRepository.findById(nullId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> productService.updateProduct(nullId, productRequestDto))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(PRODUCT_NOT_FOUND)
+        );
+    }
+
+    @Test
+    @DisplayName("상품 수정 시 카테고리 NOT FOUND EXCEPTION 테스트")
+    void 상품_수정_카테고리_NOT_FOUND_EXCEPTION_테스트(){
         //given
         Long testId = 1L;
         Long nullId = 2L;
         Category category = new Category("상품권", "#0000");
+        ProductRequestDto productRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", nullId);
+
+        Product product = new Product.Builder()
+                .name("수정 전")
+                .price(1)
+                .imageUrl("abcd.png")
+                .category(category)
+                .build();
+
+        given(productRepository.findById(testId)).willReturn(Optional.of(product));
+        given(categoryRepository.findById(nullId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> productService.updateProduct(testId, productRequestDto))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(CATEGORY_NOT_FOUND)
+        );
+    }
+    @Test
+    @DisplayName("상품 수정 테스트")
+    void 상품_수정_테스트(){
+        //given
+        Long testId = 1L;
+        Category category = new Category("상품권", "#0000");
         ProductRequestDto productRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 1L);
-        ProductRequestDto inValidRequestDto = new ProductRequestDto("테스트 상품", 1000, "abc.png", 2L);
 
         Product product = new Product.Builder()
                 .name("수정 전")
@@ -161,9 +215,6 @@ class ProductServiceTest {
         given(productRepository.findById(testId)).willReturn(Optional.of(product));
         given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
 
-        given(productRepository.findById(nullId)).willReturn(Optional.empty());
-        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
-
         //when
         ProductResponseDto updatedProductDto = productService.updateProduct(testId, productRequestDto);
 
@@ -171,13 +222,25 @@ class ProductServiceTest {
         assertAll(
                 () -> assertThat(updatedProductDto.name()).isEqualTo(productRequestDto.name()),
                 () -> assertThat(updatedProductDto.price()).isEqualTo(productRequestDto.price()),
-                () -> assertThat(updatedProductDto.imageUrl()).isEqualTo(productRequestDto.imageUrl()),
-                () -> assertThatThrownBy(() -> productService.updateProduct(nullId, productRequestDto))
-                        .isInstanceOf(EntityNotFoundException.class),
-                () -> assertThatThrownBy(() -> productService.updateProduct(testId, inValidRequestDto))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(CATEGORY_NOT_FOUND)
+                () -> assertThat(updatedProductDto.imageUrl()).isEqualTo(productRequestDto.imageUrl())
         );
+    }
+
+    @Test
+    @DisplayName("상품 삭제 시 상품 NOT FOUND EXCEPTION 테스트")
+    void 상품_삭제_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long nullId = 1L;
+
+        given(productRepository.findById(nullId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> productService.deleteProduct(nullId))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(PRODUCT_NOT_FOUND)
+        );
+
     }
 
     @Test
@@ -185,7 +248,6 @@ class ProductServiceTest {
     void 상품_삭제_테스트(){
         //given
         Long testId = 1L;
-        Long nullId = 2L;
         Category category = new Category("상품권", "#0000");
         Product product = new Product.Builder()
                 .name("테스트 상품")
@@ -195,7 +257,6 @@ class ProductServiceTest {
                 .build();
 
         given(productRepository.findById(testId)).willReturn(Optional.of(product));
-        given(productRepository.findById(nullId)).willReturn(Optional.empty());
 
         //when
         ProductResponseDto deletedProductDto = productService.deleteProduct(testId);
@@ -205,8 +266,6 @@ class ProductServiceTest {
                 () -> assertThat(deletedProductDto.name()).isEqualTo(product.getName()),
                 () -> assertThat(deletedProductDto.price()).isEqualTo(product.getPrice()),
                 () -> assertThat(deletedProductDto.imageUrl()).isEqualTo(product.getImageUrl()),
-                () -> assertThatThrownBy(() -> productService.deleteProduct(nullId))
-                        .isInstanceOf(EntityNotFoundException.class),
                 () -> verify(productRepository, times(1)).delete(product)
         );
 

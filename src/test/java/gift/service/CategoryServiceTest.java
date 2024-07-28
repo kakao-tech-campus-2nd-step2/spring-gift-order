@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static gift.exception.exceptionMessage.ExceptionMessage.CATEGORY_NAME_DUPLICATION;
+import static gift.exception.exceptionMessage.ExceptionMessage.CATEGORY_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,15 +34,27 @@ class CategoryServiceTest {
     CategoryRepository categoryRepository;
 
     @Test
-    @DisplayName("카테고리 저장 테스트")
+    @DisplayName("카테고리 저장 시 카테고리 이름 중복으로 인한 EXCEPTION TEST")
+    void 카테고리_저장_이름_중복_EXCEPTION_테스트(){
+        //given
+        CategoryRequestDto inValidCategoryDto = new CategoryRequestDto("고기", "#0000");
+        Category category = new Category(inValidCategoryDto.name(), inValidCategoryDto.color());
+        given(categoryRepository.findCategoryByName(inValidCategoryDto.name())).willReturn(Optional.of(category));
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> categoryService.saveCategory(inValidCategoryDto))
+                        .isInstanceOf(NameDuplicationException.class)
+        );
+    }
+
+    @Test
+    @DisplayName("카테고리 정상 저장 테스트")
     void 카테고리_저장_테스트(){
         //given
         CategoryRequestDto categoryRequestDto = new CategoryRequestDto("상품권", "#0000");
-        CategoryRequestDto inValidCategoryDto = new CategoryRequestDto("고기", "#0000");
-        Category category = new Category(inValidCategoryDto.name(), inValidCategoryDto.color());
 
         given(categoryRepository.findCategoryByName(categoryRequestDto.name())).willReturn(Optional.empty());
-        given(categoryRepository.findCategoryByName(inValidCategoryDto.name())).willReturn(Optional.of(category));
 
         //when
         CategoryResponseDto categoryResponseDto = categoryService.saveCategory(categoryRequestDto);
@@ -48,9 +62,7 @@ class CategoryServiceTest {
         //then
         assertAll(
                 () -> assertThat(categoryResponseDto.name()).isEqualTo(categoryRequestDto.name()),
-                () -> assertThat(categoryResponseDto.color()).isEqualTo(categoryRequestDto.color()),
-                () -> assertThatThrownBy(() -> categoryService.saveCategory(inValidCategoryDto))
-                        .isInstanceOf(NameDuplicationException.class)
+                () -> assertThat(categoryResponseDto.color()).isEqualTo(categoryRequestDto.color())
         );
 
     }
@@ -77,13 +89,26 @@ class CategoryServiceTest {
     }
 
     @Test
-    @DisplayName("카테고리 단건 조회 테스트")
-    void 카테고리_단건_조회_테스트(){
+    @DisplayName("카테고리 단건 조회 시 카테고리 NOT FOUND EXCEPTION 테스트")
+    void 카테고리_단건_조회_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> categoryService.findOneCategoryById(2L))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage("해당 카테고리는 존재하지 않습니다.")
+        );
+
+    }
+    @Test
+    @DisplayName("카테고리 단건 정상 조회 테스트")
+    void 카테고리_단건_정상_조회_테스트(){
         //given
         Category category = new Category("상품권", "#0000");
 
         given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
-        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
         CategoryResponseDto categoryResponseDto = categoryService.findOneCategoryById(1L);
@@ -91,26 +116,55 @@ class CategoryServiceTest {
         //then
         assertAll(
                 () -> assertThat(categoryResponseDto.name()).isEqualTo(category.getName()),
-                () -> assertThat(categoryResponseDto.color()).isEqualTo(category.getColor()),
-                () -> assertThatThrownBy(() -> categoryService.findOneCategoryById(2L))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage("해당 카테고리는 존재하지 않습니다.")
+                () -> assertThat(categoryResponseDto.color()).isEqualTo(category.getColor())
         );
     }
 
     @Test
-    @DisplayName("카테고리 수정 테스트")
-    void 카테고리_수정_테스트(){
+    @DisplayName("카테고리 수정 시 카테고리 NOT FOUND EXCEPTION 테스트")
+    void 카테고리_수정_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("고기", "#1234");
+
+        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> categoryService.updateCategory(2L, categoryRequestDto))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(CATEGORY_NOT_FOUND)
+        );
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 시 카테고리 이름 중복 EXCEPTION 테스트")
+    void 카테고리_수정_이름_중복_EXCEPTION_테스트(){
         //given
         Category category = new Category("상품권", "#0000");
         Category inValidCategory = new Category("생선", "#0000");
-        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("고기", "#1234");
         CategoryRequestDto inValidCategoryRequestDto = new CategoryRequestDto("생선", "#1234");
 
         given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
-        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
-        given(categoryRepository.findCategoryByName(categoryRequestDto.name())).willReturn(Optional.empty());
         given(categoryRepository.findCategoryByName(inValidCategoryRequestDto.name())).willReturn(Optional.of(inValidCategory));
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> categoryService.updateCategory(1L, inValidCategoryRequestDto))
+                        .isInstanceOf(NameDuplicationException.class)
+                        .hasMessage(CATEGORY_NAME_DUPLICATION)
+        );
+    }
+
+
+    @Test
+    @DisplayName("카테고리 정상 수정 테스트")
+    void 카테고리_정상_수정_테스트(){
+        //given
+        Category category = new Category("상품권", "#0000");
+        CategoryRequestDto categoryRequestDto = new CategoryRequestDto("고기", "#1234");
+
+        given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
+        given(categoryRepository.findCategoryByName(categoryRequestDto.name())).willReturn(Optional.empty());
 
         //when
         CategoryResponseDto categoryResponseDto = categoryService.updateCategory(1L, categoryRequestDto);
@@ -118,14 +172,25 @@ class CategoryServiceTest {
         //then
         assertAll(
                 () -> assertThat(categoryResponseDto.name()).isEqualTo("고기"),
-                () -> assertThat(categoryResponseDto.color()).isEqualTo("#1234"),
-                () -> assertThatThrownBy(() -> categoryService.updateCategory(2L, categoryRequestDto))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage("해당 카테고리는 존재하지 않습니다."),
-                () -> assertThatThrownBy(() -> categoryService.updateCategory(1L, inValidCategoryRequestDto))
-                        .isInstanceOf(NameDuplicationException.class)
+                () -> assertThat(categoryResponseDto.color()).isEqualTo("#1234")
         );
     }
+
+    @Test
+    @DisplayName("카테고리 삭제 시 카테고리 NOT FOUND EXCEPTION 테스트")
+    void 카테고리_삭제_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long invalidId = 1L;
+        given(categoryRepository.findById(invalidId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> categoryService.deleteCategory(invalidId))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(CATEGORY_NOT_FOUND)
+        );
+    }
+
 
     @Test
     @DisplayName("카테고리 삭제 테스트")
@@ -134,7 +199,6 @@ class CategoryServiceTest {
         Category category = new Category("상품권", "#0000");
 
         given(categoryRepository.findById(1L)).willReturn(Optional.of(category));
-        given(categoryRepository.findById(2L)).willReturn(Optional.empty());
 
         //when
         CategoryResponseDto categoryResponseDto = categoryService.deleteCategory(1L);
@@ -142,10 +206,7 @@ class CategoryServiceTest {
         //then
         assertAll(
                 () -> assertThat(categoryResponseDto.name()).isEqualTo(category.getName()),
-                () -> assertThat(categoryResponseDto.color()).isEqualTo(category.getColor()),
-                () -> assertThatThrownBy(() -> categoryService.deleteCategory(2L))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage("해당 카테고리는 존재하지 않습니다.")
+                () -> assertThat(categoryResponseDto.color()).isEqualTo(category.getColor())
         );
     }
 

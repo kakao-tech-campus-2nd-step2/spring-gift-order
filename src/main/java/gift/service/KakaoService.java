@@ -4,16 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.AuthToken;
+import gift.domain.TokenInformation;
+import gift.dto.response.OrderResponseDto;
 import gift.exception.customException.JsonException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+
+import static gift.utils.TokenConstant.*;
 
 @Service
 public class KakaoService {
@@ -54,7 +57,7 @@ public class KakaoService {
         return builder;
     }
 
-    public Map<String, String> getKakaoOauthToken(String code){
+    public TokenInformation getKakaoOauthToken(String code){
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         RequestEntity request = new RequestEntity<>(makeAccessTokenBody(code), headers, HttpMethod.POST, URI.create(ACCESS_TOKEN_API_URL));
@@ -62,9 +65,7 @@ public class KakaoService {
 
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
-            Map<String, String> tokenInfo = new HashMap<>();
-            makeKakaoTokenInformation(tokenInfo, jsonNode);
-            return tokenInfo;
+            return new TokenInformation(jsonNode);
         }catch (JsonProcessingException e) {
             throw new JsonException();
         }catch (Exception e) {
@@ -83,25 +84,6 @@ public class KakaoService {
         try {
             JsonNode jsonNode = objectMapper.readTree(response.getBody());
             return jsonNode.get("id").asText();
-        } catch (JsonProcessingException e) {
-            throw new JsonException();
-        }catch (Exception e) {
-            throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
-        }
-    }
-
-    public Map<String, String> renewToken(AuthToken authToken){
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        RequestEntity request = new RequestEntity<>(makeTokenRenewBody(authToken.getRefreshToken()), headers, HttpMethod.POST, URI.create(ACCESS_TOKEN_API_URL));
-        ResponseEntity<String> response = restTemplate.exchange(ACCESS_TOKEN_API_URL, HttpMethod.POST, request, String.class);
-
-        try {
-            JsonNode jsonNode = objectMapper.readTree(response.getBody());
-            Map<String, String> tokenInfo = new HashMap<>();
-            tokenInfo.put("id", String.valueOf(authToken.getId()));
-            makeKakaoTokenInformation(tokenInfo, jsonNode);
-            return tokenInfo;
         }catch (JsonProcessingException e) {
             throw new JsonException();
         }catch (Exception e) {
@@ -109,14 +91,32 @@ public class KakaoService {
         }
     }
 
-    private void makeKakaoTokenInformation(Map<String, String> tokenInfo, JsonNode jsonNode) {
-        tokenInfo.put("access_token", jsonNode.get("access_token").asText());
-        tokenInfo.put("expires_in", jsonNode.get("expires_in").asText());
+    public TokenInformation renewToken(AuthToken authToken){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        RequestEntity request = new RequestEntity<>(makeTokenRenewBody(authToken.getRefreshToken()), headers, HttpMethod.POST, URI.create(ACCESS_TOKEN_API_URL));
+        ResponseEntity<String> response = restTemplate.exchange(ACCESS_TOKEN_API_URL, HttpMethod.POST, request, String.class);
 
-        if(jsonNode.has("refresh_token") && jsonNode.has("refresh_token_expires_in")){
-            tokenInfo.put("refresh_token", jsonNode.get("refresh_token").asText());
-            tokenInfo.put("refresh_token_expires_in", jsonNode.get("refresh_token_expires_in").asText());
+        try {
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+            return new TokenInformation(jsonNode);
+        }catch (JsonProcessingException e) {
+            throw new JsonException();
+        }catch (Exception e) {
+            throw new RuntimeException("예상하지 못한 EXCEPTION 발생");
         }
+    }
+
+    public void sendKakaoMessage(String accessToken, OrderResponseDto orderResponseDto){
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+        headers.setBearerAuth(accessToken);
+
+        MultiValueMap<String, Object> parameters = new LinkedMultiValueMap<>();
+        parameters.add("template_object", makeMessageBody(orderResponseDto));
+
+        RequestEntity request = new RequestEntity<>(parameters, headers, HttpMethod.POST, URI.create(SEND_MESSAGE_URL));
+        restTemplate.exchange(SEND_MESSAGE_URL, HttpMethod.POST, request, String.class);
     }
 
     private LinkedMultiValueMap<String, String> makeAccessTokenBody(String code) {
@@ -130,10 +130,22 @@ public class KakaoService {
 
     private LinkedMultiValueMap<String, String> makeTokenRenewBody(String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "refresh_token");
+        body.add("grant_type", REFRESH_TOKEN);
         body.add("client_id", CLIENT_ID);
         body.add("refresh_token", refreshToken);
         return body;
+    }
+
+    private String makeMessageBody(OrderResponseDto orderResponseDto) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{\"object_type\":\"text\",\"text\":\"")
+                .append(orderResponseDto.id())
+                .append(" 번 옵션이 주문 되었습니다. ")
+                .append(orderResponseDto.message())
+                .append("\",\"link\":{\"web_url\":\"\"}}");
+
+        return  sb.toString();
     }
 
 }

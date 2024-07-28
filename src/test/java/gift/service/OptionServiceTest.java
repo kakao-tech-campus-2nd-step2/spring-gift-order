@@ -40,12 +40,57 @@ class OptionServiceTest {
     @Mock
     ProductRepository productRepository;
 
+
     @Test
-    @DisplayName("옵션 저장 테스트")
-    void 옵션_저장_테스트(){
+    @DisplayName("옵션 저장 시 PRODUCT NOT FOUND EXCEPTION 테스트")
+    void 옵션_저장_PRODUCT_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long inValidProductId = 2L;
+        OptionRequestDto validOptionDto = new OptionRequestDto("TEST", 1);
+        given(productRepository.findById(inValidProductId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> optionService.saveOption(validOptionDto, inValidProductId))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(PRODUCT_NOT_FOUND)
+        );
+    }
+
+    @Test
+    @DisplayName("옵션 저장 시 OPTION 이름 중복 EXCEPTION 테스트")
+    void 옵션_저장_이름_중복_EXCEPTION_테스트(){
         //given
         Long validProductId = 1L;
-        Long inValidProductId = 2L;
+
+        Category category = new Category("상품권", "#0000");
+
+        Product product = new Product.Builder()
+                .name("테스트 상품")
+                .price(1000)
+                .imageUrl("abc.png")
+                .category(category)
+                .build();
+
+        OptionRequestDto inValidOptionDto = new OptionRequestDto("invalid", 1);
+        Option inValidOption = new Option(inValidOptionDto.optionName(), inValidOptionDto.optionQuantity());
+
+        given(productRepository.findById(validProductId)).willReturn(Optional.of(product));
+        given(optionRepository.findOptionByNameAndProductId(inValidOptionDto.optionName(), validProductId)).willReturn(Optional.of(inValidOption));
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> optionService.saveOption(inValidOptionDto, validProductId))
+                        .isInstanceOf(NameDuplicationException.class)
+                        .hasMessage(OPTION_NAME_DUPLICATION)
+        );
+    }
+
+    @Test
+    @DisplayName("옵션 정상 저장 테스트")
+    void 옵션_정상_저장_테스트(){
+        //given
+        Long validProductId = 1L;
 
         Category category = new Category("상품권", "#0000");
 
@@ -57,16 +102,11 @@ class OptionServiceTest {
                 .build();
 
         OptionRequestDto validOptionDto = new OptionRequestDto("TEST", 1);
-        OptionRequestDto inValidOptionDto = new OptionRequestDto("invalid", 1);
         Option option = new Option(validOptionDto.optionName(), validOptionDto.optionQuantity());
         option.addProduct(product);
-        Option inValidOption = new Option(validOptionDto.optionName(), validOptionDto.optionQuantity());
 
         given(productRepository.findById(validProductId)).willReturn(Optional.of(product));
-        given(productRepository.findById(inValidProductId)).willReturn(Optional.empty());
-
         given(optionRepository.findOptionByNameAndProductId(validOptionDto.optionName(), validProductId)).willReturn(Optional.empty());
-        given(optionRepository.findOptionByNameAndProductId(inValidOptionDto.optionName(), validProductId)).willReturn(Optional.of(inValidOption));
         given(optionRepository.save(any(Option.class))).willReturn(option);
 
         //when
@@ -75,13 +115,7 @@ class OptionServiceTest {
         //then
         assertAll(
                 () -> assertThat(optionResponseDto.name()).isEqualTo(option.getName()),
-                () -> assertThat(optionResponseDto.quantity()).isEqualTo(option.getQuantity()),
-                () -> assertThatThrownBy(() -> optionService.saveOption(validOptionDto, inValidProductId))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(PRODUCT_NOT_FOUND),
-                () -> assertThatThrownBy(() -> optionService.saveOption(inValidOptionDto, validProductId))
-                        .isInstanceOf(NameDuplicationException.class)
-                        .hasMessage(OPTION_NAME_DUPLICATION)
+                () -> assertThat(optionResponseDto.quantity()).isEqualTo(option.getQuantity())
         );
     }
 
@@ -105,39 +139,6 @@ class OptionServiceTest {
     }
 
     @Test
-    @DisplayName("옵션 삭제 테스트")
-    void 옵션_삭제_테스트(){
-        //given
-        Long validOptionId = 1L;
-        Long inValidOptionId = 2L;
-
-        Long validProductId = 1L;
-        Long inValidProductId = 2L;
-
-        Option option = new Option("TEST", 1);
-
-        given(optionRepository.findById(validOptionId)).willReturn(Optional.of(option));
-        given(optionRepository.findById(inValidOptionId)).willReturn(Optional.empty());
-        given(optionRepository.countOptionByProductId(validProductId)).willReturn(2L);
-        given(optionRepository.countOptionByProductId(inValidProductId)).willReturn(1L);
-
-        //when
-        OptionResponseDto optionResponseDto = optionService.deleteOneOption(validProductId, validOptionId);
-
-        //then
-        assertAll(
-                () -> assertThat(optionResponseDto.name()).isEqualTo(option.getName()),
-                () -> assertThat(optionResponseDto.quantity()).isEqualTo(option.getQuantity()),
-                () -> assertThatThrownBy(() -> optionService.deleteOneOption(validProductId, inValidOptionId))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(OPTION_NOT_FOUND),
-        () -> assertThatThrownBy(() -> optionService.deleteOneOption(inValidProductId, validOptionId))
-                .isInstanceOf(DenyDeleteException.class)
-                .hasMessage(DENY_OPTION_DELETE)
-        );
-    }
-
-    @Test
     @DisplayName("옵션 수량 초과 감소 시 Exception 테스트")
     void 옵션_수량_초과_감소_EXCEPTION_TEST(){
         //given
@@ -148,8 +149,8 @@ class OptionServiceTest {
 
         //expected
         assertThatThrownBy(() -> optionService.updateOptionQuantity(optionId, 101))
-                        .isInstanceOf(OptionQuantityNotMinusException.class)
-                        .hasMessage(OPTION_QUANTITY_NOT_MINUS);
+                .isInstanceOf(OptionQuantityNotMinusException.class)
+                .hasMessage(OPTION_QUANTITY_NOT_MINUS);
 
     }
 
@@ -170,10 +171,63 @@ class OptionServiceTest {
                 () -> assertThat(optionResponseDto.name()).isEqualTo(option.getName()),
                 () -> assertThat(optionResponseDto.quantity()).isEqualTo(50)
         );
-
     }
 
+    @Test
+    @DisplayName("옵션 삭제 시 옵션 NOT FOUND EXCEPTION 테스트")
+    void 옵션_삭제_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long inValidOptionId = 2L;
+        given(optionRepository.findById(inValidOptionId)).willReturn(Optional.empty());
 
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> optionService.deleteOneOption(1L, inValidOptionId))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(OPTION_NOT_FOUND)
+        );
+    }
 
+    @Test
+    @DisplayName("옵션 삭제 시 옵션 개수는 0개 불가능 테스트")
+    void 옵션_삭제_개수_0개_불가능_테스트(){
+        //given
+        Long validOptionId = 1L;
+        Long inValidProductId = 2L;
 
+        Option option = new Option("TEST", 1);
+
+        given(optionRepository.findById(validOptionId)).willReturn(Optional.of(option));
+        given(optionRepository.countOptionByProductId(inValidProductId)).willReturn(1L);
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> optionService.deleteOneOption(inValidProductId, validOptionId))
+                        .isInstanceOf(DenyDeleteException.class)
+                        .hasMessage(DENY_OPTION_DELETE)
+        );
+    }
+
+    @Test
+    @DisplayName("옵션 정상 삭제 테스트")
+    void 옵션_정상_삭제_테스트(){
+        //given
+        Long validOptionId = 1L;
+
+        Long validProductId = 1L;
+
+        Option option = new Option("TEST", 1);
+
+        given(optionRepository.findById(validOptionId)).willReturn(Optional.of(option));
+        given(optionRepository.countOptionByProductId(validProductId)).willReturn(2L);
+
+        //when
+        OptionResponseDto optionResponseDto = optionService.deleteOneOption(validProductId, validOptionId);
+
+        //then
+        assertAll(
+                () -> assertThat(optionResponseDto.name()).isEqualTo(option.getName()),
+                () -> assertThat(optionResponseDto.quantity()).isEqualTo(option.getQuantity())
+        );
+    }
 }

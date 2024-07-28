@@ -47,11 +47,53 @@ class WishServiceTest {
     private MemberRepository memberRepository;
 
     @Test
+    @DisplayName("WISH 저장 시 상품 NOT FOUND EXCEPTION 테스트")
+    void 위시_저장_상품_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long nullProductId = 2L;
+
+        String email = "abc@pusan.ac.kr";
+
+        given(productRepository.findById(nullProductId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.addWish(nullProductId, email, 100))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(PRODUCT_NOT_FOUND)
+        );
+    }
+
+    @Test
+    @DisplayName("WISH 저장 시 멤버 NOT FOUND EXCEPTION 테스트")
+    void 위시_저장_멤버_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long productId = 1L;
+        Category category = new Category("상품권", "#0000");
+        Product product = new Product.Builder()
+                .name("테스트 상품")
+                .price(1000)
+                .imageUrl("abc.png")
+                .category(category)
+                .build();
+
+        String nullEmail = "abcd@pusan.ac.kr";
+
+        given(productRepository.findById(productId)).willReturn(Optional.of(product));
+        given(memberRepository.findMemberByEmail(nullEmail)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.addWish(productId, nullEmail, 100))
+                        .isInstanceOf(EntityNotFoundException.class)
+                        .hasMessage(NOT_EXISTS_MEMBER)
+        );
+    }
+    @Test
     @DisplayName("WISH 저장 테스트")
     void 위시_저장_테스트(){
         //given
         Long productId = 1L;
-        Long nullProductId = 2L;
         Category category = new Category("상품권", "#0000");
         Product product = new Product.Builder()
                 .name("테스트 상품")
@@ -61,7 +103,6 @@ class WishServiceTest {
                 .build();
 
         String email = "abc@pusan.ac.kr";
-        String nullEmail = "abcd@pusan.ac.kr";
         Member member = new Member.Builder()
                 .email(email)
                 .password("abc")
@@ -74,9 +115,7 @@ class WishServiceTest {
                 .build();
 
         given(productRepository.findById(productId)).willReturn(Optional.of(product));
-        given(productRepository.findById(nullProductId)).willReturn(Optional.empty());
         given(memberRepository.findMemberByEmail(email)).willReturn(Optional.of(member));
-        given(memberRepository.findMemberByEmail(nullEmail)).willReturn(Optional.empty());
         given(wishRepository.save(any(Wish.class))).willReturn(wish);
 
         //when
@@ -87,25 +126,51 @@ class WishServiceTest {
                 () -> assertThat(wishResponseDto.count()).isEqualTo(100),
                 () -> assertThat(wishResponseDto.productResponseDto().name()).isEqualTo(product.getName()),
                 () -> assertThat(wishResponseDto.productResponseDto().price()).isEqualTo(product.getPrice()),
-                () -> assertThat(wishResponseDto.productResponseDto().imageUrl()).isEqualTo(product.getImageUrl()),
-                () -> assertThatThrownBy(() -> wishService.addWish(nullProductId, email, 100))
+                () -> assertThat(wishResponseDto.productResponseDto().imageUrl()).isEqualTo(product.getImageUrl())
+        );
+    }
+    @Test
+    @DisplayName("WISH 수정 시 위시 NOT FOUND EXCEPTION 테스트")
+    void 위시_수정_위시_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long inValidId = 2L;
+
+        String validEmail = "abc@pusan.ac.kr";
+
+        given(wishRepository.findById(inValidId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.editWish(inValidId, validEmail, 100))
                         .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(PRODUCT_NOT_FOUND),
-                () -> assertThatThrownBy(() -> wishService.addWish(productId, nullEmail, 100))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(NOT_EXISTS_MEMBER)
+                        .hasMessage(WISH_NOT_FOUND)
         );
     }
 
     @Test
-    @DisplayName("WISH 수정 테스트")
-    void 위시_수정_테스트(){
+    @DisplayName("WISH 수정 시 권한 EXCEPTION 테스트")
+    void 위시_수정_권한_EXCEPTION_테스트(){
         //given
         Long validId = 1L;
-        Long inValidId = 2L;
+        String inValidEmail = "abcd@pusan.ac.kr";
+
+        given(wishRepository.findById(validId)).willReturn(Optional.of(new Wish()));
+        given(wishRepository.findWishByIdAndMemberEmail(validId, inValidEmail)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.editWish(validId, inValidEmail, 100))
+                        .isInstanceOf(ForbiddenException.class)
+        );
+    }
+
+    @Test
+    @DisplayName("WISH 정상 수정 테스트")
+    void 위시_정상_수정_테스트(){
+        //given
+        Long validId = 1L;
 
         String validEmail = "abc@pusan.ac.kr";
-        String inValidEmail = "abcd@pusan.ac.kr";
 
         Category category = new Category("상품권", "#0000");
 
@@ -128,9 +193,7 @@ class WishServiceTest {
                 .build();
 
         given(wishRepository.findById(validId)).willReturn(Optional.of(new Wish()));
-        given(wishRepository.findById(inValidId)).willReturn(Optional.empty());
         given(wishRepository.findWishByIdAndMemberEmail(validId, validEmail)).willReturn(Optional.of(wish));
-        given(wishRepository.findWishByIdAndMemberEmail(validId, inValidEmail)).willReturn(Optional.empty());
 
         //when
         WishResponseDto wishResponseDto = wishService.editWish(validId, validEmail, 1000);
@@ -140,24 +203,52 @@ class WishServiceTest {
                 () -> assertThat(wishResponseDto.count()).isEqualTo(1000),
                 () -> assertThat(wishResponseDto.productResponseDto().name()).isEqualTo(product.getName()),
                 () -> assertThat(wishResponseDto.productResponseDto().price()).isEqualTo(product.getPrice()),
-                () -> assertThat(wishResponseDto.productResponseDto().imageUrl()).isEqualTo(product.getImageUrl()),
-                () -> assertThatThrownBy(() -> wishService.editWish(inValidId, validEmail, 100))
+                () -> assertThat(wishResponseDto.productResponseDto().imageUrl()).isEqualTo(product.getImageUrl())
+        );
+    }
+
+    @Test
+    @DisplayName("WISH 삭제 시 위시 NOT FOUND EXCEPTION 테스트")
+    void 위시_삭제_위시_NOT_FOUND_EXCEPTION_테스트(){
+        //given
+        Long inValidId = 2L;
+
+        String validEmail = "abc@pusan.ac.kr";
+
+        given(wishRepository.findById(inValidId)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.deleteWish(inValidId, validEmail))
                         .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(WISH_NOT_FOUND),
-                () -> assertThatThrownBy(() -> wishService.editWish(validId, inValidEmail, 100))
+                        .hasMessage(WISH_NOT_FOUND)
+        );
+    }
+
+    @Test
+    @DisplayName("WISH 수정 시 권한 EXCEPTION 테스트")
+    void 위시_삭제_권한_EXCEPTION_테스트(){
+        //given
+        Long validId = 1L;
+        String inValidEmail = "abcd@pusan.ac.kr";
+
+        given(wishRepository.findById(validId)).willReturn(Optional.of(new Wish()));
+        given(wishRepository.findWishByIdAndMemberEmail(validId, inValidEmail)).willReturn(Optional.empty());
+
+        //expected
+        assertAll(
+                () -> assertThatThrownBy(() -> wishService.deleteWish(validId, inValidEmail))
                         .isInstanceOf(ForbiddenException.class)
         );
     }
 
     @Test
-    @DisplayName("WISH 삭제 테스트")
-    void 위시_삭제_테스트(){
+    @DisplayName("WISH 정상 삭제 테스트")
+    void 위시_정상_삭제_테스트(){
         //given
         Long validId = 1L;
-        Long inValidId = 2L;
 
         String validEmail = "abc@pusan.ac.kr";
-        String inValidEmail = "abcd@pusan.ac.kr";
 
         Category category = new Category("상품권", "#0000");
 
@@ -180,9 +271,7 @@ class WishServiceTest {
                 .build();
 
         given(wishRepository.findById(validId)).willReturn(Optional.of(new Wish()));
-        given(wishRepository.findById(inValidId)).willReturn(Optional.empty());
         given(wishRepository.findWishByIdAndMemberEmail(validId, validEmail)).willReturn(Optional.of(wish));
-        given(wishRepository.findWishByIdAndMemberEmail(validId, inValidEmail)).willReturn(Optional.empty());
 
         //when
         WishResponseDto wishResponseDto = wishService.deleteWish(validId, validEmail);
@@ -193,11 +282,6 @@ class WishServiceTest {
                 () -> assertThat(wishResponseDto.productResponseDto().name()).isEqualTo(product.getName()),
                 () -> assertThat(wishResponseDto.productResponseDto().price()).isEqualTo(product.getPrice()),
                 () -> assertThat(wishResponseDto.productResponseDto().imageUrl()).isEqualTo(product.getImageUrl()),
-                () -> assertThatThrownBy(() -> wishService.deleteWish(inValidId, validEmail))
-                        .isInstanceOf(EntityNotFoundException.class)
-                        .hasMessage(WISH_NOT_FOUND),
-                () -> assertThatThrownBy(() -> wishService.deleteWish(validId, inValidEmail))
-                        .isInstanceOf(ForbiddenException.class),
                 () -> verify(wishRepository, times(1)).delete(any(Wish.class))
         );
     }

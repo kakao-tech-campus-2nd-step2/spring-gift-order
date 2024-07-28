@@ -1,11 +1,17 @@
 package gift.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import java.io.IOException;
+
+import static gift.exception.exceptionMessage.ExceptionMessage.*;
+import static org.springframework.http.HttpStatus.*;
 
 @Component
 public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
@@ -18,6 +24,42 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
 
     @Override
     public void handleError(ClientHttpResponse httpResponse) throws IOException {
-        throw new HttpClientErrorException(httpResponse.getStatusCode());
+        HttpStatusCode statusCode = httpResponse.getStatusCode();
+
+        if (statusCode.is4xxClientError()) {
+            handleClientError(httpResponse);
+        } else if (statusCode.is5xxServerError()) {
+            handleServerError(httpResponse);
+        }
+    }
+
+    private void handleClientError(ClientHttpResponse httpResponse) throws IOException {
+        HttpStatusCode statusCode = httpResponse.getStatusCode();
+
+        switch (statusCode) {
+            case BAD_REQUEST:
+                throw new HttpClientErrorException(statusCode, API_BAD_REQUEST);
+            case UNAUTHORIZED:
+                throw new HttpClientErrorException(statusCode, API_UNAUTHORIZED);
+            case FORBIDDEN:
+                throw new HttpClientErrorException(statusCode, API_FORBIDDEN);
+            case TOO_MANY_REQUESTS:
+                throw new HttpClientErrorException(statusCode, API_TOO_MANY_REQUESTS);
+            default:
+        }
+    }
+
+    private void handleServerError(ClientHttpResponse httpResponse) throws IOException {
+        HttpStatusCode statusCode = httpResponse.getStatusCode();
+
+        switch (statusCode) {
+            case INTERNAL_SERVER_ERROR:
+                throw new HttpServerErrorException(statusCode, API_INTERNAL_SERVER_ERROR);
+            case BAD_GATEWAY:
+                throw new HttpServerErrorException(statusCode, API_BAD_GATEWAY);
+            case SERVICE_UNAVAILABLE:
+                throw new HttpServerErrorException(statusCode, API_SERVICE_UNAVAILABLE);
+            default:
+        }
     }
 }
