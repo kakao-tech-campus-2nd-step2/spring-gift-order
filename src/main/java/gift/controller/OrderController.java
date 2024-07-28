@@ -4,6 +4,7 @@ import gift.dto.OrderRequest;
 import gift.dto.OrderResponse;
 import gift.service.KakaoTokenService;
 import gift.service.OrderService;
+import org.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,11 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) throws JSONException {
         // 주문 처리 로직
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
 
-        kakaoTokenService.sendKakaoMessage(orderResponse);
+        kakaoTokenService.processOrder(orderResponse);
 
         return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
     }
