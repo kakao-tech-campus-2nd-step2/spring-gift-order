@@ -6,6 +6,8 @@ import gift.dto.requestdto.OptionCreateRequestDTO;
 import gift.dto.requestdto.OptionNameUpdateRequestDTO;
 import gift.dto.responsedto.OptionResponseDTO;
 import gift.service.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "옵션 api", description = "옵션 api입니다")
 public class OptionController {
     private final OptionService optionService;
 
@@ -29,6 +32,7 @@ public class OptionController {
     }
 
     @GetMapping("/products/{productId}/options")
+    @Operation(summary = "옵션 조회 api", description = "옵션 조회 api입니다")
     public ResponseEntity<SuccessBody<List<OptionResponseDTO>>> getAllCategoriesByProductId(
         @PathVariable(value = "productId") Long productId
     ) {
@@ -38,6 +42,7 @@ public class OptionController {
     }
 
     @PostMapping("/products/{productId}/options")
+    @Operation(summary = "옵션 추가 api", description = "옵션 추가 api입니다")
     public ResponseEntity<SuccessBody<Long>> addOption(
         @PathVariable(value = "productId") Long productId,
         @Valid @RequestBody OptionCreateRequestDTO optionCreateRequestDTO
@@ -47,6 +52,7 @@ public class OptionController {
     }
 
     @PutMapping("/options/{optionId}")
+    @Operation(summary = "옵션 수정 api", description = "옵션 수정 api입니다")
     public ResponseEntity<SuccessBody<Long>> updateOptionName(
         @PathVariable(value = "optionId") Long optionId,
         @Valid @RequestBody OptionNameUpdateRequestDTO optionNameUpdateRequestDTO
@@ -56,6 +62,7 @@ public class OptionController {
     }
 
     @DeleteMapping("/options/{optionId}")
+    @Operation(summary = "옵션 삭제 api", description = "옵션 삭제 api입니다")
     public ResponseEntity<SuccessBody<Long>> deleteOption(
         @PathVariable(value = "optionId") Long optionId
     ) {

@@ -8,6 +8,8 @@ import gift.dto.requestdto.CategoryRequestDTO;
 import gift.dto.responsedto.CategoryResponseDTO;
 import gift.service.AuthService;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "카테고리 api", description = "카테고리 api입니다")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -34,6 +37,7 @@ public class CategoryController {
     }
 
     @PostMapping("/category")
+    @Operation(summary = "카테고리 등록 api", description = "카테고리 등록 api입니다")
     public ResponseEntity<SuccessBody<Long>> addCategory(
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
         @LoginUser User user) {
@@ -43,6 +47,7 @@ public class CategoryController {
     }
 
     @GetMapping("/category/{id}")
+    @Operation(summary = "카테고리 단일 조회 api", description = "카테고리 단일 조회 api입니다")
     public ResponseEntity<SuccessBody<CategoryResponseDTO>> getOneCategory(
         @PathVariable("id") Long categoryId) {
         CategoryResponseDTO categoryResponseDTO = categoryService.getOneCategory(categoryId);
@@ -51,6 +56,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories")
+    @Operation(summary = "카테고리 전체 조회 api", description = "카테고리 전체 조회 api입니다")
     public ResponseEntity<SuccessBody<List<CategoryResponseDTO>>> getAllCategory() {
         List<CategoryResponseDTO> categoryResponseDTOList = categoryService.getAllCategories();
 
@@ -59,6 +65,7 @@ public class CategoryController {
     }
 
     @PutMapping("/category/{id}")
+    @Operation(summary = "카테고리 수정 api", description = "카테고리 수정 api입니다")
     public ResponseEntity<SuccessBody<Long>> updateCategory(
         @PathVariable("id") Long categoryId,
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
@@ -69,6 +76,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/category/{id}")
+    @Operation(summary = "카테고리 삭제 api", description = "카테고리 삭제ㄴ api입니다")
     public ResponseEntity<SuccessBody<Long>> deleteCategory(
         @PathVariable("id") Long categoryId,
         @LoginUser User user){
