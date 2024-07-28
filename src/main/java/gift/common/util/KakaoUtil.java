@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.common.properties.KakaoProperties;
 import gift.controller.oauth.dto.TokenInfoResponse;
-import gift.controller.order.dto.Link;
-import gift.controller.order.dto.TextTemplate;
+import gift.controller.oauth.dto.UserInfoResponse;
+import gift.controller.oauth.dto.Link;
+import gift.controller.oauth.dto.TextTemplate;
 import gift.model.Token;
 import java.net.URI;
-import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,14 +31,14 @@ public class KakaoUtil {
 
     public String extractEmail(String accessToken) {
         var url = kakaoProperties.userInfoUrl();
-        var response = restClient.get()
+        UserInfoResponse response = restClient.get()
             .uri(URI.create(url))
             .header("Authorization", "Bearer " + accessToken)
             .retrieve()
-            .body(Map.class);
+            .toEntity(UserInfoResponse.class)
+            .getBody();
 
-        Map<String, Object> kakaoAccount = (Map<String, Object>) response.get("kakao_account");
-        String email = (String) kakaoAccount.get("email");
+        String email = response.kakao_account().email();
         return email;
     }
 

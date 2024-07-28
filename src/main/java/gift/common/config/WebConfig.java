@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
             .excludePathPatterns("/api/v1/user/**",
-                "/api/v1/kakao/login/**");
+                "/api/v1/kakao/login/**", "/swagger-ui/**", "/v3/**");
     }
 
     @Override

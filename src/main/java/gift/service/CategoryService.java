@@ -59,17 +59,14 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(Long categoryId) {
-        if (categoryId == defaultId) {
+        if (productRepository.existsByCategoryId(categoryId)) {
             throw new IllegalArgumentException("삭제할 수 없는 카테고리입니다.");
         }
 
         if (!categoryRepository.existsById(categoryId)) {
             throw new CategoryException(ErrorCode.CATEGORY_NOT_FOUND);
         }
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> new CategoryException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        productRepository.updateCategory(categoryId, defaultId);
         categoryRepository.deleteById(categoryId);
     }
 }

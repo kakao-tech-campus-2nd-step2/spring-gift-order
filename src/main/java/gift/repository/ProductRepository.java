@@ -14,9 +14,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAll(Pageable pageable);
 
-    @Modifying
-    @Query("update Product p set p.category.id = :defaultCategoryId where p.category.id = :categoryId")
-    void updateCategory(Long categoryId, Long defaultCategoryId);
+    boolean existsByCategoryId(Long categoryId);
 
     @Query("select p from Product p join p.options o where o.id = :optionId")
     Product findByOptionId(Long optionId);

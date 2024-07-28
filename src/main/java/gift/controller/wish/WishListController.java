@@ -6,6 +6,9 @@ import gift.common.dto.PageResponse;
 import gift.controller.wish.dto.WishRequest;
 import gift.controller.wish.dto.WishResponse;
 import gift.service.WishService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Wish", description = "위시리스트 API")
+@SecurityRequirement(name = "Authorization")
 @RestController
 @RequestMapping("/api/v1/wish")
 public class WishListController {
@@ -32,6 +37,7 @@ public class WishListController {
     }
 
     @GetMapping("")
+    @Operation(summary = "전체 위시리스트 조회", description = "전체 위시리스트를 조회합니다.")
     public ResponseEntity<PageResponse<WishResponse>> getAllWishList(
         @LoginUser LoginInfo user,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
@@ -41,6 +47,7 @@ public class WishListController {
     }
 
     @PostMapping("")
+    @Operation(summary = "위시리스트 등록", description = "위시리스트를 등록합니다.")
     public ResponseEntity<Void> addWishProduct(@LoginUser LoginInfo user,
         @Valid @RequestBody WishRequest.Create request) {
         Long id = wishService.addWistList(user.id(), request);
@@ -48,6 +55,7 @@ public class WishListController {
     }
 
     @PatchMapping("/{wishId}")
+    @Operation(summary = "위시리스트 수정", description = "위시리스트를 수정합니다.")
     public ResponseEntity<String> updateWishProduct(@PathVariable("wishId") Long wishId,
         @LoginUser LoginInfo user,
         @Valid @RequestBody WishRequest.Update request) {
@@ -56,6 +64,7 @@ public class WishListController {
     }
 
     @DeleteMapping("/{wishId}")
+    @Operation(summary = "위시리스트 삭제", description = "위시리스트를 삭제합니다.")
     public ResponseEntity<String> deleteWishProduct(@PathVariable("wishId") Long wishId,
         @LoginUser LoginInfo user) {
         wishService.deleteWishList(user.id(), wishId);

@@ -5,6 +5,9 @@ import gift.controller.product.dto.ProductRequest;
 import gift.controller.product.dto.ProductResponse;
 import gift.service.OptionService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Product", description = "상품 API")
+@SecurityRequirement(name = "Authorization")
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
@@ -33,12 +38,14 @@ public class ProductController {
     }
 
     @PostMapping("")
+    @Operation(summary = "상품 등록", description = "상품을 등록합니다.")
     public ResponseEntity<Void> registerProduct(@Valid @RequestBody ProductRequest.Create request) {
         Long id = productService.addProduct(request);
         return ResponseEntity.created(URI.create("/api/v1/products/" + id)).build();
     }
 
     @GetMapping("")
+    @Operation(summary = "전체 상품 조회", description = "전체 상품을 조회합니다.")
     public ResponseEntity<PageResponse<ProductResponse>> getAllProducts(
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
@@ -47,12 +54,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "상품 조회", description = "상품을 조회합니다.")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") Long id) {
         ProductResponse response = productService.findProduct(id);
         return ResponseEntity.ok().body(response);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable("id") Long id,
                                                          @Valid @RequestBody ProductRequest.Update request) {
         ProductResponse response = productService.updateProduct(id, request);
@@ -60,6 +69,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
     public ResponseEntity deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

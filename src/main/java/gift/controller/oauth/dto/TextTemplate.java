@@ -1,6 +1,4 @@
-package gift.controller.order.dto;
-
-import gift.controller.order.dto.Link;
+package gift.controller.oauth.dto;
 
 public record TextTemplate(
     String object_type,
