@@ -57,7 +57,7 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
     private OptionsService optionsService;
 
     private String token = "{ACCESS_TOKEN}";
-    ;
+
 
     @Test
     void getAllProducts() throws Exception {
@@ -69,7 +69,7 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
             .forEach(i -> products.add(demoProduct(i)));
 
         List<ProductResponse> response = products.stream()
-            .map(ProductResponse::new)
+            .map(ProductResponse::createProductResponse)
             .toList();
 
         given(productService.getAllProducts())
@@ -93,7 +93,7 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
         options.add(new OptionResponse(option.getId(), option.getName(), option.getQuantity()));
         options.add(new OptionResponse(option2.getId(), option2.getName(), option2.getQuantity()));
 
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
         given(productService.getProduct(any(Long.class)))
             .willReturn(product);
@@ -113,7 +113,7 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
         Long optionId = 1L;
         Product product = demoProduct(1L);
         List<OptionResponse> options = new ArrayList<>();
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
 
         given(productService.getProduct(any(Long.class)))

@@ -67,7 +67,7 @@ public class ProductApiControllerTest {
         //given
         Product product = demoProduct();
         List<OptionResponse> options = new ArrayList<>();
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
 
         given(productService.getProduct(any(Long.class)))
@@ -90,7 +90,7 @@ public class ProductApiControllerTest {
         Long optionId = 1L;
         Product product = demoProduct();
         List<OptionResponse> options = new ArrayList<>();
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
 
         given(productService.getProduct(any(Long.class)))

@@ -36,7 +36,7 @@ public class WishListApiController {
         List<Product> wishlist = wishService.getMyWishList(memberDto.id());
 
         dtoList = wishlist.stream()
-            .map(ProductResponse::new)
+            .map(ProductResponse::createProductResponse)
             .toList();
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }

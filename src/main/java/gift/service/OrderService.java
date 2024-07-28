@@ -31,8 +31,7 @@ public class OrderService {
     public OrderResponse getOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
             .orElseThrow(NotFoundOrderException::new);
-        return OrderResponse.createOrderResponse(order.getId(), order.getOptions().getId(),
-            order.getQuantity(), order.getCreatedAt(), order.getMessage());
+        return OrderResponse.createOrderResponse(order);
     }
 
     public OrderResponse makeOrder(Long memberId, Long productId, Long optionId, Integer quantity, String message) {
@@ -50,8 +49,7 @@ public class OrderService {
             .ifPresent(wishRepository::delete);
         Order savedOrder = orderRepository.save(new Order(memberId, option, quantity, message));
 
-        return OrderResponse.createOrderResponse(savedOrder.getId(), optionId, quantity,
-            savedOrder.getCreatedAt(), savedOrder.getMessage());
+        return OrderResponse.createOrderResponse(savedOrder);
     }
 
     public void sendKakaoMessageToMe(Long memberId, String message) {

@@ -39,7 +39,7 @@ public class OptionsService {
         List<OptionResponse> optionResponse = options.stream()
             .map(OptionResponse::createOptionResponse)
             .toList();
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         return new ProductOptionsResponse(productResponse, optionResponse);
     }
 
@@ -55,7 +55,7 @@ public class OptionsService {
         List<OptionResponse> optionResponse = options.stream()
             .map(OptionResponse::createOptionResponse)
             .toList();
-        ProductResponse productResponse = new ProductResponse(product);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
         return new ProductOptionsResponse(productResponse, optionResponse);
     }
 

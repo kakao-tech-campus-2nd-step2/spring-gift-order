@@ -28,7 +28,7 @@ public class ProductService {
     public List<ProductResponse> getAllProducts() {
         List<Product> products = productRepository.findAll();
         return products.stream()
-            .map(ProductResponse::new)
+            .map(ProductResponse::createProductResponse)
             .toList();
     }
 
