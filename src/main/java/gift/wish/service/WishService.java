@@ -3,7 +3,7 @@ package gift.wish.service;
 import gift.member.domain.Member;
 import gift.member.persistence.MemberRepository;
 import gift.product.domain.Product;
-import gift.product.exception.ProductNotFoundException;
+import gift.product.exception.product.ProductNotFoundException;
 import gift.product.persistence.ProductRepository;
 import gift.wish.domain.Wish;
 import gift.wish.exception.WishNotFoundException;
@@ -65,7 +65,7 @@ public class WishService {
                 .orElseThrow(() -> WishNotFoundException.of(wishId));
         if (!wish.isOwner(userId)) {
             throw WishNotFoundException.of(wishId);
-        } // 긍정문으로 바꾸려면 어떻게 해야할까?
+        }
 
         if (wish.beDeleted()) {
             deleteWish(wishId, userId);
@@ -82,5 +82,11 @@ public class WishService {
         }
 
         wishRepository.delete(wish);
+    }
+
+    @Transactional
+    public void deleteWishWithPurchase(final Long productId, final Long memberId) {
+        wishRepository.findWishByMemberIdAndProductId(memberId, productId)
+                .ifPresent(wish -> wishRepository.deleteById(wish.getId()));
     }
 }

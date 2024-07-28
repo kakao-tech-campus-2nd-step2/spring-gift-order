@@ -6,6 +6,8 @@ import gift.product.application.dto.request.CategoryRequest;
 import gift.product.application.dto.response.CategoryPageResponse;
 import gift.product.application.dto.response.CategoryResponse;
 import gift.product.service.CategoryService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.net.URI;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Category", description = "카테고리 관련 API")
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -29,6 +32,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @ApiResponse(responseCode = "201", description = "카테고리 등록 성공")
     @PostMapping()
     @Authorized(Role.USER)
     public ResponseEntity<Void> createCategory(@RequestBody CategoryRequest request) {
@@ -38,6 +42,7 @@ public class CategoryController {
                 .build();
     }
 
+    @ApiResponse(responseCode = "200", description = "카테고리 수정 성공")
     @PutMapping("/{id}")
     @Authorized(Role.USER)
     @ResponseStatus(HttpStatus.OK)
@@ -45,6 +50,7 @@ public class CategoryController {
         categoryService.modifyCategory(id, request.toCategoryParam());
     }
 
+    @ApiResponse(responseCode = "200", description = "카테고리 조회 성공")
     @GetMapping("/{id}")
     @Authorized(Role.USER)
     public ResponseEntity<CategoryResponse> getCategory(@PathVariable Long id) {
@@ -55,6 +61,7 @@ public class CategoryController {
                 .body(response);
     }
 
+    @ApiResponse(responseCode = "200", description = "카테고리 목록 조회 성공")
     @GetMapping()
     @Authorized(Role.USER)
     public ResponseEntity<CategoryPageResponse> getCategoryList(Pageable pageable) {
@@ -65,6 +72,7 @@ public class CategoryController {
                 .body(response);
     }
 
+    @ApiResponse(responseCode = "204", description = "카테고리 삭제 성공")
     @DeleteMapping("/{id}")
     @Authorized(Role.USER)
     @ResponseStatus(HttpStatus.NO_CONTENT)

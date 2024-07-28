@@ -11,7 +11,7 @@ import gift.member.domain.Member;
 import gift.member.persistence.MemberRepository;
 import gift.product.domain.Category;
 import gift.product.domain.Product;
-import gift.product.exception.ProductNotFoundException;
+import gift.product.exception.product.ProductNotFoundException;
 import gift.product.persistence.ProductRepository;
 import gift.wish.domain.Wish;
 import gift.wish.exception.WishCanNotModifyException;

@@ -12,13 +12,13 @@ public record KakaoTokenResponse(
         String tokenType,
 
         @JsonProperty("expires_in")
-        Integer expiresIn,
+        Long expiresIn,
 
         @JsonProperty("refresh_token")
         String refreshToken,
 
         @JsonProperty("refresh_token_expires_in")
-        Integer refreshTokenExpiresIn,
+        Long refreshTokenExpiresIn,
 
         @JsonProperty("scope")
         String scope
@@ -27,11 +27,11 @@ public record KakaoTokenResponse(
         return tokenType.concat(" ").concat(accessToken);
     }
 
-    public OAuthAccessToken toAccessTokenFrom(Long id) {
-        return new OAuthAccessToken(id, tokenType, accessToken, "kakao", expiresIn);
+    public OAuthAccessToken toAccessTokenFrom(String username) {
+        return new OAuthAccessToken(username, tokenType, accessToken, "kakao", expiresIn);
     }
 
-    public OAuthRefreshToken toRefreshTokenFrom(Long id) {
-        return new OAuthRefreshToken(id, tokenType, refreshToken, "kakao", refreshTokenExpiresIn);
+    public OAuthRefreshToken toRefreshTokenFrom(String username) {
+        return new OAuthRefreshToken(username, tokenType, refreshToken, "kakao", refreshTokenExpiresIn);
     }
 }

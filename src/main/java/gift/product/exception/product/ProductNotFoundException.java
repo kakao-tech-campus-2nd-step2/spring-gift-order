@@ -1,4 +1,4 @@
-package gift.product.exception;
+package gift.product.exception.product;
 
 import org.springframework.http.HttpStatus;
 

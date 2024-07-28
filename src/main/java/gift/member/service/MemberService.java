@@ -49,6 +49,19 @@ public class MemberService {
         return MemberSignInInfo.of(token);
     }
 
+    @Transactional(readOnly = true)
+    public boolean checkUser(String username) {
+        return memberRepository.findByUsername(username).isPresent();
+    }
+
+    @Transactional(readOnly = true)
+    public String getUsername(final Long userId) {
+        var savedMember = memberRepository.findById(userId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return savedMember.getUsername();
+    }
+
     private void checkPassword(MemberInfoCommand memberInfoCommand, Member savedMember) {
         if (PasswordProvider.match(memberInfoCommand.username(), memberInfoCommand.password(),
                 savedMember.getPassword())) {

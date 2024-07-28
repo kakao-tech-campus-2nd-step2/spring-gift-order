@@ -1,4 +1,4 @@
-package gift.product.exception;
+package gift.product.exception.option;
 
 import gift.common.util.ApiResponse;
 import gift.product.application.ProductOptionController;
