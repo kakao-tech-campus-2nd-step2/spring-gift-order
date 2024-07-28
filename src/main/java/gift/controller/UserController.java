@@ -1,8 +1,10 @@
 package gift.controller;
 
+import gift.exception.AlreadyExistException;
 import gift.DTO.Token;
 import gift.DTO.User.UserRequest;
 import gift.DTO.User.UserResponse;
+import gift.exception.LogicalException;
 import gift.security.AuthenticateMember;
 import gift.security.JwtTokenProvider;
 import gift.service.UserService;
@@ -24,9 +26,9 @@ public class UserController {
      * 로그인 ( 유저 정보 인증 )
      */
     @PostMapping("/login")
-    public ResponseEntity<Token> giveToken(@RequestBody UserRequest user){
+    public ResponseEntity<Token> giveToken(@RequestBody UserRequest user) throws IllegalAccessException {
         if(!userService.login(user)){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new IllegalArgumentException("아이디나 비밀번호를 다시 확인해주세요!");
         }
 
         Token token = jwtTokenProvider.makeToken(user);
@@ -37,8 +39,11 @@ public class UserController {
      */
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody UserRequest user){
-        if(userService.isDuplicate(user))
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        if(userService.isUserIdDuplicate(user.getUserId()))
+            throw new AlreadyExistException("이미 존재하는 유저 아이디입니다!");
+
+        if(userService.isEmailDuplicate(user.getEmail()))
+            throw new AlreadyExistException("이미 존재하는 이메일입니다!");
 
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -69,13 +74,14 @@ public class UserController {
             @PathVariable("id") Long id,
             @RequestBody UserRequest user,
             @AuthenticateMember UserResponse userRes
-    ){
+    ) throws NoSuchFieldException {
         if(!id.equals(userService.findByUserId(user.getUserId()).getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new LogicalException("리소스 접근 URI와 요청 데이터가 다릅니다!");
         }
 
-        if(!userService.isDuplicate(user))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if(!userService.isUserIdDuplicate(user.getUserId())) {
+            throw new NoSuchFieldException("존재하지 않는 유저 정보 접근입니다!");
+        }
 
         userService.update(user);
         return new ResponseEntity<>(HttpStatus.OK);

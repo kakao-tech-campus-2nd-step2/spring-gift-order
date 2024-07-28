@@ -64,7 +64,7 @@ public class ProductController {
             @AuthenticateMember UserResponse user
     ){
         productService.updateProduct(product, id);
-        return new ResponseEntity<>((HttpStatus.NO_CONTENT));
+        return new ResponseEntity<>((HttpStatus.OK));
     }
     /*
      * 상품 삭제
@@ -75,6 +75,6 @@ public class ProductController {
             @AuthenticateMember UserResponse user
     ) {
         productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
