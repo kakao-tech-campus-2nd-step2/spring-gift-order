@@ -55,4 +55,11 @@ public class Wish {
     public void updateQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+    public void subtract(Integer quantity) {
+        if (this.quantity <= quantity) {
+            throw new IllegalArgumentException("위시 수량보다 많은 값을 차감할 수 없습니다.");
+        }
+        this.quantity -= quantity;
+    }
 }

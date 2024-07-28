@@ -7,6 +7,10 @@ import gift.doamin.order.repository.OrderRepository;
 import gift.doamin.product.entity.Option;
 import gift.doamin.product.repository.OptionRepository;
 import gift.doamin.user.entity.User;
+import gift.doamin.wishlist.entity.Wish;
+import gift.doamin.wishlist.repository.JpaWishListRepository;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +19,13 @@ public class OrderService {
 
     private final OptionRepository optionRepository;
     private final OrderRepository orderRepository;
+    private final JpaWishListRepository jpaWishListRepository;
 
-    public OrderService(OptionRepository optionRepository, OrderRepository orderRepository) {
+    public OrderService(OptionRepository optionRepository, OrderRepository orderRepository,
+        JpaWishListRepository jpaWishListRepository) {
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
+        this.jpaWishListRepository = jpaWishListRepository;
     }
 
     @Transactional
@@ -31,7 +38,21 @@ public class OrderService {
 
         option.subtract(orderRequest.getQuantity());
 
+        subtractWishList(user, option, orderRequest.getQuantity());
+
         return new OrderResponse(order);
+    }
+
+    @Transactional
+    public void subtractWishList(User user, Option option, Integer quantity) {
+        jpaWishListRepository.findByUserIdAndProductId(user.getId(), option.getProduct().getId())
+            .ifPresent(wish -> {
+                try {
+                    wish.subtract(quantity);
+                } catch (IllegalArgumentException e) {
+                    jpaWishListRepository.delete(wish);
+                }
+            });
     }
 
 }

@@ -42,6 +42,10 @@ public class Option {
         return id;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public String getName() {
         return name;
     }
