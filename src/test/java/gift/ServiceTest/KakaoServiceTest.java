@@ -9,6 +9,7 @@ import gift.domain.getTokenDto;
 import gift.repository.MemberRepository;
 import gift.service.KakaoService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -43,6 +44,7 @@ class KakaoServiceTest {
     private KakaoService kakaoService;
 
     @Test
+    @DisplayName("Uri 생성 테스트")
     void testMakeUri() {
         URI uri = kakaoService.makeUri();
         assertNotNull(uri);
@@ -51,6 +53,7 @@ class KakaoServiceTest {
     }
 
     @Test
+    @DisplayName("토큰 가져오기 테스트")
     void testGetToken() throws JsonProcessingException {
         String code = "test-code";
         String token = "test-token";

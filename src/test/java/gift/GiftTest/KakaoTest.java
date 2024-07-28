@@ -6,6 +6,7 @@ import gift.domain.*;
 import gift.repository.*;
 import gift.service.KakaoService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -78,6 +79,7 @@ public class KakaoTest {
     }
 
     @Test
+    @DisplayName("code로 Member 정보 가져오기")
     void test1() throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String string = kakaoController.getUserAgree().getUrl();
@@ -88,6 +90,7 @@ public class KakaoTest {
         System.out.println("Response Body: " + object.getBody());
     }
     @Test
+    @DisplayName("주문하기")
     void test2() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpHeaders headers = new HttpHeaders();

@@ -5,6 +5,7 @@ import gift.controller.OrderController;
 import gift.domain.Order;
 import gift.domain.OrderRequest;
 import gift.service.OrderService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +34,7 @@ public class OrderControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("주문하기")
     void orderTest() throws Exception {
         OrderRequest orderRequest = new OrderRequest(1L,2L,"문 앞에 놔주세요");
 
