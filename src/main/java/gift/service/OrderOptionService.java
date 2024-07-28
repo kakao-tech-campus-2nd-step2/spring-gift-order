@@ -1,6 +1,8 @@
 package gift.service;
 
 import gift.domain.Option;
+import gift.dto.KakaoTalkRequest;
+import gift.dto.KakaoTalkResponse;
 import gift.dto.MemberDTO;
 import gift.dto.OrderOptionDTO;
 import gift.exception.NoSuchOptionException;
@@ -18,22 +20,32 @@ public class OrderOptionService {
     private final OptionRepository optionRepository;
     private final WishedProductRepository wishedProductRepository;
     private final OrderOptionRepository orderOptionRepository;
+    private final KakaoTalkService kakaoTalkService;
 
     @Autowired
     public OrderOptionService(OptionService optionService, OptionRepository optionRepository,
-        WishedProductRepository wishedProductRepository, OrderOptionRepository orderOptionRepository) {
+        WishedProductRepository wishedProductRepository, OrderOptionRepository orderOptionRepository,
+        KakaoTalkService kakaoTalkService) {
         this.optionService = optionService;
         this.optionRepository = optionRepository;
         this.wishedProductRepository = wishedProductRepository;
         this.orderOptionRepository = orderOptionRepository;
+        this.kakaoTalkService = kakaoTalkService;
     }
 
     @Transactional
-    public OrderOptionDTO order(MemberDTO memberDTO, OrderOptionDTO orderOptionDTO) {
+    public KakaoTalkResponse order(MemberDTO memberDTO, OrderOptionDTO orderOptionDTO) {
         optionService.buyOption(orderOptionDTO.optionId(), orderOptionDTO.quantity());
         Option option = optionRepository.findById(orderOptionDTO.optionId())
             .orElseThrow(NoSuchOptionException::new);
         wishedProductRepository.deleteAllByMemberAndProduct(memberDTO.toEntity(), option.getProduct());
-        return orderOptionRepository.save(orderOptionDTO.toEntity(option, memberDTO.toEntity())).toDTO();
+        orderOptionRepository.save(orderOptionDTO.toEntity(option, memberDTO.toEntity()));
+
+        KakaoTalkRequest kakaoTalkRequest = KakaoTalkRequest.of(orderOptionDTO.message(),
+            option.getProduct().getImageUrl(),
+            "http://localhost:8080/api/products/" + option.getProduct().getId(),
+            option.getProduct().getName(), option.getProduct().getCategory().getName(),
+            option.getProduct().getPrice());
+        return kakaoTalkService.sendTalk(memberDTO, kakaoTalkRequest);
     }
 }

@@ -40,7 +40,7 @@ public class KakaoLoginService {
 
     public Map<String, String> login(String code) {
         var kakaoTokenDTO = getKakaoToken(code);
-        var kakaoProfileDTO = getKakaoProfile(kakaoTokenDTO);
+        var kakaoProfileDTO = getKakaoProfile(kakaoTokenDTO.access_token());
 
         String email = kakaoProfileDTO.kakao_account().email();
         MemberDTO foundMemberDTO = memberService.findMember(email);
@@ -63,11 +63,11 @@ public class KakaoLoginService {
             .body(KakaoTokenDTO.class);
     }
 
-    private KakaoProfileDTO getKakaoProfile(KakaoTokenDTO kakaoTokenDTO) {
+    private KakaoProfileDTO getKakaoProfile(String kakaoAccessToken) {
         var client = RestClient.builder(restTemplate).build();
         return client.get()
             .uri(URI.create(KAKAO_PROFILE_URL))
-            .header("Authorization", "Bearer " + kakaoTokenDTO.access_token())
+            .header("Authorization", "Bearer " + kakaoAccessToken)
             .retrieve()
             .body(KakaoProfileDTO.class);
     }
