@@ -4,6 +4,11 @@ import gift.product.dto.auth.LoginMemberIdDto;
 import gift.product.dto.wish.WishDto;
 import gift.product.model.Wish;
 import gift.product.service.WishService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -12,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "wish", description = "위시 리스트 관련 API")
 @RestController
 @RequestMapping("/api/wishes")
 public class WishController {
@@ -50,6 +57,7 @@ public class WishController {
         return ResponseEntity.ok(wishes);
     }
 
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
     @GetMapping("/{id}")
     public ResponseEntity<Wish> getWish(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {
@@ -58,6 +66,10 @@ public class WishController {
         return ResponseEntity.ok(wish);
     }
 
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
+    })
     @PostMapping("/insert")
     public ResponseEntity<Wish> insertWish(@Valid @RequestBody WishDto wishDto,
         HttpServletRequest request) {
@@ -67,6 +79,7 @@ public class WishController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseWish);
     }
 
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProblemDetail.class)))
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteWish(@PathVariable(name = "id") Long id,
         HttpServletRequest request) {

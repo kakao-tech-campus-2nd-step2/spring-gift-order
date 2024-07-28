@@ -12,12 +12,16 @@ import gift.product.repository.CategoryRepository;
 import gift.product.repository.ProductRepository;
 import java.net.URI;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -47,6 +51,23 @@ class OptionIntegrityTest {
 
     @Autowired
     ProductRepository productRepository;
+
+    static Stream<Arguments> generateTestData() {
+        return Stream.of(
+            Arguments.of("실패 옵션 이름이 50자를 초과했을 때",
+                "테스트옵션".repeat(51),
+                1,
+                "옵션 이름은 공백 포함 최대 50자까지 입력할 수 있습니다."),
+            Arguments.of("실패 옵션 이름에 사용 불가능한 특수 문자를 입력했을 때",
+                "테스트옵션#",
+                1,
+                "사용 가능한 특수 문자는 ()[]+-&/_ 입니다."),
+            Arguments.of("실패 옵션 수량이 범위를 초과했을 때",
+                "테스트옵션",
+                100_000_001,
+                "옵션 수량은 최소 1개 이상 1억 개 미만이어야 합니다.")
+        );
+    }
 
     @Order(1)
     @Test
@@ -150,12 +171,16 @@ class OptionIntegrityTest {
         assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("generateTestData")
     @Order(6)
-    @Test
-    void 실패_옵션_이름이_50자를_초과했을_때() throws JsonProcessingException {
+    void 실패_옵션_잘못된_값으로_요청(String testName,
+        String testOptionName,
+        int testQuantity,
+        String errorMessage) throws JsonProcessingException {
         //given
         String url = BASE_URL + port + "/api/options/insert";
-        OptionDto optionDto = new OptionDto("테스트옵션".repeat(51), 1, 1L);
+        OptionDto optionDto = new OptionDto(testOptionName, testQuantity, 1L);
 
         RequestEntity<OptionDto> requestEntity = new RequestEntity<>(optionDto, HttpMethod.POST,
             URI.create(url));
@@ -168,48 +193,6 @@ class OptionIntegrityTest {
         String message = (String) responseMessageMap.get("detail");
 
         //then
-        assertThat(message).isEqualTo("옵션 이름은 공백 포함 최대 50자까지 입력할 수 있습니다.");
-    }
-
-    @Order(7)
-    @Test
-    void 실패_옵션_이름에_사용_불가능한_특수_문자를_입력했을_때() throws JsonProcessingException {
-        //given
-        String url = BASE_URL + port + "/api/options/insert";
-        OptionDto optionDto = new OptionDto("테스트옵션#", 1, 1L);
-
-        RequestEntity<OptionDto> requestEntity = new RequestEntity<>(optionDto, HttpMethod.POST,
-            URI.create(url));
-
-        //when
-        ObjectMapper mapper = new ObjectMapper();
-        String responseMessage = testRestTemplate.exchange(requestEntity, String.class).getBody();
-        Map<String, Object> responseMessageMap = mapper.readValue(responseMessage, Map.class);
-
-        String message = (String) responseMessageMap.get("detail");
-
-        //then
-        assertThat(message).isEqualTo("사용 가능한 특수 문자는 ()[]+-&/_ 입니다.");
-    }
-
-    @Order(8)
-    @Test
-    void 실패_옵션_수량이_범위를_초과했을_때() throws JsonProcessingException {
-        //given
-        String url = BASE_URL + port + "/api/options/insert";
-        OptionDto optionDto = new OptionDto("테스트옵션", 100_000_001, 1L);
-
-        RequestEntity<OptionDto> requestEntity = new RequestEntity<>(optionDto, HttpMethod.POST,
-            URI.create(url));
-
-        //when
-        ObjectMapper mapper = new ObjectMapper();
-        String responseMessage = testRestTemplate.exchange(requestEntity, String.class).getBody();
-        Map<String, Object> responseMessageMap = mapper.readValue(responseMessage, Map.class);
-
-        String message = (String) responseMessageMap.get("detail");
-
-        //then
-        assertThat(message).isEqualTo("옵션 수량은 최소 1개 이상 1억 개 미만이어야 합니다.");
+        assertThat(message).isEqualTo(errorMessage);
     }
 }

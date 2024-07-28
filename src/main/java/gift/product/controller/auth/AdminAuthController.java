@@ -3,6 +3,7 @@ package gift.product.controller.auth;
 import gift.product.dto.auth.JwtResponse;
 import gift.product.dto.auth.MemberDto;
 import gift.product.service.AuthService;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.net.URI;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Hidden
 @Controller
 @RequestMapping("/admin")
 public class AdminAuthController {
