@@ -2,7 +2,7 @@ package gift.service;
 
 import gift.domain.Member;
 import gift.domain.Option;
-import gift.domain.Order;
+import gift.domain.Orders;
 import gift.dto.OrderRequestDTO;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
@@ -58,7 +58,7 @@ public class OrderServiceTest {
         orderRequest.setMessage("Please handle this order with care.");
 
         when(optionRepository.findById(anyLong())).thenReturn(Optional.of(option));
-        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderRepository.save(any(Orders.class))).thenAnswer(invocation -> invocation.getArgument(0));
     }
 
 

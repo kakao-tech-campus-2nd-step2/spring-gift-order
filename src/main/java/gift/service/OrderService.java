@@ -2,7 +2,7 @@ package gift.service;
 
 import gift.domain.Member;
 import gift.domain.Option;
-import gift.domain.Order;
+import gift.domain.Orders;
 import gift.dto.OrderRequestDTO;
 import gift.dto.OrderResponseDTO;
 import gift.repository.OptionRepository;
@@ -40,12 +40,10 @@ public class OrderService {
         option.subtract(orderRequest.getQuantity());
         optionRepository.save(option);
 
-        Order order = new Order(member, option, orderRequest.getQuantity(), LocalDateTime.now(), orderRequest.getMessage());
+        Orders order = new Orders(member, option, orderRequest.getQuantity(), LocalDateTime.now(), orderRequest.getMessage());
         orderRepository.save(order);
 
         wishService.removeWish(member.getId(), option.getProduct().getName());
-
-
 
         if (member.getEmail() != null) {
             String kakaoAccessToken = kakaoTokenService.getTokenByEmail(member.getEmail());

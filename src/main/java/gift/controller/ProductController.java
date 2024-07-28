@@ -4,6 +4,8 @@ import gift.dto.ProductRequestDTO;
 import gift.dto.ProductResponseDTO;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/products")
+@Tag(name = "ProductController", description = "상품 관리 API")
 public class ProductController {
 
     private final ProductService productService;
@@ -22,6 +25,7 @@ public class ProductController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "상품 목록 조회", description = "모든 상품을 페이지네이션하여 조회합니다.")
     @GetMapping
     public String getProducts(Model model,
                               @RequestParam(defaultValue = "0") int page,
@@ -33,6 +37,7 @@ public class ProductController {
         return "products";
     }
 
+    @Operation(summary = "새 상품 폼 조회", description = "새로운 상품을 추가하는 폼을 조회합니다.")
     @GetMapping("/new")
     public String newProductForm(Model model) {
         model.addAttribute("productFormDTO", new ProductRequestDTO());
@@ -40,6 +45,7 @@ public class ProductController {
         return "productForm";
     }
 
+    @Operation(summary = "상품 생성", description = "새로운 상품을 생성합니다.")
     @PostMapping
     public String createProduct(@Valid @ModelAttribute("productFormDTO") ProductRequestDTO productRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -57,6 +63,7 @@ public class ProductController {
         return "redirect:/api/products";
     }
 
+    @Operation(summary = "상품 수정 폼 조회", description = "기존 상품을 수정하는 폼을 조회합니다.")
     @GetMapping("/edit/{id}")
     public String editProductForm(@PathVariable Long id, Model model) {
         ProductResponseDTO productResponseDTO = productService.getProductById(id);
@@ -65,6 +72,7 @@ public class ProductController {
         return "productForm";
     }
 
+    @Operation(summary = "상품 수정", description = "기존 상품을 수정합니다.")
     @PostMapping("/edit/{id}")
     public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute("productFormDTO") ProductRequestDTO productRequestDTO, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -82,6 +90,7 @@ public class ProductController {
         return "redirect:/api/products";
     }
 
+    @Operation(summary = "상품 삭제", description = "기존 상품을 삭제합니다.")
     @DeleteMapping("/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);

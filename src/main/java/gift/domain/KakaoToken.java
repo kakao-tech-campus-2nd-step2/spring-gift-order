@@ -3,7 +3,7 @@ package gift.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "kakao_tokens")
+@Table(name = "kakaoToken")
 public class KakaoToken {
 
     @Id
@@ -31,15 +31,11 @@ public class KakaoToken {
         return userEmail;
     }
 
-    public void setUserEmail(String userId) {
-        this.userEmail = userId;
-    }
-
     public String getToken() {
         return token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public KakaoToken withUpdatedToken(String token) {
+        return new KakaoToken(this.userEmail, token);
     }
 }

@@ -11,13 +11,13 @@ public class OrderTest {
 
     private Member member;
     private Option option;
-    private Order order;
+    private Orders order;
 
     @BeforeEach
     void setUp() {
         member = new Member("test@example.com", "password");
         option = new Option("Test Option", 10, null);
-        order = new Order(member, option, 2, LocalDateTime.now(), "Please handle this order with care.");
+        order = new Orders(member, option, 2, LocalDateTime.now(), "Please handle this order with care.");
     }
 
     @Test
