@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface KakaoOauthMemberRepository extends JpaRepository<KakaoOauthMember, Long> {
 
+    Optional<KakaoOauthMember> findByKakaoIdentifier(Long id);
     Optional<KakaoOauthMember> findByMember(Member member);
 }

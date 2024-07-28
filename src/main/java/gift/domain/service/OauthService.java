@@ -1,5 +1,6 @@
 package gift.domain.service;
 
+import gift.domain.dto.response.KakaoUserInfoResponse;
 import gift.domain.dto.response.OauthTokenResponse;
 import gift.domain.exception.unauthorized.TokenUnexpectedErrorException;
 import gift.global.WebConfig.Constants.Domain.Member.Type;
@@ -30,6 +31,22 @@ public class OauthService {
             return getKakaoOauthToken(authorizationCode);
         }
         throw new IllegalStateException();
+    }
+
+    public KakaoUserInfoResponse getKakaoUserInfo(String kakaoUserAccessToken) {
+        try {
+            return restClient
+                .get()
+                .uri("https://kapi.kakao.com/v2/user/me")
+                .accept(MediaType.APPLICATION_FORM_URLENCODED)
+                .header("Authorization", "Bearer " + kakaoUserAccessToken)
+                .retrieve()
+                .toEntity(KakaoUserInfoResponse.class)
+                .getBody();
+        } catch (Exception e) {
+            //TODO: 200 응답이 아닐 때를 조금 더 세분화시키기 (https://github.com/kakao-tech-campus-2nd-step2/spring-gift-order/pull/267#discussion_r1692966327)
+            throw new TokenUnexpectedErrorException();
+        }
     }
 
     private OauthTokenResponse getKakaoOauthToken(String authorizationCode) {
