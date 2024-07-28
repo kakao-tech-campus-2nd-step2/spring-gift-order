@@ -65,23 +65,16 @@ public class OptionService {
         }
 
         if (request.action().equals(QuantityUpdateAction.ADD.toString())) {
-            int updatedQuantity = option.getQuantity() + request.quantity();
-            if (updatedQuantity > Domain.Option.QUANTITY_RANGE_MAX) {
-                throw new OptionQuantityOutOfRangeException();
-            }
+            addQuantity(option, request.quantity());
             option.setName(request.name());
-            option.add(request.quantity());
             return option;
         }
 
         if (request.action().equals(QuantityUpdateAction.SUBTRACT.toString())) {
-            int updatedQuantity = option.getQuantity() - request.quantity();
-            if (updatedQuantity < Domain.Option.QUANTITY_RANGE_MIN) {
-                throw new OptionQuantityOutOfRangeException();
-            }
+            subtractQuantity(option, request.quantity());
             option.setName(request.name());
-            option.subtract(request.quantity());
             return option;
+
         }
 
         throw new OptionUpdateActionInvalidException();
@@ -93,6 +86,26 @@ public class OptionService {
         Option option = getOptionById(optionId);
         product.getOptions().remove(option);
         optionRepository.delete(option);
+    }
+
+    @Transactional
+    public Option addQuantity(Option option, Integer quantity) {
+        int updatedQuantity = option.getQuantity() + quantity;
+        if (updatedQuantity > Domain.Option.QUANTITY_RANGE_MAX) {
+            throw new OptionQuantityOutOfRangeException();
+        }
+        option.add(quantity);
+        return option;
+    }
+
+    @Transactional
+    public Option subtractQuantity(Option option, Integer quantity) {
+        int updatedQuantity = option.getQuantity() - quantity;
+        if (updatedQuantity < Domain.Option.QUANTITY_RANGE_MIN) {
+            throw new OptionQuantityOutOfRangeException();
+        }
+        option.subtract(quantity);
+        return option;
     }
 
     //옵션 이름들이 중복이 없는지 검증

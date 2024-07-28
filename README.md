@@ -600,8 +600,8 @@ Content-Type: application/json
 
 #### 기능 설계(컨트롤러 및 서비스 설계)
 
-- [ ] 주문 생성 API
-- [ ] 주문 조회 API
+- [x] 주문 생성 API
+- [x] 주문 조회 API
 
 #### 예외, 검증 설계
 
@@ -1908,7 +1908,7 @@ Authorization: Bearer your-token-string
 {
   "timestamp": "2024-01-01T00:00:00.0000000",
   "success": true,
-  "status": 200,
+  "status": 201,
   "created-order": {
     "id": 1,
     "option-id": 1,

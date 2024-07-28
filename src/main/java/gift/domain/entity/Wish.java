@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+//TODO: 상품에 대해 위시를 정하지 말고 상품 옵션에 대해 위시 수량을 정한뒤, 그 수량을 감소시킬 필요가 있음
 @Entity
 public class Wish {
 
