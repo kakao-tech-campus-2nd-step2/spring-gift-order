@@ -1,6 +1,6 @@
 package gift.product.repository;
 
-import gift.product.dto.OptionResponse;
+import gift.product.dto.option.OptionResponse;
 import gift.product.model.Option;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

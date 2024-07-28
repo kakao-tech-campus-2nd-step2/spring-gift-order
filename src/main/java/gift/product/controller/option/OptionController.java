@@ -1,7 +1,7 @@
-package gift.product.controller;
+package gift.product.controller.option;
 
-import gift.product.dto.OptionDto;
-import gift.product.dto.OptionResponse;
+import gift.product.dto.option.OptionDto;
+import gift.product.dto.option.OptionResponse;
 import gift.product.model.Option;
 import gift.product.service.OptionService;
 import jakarta.validation.Valid;

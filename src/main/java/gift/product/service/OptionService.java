@@ -1,8 +1,7 @@
 package gift.product.service;
 
-import gift.product.dto.OptionDto;
-import gift.product.dto.OptionResponse;
-import gift.product.dto.OptionSubtractAmount;
+import gift.product.dto.option.OptionDto;
+import gift.product.dto.option.OptionResponse;
 import gift.product.exception.CannotDeleteOnlyOneOptionException;
 import gift.product.model.Option;
 import gift.product.model.Product;
@@ -41,7 +40,7 @@ public class OptionService {
         validateRedundancyOptionName(optionDto.name(), optionDto.productId());
         Product product = getValidatedProduct(optionDto.productId());
 
-        return optionRepository.save(new Option(optionDto.name(), optionDto.quentity(), product));
+        return optionRepository.save(new Option(optionDto.name(), optionDto.quantity(), product));
     }
 
     @Transactional
@@ -50,7 +49,7 @@ public class OptionService {
         getValidatedOption(id);
 
         return optionRepository.save(
-            new Option(id, optionDto.name(), optionDto.quentity(), product));
+            new Option(id, optionDto.name(), optionDto.quantity(), product));
     }
 
     @Transactional
@@ -58,12 +57,6 @@ public class OptionService {
         Option option = getValidatedOption(id);
         validateOptionOnlyOne(option);
         optionRepository.deleteById(id);
-    }
-
-    @Transactional
-    public Option subtractOption(Long id, OptionSubtractAmount optionSubtractAmount) {
-        Option option = getValidatedOption(id);
-        return optionRepository.save(option.subtract(optionSubtractAmount.amount()));
     }
 
     private Product getValidatedProduct(Long productId) {

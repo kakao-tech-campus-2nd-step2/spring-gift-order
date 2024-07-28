@@ -2,7 +2,7 @@ package gift.integrity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gift.product.dto.CategoryDto;
+import gift.product.dto.category.CategoryDto;
 import java.net.URI;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -28,10 +28,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 @SuppressWarnings("NonAsciiCharacters")
 class CategoryIntegrityTest {
 
+    static final String BASE_URL = "http://localhost:";
     @LocalServerPort
     int port;
-    String BASE_URL = "http://localhost:";
-
     @Autowired
     TestRestTemplate testRestTemplate;
 

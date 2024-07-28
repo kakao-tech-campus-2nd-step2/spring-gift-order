@@ -2,11 +2,11 @@ package gift.integrity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gift.product.dto.CategoryDto;
-import gift.product.dto.ClientProductDto;
-import gift.product.dto.MemberDto;
-import gift.product.dto.ProductDto;
-import gift.product.dto.WishDto;
+import gift.product.dto.auth.MemberDto;
+import gift.product.dto.category.CategoryDto;
+import gift.product.dto.product.ClientProductDto;
+import gift.product.dto.product.ProductDto;
+import gift.product.dto.wish.WishDto;
 import gift.product.service.AuthService;
 import gift.product.service.CategoryService;
 import gift.product.service.ProductService;
@@ -41,11 +41,9 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 @SuppressWarnings("NonAsciiCharacters")
 class WishIntegrityTest {
 
+    static final String BASE_URL = "http://localhost:";
     @LocalServerPort
     int port;
-
-    String BASE_URL = "http://localhost:";
-
     @Autowired
     TestRestTemplate testRestTemplate;
 
@@ -67,7 +65,7 @@ class WishIntegrityTest {
     void 로그인() {
         MemberDto memberDto = new MemberDto("test@test.com", "1234");
         authService.register(memberDto);
-        accessToken = authService.login(memberDto).token();
+        accessToken = authService.login(memberDto).accessToken();
     }
 
     @BeforeAll
@@ -76,7 +74,7 @@ class WishIntegrityTest {
         categoryService.insertCategory(categoryDto);
 
         String url = BASE_URL + port + "/api/products/insert";
-        ProductDto productDto = new ClientProductDto("테스트1", 1500, "테스트주소1", "테스트카테고리1");
+        ProductDto productDto = new ClientProductDto("테스트1", 1500, "테스트주소1", categoryDto.name());
         RequestEntity<ProductDto> requestEntity = new RequestEntity<>(productDto, HttpMethod.POST,
             URI.create(url));
 

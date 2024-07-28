@@ -1,6 +1,6 @@
 package gift.product.service;
 
-import gift.product.dto.CategoryDto;
+import gift.product.dto.category.CategoryDto;
 import gift.product.model.Category;
 import gift.product.repository.CategoryRepository;
 import java.util.List;

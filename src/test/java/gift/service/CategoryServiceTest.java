@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.clearInvocations;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.CategoryDto;
+import gift.product.dto.category.CategoryDto;
 import gift.product.model.Category;
 import gift.product.repository.CategoryRepository;
 import gift.product.service.CategoryService;
@@ -111,7 +111,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    void 존재하지_않는_카테고리_조회() {
+    void 실패_존재하지_않는_카테고리_조회() {
         //given
         given(categoryRepository.findById(-1L)).willReturn(
             Optional.empty());
@@ -122,7 +122,7 @@ class CategoryServiceTest {
     }
 
     @Test
-    void 이미_존재하는_카테고리_추가() {
+    void 실패_이미_존재하는_카테고리_추가() {
         //given
         CategoryDto categoryDto = new CategoryDto("테스트카테고리");
         given(categoryRepository.findByName(categoryDto.name())).willReturn(Optional.empty());

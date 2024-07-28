@@ -5,8 +5,8 @@ import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import gift.product.dto.LoginMember;
-import gift.product.dto.WishDto;
+import gift.product.dto.auth.LoginMemberIdDto;
+import gift.product.dto.wish.WishDto;
 import gift.product.model.Category;
 import gift.product.model.Member;
 import gift.product.model.Product;
@@ -49,14 +49,16 @@ class WishServiceTest {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        Member member = new Member(1L, "tset@test.com", "test");
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        Member member = new Member(1L, "test@test.com", "test");
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.of(member));
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            member.getId())).willReturn(false);
 
         //when
-        WishDto wishDto = new WishDto(1L);
-        LoginMember loginMember = new LoginMember(1L);
-        wishService.insertWish(wishDto, loginMember);
+        WishDto wishDto = new WishDto(product.getId());
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(member.getId());
+        wishService.insertWish(wishDto, loginMemberIdDto);
 
         //then
         then(wishRepository).should().save(any());
@@ -79,9 +81,9 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_위시_항목_조회() {
+    void 실패_존재하지_않는_위시_항목_조회() {
         //given
-        LoginMember testMember = new LoginMember(1L);
+        LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
 
         //when, then
@@ -90,9 +92,9 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_위시_항목_삭제() {
+    void 실패_존재하지_않는_위시_항목_삭제() {
         //given
-        LoginMember testMember = new LoginMember(1L);
+        LoginMemberIdDto testMember = new LoginMemberIdDto(1L);
         given(wishRepository.findByIdAndMemberId(any(), any())).willReturn(Optional.empty());
 
         //when, then
@@ -101,19 +103,36 @@ class WishServiceTest {
     }
 
     @Test
-    void 존재하지_않는_회원_정보로_위시리스트_추가_시도() {
+    void 실패_존재하지_않는_회원_정보로_위시리스트_추가_시도() {
         //given
         Category category = new Category(1L, "테스트카테고리");
         Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
-        given(productRepository.findById(1L)).willReturn(Optional.of(product));
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
         given(authRepository.findById(any())).willReturn(Optional.empty());
 
-        WishDto wishDto = new WishDto(1L);
-        LoginMember loginMember = new LoginMember(-1L);
+        WishDto wishDto = new WishDto(product.getId());
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(-1L);
 
         //when, then
         assertThatThrownBy(
-            () -> wishService.insertWish(wishDto, loginMember)).isInstanceOf(
+            () -> wishService.insertWish(wishDto, loginMemberIdDto)).isInstanceOf(
             NoSuchElementException.class);
+    }
+
+    @Test
+    void 실패_위시_리스트에_상품_중복_추가() {
+        //given
+        Category category = new Category(1L, "테스트카테고리");
+        Product product = new Product(1L, "테스트상품", 1500, "테스트주소", category);
+        WishDto wishDto = new WishDto(product.getId());
+        LoginMemberIdDto loginMemberIdDto = new LoginMemberIdDto(1L);
+
+        given(productRepository.findById(product.getId())).willReturn(Optional.of(product));
+        given(wishRepository.existsByProductIdAndMemberId(product.getId(),
+            loginMemberIdDto.id())).willReturn(true);
+
+        //when, then
+        assertThatThrownBy(() -> wishService.insertWish(wishDto, loginMemberIdDto)).isInstanceOf(
+            IllegalArgumentException.class);
     }
 }

@@ -1,4 +1,4 @@
-package gift.product.dto;
+package gift.product.dto.product;
 
 public interface ProductDto {
 

@@ -1,6 +1,6 @@
 package gift.product.service;
 
-import gift.product.dto.ProductDto;
+import gift.product.dto.product.ProductDto;
 import gift.product.model.Category;
 import gift.product.model.Option;
 import gift.product.model.Product;

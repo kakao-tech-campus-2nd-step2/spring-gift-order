@@ -2,19 +2,24 @@ package gift.product.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.product.dto.AccessAndRefreshToken;
-import gift.product.dto.JwtResponse;
-import gift.product.dto.MemberDto;
+import gift.product.dto.auth.JwtResponse;
+import gift.product.dto.auth.LoginMemberIdDto;
+import gift.product.dto.auth.MemberDto;
+import gift.product.dto.auth.OAuthJwt;
 import gift.product.exception.LoginFailedException;
+import gift.product.model.KakaoToken;
 import gift.product.model.Member;
 import gift.product.property.KakaoProperties;
 import gift.product.repository.AuthRepository;
+import gift.product.repository.KakaoTokenRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.NoSuchElementException;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -27,26 +32,19 @@ import org.springframework.web.client.RestClient;
 @Transactional(readOnly = true)
 public class AuthService {
 
+    private static final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
     private final AuthRepository authRepository;
-
+    private final KakaoTokenRepository kakaoTokenRepository;
+    private final KakaoProperties kakaoProperties;
+    private final RestClient restClient = RestClient.builder().build();
     @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    private final KakaoProperties kakaoProperties;
-
-    private final RestClient restClient = RestClient.builder().build();
-    ;
-
-    private final String KAKAO_AUTH_CODE_BASE_URL = "https://kauth.kakao.com/oauth/authorize?scope=talk_message,account_email&response_type=code";
-
-    private final String KAKAO_AUTH_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-
-    private final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
-
-    private final String KAKAO_UNLINK_USER_URL = "https://kapi.kakao.com/v1/user/unlink";
-
-    public AuthService(AuthRepository authRepository, KakaoProperties kakaoProperties) {
+    public AuthService(AuthRepository authRepository,
+        KakaoTokenRepository kakaoTokenRepository,
+        KakaoProperties kakaoProperties) {
         this.authRepository = authRepository;
+        this.kakaoTokenRepository = kakaoTokenRepository;
         this.kakaoProperties = kakaoProperties;
     }
 
@@ -64,8 +62,9 @@ public class AuthService {
         Member member = authRepository.findByEmail(memberDto.email());
 
         String accessToken = getAccessToken(member);
+        String refreshToken = getRefreshToken(member);
 
-        return new JwtResponse(accessToken);
+        return new JwtResponse(accessToken, refreshToken);
     }
 
     public String getKakaoAuthCodeUrl() {
@@ -73,24 +72,70 @@ public class AuthService {
             + "&client_id=" + kakaoProperties.clientId();
     }
 
-    public AccessAndRefreshToken getAccessAndRefreshToken(String code) {
-        AccessAndRefreshToken accessAndRefreshToken = getJwtAll(code);
-        registerKakaoMember(accessAndRefreshToken.accessToken());
+    public OAuthJwt getOAuthToken(String code, String externalApiUrl) {
+        LinkedMultiValueMap<String, String> body = generateBodyForToken(code);
 
-        return accessAndRefreshToken;
-    }
-
-    public long unlinkKakaoAccount(String accessToken) {
         ResponseEntity<String> response = restClient.post()
-            .uri(URI.create(KAKAO_UNLINK_USER_URL))
-            .header("Authorization", "Bearer " + accessToken)
+            .uri(URI.create(externalApiUrl))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .body(body)
             .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("토큰 발급 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
             .toEntity(String.class);
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.getBody());
+            String accessToken = rootNode.path("access_token").asText();
+            String refreshToken = rootNode.path("refresh_token").asText();
 
+            return new OAuthJwt(accessToken, refreshToken);
+        } catch (Exception e) {
+            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+    }
+
+    public JwtResponse registerKakaoMember(OAuthJwt oAuthJwt, String externalApiUrl) {
+        ResponseEntity<String> response = restClient.post()
+            .uri(URI.create(externalApiUrl))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header("Authorization", "Bearer " + oAuthJwt.accessToken())
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("카카오 유저 정보 조회 관련 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
+            .toEntity(String.class);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            String memberEmail = rootNode.path("kakao_account").path("email").asText();
+
+            if (!authRepository.existsByEmail(memberEmail)) {
+                authRepository.save(new Member(memberEmail, "oauth"));
+            }
+
+            return getJwtResponse(oAuthJwt, memberEmail);
+        } catch (Exception e) {
+            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+    }
+
+    public long unlinkKakaoAccount(LoginMemberIdDto loginMemberIdDto, String externalApiUrl) {
+        ResponseEntity<String> response = restClient.post()
+            .uri(URI.create(externalApiUrl))
+            .header("Authorization", "Bearer " + getKakaoToken(loginMemberIdDto).getAccessToken())
+            .retrieve()
+            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
+                throw new LoginFailedException("카카오 유저 연결을 끊는 도중 에러가 발생하였습니다. 다시 시도해주세요.");
+            }))
+            .toEntity(String.class);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
             return Long.parseLong(rootNode.path("id").asText());
         } catch (Exception e) {
             throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
@@ -104,6 +149,19 @@ public class AuthService {
         SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.builder()
             .claim("id", member.getId())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
+            .signWith(key)
+            .compact();
+    }
+
+    private String getRefreshToken(Member member) {
+        String EncodedSecretKey = Encoders.BASE64.encode(
+            SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Decoders.BASE64.decode(EncodedSecretKey);
+        SecretKey key = Keys.hmacShaKeyFor(keyBytes);
+        return Jwts.builder()
+            .claim("id", member.getId())
+            .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 30L))
             .signWith(key)
             .compact();
     }
@@ -136,55 +194,22 @@ public class AuthService {
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_url", kakaoProperties.redirectUrl());
         body.add("code", code);
+        body.add("client_secret", kakaoProperties.clientSecret());
         return body;
     }
 
-    private AccessAndRefreshToken getJwtAll(String code) {
-        LinkedMultiValueMap<String, String> body = generateBodyForToken(code);
+    private JwtResponse getJwtResponse(OAuthJwt oAuthJwt, String memberEmail) {
+        Member member = authRepository.findByEmail(memberEmail);
 
-        ResponseEntity<String> response = restClient.post()
-            .uri(URI.create(KAKAO_AUTH_TOKEN_URL))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .body(body)
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
-                throw new LoginFailedException("토큰 발급 관련 에러가 발생하였습니다. 다시 시도해주세요.");
-            }))
-            .toEntity(String.class);
+        kakaoTokenRepository.save(new KakaoToken(member.getId(),
+            oAuthJwt.accessToken(),
+            oAuthJwt.refreshToken()));
 
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
-            String accessToken = rootNode.path("access_token").asText();
-            String refreshToken = rootNode.path("refresh_token").asText();
-
-            return new AccessAndRefreshToken(accessToken, refreshToken);
-        } catch (Exception e) {
-            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
-        }
+        return new JwtResponse(getAccessToken(member), getRefreshToken(member));
     }
 
-    private void registerKakaoMember(String accessToken) {
-        ResponseEntity<String> response = restClient.post()
-            .uri(URI.create(KAKAO_USER_INFO_URL))
-            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-            .header("Authorization", "Bearer " + accessToken)
-            .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, ((req, res) -> {
-                throw new LoginFailedException("카카오 유저 정보 조회 관련 에러가 발생하였습니다. 다시 시도해주세요.");
-            }))
-            .toEntity(String.class);
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(response.getBody());
-            String memberEmail = rootNode.path("kakao_account").path("email").asText();
-
-            if (!authRepository.existsByEmail(memberEmail)) {
-                authRepository.save(new Member(memberEmail, "oauth"));
-            }
-        } catch (Exception e) {
-            throw new LoginFailedException("소셜 로그인 진행 중 예기치 못한 오류가 발생하였습니다. 다시 시도해 주세요.");
-        }
+    private KakaoToken getKakaoToken(LoginMemberIdDto loginMemberIdDto) {
+        return kakaoTokenRepository.findByMemberId(loginMemberIdDto.id())
+            .orElseThrow(() -> new NoSuchElementException("카카오 계정 로그인을 수행한 후 다시 시도해주세요."));
     }
 }

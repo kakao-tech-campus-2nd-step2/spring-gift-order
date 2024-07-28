@@ -1,4 +1,4 @@
-package gift.product.dto;
+package gift.product.dto.option;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -11,7 +11,7 @@ public record OptionDto(
     String name,
     @Min(value = 1, message = "옵션 수량은 최소 1개 이상 1억 개 미만이어야 합니다.")
     @Max(value = 99_999_999, message = "옵션 수량은 최소 1개 이상 1억 개 미만이어야 합니다.")
-    int quentity,
+    int quantity,
     Long productId
 ) {
 
