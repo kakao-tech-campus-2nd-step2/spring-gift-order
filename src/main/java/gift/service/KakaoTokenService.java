@@ -4,6 +4,8 @@ import gift.domain.Option;
 import gift.dto.OrderResponse;
 import gift.exception.ForbiddenException;
 import gift.exception.RestTemplateResponseErrorHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -61,7 +63,7 @@ public class KakaoTokenService {
         }
     }
 
-    public void sendKakaoMessage(OrderResponse orderResponse) {
+    public void sendKakaoMessage(OrderResponse orderResponse) throws JSONException {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"; // 카카오톡 메시지 전송 API URL
         String token = "Bearer {token}"; // 실제 토큰으로 교체 어떤식으로 할 지 생각하기 (어디에 저장할까?)
         Option option = optionService.getOption(orderResponse.getOptionId());
@@ -82,8 +84,16 @@ public class KakaoTokenService {
         restTemplate.postForEntity(url, requestEntity, String.class);
     }
 
-    private String createKakaoTemplate(String message) {
-        return String.format("{\"object_type\":\"text\",\"text\":\"%s\",\"link\":{\"web_url\":\"http://yourwebsite.com\"}}", message);
+    private String createKakaoTemplate(String message) throws JSONException {
+        JSONObject templateObject = new JSONObject();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", message);
+
+        JSONObject linkObject = new JSONObject();
+        linkObject.put("web_url", "http://yourwebsite.com");
+        templateObject.put("link", linkObject);
+
+        return templateObject.toString();
     }
 }
 

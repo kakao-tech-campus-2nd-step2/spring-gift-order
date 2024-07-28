@@ -41,6 +41,6 @@
 ## 1단계 + 2단계 피드백
 - [x] KakaoAuthController에 "api/kakao" 로 path 지정
 - [ ] KakaoTokenService
-  - [ Json 객체 직접 만들어서 String으로 변환해보기
+  - [x] Json 객체 직접 만들어서 String으로 변환해보기
   - [ ] 문자열을 만들어 주기 보다는, sendKakaoMessage는 전달 역할만 하고 문자열은 파라미터로 받아서 전달하기
   - [ ] 현재 세션 객체에서 토큰을 뽑아괴
