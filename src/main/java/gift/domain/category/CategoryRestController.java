@@ -4,6 +4,7 @@ import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -46,15 +47,19 @@ public class CategoryRestController {
 
     @DeleteMapping("{id}")
     @Operation(summary = "카테고리 삭제")
-    public ResponseEntity<SimpleResultResponseDto> deleteCategory(@PathVariable("id") Long id) {
+    public ResponseEntity<SimpleResultResponseDto> deleteCategory(
+        @Parameter(description = "카테고리 ID") @PathVariable("id") Long id
+    ) {
         categoryService.deleteCategory(id);
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "카테고리 삭제 성공");
     }
 
     @PutMapping("{id}")
     @Operation(summary = "카테고리 수정")
-    public ResponseEntity<SimpleResultResponseDto> updateCategory(@PathVariable("id") Long id,
-        @Valid @RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<SimpleResultResponseDto> updateCategory(
+        @Parameter(description = "카테고리 ID") @PathVariable("id") Long id,
+        @Valid @RequestBody CategoryDTO categoryDTO
+    ) {
         categoryService.updateCategory(id, categoryDTO);
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "카테고리 수정 성공");
     }

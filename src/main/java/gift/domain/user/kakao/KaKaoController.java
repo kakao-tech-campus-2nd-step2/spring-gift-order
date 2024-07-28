@@ -5,6 +5,7 @@ import gift.global.jwt.JwtProvider;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class KaKaoController {
     @GetMapping("/kakao")
     @Operation(summary = "카카오 로그인 인가코드로 JWT 발급")
     public ResponseEntity<SimpleResultResponseDto> JwtToken(
-        @RequestParam(value = "code", required = false) String authorizedCode
+        @Parameter(description = "카카오 로그인 인가코드") @RequestParam(value = "code") String authorizedCode
     ) {
         KaKaoToken kaKaoToken = kaKaoService.getKaKaoToken(authorizedCode);
         User findUser = kaKaoService.loginOrRegister(kaKaoToken);

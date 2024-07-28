@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.domain.user.dto.UserInfo;
 import gift.global.resolver.Login;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.io.UnsupportedEncodingException;
@@ -25,7 +26,10 @@ public class OrderRestController {
     }
     @PostMapping
     @Operation(summary = "카카오 주문하기, 주문 후 메시지 전송")
-    public void order(@Valid @RequestBody OrderRequestDTO orderRequestDTO, @Login UserInfo userInfo)
+    public void order(
+        @Valid @RequestBody OrderRequestDTO orderRequestDTO,
+        @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
+    )
         throws JsonProcessingException, UnsupportedEncodingException {
         orderService.order(orderRequestDTO, userInfo);
     }

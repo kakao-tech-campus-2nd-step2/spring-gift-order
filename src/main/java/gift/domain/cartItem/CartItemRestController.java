@@ -7,6 +7,7 @@ import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -40,7 +41,9 @@ public class CartItemRestController {
     @PostMapping("/{productId}")
     @Operation(summary = "장바구니에 상품 담기")
     public ResponseEntity<ResultResponseDto<Integer>> addCartItem(
-        @PathVariable("productId") Long productId, @Login UserInfo userInfo) {
+        @Parameter(description = "상품 ID") @PathVariable("productId") Long productId,
+        @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
+    ) {
 
         int currentCount = cartItemService.addCartItem(userInfo.getId(), productId);
 
@@ -54,9 +57,10 @@ public class CartItemRestController {
     @GetMapping
     @Operation(summary = "장바구니 조회 - 페이징")
     public ResponseEntity<ResultResponseDto<List<CartItemDTO>>> getProductsInCartByUserIdAndPageAndSort(
-        @RequestParam(value = "page", defaultValue = "0") int page,
-        @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
-        @Login UserInfo userInfo) {
+        @Parameter(description = "페이지 번호") @RequestParam(value = "page", defaultValue = "0") int page,
+        @Parameter(description = "정렬 기준") @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
+        @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
+    ) {
         int size = 10; // default
         Sort sortObj = getSortObject(sort);
 
@@ -76,8 +80,9 @@ public class CartItemRestController {
     @DeleteMapping("/{cartItemId}")
     @Operation(summary = "장바구니 상품 삭제")
     public ResponseEntity<SimpleResultResponseDto> deleteCartItem(
-        @PathVariable("cartItemId") Long cartItemId, @Login UserInfo userInfo) {
-
+        @Parameter(description = "장바구니 상품(CartItem) ID") @PathVariable("cartItemId") Long cartItemId,
+        @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
+    ) {
         cartItemService.deleteCartItem(cartItemId);
 
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "장바구니에서 상품이 삭제되었습니다.");
@@ -91,9 +96,9 @@ public class CartItemRestController {
     @PutMapping("/{cartItemId}")
     @Operation(summary = "장바구니 상품 수량 변경")
     public ResponseEntity<SimpleResultResponseDto> updateCartItem(
-        @PathVariable("cartItemId") Long cartItemId,
-        @RequestParam("count") int count,
-        @Login UserInfo userInfo
+        @Parameter(description = "장바구니 상품(CartItem) ID") @PathVariable("cartItemId") Long cartItemId,
+        @Parameter(description = "변경할 상품 수량") @RequestParam("count") int count,
+        @Parameter(description = "로그인 유저 정보") @Login UserInfo userInfo
     ) {
         int modifiedCount = cartItemService.updateCartItem(cartItemId, count);
 
