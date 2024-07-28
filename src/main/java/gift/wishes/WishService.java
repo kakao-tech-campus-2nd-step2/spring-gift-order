@@ -5,6 +5,7 @@ import gift.member.Member;
 import gift.member.MemberService;
 import gift.product.Product;
 import gift.product.ProductService;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,8 +53,13 @@ public class WishService {
         wish.updateQuantity(quantity);
     }
 
+    @Transactional
     public void deleteWish(Long id, Long memberId) {
         Member member = memberService.findById(memberId);
         wishRepository.deleteByIdAndMember(id, member);
+    }
+
+    public Wish getWish(Long productId, Long memberId){
+        return wishRepository.findByProductIdAndMemberId(productId, memberId).orElseThrow();
     }
 }

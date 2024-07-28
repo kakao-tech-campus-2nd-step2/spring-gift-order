@@ -3,6 +3,9 @@ package gift.order;
 import com.google.gson.Gson;
 import gift.option.Option;
 import gift.option.OptionService;
+import gift.product.Product;
+import gift.wishes.Wish;
+import gift.wishes.WishService;
 import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -14,12 +17,14 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OptionService optionService;
+    private final WishService wishService;
 
 
     public OrderService(OrderRepository orderRepository,
-        OptionService optionService) {
+        OptionService optionService, WishService wishService) {
         this.orderRepository = orderRepository;
         this.optionService = optionService;
+        this.wishService = wishService;
     }
 
     public OrderInfo saveOrder(OrderRequest orderRequest) {
@@ -61,5 +66,13 @@ public class OrderService {
             .retrieve()
             .toEntity(String.class);
     }
+
+    public void deleteOrderedProduct(OrderRequest orderRequest, Long memberId){
+        Long optionId = orderRequest.getOptionId();
+        Product product = optionService.getProduct(optionId);
+        Wish wish = wishService.getWish(product.getId(), memberId);
+        wishService.deleteWish(wish.getId(), memberId);
+    }
+
 
 }

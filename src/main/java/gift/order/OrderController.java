@@ -21,6 +21,7 @@ public class OrderController {
     public ResponseEntity<OrderInfo> order(@RequestBody OrderRequest orderRequest, @OAuth String accessToken){
         OrderInfo order = orderService.saveOrder(orderRequest);
         orderService.sendMessage(orderRequest, accessToken);
+        orderService.deleteOrderedProduct(orderRequest,  1L);
 
         return ResponseEntity.ok(order);
     }
