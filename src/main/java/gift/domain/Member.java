@@ -27,11 +27,11 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Column
+    @Column(unique = true)
     private Long kakaoId;
 
     @Column
-    private boolean isKakaoMember;
+    private Boolean isKakaoMember;
 
     @OneToMany(mappedBy = "member",
                cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,7 +48,10 @@ public class Member {
     public Member(String email, String password, Long kakaoId) {
         this(email, password);
         this.kakaoId = kakaoId;
-        this.isKakaoMember = true;
+        this.isKakaoMember = Boolean.TRUE;
+    }
+    public Long getId() {
+        return id;
     }
 
     public String getEmail() {
@@ -57,5 +60,13 @@ public class Member {
 
     public String getPassword() {
         return password;
+    }
+
+    public Long getKakaoId() {
+        return kakaoId;
+    }
+
+    public Boolean isKakaoMember() {
+        return isKakaoMember;
     }
 }

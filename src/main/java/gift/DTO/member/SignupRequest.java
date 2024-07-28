@@ -37,4 +37,8 @@ public class SignupRequest {
     public String getConfirmPassword() {
         return confirmPassword;
     }
+
+    public Long getKakaoId() {
+        return kakaoId;
+    }
 }

@@ -1,5 +1,6 @@
 package gift.controller.wishlist;
 
+import gift.DTO.product.ProductResponse;
 import gift.domain.Product;
 import gift.service.MemberService;
 import gift.service.TokenService;
@@ -21,23 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/wishlist")
 public class WishlistController {
 
-    private final MemberService memberService;
     private final WishlistService wishlistService;
     private final TokenService tokenService;
 
     @Autowired
     public WishlistController(
-        MemberService memberService,
         WishlistService wishlistService,
         TokenService tokenService
     ) {
-        this.memberService = memberService;
         this.wishlistService = wishlistService;
         this.tokenService = tokenService;
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getWishlist(
+    public ResponseEntity<List<ProductResponse>> getWishlist(
         @RequestHeader("Authorization") String authorizationHeader,
         @RequestParam(defaultValue = "0") Integer page,
         @RequestParam(defaultValue = "2") Integer size
@@ -48,7 +46,7 @@ public class WishlistController {
         }
 
         String email = tokenService.extractEmailFromToken(token);
-        List<Product> wishlist = wishlistService.getWishlistByEmail(email, page, size);
+        List<ProductResponse> wishlist = wishlistService.getWishlistByEmail(email, page, size);
         return ResponseEntity.ok(wishlist);
     }
 

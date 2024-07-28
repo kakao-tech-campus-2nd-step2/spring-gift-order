@@ -3,6 +3,7 @@ package gift.service;
 import gift.DTO.kakao.KakaoSignupRequest;
 import gift.DTO.member.LoginRequest;
 import gift.DTO.member.LoginResponse;
+import gift.DTO.member.MemberResponse;
 import gift.DTO.member.SignupRequest;
 import gift.DTO.member.SignupResponse;
 import gift.domain.Member;
@@ -10,6 +11,7 @@ import gift.exception.member.DuplicatedEmailException;
 import gift.exception.member.InvalidAccountException;
 import gift.exception.member.PasswordMismatchException;
 import gift.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,9 @@ public class MemberService {
         memberRepository.findByEmail(signupRequest.getEmail()).ifPresent(p -> {
             throw new DuplicatedEmailException();
         });
-        Member member = new Member(signupRequest.getEmail(), signupRequest.getPassword());
+        Member member = new Member(signupRequest.getEmail(),
+                                    signupRequest.getPassword(),
+                                    signupRequest.getKakaoId());
         memberRepository.save(member);
 
         confirmPassword(signupRequest.getPassword(), signupRequest.getConfirmPassword());
@@ -82,5 +86,12 @@ public class MemberService {
         if(!password.equals(passwordConfirm)) {
             throw new PasswordMismatchException();
         }
+    }
+
+    public List<MemberResponse> getMembers() {
+        return memberRepository.findAll()
+                            .stream()
+                            .map(MemberResponse::fromEntity)
+                            .toList();
     }
 }

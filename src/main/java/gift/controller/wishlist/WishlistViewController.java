@@ -1,5 +1,6 @@
 package gift.controller.wishlist;
 
+import gift.DTO.product.ProductResponse;
 import gift.domain.Product;
 import gift.service.TokenService;
 import gift.service.WishlistService;
@@ -51,7 +52,7 @@ public class WishlistViewController {
         }
 
         String email = tokenService.extractEmailFromToken(token);
-        List<Product> wishlist = wishlistService.getWishlistByEmail(email, page, size);
+        List<ProductResponse> wishlist = wishlistService.getWishlistByEmail(email, page, size);
         model.addAttribute("wishlist", wishlist);
         return "wishlist";
     }

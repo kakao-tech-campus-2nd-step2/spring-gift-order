@@ -1,11 +1,13 @@
 package gift.service;
 
+import gift.DTO.product.ProductResponse;
 import gift.domain.Member;
 import gift.domain.Product;
 import gift.domain.Wishlist;
 import gift.repository.ProductRepository;
 import gift.repository.WishlistRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,10 +37,13 @@ public class WishlistService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getWishlistByEmail(String email, Integer pageNumber, Integer pageSize) {
+    public List<ProductResponse> getWishlistByEmail(String email, Integer pageNumber, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<Wishlist> wishes = wishlistRepository.findByMemberEmail(email, pageable);
-        return wishes.stream().map(wish -> wish.getProduct()).toList();
+        return wishes.stream()
+                    .map(Wishlist::getProduct)
+                    .map(ProductResponse::fromEntity)
+                    .toList();
     }
 
     @Transactional
