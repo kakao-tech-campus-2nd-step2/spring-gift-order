@@ -22,23 +22,11 @@ public class TemplateObject {
         return objectType;
     }
 
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
-    }
-
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
     public LinkObject getLink() {
         return link;
-    }
-
-    public void setLink(LinkObject link) {
-        this.link = link;
     }
 }
