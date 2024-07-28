@@ -62,4 +62,8 @@ public class Option {
     public void setId(long l) {
         this.option_id = l;
     }
+
+    public Product getProduct() {
+        return product;
+    }
 }
