@@ -1,32 +1,35 @@
 package gift.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.client.KakaoApiClient;
 import gift.client.requestBody.KakaoMessageRequestBodyGenerator;
 import gift.client.requestBody.KakaoTokenRequestBodyGenerator;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.KakaoTokenResponse;
 import gift.repository.KakaoAccessTokenRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KakaoApiService {
 
     private final KakaoApiClient kakaoApiClient;
-    private final KakaoTokenRequestBodyGenerator kakaoTokenRequestBodyGenerator;
-    private final KakaoMessageRequestBodyGenerator kakaoMessageRequestBodyGenerator;
     private final KakaoAccessTokenRepository kakaoAccessTokenRepository;
+    private final ObjectMapper objectMapper;
 
-    public KakaoApiService(KakaoApiClient kakaoApiClient, KakaoTokenRequestBodyGenerator kakaoTokenRequestBodyGenerator, KakaoMessageRequestBodyGenerator kakaoMessageRequestBodyGenerator, KakaoAccessTokenRepository kakaoAccessTokenRepository) {
+    public KakaoApiService(KakaoApiClient kakaoApiClient, KakaoAccessTokenRepository kakaoAccessTokenRepository, ObjectMapper objectMapper) {
         this.kakaoApiClient = kakaoApiClient;
-        this.kakaoTokenRequestBodyGenerator = kakaoTokenRequestBodyGenerator;
-        this.kakaoMessageRequestBodyGenerator = kakaoMessageRequestBodyGenerator;
         this.kakaoAccessTokenRepository = kakaoAccessTokenRepository;
+        this.objectMapper = objectMapper;
     }
 
-    public KakaoTokenResponse getKakaoToken(String code) {
-        kakaoTokenRequestBodyGenerator.setCode(code);
+    @Value("${clientId}")
+    private String clientId;
 
-        return kakaoApiClient.getKakaoToken(kakaoTokenRequestBodyGenerator.toMultiValueMap());
+    public KakaoTokenResponse getKakaoToken(String code) {
+        KakaoTokenRequestBodyGenerator generator = new KakaoTokenRequestBodyGenerator(clientId, code);
+
+        return kakaoApiClient.getKakaoToken(generator.toMultiValueMap());
     }
 
     public String getMemberEmail(String token) {
@@ -36,8 +39,8 @@ public class KakaoApiService {
     public void sendMessageToMe(Long memberId, OrderRequest orderRequest) {
         String accessToken = kakaoAccessTokenRepository.getAccessToken(memberId);
 
-        kakaoMessageRequestBodyGenerator.setMessage(orderRequest.message());
+        KakaoMessageRequestBodyGenerator generator = new KakaoMessageRequestBodyGenerator(orderRequest.message(), objectMapper);
 
-        kakaoApiClient.sendMessageToMe(accessToken, kakaoMessageRequestBodyGenerator.toMultiValueMap());
+        kakaoApiClient.sendMessageToMe(accessToken, generator.toMultiValueMap());
     }
 }

@@ -3,25 +3,20 @@ package gift.client.requestBody;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.KakaoMessageTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Component
 public class KakaoMessageRequestBodyGenerator {
 
-    private final ObjectMapper objectMapper;
     private String message;
+    private final ObjectMapper objectMapper;
 
-    public KakaoMessageRequestBodyGenerator(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
-    public void setMessage(String message) {
+    public KakaoMessageRequestBodyGenerator(String message, ObjectMapper objectMapper) {
         this.message = message;
+        this.objectMapper = objectMapper;
     }
 
     public MultiValueMap<String, String> toMultiValueMap() {

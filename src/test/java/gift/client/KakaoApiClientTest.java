@@ -101,8 +101,7 @@ class KakaoApiClientTest {
     void sendMessageToMe() {
         //Given
         String accessToken = "accessToken";
-        KakaoMessageRequestBodyGenerator generator = new KakaoMessageRequestBodyGenerator(objectMapper);
-        generator.setMessage("hello");
+        KakaoMessageRequestBodyGenerator generator = new KakaoMessageRequestBodyGenerator("message",objectMapper);
 
         server.expect(requestTo("https://kapi.kakao.com/v2/api/talk/memo/default/send"))
                 .andExpect(method(HttpMethod.POST))
