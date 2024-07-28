@@ -38,6 +38,8 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.request.RequestDocumentation;
 
 
 @WebMvcTest(value = ProductApiController.class,
@@ -101,10 +103,13 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
             .willReturn(response);
 
         //when //then
-        mockMvc.perform(get("/api/products/{id}/all", product.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/products/{id}/all", product.getId())
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(document("rest-docs-product-test/get-product-with-all-options",
+                pathParameters(
+                    parameterWithName("id").description("Product id")
+                )));
     }
 
     @Test
@@ -122,10 +127,14 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
             .willReturn(response);
 
         //when //then
-        mockMvc.perform(get("/api/products/{id}?option_id=" + optionId, product.getId())
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/products/{id}?option_id=" + optionId, product.getId())
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
             .andDo(document("rest-docs-product-test/get-product-with-option",
+                pathParameters(
+                    parameterWithName("id").description("Product id")
+                ),
                 queryParameters(
                     parameterWithName("option_id").description("Option id")
                 )));

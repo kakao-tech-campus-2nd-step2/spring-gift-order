@@ -62,12 +62,15 @@ public class RestDocsOptionsTest extends AbstractRestDocsTest {
 
         //when //then
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/products/{id}/options", product.getId())
+                RestDocumentationRequestBuilders.post("/api/products/{id}/options", product.getId())
                     .header("Authorization", "Bearer " + token)
                     .content(content)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated())
-            .andDo(print());
+            .andDo(document("rest-docs-options-test/add-options",
+                pathParameters(
+                    parameterWithName("id").description("Product id")
+                )));
     }
 
     @Test
@@ -116,7 +119,7 @@ public class RestDocsOptionsTest extends AbstractRestDocsTest {
             .andDo(document("rest-docs-options-test/delete-options",
                 pathParameters(
                     parameterWithName("id").description("Option id")
-            )));
+                )));
     }
 
 

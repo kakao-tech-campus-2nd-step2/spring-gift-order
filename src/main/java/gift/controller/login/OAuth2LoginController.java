@@ -41,7 +41,7 @@ public class OAuth2LoginController {
         return "kakaoLogin";
     }
 
-    @GetMapping("/kakao/login/oauth2/code")
+    @GetMapping("/kakao/login/oauth2")
     @ResponseBody
     public ResponseEntity<Void> getToken(HttpServletRequest request,
         HttpServletResponse response) {

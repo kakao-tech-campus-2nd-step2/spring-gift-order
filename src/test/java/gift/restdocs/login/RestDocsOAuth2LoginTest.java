@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -35,7 +36,10 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.request.RequestDocumentation;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(value = OAuth2LoginController.class,
     excludeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = LoginWebConfig.class)})
@@ -80,10 +84,12 @@ public class RestDocsOAuth2LoginTest extends AbstractRestDocsTest {
         doNothing().when(oAuth2LoginService).saveAccessToken(any(Long.class), any(String.class));
 
         //when //then
-        mockMvc.perform(get("/kakao/login/oauth2/code")
-                .param("code", authorizationCode))
+        mockMvc.perform(get("/kakao/login/oauth2?code=" + authorizationCode))
             .andExpect(status().isOk())
             .andExpect(cookie().value("access_token", token))
-            .andDo(print());
+            .andDo(MockMvcRestDocumentation.document("rest-docs-o-auth2-login-test/get-token",
+                queryParameters(
+                    parameterWithName("code").description("카카오 서버로부터 전달받은 인가 코드")
+                )));
     }
 }
