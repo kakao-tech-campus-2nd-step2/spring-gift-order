@@ -1,4 +1,6 @@
 # spring-gift-order
+## Step3
+feat: 스웨거 api 문서화 [박한솔]
 
 ## Step2
 feat: KakaoService - 주문 생성 기능 추가 및 Kakao 메시지 전송 구현 [박한솔]
