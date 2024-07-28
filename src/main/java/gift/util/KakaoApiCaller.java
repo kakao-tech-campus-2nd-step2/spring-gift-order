@@ -15,13 +15,13 @@ import java.net.URI;
 import java.util.Map;
 
 @Component
-public class AuthUtil {
+public class KakaoApiCaller {
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
 
     @Autowired
-    public AuthUtil(KakaoProperties kakaoProperties, RestClient restClient) {
+    public KakaoApiCaller(KakaoProperties kakaoProperties, RestClient restClient) {
         this.kakaoProperties = kakaoProperties;
         this.restClient = restClient;
     }

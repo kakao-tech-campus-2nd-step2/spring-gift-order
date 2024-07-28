@@ -14,7 +14,7 @@ import gift.repository.order.OrderRepository;
 import gift.repository.token.OAuthTokenRepository;
 import gift.repository.user.UserRepository;
 import gift.repository.wish.WishRepository;
-import gift.util.AuthUtil;
+import gift.util.KakaoApiCaller;
 import gift.util.TokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
@@ -40,7 +40,7 @@ public class OrderService {
 
     private final OAuthTokenRepository OAuthTokenRepository;
 
-    private final AuthUtil authUtil;
+    private final KakaoApiCaller kakaoApiCaller;
 
     @Autowired
     private TokenManager tokenManager;
@@ -52,14 +52,14 @@ public class OrderService {
                         UserRepository userRepository,
                         OrderRepository orderRepository,
                         OAuthTokenRepository OAuthTokenRepository,
-                        AuthUtil authUtil) {
+                        KakaoApiCaller kakaoApiCaller) {
         this.optionRepository = optionRepository;
         this.giftRepository = giftRepository;
         this.wishRepository = wishRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.OAuthTokenRepository = OAuthTokenRepository;
-        this.authUtil = authUtil;
+        this.kakaoApiCaller = kakaoApiCaller;
     }
 
     @Transactional
@@ -99,7 +99,7 @@ public class OrderService {
         OAuthToken = tokenManager.checkExpiredToken(OAuthToken);
         String message = String.format("상품 : %s\\n옵션 : %s\\n수량 : %s\\n메시지 : %s\\n주문이 완료되었습니다!"
                 , gift.getName(), option.getName(), orderRequest.quantity(), orderRequest.message());
-        authUtil.sendMessage(OAuthToken.getAccessToken(), message);
+        kakaoApiCaller.sendMessage(OAuthToken.getAccessToken(), message);
     }
 
     public void checkOptionInGift(Gift gift, Long optionId) {

@@ -7,7 +7,7 @@ import gift.model.token.OAuthToken;
 import gift.model.user.User;
 import gift.repository.token.OAuthTokenRepository;
 import gift.repository.user.UserRepository;
-import gift.util.AuthUtil;
+import gift.util.KakaoApiCaller;
 import gift.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,27 +15,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoAuthService {
 
-    private final AuthUtil authUtil;
+    private final KakaoApiCaller kakaoApiCaller;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final OAuthTokenRepository OAuthTokenRepository;
 
     @Autowired
-    public KakaoAuthService(AuthUtil authUtil, JwtUtil jwtUtil, UserRepository userRepository, OAuthTokenRepository OAuthTokenRepository) {
-        this.authUtil = authUtil;
+    public KakaoAuthService(KakaoApiCaller kakaoApiCaller, JwtUtil jwtUtil, UserRepository userRepository, OAuthTokenRepository OAuthTokenRepository) {
+        this.kakaoApiCaller = kakaoApiCaller;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
         this.OAuthTokenRepository = OAuthTokenRepository;
     }
 
     public String createCodeUrl() {
-        return authUtil.createGetCodeUrl();
+        return kakaoApiCaller.createGetCodeUrl();
     }
 
     public String register(String authCode) {
 
-        AuthTokenResponse tokenResponse = authUtil.getAccessToken(authCode);
-        String email = authUtil.extractUserEmail(tokenResponse.accessToken());
+        AuthTokenResponse tokenResponse = kakaoApiCaller.getAccessToken(authCode);
+        String email = kakaoApiCaller.extractUserEmail(tokenResponse.accessToken());
 
         User user = userRepository.findByEmail(email).orElseGet(
                 () -> userRepository.save(new User(email, "1234", LoginType.KAKAO))
