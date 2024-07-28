@@ -18,9 +18,9 @@ public class TokenManager {
         this.OAuthTokenRepository = OAuthTokenRepository;
     }
 
-    public OAuthToken checkExpiredToken(OAuthToken OAuthToken){
+    public OAuthToken checkExpiredToken(OAuthToken OAuthToken) {
         AuthTokenInfoResponse tokenInfo = authUtil.getTokenInfo(OAuthToken.getAccessToken());
-        if(tokenInfo.expiresIn() == 0){
+        if (tokenInfo.expiresIn() == 0) {
             AuthTokenResponse tokenResponse = authUtil.refreshAccessToken(OAuthToken.getRefreshToken());
             OAuthToken.updateAccessToken(tokenResponse.accessToken());
             OAuthTokenRepository.save(OAuthToken);

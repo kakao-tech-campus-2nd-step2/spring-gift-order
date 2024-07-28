@@ -4,7 +4,6 @@ import gift.common.properties.KakaoProperties;
 import gift.dto.OAuth.AuthTokenInfoResponse;
 import gift.dto.OAuth.AuthTokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -97,7 +96,7 @@ public class AuthUtil {
         return resp;
     }
 
-    public AuthTokenInfoResponse getTokenInfo(String accessToken){
+    public AuthTokenInfoResponse getTokenInfo(String accessToken) {
         String url = "https://kapi.kakao.com/v1/user/access_token_info";
         AuthTokenInfoResponse resp = restClient.get()
                 .uri(URI.create(url))

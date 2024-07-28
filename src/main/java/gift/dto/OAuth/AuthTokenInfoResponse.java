@@ -8,6 +8,6 @@ public record AuthTokenInfoResponse(
         Long id,
         Integer expiresIn,
         Integer appId
-){
+) {
 
 }
