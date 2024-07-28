@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -39,11 +40,24 @@ public class KakaoUtil {
 
     public Map<String, Object> getUserInfo(String accessToken) {
         String url = "https://kapi.kakao.com/v2/user/me";
-        return restClient
-                .post()
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + accessToken);
+
+        Map<String, Object> response = restClient
+                .get()
                 .uri(url)
-                .header("Authorization", "Bearer " + accessToken)
+                .headers(httpHeaders -> httpHeaders.setAll(headers))
                 .retrieve()
                 .body(Map.class);
+
+        // 역할(Role) 정보 추가 (예: 사용자 ID가 1인 경우 ADMIN 역할 부여)
+        long memberId = ((Number) response.get("id")).longValue();
+        if (memberId == 1L) {
+            response.put("role", "ADMIN");
+        } else {
+            response.put("role", "USER");
+        }
+
+        return response;
     }
 }
