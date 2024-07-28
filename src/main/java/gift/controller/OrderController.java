@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/api/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -21,7 +22,7 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("api/orders")
+    @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@LoginMember TokenAuth tokenAuth, @RequestBody OrderRequest orderRequest) {
         String token = tokenAuth.getToken();
         OrderResponse orderResponse = orderService.createOrder(token, orderRequest);
