@@ -98,27 +98,15 @@ class WishesServiceTest {
 
     @Test
     @DisplayName("위시 리스트 상품 삭제 서비스 테스트")
-    void removeProductFromWishlist() {
+    void removeProductIfPresent() {
         Wish wish = new Wish(member, product);
         given(wishesRepository.findByMember_IdAndProduct_Id(anyLong(), anyLong()))
                 .willReturn(Optional.of(wish));
 
-        wishesService.removeProductFromWishlist(memberId, productId);
+        wishesService.removeWishIfPresent(memberId, productId);
 
         verify(wishesRepository).findByMember_IdAndProduct_Id(memberId, productId);
         verify(wishesRepository).deleteById(any());
-    }
-
-    @Test
-    @DisplayName("위시 리스트 상품 삭제 실패 테스트")
-    void removeProductFromWishlistFailed() {
-        given(wishesRepository.findByMember_IdAndProduct_Id(anyLong(), anyLong()))
-                .willReturn(Optional.empty());
-
-        assertThatThrownBy(() -> wishesService.removeProductFromWishlist(memberId, productId))
-                .isInstanceOf(CustomException.class)
-                .hasMessage(ErrorCode.WISH_NOT_FOUND
-                                     .getMessage());
     }
 
     @Test

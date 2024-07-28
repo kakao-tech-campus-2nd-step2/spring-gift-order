@@ -9,12 +9,12 @@ VALUES ('product1', 4500, 'https://shop.io/product/1/image.jpg', 1),
        ('product3', 20000, 'https://shop.io/product/3/image.jpg', 2);
 
 INSERT INTO option(name, quantity, product_id)
-VALUES ('옵션1', 100, 1),
-       ('옵션2', 5, 1),
-       ('옵션1', 20, 2),
-       ('옵션2', 3, 2),
-       ('옵션1', 60, 3),
-       ('옵션2', 1, 3);
+VALUES ('카카오 초콜릿', 100, 1),
+       ('화이트 초콜릿', 5, 1),
+       ('디지털 상품권', 20, 2),
+       ('문화상품권', 3, 2),
+       ('아메리카노', 60, 3),
+       ('디카페인 아메리카노', 1, 3);
 
 INSERT INTO member(email, password)
 VALUES ('admin@email.com', 'password'),

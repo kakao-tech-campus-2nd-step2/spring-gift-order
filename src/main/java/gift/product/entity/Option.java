@@ -47,6 +47,10 @@ public class Option {
         return quantity;
     }
 
+    public Long getProductId() {
+        return product.getId();
+    }
+
     @Override
     public int hashCode() {
         return name.hashCode();

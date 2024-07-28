@@ -38,11 +38,11 @@ public class WishesService {
         wishesRepository.save(createWish(memberId, productId));
     }
 
-    public void removeProductFromWishlist(Long memberId, Long productId) {
-        Wish wish = wishesRepository.findByMember_IdAndProduct_Id(memberId, productId)
-                .orElseThrow(() -> new CustomException(ErrorCode.WISH_NOT_FOUND));
-
-        wishesRepository.deleteById(wish.getId());
+    public void removeWishIfPresent(Long memberId, Long productId) {
+        wishesRepository.findByMember_IdAndProduct_Id(memberId, productId)
+                .ifPresent(wish -> {
+                    wishesRepository.deleteById(wish.getId());
+                });
     }
 
     public Page<ProductResponse> getWishlistOfMember(Long memberId, Pageable pageable) {

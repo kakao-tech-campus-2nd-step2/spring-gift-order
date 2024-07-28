@@ -3,6 +3,7 @@ package gift.member.entity;
 import gift.member.dto.MemberDto;
 import gift.wishlist.entity.Wish;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,12 +27,23 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Wish> wishList = new ArrayList<>();
 
+    @Embedded
+    private KakaoTokenInfo kakaoTokenInfo;
+
     protected Member() {
     }
 
     public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+    public Member(String email,
+                  String password,
+                  KakaoTokenInfo kakaoTokenInfo) {
+        this.email = email;
+        this.password = password;
+        this.kakaoTokenInfo = kakaoTokenInfo;
     }
 
     public Long getId() {
@@ -50,9 +62,29 @@ public class Member {
         return wishList;
     }
 
+    public String getKakaoAccessToken() {
+        return kakaoTokenInfo.getKakaoAccessToken();
+    }
+
+    public String getKakaoRefreshToken() {
+        return kakaoTokenInfo.getKakaoRefreshToken();
+    }
+
     public void update(MemberDto memberDto) {
         email = memberDto.email();
         password = memberDto.password();
+    }
+
+    public void refreshKakaoTokens(KakaoTokenInfo tokenInfo) {
+        kakaoTokenInfo.refresh(tokenInfo);
+    }
+
+    public boolean isNotKakaoUser() {
+        return kakaoTokenInfo == null;
+    }
+
+    public boolean isTokenExpired() {
+        return kakaoTokenInfo.isExpired();
     }
 
 }

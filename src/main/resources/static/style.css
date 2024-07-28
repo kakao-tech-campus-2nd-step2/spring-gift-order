@@ -122,3 +122,7 @@ table.table .avatar {
     background: #2e9cdf;
     color: #ffffff;
 }
+
+.selected-row {
+    background-color: #2e9cdf !important;
+}

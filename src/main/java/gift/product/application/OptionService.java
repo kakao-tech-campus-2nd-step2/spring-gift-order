@@ -60,17 +60,18 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractQuantityOfOption(Long id,
-                                         OptionRequest request,
-                                         int quantity) {
-        Option option = optionRepository.findByProduct_IdAndName(id, request.name())
-                .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
-
+    public void subtractQuantity(Option option,
+                                 int quantity) {
         if (option.isLessEqual(quantity)) {
             throw new CustomException(ErrorCode.OPTION_QUANTITY_SUBTRACT_FAILED);
         }
 
         option.subtract(quantity);
+    }
+
+    public Option getOptionById(Long id) {
+        return optionRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
     }
 
 }
