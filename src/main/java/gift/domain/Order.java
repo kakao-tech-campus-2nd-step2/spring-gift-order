@@ -23,8 +23,10 @@ public class Order {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
     private LocalDateTime orderDateTime;
 
+    @Column(nullable = false)
     private String message;
 
     public Order() {
