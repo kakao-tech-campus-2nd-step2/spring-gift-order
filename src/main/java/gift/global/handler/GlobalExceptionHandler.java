@@ -2,6 +2,7 @@ package gift.global.handler;
 
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
+import gift.global.exception.RestTemplateException;
 import gift.global.exception.cartItem.CartItemNotFoundException;
 import gift.global.exception.category.CategoryDuplicateException;
 import gift.global.exception.category.CategoryNotFoundException;
@@ -68,6 +69,14 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * RestTemplate 관련 에러 핸들러
+     */
+    @ExceptionHandler(RestTemplateException.class)
+    public ResponseEntity<ErrorResponseDto> RestTemplateException(RestTemplateException e) {
+        return ResponseMaker.createErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    /**
      * 도메인별 DUPLICATE_EXCEPTION
      */
     @ExceptionHandler(ProductDuplicateException.class)
@@ -118,4 +127,5 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDto> CartItemNotFoundException(CartItemNotFoundException e) {
         return ResponseMaker.createErrorResponse(ErrorCode.NOT_FOUND, e.getMessage());
     }
+
 }
