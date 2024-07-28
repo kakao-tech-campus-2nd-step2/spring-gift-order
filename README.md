@@ -1,8 +1,8 @@
-# spring-gift-order
+# spring-gift-giftOrder
 
 ### 과제 진행 요구 사항
 
-- 미션은 [주문하기](https://github.com/kakao-tech-campus-2nd-step2/spring-gift-order) 저장소를 포크하고 클론하는 것으로 시작한다.
+- 미션은 [주문하기](https://github.com/kakao-tech-campus-2nd-step2/spring-gift-giftOrder) 저장소를 포크하고 클론하는 것으로 시작한다.
 - [온라인 코드 리뷰 요청 1단계 문서](https://github.com/next-step/nextstep-docs/blob/master/codereview/review-step1.md)를 참고하여 실습 환경을
   구축한다.
 - 기능을 구현하기 전 README.md에 구현할 기능 목록을 정리해 추가한다.
@@ -45,6 +45,11 @@
 - [X] 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
 - [X] 주문 내역을 카카오톡 메시지로 전송한다.
 - [X] Mockito 를 사용하여 카카오 로그인 테스트를 진행한다.
+
+#### 3단계
+
+- [X] API 문서를 만들어 클라이언트와 소통할 수 있는 방법을 구현한다.
+- [X] 기본 세팅에 더해, 커스터마이징을 통해 자세한 정보를 제공한다.
 
 ### 나만의 HTTP RULE
 
