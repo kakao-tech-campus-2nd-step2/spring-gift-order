@@ -16,18 +16,22 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
-    private final KakaoService kakaoService;
+    private final KakaoMessageService kakaoMessageService;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, KakaoService kakaoService) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, KakaoMessageService kakaoMessageService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
-        this.kakaoService = kakaoService;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request, String accessToken) {
         Option option = optionRepository.findById(request.getOptionId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid option ID: " + request.getOptionId()));
+
+        if (option.getQuantity() < request.getQuantity()) {
+            throw new IllegalArgumentException("Insufficient option quantity for ID: " + request.getOptionId());
+        }
 
         option.subtractQuantity(request.getQuantity()); // 옵션 수량 차감
         optionRepository.save(option);
@@ -43,7 +47,7 @@ public class OrderService {
                 order.getMessage()
         );
 
-        kakaoService.sendKakaoMessage(response, accessToken);
+        kakaoMessageService.sendKakaoMessage(response, accessToken);
 
         return response;
     }
