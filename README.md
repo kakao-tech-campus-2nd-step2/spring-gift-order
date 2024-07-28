@@ -1062,7 +1062,7 @@ Content-Type: application/json
 
 ##### 카카오 회원인 경우
 
-- 요청 전 카카로 로그인을 통해 `access_token`을 발급받아야 한다.
+- 요청 전 카카오 로그인을 통해 `access_token`을 발급받아야 한다.
   - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
 
 ```json
@@ -1119,7 +1119,7 @@ Content-Type: application/json
 
 ##### 카카오 회원인 경우
 
-- 요청 전 카카로 로그인을 통해 `access_token`을 발급받아야 한다.
+- 요청 전 카카오 로그인을 통해 `access_token`을 발급받아야 한다.
   - `/oauth/login` 에 접속해 카카오 계정으로 성공적으로 로그인 하면 body에서 확인할 수 있음
 
 ```json
