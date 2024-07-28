@@ -3,8 +3,6 @@ package gift.exception;
 import gift.dto.betweenClient.ResponseDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.EmailAlreadyHereException;
-import gift.exception.BadRequestExceptions.UserNotFoundException;
-import gift.exception.InternalServerExceptions.InternalServerException;
 import gift.util.ResponseEntityUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

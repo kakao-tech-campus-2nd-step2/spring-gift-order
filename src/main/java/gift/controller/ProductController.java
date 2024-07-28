@@ -1,14 +1,12 @@
 package gift.controller;
 
 import gift.constants.ResponseMsgConstants;
-import gift.dto.betweenClient.JwtDTO;
 import gift.dto.betweenClient.product.ProductPostRequestDTO;
 import gift.dto.betweenClient.product.ProductResponseDTO;
 import gift.dto.betweenClient.product.ProductRequestDTO;
 import gift.dto.betweenClient.ResponseDTO;
 import gift.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @Validated
