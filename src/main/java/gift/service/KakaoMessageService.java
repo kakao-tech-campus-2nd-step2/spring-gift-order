@@ -13,23 +13,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 public class KakaoMessageService {
 
-	private final RestTemplate restTemplate;
+	private final KakaoAuthService kakaoAuthService;
 	
 	@Value("${kakao.message-url}")
     private String messageUrl;
 
-	public KakaoMessageService(RestTemplate restTemplate) {
-		this.restTemplate = restTemplate;
+	public KakaoMessageService(KakaoAuthService kakaoAuthService) {
+		this.kakaoAuthService = kakaoAuthService;
 	}
 
 	public Map<String, String> sendMessage(String accessToken, String message) {
 		RequestEntity<MultiValueMap<String, String>> request = messageRequest(accessToken, message);
-        ResponseEntity<Map<String, String>> response = handleRequest(request);
+        ResponseEntity<Map<String, String>> response = kakaoAuthService.errorHandling(request,
+        		new ParameterizedTypeReference<Map<String, String>>() {});
         return response.getBody();
     }
 	
@@ -48,9 +48,9 @@ public class KakaoMessageService {
 				+ "\"button_title\":\"확인\"}", message);
 	}
 
-	private HttpHeaders createHeaders(String access) {
+	private HttpHeaders createHeaders(String accessToken) {
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", "Bearer " + access);
+		headers.set("Authorization", "Bearer " + accessToken);
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 		return headers;
 	}
@@ -60,9 +60,4 @@ public class KakaoMessageService {
 		body.add("template_object", templateObject);
 		return body;
 	}
-	
-	private ResponseEntity<Map<String, String>> handleRequest(RequestEntity<MultiValueMap<String, String>> request) {
-		ParameterizedTypeReference<Map<String, String>> responseType = new ParameterizedTypeReference<Map<String, String>>() {};
-        return restTemplate.exchange(request, responseType);
-    }
 }
