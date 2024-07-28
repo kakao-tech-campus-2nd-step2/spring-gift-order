@@ -40,7 +40,7 @@ public class Option {
     private Product product;
 
     // Constructor
-    public Option() {
+    protected Option() {
     }
 
     public Option(String name, Long quantity) {
