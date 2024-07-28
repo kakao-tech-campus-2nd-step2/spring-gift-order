@@ -1,39 +1,46 @@
 package gift.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 
 import gift.entity.User;
-import gift.exception.UnauthorizedException;
+import gift.exception.InvalidUserException;
+import gift.exception.UserNotFoundException;
 import gift.repository.UserRepository;
 
 @Service
 public class UserService {
 
-    private final AuthService authService;
-    private final KakaoAuthService kakaoAuthService;
-    private final UserRepository userRepository;
-
-    public UserService(AuthService authService, KakaoAuthService kakaoAuthService, UserRepository userRepository) {
-        this.authService = authService;
-        this.kakaoAuthService = kakaoAuthService;
-        this.userRepository = userRepository;
+	private final UserRepository userRepository;
+	private final TokenService tokenService; 
+	
+	public UserService(UserRepository userRepository, TokenService tokenService) {
+		this.userRepository = userRepository;
+		this.tokenService = tokenService;
+	}
+	
+	public User findByEmail(String email) {
+		return userRepository.findByEmail(email)
+	    		.orElseThrow(() -> new UserNotFoundException("email not found"));
+	}
+	
+	public void createUser(User user, BindingResult bindingResult) {
+		validateBindingResult(bindingResult);
+		userRepository.save(user);
+	}
+	
+	public User getUserFromToken(String token) {
+    	String email = tokenService.extractionEmail(token);
+    	return findByEmail(email);
     }
-
-    public User getUserFromToken(String token) {
-        String email;
-        try {
-            email = authService.parseToken(token);
-        } catch (UnauthorizedException e) {
-            email = kakaoAuthService.parseKakaoToken(token);
-        }
-        return findOrRegisterUser(email);
-    }
-
-    private User findOrRegisterUser(String email) {
-        return userRepository.findByEmail(email).orElseGet(() -> {
-            User newUser = new User(email, "default_password123");
-            userRepository.save(newUser);
-            return newUser;
-        });
-    }
+	
+	private void validateBindingResult(BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			String errorMessage = bindingResult
+					.getFieldError()
+					.getDefaultMessage();
+			throw new InvalidUserException(errorMessage, HttpStatus.BAD_REQUEST);
+		}
+	}
 }
