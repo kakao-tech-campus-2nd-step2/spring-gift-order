@@ -11,6 +11,7 @@ import gift.model.Product;
 import gift.repository.MemberRepository;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +46,7 @@ public class OrderService {
         return OrderResponse.from(orders);
     }
 
+    @Async
     public void sendKakaoMessage(Long memberId, Long orderId) {
         Member member = memberRepository.getReferenceById(memberId);
         if(member.getLoginType() != SocialLoginType.KAKAO) {
