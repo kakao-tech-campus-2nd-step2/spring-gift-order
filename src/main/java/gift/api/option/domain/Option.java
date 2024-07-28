@@ -1,7 +1,7 @@
 package gift.api.option.domain;
 
 import gift.api.option.exception.InvalidSubtractionException;
-import gift.api.product.Product;
+import gift.api.product.domain.Product;
 import gift.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +43,14 @@ public class Option extends BaseEntity {
             "name='" + name + '\'' +
             ", quantity=" + quantity +
             '}';
+    }
+
+    public Long getProductId() {
+        return product.getId();
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public String getName() {

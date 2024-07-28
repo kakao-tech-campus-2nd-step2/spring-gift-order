@@ -1,8 +1,8 @@
 package gift.api.wishlist.domain;
 
-import gift.api.member.Member;
-import gift.api.product.Product;
-import gift.api.wishlist.InvalidQuantityException;
+import gift.api.member.domain.Member;
+import gift.api.product.domain.Product;
+import gift.api.wishlist.exception.InvalidQuantityException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ForeignKey;

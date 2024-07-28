@@ -1,4 +1,4 @@
-package gift.api.wishlist;
+package gift.api.wishlist.exception;
 
 import gift.global.exception.GlobalException;
 import org.springframework.http.HttpStatus;

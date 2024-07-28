@@ -1,4 +1,4 @@
-package gift.api.member;
+package gift.api.member.domain;
 
 import gift.api.member.enums.Role;
 import gift.global.BaseEntity;
@@ -19,6 +19,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String kakaoAccessToken;
+
     protected Member() {
     }
 
@@ -28,8 +30,16 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
+    public void saveKakaoToken(String accessToken) {
+        this.kakaoAccessToken = accessToken;
+    }
+
     public String getEmail() {
         return email;
+    }
+
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
     }
 
     @Override

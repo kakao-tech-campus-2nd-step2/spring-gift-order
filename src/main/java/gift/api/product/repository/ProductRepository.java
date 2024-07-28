@@ -1,5 +1,6 @@
-package gift.api.product;
+package gift.api.product.repository;
 
+import gift.api.product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

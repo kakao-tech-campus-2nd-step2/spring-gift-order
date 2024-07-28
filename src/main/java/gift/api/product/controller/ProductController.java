@@ -1,10 +1,11 @@
-package gift.api.product;
+package gift.api.product.controller;
 
-import gift.api.option.OptionService;
 import gift.api.option.dto.OptionRequest;
 import gift.api.option.dto.OptionResponse;
+import gift.api.option.service.OptionService;
 import gift.api.product.dto.ProductRequest;
 import gift.api.product.dto.ProductResponse;
+import gift.api.product.service.ProductService;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;

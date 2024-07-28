@@ -3,6 +3,7 @@ package gift.api.wishlist;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gift.api.wishlist.domain.WishId;
+import gift.api.wishlist.repository.WishRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
