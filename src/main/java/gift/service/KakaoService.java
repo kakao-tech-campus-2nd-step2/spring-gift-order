@@ -27,7 +27,7 @@ public class KakaoService {
 
     private MemberRepository memberRepository;
 
-    private KakaoService(MemberRepository memberRepository){
+    public KakaoService(MemberRepository memberRepository){
         this.memberRepository = memberRepository;
     }
 
@@ -40,6 +40,7 @@ public class KakaoService {
                 .encode()
                 .build()
                 .toUri();
+        System.out.println(uri);
         return uri;
     }
 
@@ -48,21 +49,13 @@ public class KakaoService {
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-//
-//        var body = new LinkedMultiValueMap<String, String>();
-//        body.add("grant_type", "authorization_code");
-//        body.add("client_id", client_id);
-//        body.add("redirect_uri", "http://localhost:8080/api/kakao/code");
-//        body.add("code", code);
 
         ObjectMapper objectMapper = new ObjectMapper();
         var dto = new getTokenDto("authorization_code",client_id,"http://localhost:8080/api/kakao/code",code);
-//        var body = new LinkedMultiValueMap<String, Object>();
-//        body.add("template_object",objectMapper.writeValueAsString(dto));
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         Map<String, String> map = objectMapper.convertValue(dto, new TypeReference<Map<String, String>>() {}); // (3)
-        body.setAll(map); // (4)
+        body.setAll(map);
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
@@ -104,7 +97,7 @@ public class KakaoService {
     }
 
     public Member saveMember(String email,String name){
-        Member member = new Member(email,null,name,new LinkedList<WishList>());
+        Member member = new Member(email,name,null,new LinkedList<WishList>());
         return memberRepository.save(member);
     }
 
