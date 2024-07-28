@@ -94,6 +94,10 @@ public class Option {
         this.quantity.subtract(quantity);
     }
 
+    public void add(int quantity) {
+        this.quantity.add(quantity);
+    }
+
     public void addQuantity(int quantity) {
         this.quantity.add(quantity);
     }

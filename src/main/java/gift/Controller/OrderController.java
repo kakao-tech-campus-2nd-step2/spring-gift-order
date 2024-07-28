@@ -38,8 +38,9 @@ public class OrderController {
     @PutMapping()
     public ResponseEntity<String> editOrder(@ValidUser Member member,
                                             @RequestParam("order-id") Long orderId,
-                                            @RequestParam("quantity") Integer quantity){
-        orderService.editOrder(member, orderId, quantity);
+                                            @RequestParam("edit-type") String editType,
+                                            @RequestParam("delta-quantity") int delataQuantity){
+        orderService.editOrder(member, orderId, editType, delataQuantity);
         return ResponseEntity.ok("주문이 정상적으로 수정되었습니다");
     }
 

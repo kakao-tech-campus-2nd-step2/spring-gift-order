@@ -88,18 +88,19 @@ public class Order {
         return message;
     }
 
-    public void checkOrderBelongsToMember(Member member){
-        if(this.member != member) {
+    public void checkOrderBelongsToMember(Member member) {
+        if (this.member != member) {
             throw new IllegalArgumentException("이 주문은 해당 member의 주문이 아닙니다");
         }
     }
 
-    public void updateQuantity(Quantity quantity){
-        validateQuantity(quantity);
-        this.quantity = quantity;
+    public void addQuantity(Quantity deltaQuantity) {
+        this.quantity.add(deltaQuantity.getValue());
+        this.option.subtract(deltaQuantity.getValue());
     }
 
-    public void updateQuantity(int quantity){
-        this.updateQuantity(new Quantity(quantity));
+    public void subtractQuantity(Quantity deltaQuantity) {
+        this.quantity.subtract(deltaQuantity.getValue());
+        this.option.add(deltaQuantity.getValue());
     }
 }
