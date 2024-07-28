@@ -24,6 +24,10 @@ public class User {
   @Column(nullable = true)
   private String password;
 
+  @Column(nullable = true)
+  private String kakaoAccessToken;
+
+
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private UserRole role;
@@ -70,6 +74,16 @@ public class User {
   public void setPassword(String password) {
     this.password = password;
   }
+
+
+  public String getKakaoAccessToken() {
+    return kakaoAccessToken;
+  }
+
+  public void setKakaoAccessToken(String kakaoAccessToken) {
+    this.kakaoAccessToken = kakaoAccessToken;
+  }
+
 
   public List<Wish> getWishs() {
     return wishs;
