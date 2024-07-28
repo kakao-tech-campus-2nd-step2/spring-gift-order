@@ -62,6 +62,13 @@ public class WishService {
         wishRepository.deleteByProductIdAndMemberId(productId, memberId);
     }
 
+    @Transactional
+    public void deleteIfExists(Long productId, Long memberId) {
+        if (wishRepository.existsByProductIdAndMemberId(productId, memberId)) {
+            wishRepository.deleteByProductIdAndMemberId(productId, memberId);
+        }
+    }
+
     private void checkProductByProductId(Long productId) {
         if (!productRepository.existsById(productId)) {
             throw new EntityNotFoundException("Product with id " + productId + " does not exist");
