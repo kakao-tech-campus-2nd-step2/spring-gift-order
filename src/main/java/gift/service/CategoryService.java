@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.entity.Category;
 import gift.entity.CategoryDTO;
+import gift.exception.ResourceNotFoundException;
 import gift.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +39,9 @@ public class CategoryService {
 
     public Category update(Long id, CategoryDTO categoryDTO) {
         Category category = findById(id);
+        if (category.getId() == 1L) {
+            throw new ResourceNotFoundException("Category not found with id " + id);
+        }
         category.setCategory(categoryDTO);
         return categoryRepository.save(category);
     }
