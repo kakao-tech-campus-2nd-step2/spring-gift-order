@@ -7,6 +7,7 @@ import gift.repository.CategoryRepository;
 import gift.repository.MenuRepository;
 import gift.repository.OptionRepository;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,24 +32,42 @@ class MenuRepositoryTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    @Test
-    @DisplayName("메뉴 FindById 테스트")
-    void testFindById() {
-        // Given
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
+    private Category category1;
+    private Category category2;
+    private Option option1;
+    private Option option2;
+    private Option option3;
+    private Option option4;
 
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
+    @BeforeEach
+    void setUp() {
+        category1 = new Category(null, "양식", new LinkedList<Menu>());
+        category2 = new Category(null, "한식", new LinkedList<Menu>());
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
+        Menu menu = new Menu("파스타", 3000, "naver.com", category1,new HashSet<>());
+
+        option1 = new Option(null, "알리오올리오", 3L,menu);
+        option2 = new Option(null, "토마토", 4L,menu);
+        option3 = new Option(null, "매운맛", 3L,menu);
+        option4 = new Option(null, "순한맛", 4L,menu);
+
         optionRepository.save(option1);
         optionRepository.save(option2);
+        optionRepository.save(option3);
+        optionRepository.save(option4);
+    }
 
-        Set<Option> options = new HashSet<Option>();
+    @Test
+    @DisplayName("메뉴 FindById 테스트")
+    @Transactional
+    void testFindById() {
+        // Given
+        Set<Option> options = new HashSet<>();
         options.add(option1);
         options.add(option2);
 
-        Menu menu = new Menu("파스타",3000,"naver.com",category,options);
-
+        Menu menu = new Menu("파스타", 3000, "naver.com", category1, options);
         menu = menuRepository.save(menu);
 
         // When
@@ -63,37 +82,13 @@ class MenuRepositoryTest {
     @Test
     @DisplayName("메뉴 FindAll 테스트")
     void testFindAll() {
-
         // Given
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
-
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
-        optionRepository.save(option1);
-        optionRepository.save(option2);
-
-        Set<Option> options = new HashSet<Option>();
-        options.add(option1);
-        options.add(option2);
-
-        Menu menu1 = new Menu("파스타",3000,"naver.com",category,options);
-
-        Category category2 = new Category(null,"한식",new LinkedList<Menu>());
-        categoryRepository.save(category);
-
-        Option option3 = new Option(null,"매운맛",3L);
-        Option option4 = new Option(null,"순한맛",4L);
-        optionRepository.save(option3);
-        optionRepository.save(option4);
-
-        Set<Option> options2 = new HashSet<Option>();
+        Set<Option> options2 = new HashSet<>();
         options2.add(option3);
         options2.add(option4);
 
-        Menu menu2 = new Menu("떡볶이",3000,"naver.com",category2,options2);
+        Menu menu2 = new Menu("떡볶이", 3000, "naver.com", category2, options2);
 
-        menuRepository.save(menu1);
         menuRepository.save(menu2);
 
         // When
@@ -108,20 +103,11 @@ class MenuRepositoryTest {
     @DisplayName("메뉴로 옵션 찾기 테스트")
     void testGetOptionsById() {
         // Given
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
-
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
-        optionRepository.save(option1);
-        optionRepository.save(option2);
-
-        Set<Option> options = new HashSet<Option>();
+        Set<Option> options = new HashSet<>();
         options.add(option1);
         options.add(option2);
 
-        Menu menu = new Menu("파스타",3000,"naver.com",category,options);
-
+        Menu menu = new Menu("파스타", 3000, "naver.com", category1, options);
         menu = menuRepository.save(menu);
 
         // When

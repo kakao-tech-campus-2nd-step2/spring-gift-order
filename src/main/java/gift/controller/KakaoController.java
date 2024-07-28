@@ -1,5 +1,6 @@
 package gift.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.domain.Member;
 import gift.service.KakaoService;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class KakaoController {
     @GetMapping("/code")
     public ResponseEntity<Member> getUserInfomation(
             @RequestParam("code") String code
-    ){
+    ) throws JsonProcessingException {
         Member member = kakaoService.getToken(code);
         return ResponseEntity.ok().body(member);
     }

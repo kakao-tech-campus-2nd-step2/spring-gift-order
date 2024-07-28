@@ -1,5 +1,7 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.KakaoLoginResponse;
 import gift.domain.Member;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -40,19 +43,26 @@ public class KakaoService {
         return uri;
     }
 
-    public Member getToken(String code){
+    public Member getToken(String code) throws JsonProcessingException {
         var url = "https://kauth.kakao.com/oauth/token";
 
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
+//
+//        var body = new LinkedMultiValueMap<String, String>();
+//        body.add("grant_type", "authorization_code");
+//        body.add("client_id", client_id);
+//        body.add("redirect_uri", "http://localhost:8080/api/kakao/code");
+//        body.add("code", code);
 
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", client_id);
-        body.add("redirect_uri", "http://localhost:8080/api/kakao/code");
-        body.add("code", code);
+        ObjectMapper objectMapper = new ObjectMapper();
+        var dto = new getTokenDto("authorization_code",client_id,"http://localhost:8080/api/kakao/code",code);
+//        var body = new LinkedMultiValueMap<String, Object>();
+//        body.add("template_object",objectMapper.writeValueAsString(dto));
 
-       // var body = new getTokenDto("authorization_code",client_id,"http://localhost:8080/api/kakao/code",code);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        Map<String, String> map = objectMapper.convertValue(dto, new TypeReference<Map<String, String>>() {}); // (3)
+        body.setAll(map); // (4)
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 

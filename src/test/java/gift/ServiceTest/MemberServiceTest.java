@@ -41,8 +41,8 @@ public class MemberServiceTest {
     @Test
     @DisplayName("회원가입 테스트")
     public void joinTest() {
-        MemberRequest memberRequest = new MemberRequest("testId", "testPassword");
-        Member member = new Member("testId","testPassword",new LinkedList<WishList>());
+        MemberRequest memberRequest = new MemberRequest("testId", "testPassword","김민지");
+        Member member = new Member("testId","testPassword","김민지",new LinkedList<WishList>());
 
         Mockito.when(memberRepository.save(any(Member.class))).thenReturn(member);
         Mockito.when(memberRepository.existsById("testId")).thenReturn(false);
@@ -53,7 +53,7 @@ public class MemberServiceTest {
     @Test
     @DisplayName("이미 존재하는 회원 추가 테스트")
     public void testJoin_ThrowsException() {
-        MemberRequest memberRequest = new MemberRequest("testId", "testPassword");
+        MemberRequest memberRequest = new MemberRequest("testId", "testPassword","김민지");
         Mockito.when(memberRepository.existsById("testId")).thenReturn(true);
 
         assertThatThrownBy(() -> memberService.join(memberRequest))
@@ -64,8 +64,8 @@ public class MemberServiceTest {
     @Test
     @DisplayName("로그인 성공 테스트")
     public void testLogin_Success() {
-        MemberRequest memberRequest = new MemberRequest("testId", "testPassword");
-        Member member = new Member("testId", "testPassword", new LinkedList<WishList>());
+        MemberRequest memberRequest = new MemberRequest("testId", "testPassword","김민지");
+        Member member = new Member("testId", "testPassword","김민지", new LinkedList<WishList>());
 
         Mockito.when(memberRepository.findById(memberRequest.id())).thenReturn(Optional.of(member));
         Mockito.when(jwtService.createJWT(memberRequest.id())).thenReturn("token");
@@ -78,8 +78,8 @@ public class MemberServiceTest {
     @Test
     @DisplayName("잘못된 비빌번호 테스트")
     public void testLogin_wrongPassword() {
-        MemberRequest memberRequest = new MemberRequest("testId", "wrongPassword");
-        Member member = new Member("testId", "testPassword", new LinkedList<WishList>());
+        MemberRequest memberRequest = new MemberRequest("testId", "wrongPassword","김민지");
+        Member member = new Member("testId", "testPassword", "김민지",new LinkedList<WishList>());
 
         Mockito.when(memberRepository.findById(memberRequest.id())).thenReturn(Optional.of(member));
 
@@ -91,7 +91,7 @@ public class MemberServiceTest {
     @Test
     @DisplayName("존재하지 않는 멤버 테스트")
     public void testLogin_NonExistingMember() {
-        MemberRequest memberRequest = new MemberRequest("TestId", "testPassword");
+        MemberRequest memberRequest = new MemberRequest("TestId", "testPassword","김민지");
 
         Mockito.when(memberRepository.findById(memberRequest.id())).thenReturn(Optional.empty());
 
@@ -103,7 +103,7 @@ public class MemberServiceTest {
     @Test
     @DisplayName("id로 멤버 찾기 테스트")
     public void testFindById_Success() {
-        Member member = new Member("testId", "testPassword", new LinkedList<WishList>());
+        Member member = new Member("testId", "testPassword", "김민지", new LinkedList<WishList>());
 
         Mockito.when(memberRepository.findById("testId")).thenReturn(Optional.of(member));
 
