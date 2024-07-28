@@ -30,6 +30,15 @@ public class Order {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Order(Long id, Long productId, Long optionId, int quantity, String message) {
+        this.id = id;
+        this.productId = productId;
+        this.optionId = optionId;
+        this.quantity = quantity;
+        this.createdAt = LocalDateTime.now();
+        this.message = message;
+    }
+
     public Long getId() {
         return id;
     }
