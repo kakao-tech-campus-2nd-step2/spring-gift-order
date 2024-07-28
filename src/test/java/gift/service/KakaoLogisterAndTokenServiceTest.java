@@ -42,7 +42,7 @@ class KakaoLogisterAndTokenServiceTest {
         given(kakaoTokenService.getUserInfo(any())).willReturn(memberDTO);
         given(memberService.getMember(any())).willThrow(new UserNotFoundException("없는 유저 입니다."));
 
-        assertThat(kakaoAuthService.logister("아무 인가 코드")).isEqualTo(memberDTO);
+        assertThat(kakaoAuthService.loginOrRegister("아무 인가 코드")).isEqualTo(memberDTO);
         verify(memberService).register(memberDTO);
     }
 
@@ -52,13 +52,13 @@ class KakaoLogisterAndTokenServiceTest {
         given(kakaoTokenService.getUserInfo(any())).willReturn(memberDTO);
         given(memberService.getMember(any())).willReturn(memberDTOInDb);
 
-        assertThrows(BadRequestException.class, () -> kakaoAuthService.logister("아무 인가 코드"));
+        assertThrows(BadRequestException.class, () -> kakaoAuthService.loginOrRegister("아무 인가 코드"));
     }
 
     @Test
     void logister_WhenTokenServiceThrowsException_ShouldPropagateException() {
         given(kakaoTokenService.getAccessToken(any())).willThrow(new BadRequestException("Invalid token"));
 
-        assertThrows(BadRequestException.class, () -> kakaoAuthService.logister("아무 인가 코드"));
+        assertThrows(BadRequestException.class, () -> kakaoAuthService.loginOrRegister("아무 인가 코드"));
     }
 }
