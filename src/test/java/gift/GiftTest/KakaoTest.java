@@ -84,10 +84,7 @@ public class KakaoTest {
         RestTemplate restTemplate = new RestTemplate();
         String string = kakaoController.getUserAgree().getUrl();
         URI uri = new URI(string);
-        System.out.println(uri);
         ResponseEntity<Object> object = restTemplate.getForEntity(uri,Object.class);
-        System.out.println(object);
-        System.out.println("Response Body: " + object.getBody());
     }
     @Test
     @DisplayName("주문하기")
@@ -107,7 +104,5 @@ public class KakaoTest {
                 entity,
                 Order.class
         );
-
-        System.out.println(response.getStatusCode());
     }
 }

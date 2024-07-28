@@ -40,7 +40,6 @@ public class KakaoService {
                 .encode()
                 .build()
                 .toUri();
-        System.out.println(uri);
         return uri;
     }
 
@@ -65,7 +64,6 @@ public class KakaoService {
 
         headers = new HttpHeaders();
         headers.add("Authorization",response.getBody().access_token());
-        System.out.println(response.getBody().access_token());
         return getUserInformation(response.getBody().access_token());
     }
 
