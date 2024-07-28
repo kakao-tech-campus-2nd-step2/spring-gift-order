@@ -45,10 +45,6 @@ public class Option extends BaseEntity {
             '}';
     }
 
-    public Long getProductId() {
-        return product.getId();
-    }
-
     public Product getProduct() {
         return product;
     }
