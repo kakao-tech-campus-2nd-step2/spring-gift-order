@@ -11,6 +11,7 @@ import gift.product.option.repository.OptionJpaRepository;
 import gift.product.option.service.OptionService;
 import gift.user.entity.User;
 import gift.user.repository.UserJpaRepository;
+import gift.wish.repository.WishRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +24,17 @@ public class OrderService {
     private final OptionJpaRepository optionRepository;
     private final UserJpaRepository userRepository;
     private final OrderJpaRepository orderRepository;
+    private final WishRepository wishRepository;
 
 
     public OrderService(OptionService optionService, OptionJpaRepository optionRepository,
-        UserJpaRepository userRepository, OrderJpaRepository orderRepository) {
+        UserJpaRepository userRepository, OrderJpaRepository orderRepository,
+        WishRepository wishRepository) {
         this.optionService = optionService;
         this.optionRepository = optionRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
+        this.wishRepository = wishRepository;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -43,7 +47,9 @@ public class OrderService {
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         user.getWishes()
-            .removeIf(wish -> wish.getProduct().equals(option.getProduct()));
+            .stream()
+            .filter(wish -> wish.getProduct().equals(option.getProduct()))
+            .forEach(wishRepository::delete);
 
         Order order = new Order(request.optionId(), request.quantity(), request.message());
 

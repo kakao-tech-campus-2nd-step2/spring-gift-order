@@ -109,6 +109,7 @@ Content-Type: application/json
   - [x] 위시리스트에 존재하는 경우 위시리스트에서 해당 상품 삭제
 - [ ] 카카오 메시지 api에 order message를 보내도록 요청
   - [ ] 카카오 로그인시 카카오 token 저장 필요
+    * user entity에 token 필드 추가
   - [ ] 메시지 템플릿 request 형식에 맞게 데이터 가공
 
 
