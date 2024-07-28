@@ -1,6 +1,7 @@
 package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.domain.*;
 import gift.repository.MemberRepository;
@@ -42,7 +43,6 @@ public class OrderService {
 
     private void sandOrderMessage(String token, OrderRequest orderRequest) throws JsonProcessingException {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.add("Authorization", token);
@@ -63,18 +63,16 @@ public class OrderService {
         text = text.concat("수량 : " + option.getQuantity() + "\n");
         text = text.concat("주문 메세지 : " + orderRequest.message() + "\n");
 
+        var dto = new OrderBodyDto("text",text,link,"바로확인");
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", text);
-        templateObject.put("link", link);
-        templateObject.put("button_title", "바로 확인");
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> map = objectMapper.convertValue(dto, new TypeReference<Map<String, Object>>() {}); // (3)
 
-        String templateObjectJson = new ObjectMapper().writeValueAsString(templateObject);
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        String templateObjectJson = new ObjectMapper().writeValueAsString(map);
         body.add("template_object", templateObjectJson);
 
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
