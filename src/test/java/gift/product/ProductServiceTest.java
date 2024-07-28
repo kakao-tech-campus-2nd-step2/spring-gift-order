@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import gift.option.Option;
+import gift.option.OptionResponse;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -39,25 +40,14 @@ class ProductServiceTest {
         Option option = option(null, product);
         when(productRepository.findById(any(Long.class))).thenReturn(Optional.of(product));
         //when
-        List<Option> options = productService.addOption(product.getId(), option);
+        List<OptionResponse> options = productService.addOption(product.getId(), option);
         // then
         assertAll(
             () -> assertThat(options.size()).isEqualTo(product.getOptions().size()),
-            () -> assertThat(options).isEqualTo(product.getOptions()),
-            () -> assertThat(options.contains(option)).isEqualTo(true)
+            () -> assertThat(options).isEqualTo(product.getOptionResponses()),
+            () -> assertThat(options.contains(new OptionResponse(option))).isEqualTo(true)
         );
     }
-
-    /*@DisplayName("없는 상품의 옵션을 만들려는 경우")
-    @Test
-    void addOptionFail() {
-        //given
-        Long expiredProductId = 10L;
-        Option option = option(null, expiredProductId);
-        //when //then
-        assertThrows(NoSuchElementException.class,
-            () -> productService.addOption(expiredProductId, option));
-    }*/
 
     @Test
     void deleteOption() {
@@ -75,17 +65,6 @@ class ProductServiceTest {
             () -> assertThat(options.contains(option)).isEqualTo(false)
         );
     }
-
-    /*@DisplayName("이미 지워진 상품의 옵션을 삭제 하려는 경우")
-    @Test
-    void deleteOptionFail1() {
-        //given
-        Long expiredProductId = 10L;
-        Option option = option(null, expiredProductId);
-        //when //then
-        assertThrows(NoSuchElementException.class,
-            () -> productService.deleteOption(expiredProductId, option));
-    }*/
 
     @DisplayName("등록되지 않은 옵션을 삭제 하려는 경우")
     @Test

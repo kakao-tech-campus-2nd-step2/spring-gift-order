@@ -28,9 +28,6 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private final List<Option> options = new ArrayList<>();
 
-    /*@OneToMany(mappedBy = "product")
-    private final List<Option> options = new ArrayList<>();*/
-
     public Long getId(){
         return this.id;
     }

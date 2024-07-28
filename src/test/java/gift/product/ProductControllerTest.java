@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.google.gson.Gson;
 import gift.option.Option;
 import gift.option.OptionRequest;
+import gift.option.OptionResponse;
 import gift.option.OptionService;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,11 +79,11 @@ public class ProductControllerTest {
     @Test
     void addOption() throws Exception {
         //given
-        List<Option> options = new ArrayList<>();
+        List<OptionResponse> options = new ArrayList<>();
         OptionRequest optionRequest = new OptionRequest(1L, "option", 10);
         Option option = option(1L, product());
         when(optionService.addOption(any(), any())).thenReturn(option);
-        options.add(option);
+        options.add(new OptionResponse(option));
         when(productService.addOption(any(), any(Option.class))).thenReturn(options);
 
         //when

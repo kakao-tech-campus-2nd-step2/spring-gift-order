@@ -1,8 +1,6 @@
 package gift.product;
 
-import gift.option.Option;
 import gift.option.OptionResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 public record ProductResponse(
