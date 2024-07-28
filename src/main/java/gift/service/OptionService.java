@@ -1,23 +1,19 @@
 package gift.service;
 
-import gift.constants.Messages;
 import gift.domain.Option;
-import gift.domain.Product;
 import gift.dto.request.OptionRequest;
 import gift.dto.response.OptionResponse;
 import gift.dto.response.ProductResponse;
-import gift.exception.DuplicateOptionNameException;
-import gift.exception.OptionNotFoundException;
-import gift.exception.ProductNotFoundException;
+import gift.exception.customException.DuplicateOptionNameException;
+import gift.exception.customException.OptionNotFoundException;
 import gift.repository.OptionRepository;
-import gift.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static gift.constants.Messages.NOT_FOUND_OPTION;
-import static gift.constants.Messages.OPTION_NAME_ALREADY_EXISTS;
+import static gift.exception.errorMessage.Messages.NOT_FOUND_OPTION;
+import static gift.exception.errorMessage.Messages.OPTION_NAME_ALREADY_EXISTS;
 
 @Service
 public class OptionService {

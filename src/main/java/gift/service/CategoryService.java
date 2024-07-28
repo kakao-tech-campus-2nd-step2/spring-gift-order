@@ -1,19 +1,18 @@
 package gift.service;
 
-import gift.constants.Messages;
 import gift.domain.Category;
 import gift.dto.request.CategoryRequest;
 import gift.dto.response.CategoryResponse;
-import gift.exception.CategoryNotFoundException;
-import gift.exception.DuplicateCategoryNameException;
+import gift.exception.customException.CategoryNotFoundException;
+import gift.exception.customException.DuplicateCategoryNameException;
 import gift.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static gift.constants.Messages.CATEGORY_NAME_ALREADY_EXISTS;
-import static gift.constants.Messages.NOT_FOUND_CATEGORY;
+import static gift.exception.errorMessage.Messages.CATEGORY_NAME_ALREADY_EXISTS;
+import static gift.exception.errorMessage.Messages.NOT_FOUND_CATEGORY;
 
 @Service
 public class CategoryService {

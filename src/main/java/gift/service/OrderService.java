@@ -7,6 +7,7 @@ import gift.dto.request.MemberRequest;
 import gift.dto.request.OrderRequest;
 import gift.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -16,16 +17,16 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OptionService optionService;
     private final WishService wishService;
-    private final KakaoMemberService kakaoMemberService;
+    private final KakaoService kakaoService;
 
-    public OrderService(OrderRepository orderRepository, OptionService optionService, WishService wishService, KakaoMemberService kakaoMemberService) {
+    public OrderService(OrderRepository orderRepository, OptionService optionService, WishService wishService, KakaoService kakaoService) {
         this.orderRepository = orderRepository;
         this.optionService = optionService;
         this.wishService = wishService;
-        this.kakaoMemberService = kakaoMemberService;
+        this.kakaoService = kakaoService;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void orderOption(OrderRequest orderRequest, MemberRequest memberRequest, String accessToken){
         optionService.subtractQuantityById(orderRequest.optionId(), orderRequest.quantity());
 
@@ -36,9 +37,9 @@ public class OrderService {
         }
 
         String message = "옵션 id " + orderRequest.optionId() + " 상품이 주문되었습니다.";
-        kakaoMemberService.sendKakaoMessage(accessToken,message);
-
+        kakaoService.sendKakaoMessage(accessToken,message);
     }
+
 
     @Transactional
     public void save(MemberRequest memberRequest, OrderRequest orderRequest){

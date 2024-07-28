@@ -1,8 +1,8 @@
 package gift.domain;
 
-import gift.constants.Messages;
-import gift.exception.CannotDeleteLastOptionException;
-import gift.exception.InsufficientQuantityException;
+import gift.exception.errorMessage.Messages;
+import gift.exception.customException.CannotDeleteLastOptionException;
+import gift.exception.customException.InsufficientQuantityException;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -23,8 +23,6 @@ public class Option {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
-    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orders = new ArrayList<>();
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes = new ArrayList<>();
 
@@ -75,26 +73,6 @@ public class Option {
         while(iterator.hasNext()) {
             Wish wish = iterator.next();
             wish.setOption(null);
-            iterator.remove();
-        }
-    }
-
-    public void addOrder(Order order) {
-        this.orders.add(order);
-        order.setOption(this);
-    }
-
-    public void removeOrder(Order order) {
-        order.setOption(null);
-        this.orders.remove(order);
-    }
-
-    public void removeOrders() {
-        Iterator<Order> iterator = orders.iterator();
-
-        while(iterator.hasNext()){
-            Order order = iterator.next();
-            order.setOption(null);
             iterator.remove();
         }
     }

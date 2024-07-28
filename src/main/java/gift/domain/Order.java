@@ -32,21 +32,6 @@ public class Order {
         this.message = message;
         this.member = member;
         this.option = option;
-        if(this.member != null){
-            this.member.addOrder(this);
-        }
-        if(this.option != null){
-            this.option.addOrder(this);
-        }
-    }
-
-    public void remove(){
-        if(this.member != null){
-            this.member.removeOrder(this);
-        }
-        if(this.option != null){
-            this.option.removeOrder(this);
-        }
     }
 
     public Long getId() {

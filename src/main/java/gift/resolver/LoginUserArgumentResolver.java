@@ -4,7 +4,7 @@ import gift.annotation.LoginMember;
 import gift.dto.request.MemberRequest;
 import gift.dto.response.MemberResponse;
 import gift.service.JwtUtil;
-import gift.service.KakaoMemberService;
+import gift.service.KakaoService;
 import gift.service.MemberService;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,12 +15,12 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
-    private final KakaoMemberService kakaoMemberService;
+    private final KakaoService kakaoService;
 
-    public LoginUserArgumentResolver(MemberService memberService, JwtUtil jwtUtil, KakaoMemberService kakaoMemberService) {
+    public LoginUserArgumentResolver(MemberService memberService, JwtUtil jwtUtil, KakaoService kakaoService) {
         this.memberService = memberService;
         this.jwtUtil = jwtUtil;
-        this.kakaoMemberService = kakaoMemberService;
+        this.kakaoService = kakaoService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         if(jwtUtil.isJwtToken(token)){
             userEmail = jwtUtil.extractEmail(token);
         } else {
-            userEmail = kakaoMemberService.getKakaoUserEmail(token);
+            userEmail = kakaoService.getKakaoUserEmail(token);
         }
 
         MemberResponse memberDto = memberService.findByEmail(userEmail);

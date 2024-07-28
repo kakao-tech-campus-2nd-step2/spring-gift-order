@@ -1,7 +1,7 @@
 package gift.interceptor;
 
 import gift.service.JwtUtil;
-import gift.service.KakaoMemberService;
+import gift.service.KakaoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -11,11 +11,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class TokenInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
-    private final KakaoMemberService kakaoMemberService;
+    private final KakaoService kakaoService;
 
-    public TokenInterceptor(JwtUtil jwtUtil, KakaoMemberService kakaoMemberService) {
+    public TokenInterceptor(JwtUtil jwtUtil, KakaoService kakaoService) {
         this.jwtUtil = jwtUtil;
-        this.kakaoMemberService = kakaoMemberService;
+        this.kakaoService = kakaoService;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                 return true;
             }
 
-            if (kakaoMemberService.isKakaoTokenValid(token)) {
+            if (kakaoService.isKakaoTokenValid(token)) {
                 return true;
             }
         }

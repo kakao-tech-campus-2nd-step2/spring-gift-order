@@ -2,8 +2,8 @@ package gift.service;
 
 import gift.dto.response.KaKaoMemberInfoResponse;
 import gift.dto.response.KakaoTokenResponse;
-import gift.exception.MissingAuthorizationCodeException;
-import gift.exception.ResponseBodyNullException;
+import gift.exception.customException.MissingAuthorizationCodeException;
+import gift.exception.customException.ResponseBodyNullException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -13,10 +13,10 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.Optional;
 
-import static gift.constants.Messages.*;
+import static gift.exception.errorMessage.Messages.*;
 
 @Service
-public class KakaoMemberService {
+public class KakaoService {
 
     @Value("${kakao.client-id}")
     private String clientId;
@@ -24,7 +24,7 @@ public class KakaoMemberService {
     private String redirectUri;
     private final RestTemplate restTemplate;
 
-    public KakaoMemberService(RestTemplate restTemplate) {
+    public KakaoService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
@@ -93,11 +93,11 @@ public class KakaoMemberService {
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
         var body = new LinkedMultiValueMap<String, String>();
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"object_type\":\"text\",\"text\":\"")
+        StringBuilder templateObjectBuilder = new StringBuilder();
+        templateObjectBuilder.append("{\"object_type\":\"text\",\"text\":\"")
                 .append(message)
                 .append("\",\"link\":{\"web_url\":\"\"}}");
-        body.add("template_object", sb.toString());
+        body.add("template_object", templateObjectBuilder.toString());
 
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
         restTemplate.exchange(request,String.class);

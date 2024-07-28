@@ -1,14 +1,13 @@
 package gift.service;
 
-import gift.constants.Messages;
 import gift.domain.Category;
 import gift.domain.Option;
 import gift.domain.Product;
 import gift.dto.request.OptionRequest;
 import gift.dto.request.ProductRequest;
 import gift.dto.response.ProductResponse;
-import gift.exception.ProductNotFoundException;
-import gift.exception.ProductOptionRequiredException;
+import gift.exception.customException.ProductNotFoundException;
+import gift.exception.customException.ProductOptionRequiredException;
 import gift.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static gift.constants.Messages.*;
+import static gift.exception.errorMessage.Messages.*;
 
 @Service
 public class ProductService {
