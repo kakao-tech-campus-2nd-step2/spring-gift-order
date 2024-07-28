@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import gift.dto.response.KakaoTokenResponse;
+import gift.dto.response.RefreshTokenResponse;
 import gift.entity.KakaoToken;
 import gift.exception.CustomException;
 import gift.repository.KakaoTokenRepository;
@@ -41,10 +42,19 @@ public class KakaoTokenService {
         return kakaoToken.getAccessToken();
     }
 
-    public void refreshToken(KakaoToken kakaoToken){
-        if(kakaoToken.isExpired()){
-            kakaoApiService.refreshToken(kakaoToken.getRefreshToken());
-        }
+    public void refreshToken(String email, KakaoToken kakaoToken){
         
+        if(kakaoToken.isExpired()){
+
+            RefreshTokenResponse refreshTokenResponse = kakaoApiService.refreshToken(kakaoToken.getRefreshToken());
+
+            KakaoToken saveToken = new KakaoToken(email, 
+            refreshTokenResponse.getAccessToken(), 
+            refreshTokenResponse.getRefreshToken(),
+            refreshTokenResponse.getExpiresIn());
+
+            kakaoTokenRepository.delete(kakaoToken);
+            kakaoTokenRepository.save(saveToken);
+        }
     }
 }

@@ -15,4 +15,16 @@ public class RefreshTokenResponse {
 
     @JsonProperty("expires_in")
     private int expiresIn;
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public int getExpiresIn() {
+        return expiresIn;
+    }
 }
