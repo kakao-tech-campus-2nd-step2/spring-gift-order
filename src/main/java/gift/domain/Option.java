@@ -12,7 +12,7 @@ public class Option {
     String name;
     Long quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     Menu menu;
 
     public Option(Long id, String name, Long quantity,Menu menu) {
