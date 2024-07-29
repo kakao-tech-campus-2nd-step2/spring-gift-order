@@ -41,7 +41,8 @@ public class ProductService {
 
     @Transactional
     public Long addProduct(ProductRegisterRequestDto productDto){
-        Category category = categoryRepository.findByName(productDto.getCategoryName());
+        Category category = categoryRepository.findById(productDto.getCategoryId())
+            .orElseThrow(() -> new NoSuchElementException("해당 id의 카테고리 없음: " + productDto.getCategoryId()));
         Product newProduct = new Product(productDto.getName(),productDto.getPrice(),productDto.getImageUrl(), category);
 
 //        // 상품에는 항상 하나 이상의 옵션이 있어야 한다.
@@ -56,11 +57,13 @@ public class ProductService {
     public Long updateProduct(long id, ProductRegisterRequestDto productDto){
         Product existingProduct = productRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("해당 id의 상품 없음: " + id));
+        Category category = categoryRepository.findById(productDto.getCategoryId())
+            .orElseThrow(() -> new NoSuchElementException("해당 id의 카테고리 없음: " + productDto.getCategoryId()));
 
         existingProduct.setName(productDto.getName());
         existingProduct.setPrice(productDto.getPrice());
         existingProduct.setImageUrl(productDto.getImageUrl());
-        existingProduct.updateCategory(categoryRepository.findByName(productDto.getCategoryName()));
+        existingProduct.updateCategory(category);
 
         Product savedProduct = productRepository.save(existingProduct);
         return savedProduct.getId();
