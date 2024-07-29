@@ -48,6 +48,27 @@
                 });
         });
     });
+
+    // 카카오 로그인 버튼 클릭 시 실행되는 함수
+    function handleKakaoLogin() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            $.post('/auth/kakao', { code: code })
+                .done(function(response) {
+                    localStorage.setItem('token', response.token);
+                    window.location.href = '/';
+                })
+                .fail(function() {
+                    alert('Kakao login failed!');
+                });
+        }
+    }
+
+    $(document).ready(function() {
+        handleKakaoLogin();
+    });
 </script>
 </body>
 </html>

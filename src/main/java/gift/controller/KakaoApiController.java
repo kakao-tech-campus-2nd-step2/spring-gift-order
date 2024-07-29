@@ -1,6 +1,8 @@
 package gift.controller;
 
 import gift.service.KakaoApiService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +23,10 @@ public class KakaoApiController {
      * @param code 인가 코드
      */
     @GetMapping("/callback")
-    public void kakaoLogin(@RequestParam(value = "code") String code) {
+    public ResponseEntity<String> kakaoLogin(@RequestParam(value = "code") String code) {
         String accessToken = kakaoApiService.getAccessToken(code);
+        kakaoApiService.kakaoLogin(accessToken);
+        return new ResponseEntity<>(accessToken, HttpStatus.OK);
     }
 
 }
