@@ -63,6 +63,12 @@ public class ProductApiController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(params = "categoryId")
+    public ResponseEntity<ReadAllProductsResponse> readProductsByCategoryId(@PageableDefault Pageable pageable, @RequestParam Long categoryId) {
+        ReadAllProductsResponse response = productService.readProductsByCategoryId(categoryId, pageable);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     public ResponseEntity<CreateProductResponse> createProduct(
         @Validated @RequestBody CreateProductRequest request) throws URISyntaxException {
@@ -70,12 +76,6 @@ public class ProductApiController {
 
         URI location = new URI("http://localhost:8080/api/products/" + response.getId());
         return ResponseEntity.created(location).body(response);
-    }
-
-    @GetMapping(params = "categoryId")
-    public ResponseEntity<ReadAllProductsResponse> readProductsByCategoryId(@PageableDefault Pageable pageable, @RequestParam Long categoryId) {
-        ReadAllProductsResponse response = productService.readProductsByCategoryId(categoryId, pageable);
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{productId}")
