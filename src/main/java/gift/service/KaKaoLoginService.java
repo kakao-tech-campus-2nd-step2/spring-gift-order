@@ -64,7 +64,7 @@ public class KaKaoLoginService {
 
         ResponseEntity<String> response = client.get()
                 .uri(URI.create(getUserInfoUrl))
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", setAuthorizationHeader(accessToken))
                 .retrieve()
                 .toEntity(String.class);
 
@@ -127,6 +127,10 @@ public class KaKaoLoginService {
     private String generateRandomPassword() {
         Random random = new Random();
         return String.valueOf(1000 + random.nextInt(9000));
+    }
+
+    private String setAuthorizationHeader(String token) {
+        return "Bearer " + token;
     }
 
 }
