@@ -36,7 +36,7 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addProduct(@Valid @ModelAttribute ProductRegisterRequestDto productDto) {
+    public ResponseEntity<String> addProduct(@Valid @RequestBody ProductRegisterRequestDto productDto) {
         Long newId = productService.addProduct(productDto);
         return ResponseEntity.status(HttpStatus.CREATED).body("추가된 상품 id: " + newId);
     }
