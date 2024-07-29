@@ -13,12 +13,15 @@ import gift.dto.request.ProductCreateRequest;
 import gift.dto.response.ProductPageResponse;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 @Controller
+@Tag(name = "product", description = "Product API")
 @RequestMapping("/api/products")
 public class ProductController {
 
@@ -31,6 +34,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "상품 조회", description = "파라미터로 받은 상품 페이지를 조회합니다." )
     public String getProducts(Model model, @RequestParam(value = "page", defaultValue = "0")int page, @RequestParam(value = "size", defaultValue = "10") int size) {
         ProductPageResponse paging = productService.getPage(page, size);
         model.addAttribute("paging", paging);
@@ -38,6 +42,7 @@ public class ProductController {
     }
 
     @GetMapping("/new")
+    @Operation(summary = "상품 추가 화면", description = "상품 추가 화면을 띄웁니다." )
     public String showProductForm(Model model){
         model.addAttribute("product", new ProductCreateRequest("", 0, "", "", "", 0));
         model.addAttribute("categories", categoryService.findAll().getCategories());
@@ -45,6 +50,7 @@ public class ProductController {
     }
 
     @PostMapping("/new")
+    @Operation(summary = "상품 추가", description = "파라미터로 받은 상품을 추가합니다." )
     public String addProduct(@Valid @ModelAttribute ProductCreateRequest productCreateRequest, BindingResult bindingResult, Model model) {
 
         if(bindingResult.hasErrors()){
@@ -58,6 +64,7 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{id}")
+    @Operation(summary = "상품 수정 화면", description = "상품 수정 화면을 띄웁니다." )
     public String showEditForm(@PathVariable Long id, Model model) {
         model.addAttribute("product", productService.findById(id)); 
         model.addAttribute("categories", categoryService.findAll().getCategories());
@@ -65,6 +72,7 @@ public class ProductController {
     }
 
     @PostMapping("/edit/{id}")
+    @Operation(summary = "상품 수정", description = "파라미터로 받은 상품을 수정합니다." )
     public String updateProduct(@PathVariable Long id,@Valid @ModelAttribute ProductDto productDto, BindingResult bindingResult, Model model) {
         
         if(bindingResult.hasErrors()){
@@ -78,6 +86,7 @@ public class ProductController {
     }
 
     @PostMapping("/delete/{id}")
+    @Operation(summary = "상품 삭제", description = "파라미터로 받은 상품을 삭제합니다." )
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return "redirect:/api/products";

@@ -13,8 +13,11 @@ import gift.dto.response.KakaoTokenResponse;
 import gift.dto.response.KakaoUserInfoResponse;
 import gift.service.KakaoApiService;
 import gift.service.KakaoTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
+@Tag(name = "kakao_login", description = "카카오 API")
 public class KakaoLoginController {
 
     private final KakaoProperties kakaoProperties;
@@ -28,6 +31,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/login")
+    @Operation(summary = "카카오 로그인 화면", description = "카카오 로그인 페이지를 띄웁니다.")
     public String login(Model model){
         model.addAttribute("kakaoApiKey", kakaoProperties.getApiKey());
         model.addAttribute("redirectUri", kakaoProperties.getRedirectUri());
@@ -35,6 +39,7 @@ public class KakaoLoginController {
     }
 
     @RequestMapping("/login/code")
+    @Operation(summary = "카카오 로그인", description = "파라미터로 받은 인가 코드로 카카오 로그인을 합니다.")
     public ResponseEntity<String> kakaoLogin(@RequestParam String code) {
 
         KakaoTokenResponse response = kakaoApiService.getToken(code);

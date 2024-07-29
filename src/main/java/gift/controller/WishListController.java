@@ -19,10 +19,12 @@ import gift.dto.WishListDto;
 import gift.dto.request.WishListRequest;
 import gift.dto.response.WishListPageResponse;
 import gift.util.JwtUtil;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 
 @RestController
+@Tag(name = "wishlist", description = "WishList API")
 @RequestMapping("/wishlist")
 public class WishListController {
     

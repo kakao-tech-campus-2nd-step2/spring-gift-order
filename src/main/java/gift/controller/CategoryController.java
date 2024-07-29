@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import gift.dto.CategoryDto;
 import gift.dto.response.CategoryResponse;
 
 @RestController
+@Tag(name = "category", description = "카테고리 API")
 @RequestMapping("/api/categories")
 public class CategoryController {
 
@@ -23,12 +26,14 @@ public class CategoryController {
     }
     
     @GetMapping
+    @Operation(summary = "카테고리 목록 조회", description = "카테고리 목록을 조회 합니다.")
     public ResponseEntity<CategoryResponse> getCategories(){
         CategoryResponse categoryResponse = categoryService.findAll();
         return new ResponseEntity<>(categoryResponse, HttpStatus.OK);
     }
 
     @PostMapping
+    @Operation(summary = "카테고리 생성", description = "카테고리를 생성 합니다.")
     public ResponseEntity<Void> addCategory(@RequestBody CategoryDto categoryDto){
         categoryService.addCategory(categoryDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
