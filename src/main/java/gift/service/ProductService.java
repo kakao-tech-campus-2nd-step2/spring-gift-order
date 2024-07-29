@@ -34,11 +34,11 @@ public class ProductService {
         Long categoryId = requestDto.category();
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CATEGORY, categoryId));
-        List<Option> options = requestDto.options().stream().map(req -> new Option(req.name(),req.quantity())).toList();
+        List<Option> options = requestDto.options().stream().map(req -> new Option(req.name(), req.quantity())).toList();
         if (isOptionDuplicate(options)) {
             throw new CustomException(ErrorCode.DUPLICATE_OPTION);
         }
-        Product product = new Product(requestDto.name(), requestDto.price(), requestDto.imgUrl(), category,options);
+        Product product = new Product(requestDto.name(), requestDto.price(), requestDto.imgUrl(), category, options);
         productRepository.save(product);
     }
 
