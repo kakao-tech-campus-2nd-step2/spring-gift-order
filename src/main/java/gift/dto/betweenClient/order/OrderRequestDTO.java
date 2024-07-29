@@ -16,7 +16,7 @@ public record OrderRequestDTO(
     @NotBlank(message = "메세지를 입력해주세요")
     String message
 ) {
-    public OrderHistory convertToOrder(Option option) {
-        return new OrderHistory(option, quantity, LocalDateTime.now(), message);
+    public OrderHistory convertToOrder(Option option, LocalDateTime localDateTime) {
+        return new OrderHistory(option, quantity, localDateTime, message);
     }
 }
