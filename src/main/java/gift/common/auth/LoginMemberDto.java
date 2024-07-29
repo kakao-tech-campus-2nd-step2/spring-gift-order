@@ -9,7 +9,7 @@ public class LoginMemberDto {
     String email;
     String role;
 
-    private LoginMemberDto(Long id, String name, String email, String role) {
+    public LoginMemberDto(Long id, String name, String email, String role) {
         this.id = id;
         this.name = name;
         this.email = email;

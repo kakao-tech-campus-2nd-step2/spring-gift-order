@@ -1,7 +1,6 @@
 package gift.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import gift.category.CategoryRepository;
@@ -13,7 +12,6 @@ import gift.product.model.Product;
 import gift.wish.WishRepository;
 import gift.wish.model.Wish;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,7 +105,8 @@ class WishRepositoryTest {
         wishRepository.deleteByMemberIdAndProductId(expected.getMember().getId(),
             expected.getProduct().getId());
 
-        Optional<Wish> actual = wishRepository.findByMemberIdAndProductId(expectedMember.getId(), expectedProduct1.getId());
+        Optional<Wish> actual = wishRepository.findByMemberIdAndProductId(expectedMember.getId(),
+            expectedProduct1.getId());
 
         assertThat(actual).isEmpty();
     }

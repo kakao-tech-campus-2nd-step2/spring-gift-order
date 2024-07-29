@@ -39,6 +39,14 @@ public class Option {
         product.addOption(this);
     }
 
+    public Option(Long id, String name, Integer quantity, Product product) {
+        this.id = id;
+        this.name = name;
+        this.quantity = quantity;
+        this.product = product;
+        product.addOption(this);
+    }
+
     public Long getId() {
         return id;
     }

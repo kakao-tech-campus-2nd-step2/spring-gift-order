@@ -62,7 +62,7 @@ public class CategoryServiceTest {
     @Test
     void insertCategoryTest() {
         given(categoryRepository.save(any())).willReturn(
-            new Category( "test", "##test", "test.jpg", "test"));
+            new Category("test", "##test", "test.jpg", "test"));
 
         categoryService.insertCategory(
             new CategoryRequest("test", "##test", "test.jpg", "test"));
@@ -72,16 +72,17 @@ public class CategoryServiceTest {
 
     @Test
     void updateCategoryTest() {
-        Category category = new Category( "test", "##test", "test.jpg", "test");
+        Category category = new Category("test", "##test", "test.jpg", "test");
         given(categoryRepository.findById(any())).willReturn(Optional.of(category));
 
-        categoryService.updateCategory(new CategoryRequest("test1", "##test1", "test1.jpg", "test1"), 1L);
+        categoryService.updateCategory(
+            new CategoryRequest("test1", "##test1", "test1.jpg", "test1"), 1L);
 
         assertAll(
-            ()->assertThat(category.getName()).isEqualTo("test1"),
-            ()->assertThat(category.getColor()).isEqualTo("##test1"),
-            ()->assertThat(category.getImageUrl()).isEqualTo("test1.jpg"),
-            ()->assertThat(category.getDescription()).isEqualTo("test1")
+            () -> assertThat(category.getName()).isEqualTo("test1"),
+            () -> assertThat(category.getColor()).isEqualTo("##test1"),
+            () -> assertThat(category.getImageUrl()).isEqualTo("test1.jpg"),
+            () -> assertThat(category.getDescription()).isEqualTo("test1")
         );
     }
 

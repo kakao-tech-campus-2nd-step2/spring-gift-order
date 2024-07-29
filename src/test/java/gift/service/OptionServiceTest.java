@@ -98,6 +98,7 @@ class OptionServiceTest {
             () -> optionService.subtractOption(1L, new OptionRequest.Subtract(3))
         );
     }
+
     @Test
     void subtractOption() {
         Category category = new Category("category", "##cate", "category.jpg", "category");

@@ -1,4 +1,4 @@
-package gift.api;
+package gift.api.kakaoAuth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

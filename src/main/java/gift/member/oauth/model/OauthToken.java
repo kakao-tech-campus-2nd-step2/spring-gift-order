@@ -40,12 +40,22 @@ public class OauthToken {
         this.member = member;
     }
 
-    public void updateToken(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public Member getMember() {
         return member;
+    }
+  
+    public void updateToken(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        if (refreshToken != null) {
+            this.refreshToken = refreshToken;
+        }
     }
 }

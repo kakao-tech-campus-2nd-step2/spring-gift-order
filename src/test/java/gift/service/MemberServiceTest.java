@@ -30,7 +30,8 @@ public class MemberServiceTest {
 
     @Test
     void selectLoginMemberTest() {
-        given(memberRepository.findById(any())).willReturn(Optional.of(new Member("test", "test", "test", "test")));
+        given(memberRepository.findById(any())).willReturn(
+            Optional.of(new Member("test", "test", "test", "test")));
 
         memberService.selectLoginMemberById(1L);
 

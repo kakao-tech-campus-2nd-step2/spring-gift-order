@@ -60,7 +60,7 @@ public class WishEndToEndTest {
             });
 
         assertThat(actual.getBody()).isEqualTo(
-            new PageResponseDto<>(List.of(new WishResponse(1L, 1)), 0 ,10
+            new PageResponseDto<>(List.of(new WishResponse(1L, 1)), 0, 10
             )
         );
     }
@@ -68,7 +68,8 @@ public class WishEndToEndTest {
     private void saveWish() {
         var wishUrl = "http://localhost:" + port + "/api/wishes";
         var wishRequest = new WishRequest(1L, 1);
-        var wishRequestEntity = new RequestEntity<>(wishRequest, headers, HttpMethod.POST, URI.create(wishUrl));
+        var wishRequestEntity = new RequestEntity<>(wishRequest, headers, HttpMethod.POST,
+            URI.create(wishUrl));
         restTemplate.exchange(wishRequestEntity, String.class);
     }
 

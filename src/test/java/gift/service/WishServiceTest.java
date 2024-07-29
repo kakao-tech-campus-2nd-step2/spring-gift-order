@@ -75,7 +75,8 @@ public class WishServiceTest {
 
     @Test
     void deleteWishTest() {
-        given(wishRepository.findById(any())).willReturn(Optional.of(new Wish(new Member(1L, "email", "name", "role"), null, 1)));
+        given(wishRepository.findById(any())).willReturn(
+            Optional.of(new Wish(new Member(1L, "email", "name", "role"), null, 1)));
         LoginMemberDto loginMemberDto = getLoginMemberDto();
 
         wishService.deleteProductInWishList(1L, loginMemberDto);

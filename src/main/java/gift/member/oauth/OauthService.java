@@ -1,7 +1,7 @@
 package gift.member.oauth;
 
-import gift.api.KakaoAuthClient;
-import gift.api.KakaoTokenResponse;
+import gift.api.kakaoAuth.KakaoAuthClient;
+import gift.api.kakaoAuth.KakaoTokenResponse;
 import gift.common.utils.TokenProvider;
 import gift.member.MemberRepository;
 import gift.member.model.Member;
@@ -53,11 +53,22 @@ public class OauthService {
         }
 
         Member member = new Member(email, "", "nickname", "Member");
-        member = memberRepository.save(member);
+        memberRepository.save(member);
         OauthToken oauthToken = new OauthToken("kakao", email,
             kakaoTokenReponse.accessToken(), kakaoTokenReponse.refreshToken(), member);
         oauthTokenRepository.save(oauthToken);
         return member;
     }
 
+    @Transactional
+    public void verifyToken(String accessToken) {
+        if (kakaoAuthClient.isNotValidAccessToken(accessToken)) {
+            OauthToken oauthToken = oauthTokenRepository.findByAccessToken(accessToken)
+                .orElseThrow();
+            KakaoTokenResponse kakaoTokenResponse = kakaoAuthClient.refreshAccessToken(
+                oauthToken.getRefreshToken());
+            oauthToken.updateToken(kakaoTokenResponse.accessToken(),
+                kakaoTokenResponse.refreshToken());
+        }
+    }
 }
