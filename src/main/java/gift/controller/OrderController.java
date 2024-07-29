@@ -5,6 +5,10 @@ import gift.classes.RequestState.RequestStatus;
 import gift.dto.OrderDto;
 import gift.dto.RequestOrderDto;
 import gift.services.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/orders")
+@Tag(name = "OrderController", description = "Order API")
 public class OrderController {
 
     public final OrderService orderService;
@@ -23,7 +28,12 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderRequestStateDTO> addOrder(@RequestBody RequestOrderDto requestOrderDto,
+    @Operation(summary = "주문 추가", description = "KaKao 로그인 후, 주문을 추가하는 API")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "주문 추가 성공")
+    })
+    public ResponseEntity<OrderRequestStateDTO> addOrder(
+        @RequestBody RequestOrderDto requestOrderDto,
         @RequestHeader("Authorization") String token) {
         OrderDto orderDto = orderService.addOrder(requestOrderDto, token);
         return ResponseEntity.ok().body(new OrderRequestStateDTO(
