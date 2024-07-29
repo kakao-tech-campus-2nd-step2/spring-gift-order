@@ -28,30 +28,30 @@ wishList 삭제하기
 menu와 연관관계 매핑하기
 
 5주차 과제
-[X] 테스트코드 작성하기
+- [X] 테스트코드 작성하기
 
--> [O] MenuRepositoryTest
--> [O] MemberRepositoryTest
--> [O] OptionRepositoryTest
--> [O] WishListRepositoryTest
--> [O] CategoryRepositoryTest
+- [O] MenuRepositoryTest
+- [O] MemberRepositoryTest
+- [O] OptionRepositoryTest
+- [O] WishListRepositoryTest
+- [O] CategoryRepositoryTest
 
--> [X] MenuServiceTest
--> [O] MemberServiceTest
--> [X] OptionServiceTest
--> [X] WishListServiceTest
--> [X] CategoryServiceTest
--> [O] JPAServiceTest
+- [X] MenuServiceTest
+- [O] MemberServiceTest
+- [X] OptionServiceTest
+- [X] WishListServiceTest
+- [X] CategoryServiceTest
+- [O] JPAServiceTest
+
+- [X] MenuControllerTest
+- [X] MemberControllerTest
+- [X] OptionControllerTest
+- [X] WishListControllerTest
+- [X] CategoryControllerTest
 
 
--> [X] MenuControllerTest
--> [X] MemberControllerTest
--> [X] OptionControllerTest
--> [X] WishListControllerTest
--> [X] CategoryControllerTest
+- [O] 카카오 로그인 기능 구현
+- [O] 사용자 정보 불러와 저장하기
 
 
-[O] 카카오 로그인 기능 구현
-[O] 사용자 정보 불러와 저장하기
 
-[]

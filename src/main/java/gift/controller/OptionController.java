@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.domain.OptionRequest;
-import gift.domain.OptionResponse;
+import gift.domain.other.OptionRequest;
+import gift.domain.other.OptionResponse;
 import gift.repository.MenuRepository;
 import gift.service.OptionService;
 import org.springframework.http.ResponseEntity;

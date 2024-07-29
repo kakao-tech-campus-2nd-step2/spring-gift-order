@@ -1,7 +1,10 @@
 package gift.RepositoryTest;
 
-
-import gift.domain.*;
+import gift.domain.menu.Menu;
+import gift.domain.other.Category;
+import gift.domain.other.Member;
+import gift.domain.other.Option;
+import gift.domain.other.WishList;
 import gift.repository.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,26 +39,45 @@ class WishListRepositoryTest {
     @Autowired
     private OptionRepository optionRepository;
 
-    @Test
-    @DisplayName("위시리스트 저장 테스트")
-    void testSaveWishList() {
-        Member member = new Member("member1", "password1",new LinkedList<WishList>());
+    private Member member;
+    private Category category;
+    private Option option1;
+    private Option option2;
+    private Set<Option> options;
+    private Menu menu;
+
+    @BeforeEach
+    void setUp() {
+        // Clean up repositories
+        wishListRepository.deleteAll();
+        optionRepository.deleteAll();
+        menuRepository.deleteAll();
+        categoryRepository.deleteAll();
+        memberRepository.deleteAll();
+
+        // Initialize common entities
+        member = new Member("member1", "password1", "김민지", new LinkedList<WishList>());
         member = memberRepository.save(member);
 
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
+        category = new Category(null, "양식", new LinkedList<Menu>());
+        category = categoryRepository.save(category);
 
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
-        optionRepository.save(option1);
-        optionRepository.save(option2);
+        option1 = new Option(null, "알리오올리오", 3L,menu);
+        option2 = new Option(null, "토마토", 4L,menu);
+        option1 = optionRepository.save(option1);
+        option2 = optionRepository.save(option2);
 
-        Set<Option> options = new HashSet<Option>();
+        options = new HashSet<>();
         options.add(option1);
         options.add(option2);
 
-        Menu menu = new Menu("파스타",3000,"naver.com",category,options);
+        menu = new Menu("파스타", 3000, "naver.com", category, options);
+        menu = menuRepository.save(menu);
+    }
 
+    @Test
+    @DisplayName("위시리스트 저장 테스트")
+    void testSaveWishList() {
         WishList wishList = new WishList(member, menu);
         wishList = wishListRepository.save(wishList);
 
@@ -65,23 +87,6 @@ class WishListRepositoryTest {
     @Test
     @DisplayName("위시리스트 FindById 테스트")
     void testFindWishListById() {
-        Member member = new Member("member1", "password1",new LinkedList<WishList>());
-        member = memberRepository.save(member);
-
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
-
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
-        optionRepository.save(option1);
-        optionRepository.save(option2);
-
-        Set<Option> options = new HashSet<Option>();
-        options.add(option1);
-        options.add(option2);
-
-        Menu menu = new Menu("파스타",3000,"naver.com",category,options);
-
         WishList wishList = new WishList(member, menu);
         wishList = wishListRepository.save(wishList);
 
@@ -93,23 +98,6 @@ class WishListRepositoryTest {
     @Test
     @DisplayName("위시리스트 삭제 테스트")
     void testDeleteWishList() {
-        Member member = new Member("member1", "password1",new LinkedList<WishList>());
-        member = memberRepository.save(member);
-
-        Category category = new Category(null,"양식",new LinkedList<Menu>());
-        categoryRepository.save(category);
-
-        Option option1 = new Option(null,"알리오올리오",3L);
-        Option option2 = new Option(null,"토마토",4L);
-        optionRepository.save(option1);
-        optionRepository.save(option2);
-
-        Set<Option> options = new HashSet<Option>();
-        options.add(option1);
-        options.add(option2);
-
-        Menu menu = new Menu("파스타",3000,"naver.com",category,options);
-
         WishList wishList = new WishList(member, menu);
         wishList = wishListRepository.save(wishList);
 

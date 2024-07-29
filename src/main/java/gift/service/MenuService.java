@@ -1,9 +1,9 @@
 package gift.service;
 
-import gift.domain.Menu;
-import gift.domain.MenuRequest;
-import gift.domain.MenuResponse;
-import gift.domain.Option;
+import gift.domain.menu.Menu;
+import gift.domain.menu.MenuRequest;
+import gift.domain.other.MenuResponse;
+import gift.domain.other.Option;
 import gift.repository.CategoryRepository;
 import gift.repository.MenuRepository;
 import gift.repository.OptionRepository;

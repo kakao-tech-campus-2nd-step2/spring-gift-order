@@ -1,5 +1,7 @@
-package gift.domain;
+package gift.domain.menu;
 
+import gift.domain.other.Category;
+import gift.domain.other.Option;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -12,8 +14,8 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    @Embedded
+    private MenuName name;
 
     @Column(nullable = false)
     private int price;
@@ -35,26 +37,21 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, int price, String imageUrl,Category category,Set<Option> options) {
+    public Menu(String name, int price, String imageUrl, Category category, Set<Option> options) {
         this(null, name, price, imageUrl, category, options);
+    }
+
+    public Menu(Long id, MenuRequest menuRequest, Category category) {
+        this(id, menuRequest.name(), menuRequest.price(), menuRequest.imageUrl(), category, new HashSet<>());
     }
 
     public Menu(Long id, String name, int price, String imageUrl, Category category, Set<Option> options) {
         this.id = id;
-        this.name = name;
+        this.name = new MenuName(name);
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
         this.options = options;
-    }
-
-    public Menu(Long id, MenuRequest menuRequest,Category category) {
-        this.id = id;
-        this.name = menuRequest.name();
-        this.price = menuRequest.price();
-        this.imageUrl = menuRequest.imageUrl();
-        this.category = category;
-        this.options = new HashSet<Option>();
     }
 
     public Long getId() {
@@ -62,7 +59,7 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public int getPrice() {

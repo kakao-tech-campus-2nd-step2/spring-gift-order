@@ -1,6 +1,7 @@
 package gift.EntityTest;
 
-import gift.domain.Option;
+import gift.domain.menu.Menu;
+import gift.domain.other.Option;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +14,8 @@ class OptionTest {
 
     @BeforeEach
     void setUp() {
-        option = new Option(1L, "Option", 100L);
+        Menu menu = new Menu();
+        option = new Option(1L, "Option", 100L, menu);
     }
 
     @Test

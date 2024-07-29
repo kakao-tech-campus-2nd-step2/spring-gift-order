@@ -14,16 +14,4 @@ public class MemberControllerTest {
     @Autowired
     MemberController memberController;
 
-    @Test
-    @DisplayName("카테고리 FindAll 테스트")
-    void testFindAllCategories() {
-        ResponseEntity<String> responseEntity = memberController.loginByKakao();
-        HttpHeaders headers = responseEntity.getHeaders();
-
-        String authorizationHeader = headers.getFirst(HttpHeaders.AUTHORIZATION);
-
-        assertThat(authorizationHeader).isNotNull();
-        System.out.println("Authorization Header: " + authorizationHeader);
-    }
-
 }

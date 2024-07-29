@@ -1,8 +1,8 @@
 package gift.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gift.domain.Order;
-import gift.domain.OrderRequest;
+import gift.domain.other.Order;
+import gift.domain.other.OrderRequest;
 import gift.service.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-
     private OrderService orderService;
 
     public OrderController(OrderService orderService){
@@ -21,7 +20,6 @@ public class OrderController {
             @RequestHeader("Authorization") String token,
             @RequestBody OrderRequest orderRequest
             ) throws IllegalAccessException, JsonProcessingException {
-        System.out.println("오더");
         return ResponseEntity.ok().body(orderService.order(token,orderRequest));
     }
 }

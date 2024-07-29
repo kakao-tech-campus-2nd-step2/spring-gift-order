@@ -1,8 +1,8 @@
 package gift.service;
 
-import gift.domain.Category;
-import gift.domain.CategoryRequest;
-import gift.domain.Menu;
+import gift.domain.other.Category;
+import gift.domain.other.CategoryRequest;
+import gift.domain.menu.Menu;
 import gift.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 

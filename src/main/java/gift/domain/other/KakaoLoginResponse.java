@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.domain.other;
 
 public record KakaoLoginResponse(
         String access_token,

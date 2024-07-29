@@ -1,5 +1,6 @@
-package gift.domain;
+package gift.domain.other;
 
+import gift.domain.menu.Menu;
 import jakarta.persistence.*;
 import java.util.Objects;
 
@@ -11,7 +12,7 @@ public class Option {
     String name;
     Long quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     Menu menu;
 
     public Option(Long id, String name, Long quantity,Menu menu) {

@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.domain.other;
 
 import jakarta.persistence.*;
 
@@ -23,11 +23,18 @@ public class Member {
     public Member() {
     }
 
-    public Member(String id, String password, String name,List<WishList> wishList) {
+    public Member(String id, String name, String password, List<WishList> wishList) {
         this.id = id;
         this.password = password;
         this.wishList = wishList;
         this.name = name;
+    }
+
+    public void validatePassword(String otherPassword) {
+        if (password.equals(otherPassword)) {
+            return;
+        }
+        throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
     }
 
     public String getPassword() {
@@ -62,5 +69,4 @@ public class Member {
     public void setWishList(List<WishList> wishLists) {
         this.wishList = wishLists;
     }
-
 }

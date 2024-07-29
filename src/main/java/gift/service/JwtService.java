@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private SecretKey key = Jwts.SIG.HS256.key().build();
+    private final SecretKey key = Jwts.SIG.HS256.key().build();
 
     public JwtService() {
     }
@@ -37,14 +37,11 @@ public class JwtService {
             throw new JwtException("토큰이 유효하지 않습니다.");
         }
 
-        System.out.println("token = " + token);
-
         return token.replace("Bearer ", "");
     }
 
     public String getMemberId() {
         String accessToken = getJWT();
-        System.out.println(accessToken);
 
         if (accessToken.isEmpty()) {
             throw new JwtException("토큰이 유효하지 않습니다.");
