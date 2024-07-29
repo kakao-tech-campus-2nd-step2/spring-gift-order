@@ -1,4 +1,4 @@
-== 상품
+== 상품 API
 
 === 전체 상품 조회
 operation::product-api-controller-test/read-all-products[snippets='http-request,http-response']
