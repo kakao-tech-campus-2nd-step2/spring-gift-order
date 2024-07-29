@@ -2,7 +2,8 @@ package gift.GiftTest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.controller.KakaoController;
-import gift.domain.*;
+import gift.domain.menu.Menu;
+import gift.domain.other.*;
 import gift.repository.*;
 import gift.service.KakaoService;
 import org.junit.jupiter.api.BeforeEach;

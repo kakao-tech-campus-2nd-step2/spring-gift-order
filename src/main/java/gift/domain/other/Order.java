@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.domain.other;
 
 import jakarta.persistence.*;
 import java.util.Date;

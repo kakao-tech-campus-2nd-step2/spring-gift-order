@@ -2,8 +2,8 @@ package gift.ControllerTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.controller.OrderController;
-import gift.domain.Order;
-import gift.domain.OrderRequest;
+import gift.domain.other.Order;
+import gift.domain.other.OrderRequest;
 import gift.service.OrderService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

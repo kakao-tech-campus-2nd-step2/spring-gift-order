@@ -1,8 +1,8 @@
 package gift.service;
 
-import gift.domain.Member;
-import gift.domain.MemberRequest;
-import gift.domain.WishList;
+import gift.domain.other.Member;
+import gift.domain.other.MemberRequest;
+import gift.domain.other.WishList;
 import gift.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +29,9 @@ public class MemberService {
     }
 
     public String login(MemberRequest memberRequest) {
-        Member dbMember = memberRepository.findById(memberRequest.id())
-                .orElseThrow(() -> new NoSuchElementException("로그인에 실패했습니다 다시 시도해주세요"));
-        if (!memberRequest.password().equals(dbMember.getPassword())) {
-            throw new NoSuchElementException("로그인에 실패하였습니다. 다시 시도해주세요");
-        } else {
-            String jwt = jwtService.createJWT(memberRequest.id());
-            return jwt;
-        }
+        Member dbMember = findById(memberRequest.id());
+        dbMember.validatePassword(memberRequest.password());
+        return jwtService.createJWT(dbMember.getId());
     }
 
     public Member findById(String Id) {

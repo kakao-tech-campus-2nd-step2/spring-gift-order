@@ -3,10 +3,10 @@ package gift.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.KakaoLoginResponse;
-import gift.domain.Member;
-import gift.domain.WishList;
-import gift.domain.getTokenDto;
+import gift.domain.other.KakaoLoginResponse;
+import gift.domain.other.Member;
+import gift.domain.other.WishList;
+import gift.domain.other.getTokenDto;
 
 import gift.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,8 +1,8 @@
 package gift.RepositoryTest;
 
-import gift.domain.Category;
-import gift.domain.Menu;
-import gift.domain.Option;
+import gift.domain.other.Category;
+import gift.domain.menu.Menu;
+import gift.domain.other.Option;
 import gift.repository.CategoryRepository;
 import gift.repository.MenuRepository;
 import gift.repository.OptionRepository;

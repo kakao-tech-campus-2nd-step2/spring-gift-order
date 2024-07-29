@@ -1,6 +1,6 @@
-package gift.domain;
+package gift.domain.other;
 
-public record MemberRequest(
+public record MemberResponse(
         String id,
         String password,
         String name

@@ -1,7 +1,7 @@
 package gift.RepositoryTest;
 
-import gift.domain.Member;
-import gift.domain.WishList;
+import gift.domain.other.Member;
+import gift.domain.other.WishList;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,7 @@ public class MemberRepositoryTest {
     private MemberRepository memberRepository;
 
     @BeforeEach
-    public void setUp() 
+    public void setUp() {
         Member member1 = new Member("member1", "password1","김민지",new LinkedList<WishList>());
         Member member2 = new Member("member2", "password2","김민서",new LinkedList<WishList>());
   

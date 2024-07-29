@@ -14,7 +14,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private SecretKey key = Jwts.SIG.HS256.key().build();
+    private final SecretKey key = Jwts.SIG.HS256.key().build();
 
     public JwtService() {
     }

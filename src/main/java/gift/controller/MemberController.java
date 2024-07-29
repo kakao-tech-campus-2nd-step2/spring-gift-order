@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.domain.MemberRequest;
+import gift.domain.other.MemberRequest;
 import gift.service.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

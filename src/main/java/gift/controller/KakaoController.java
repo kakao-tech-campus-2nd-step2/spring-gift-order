@@ -1,7 +1,7 @@
 package gift.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gift.domain.Member;
+import gift.domain.other.Member;
 import gift.service.KakaoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

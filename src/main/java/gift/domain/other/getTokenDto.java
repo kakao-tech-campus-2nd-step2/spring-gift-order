@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.domain.other;
 
 public class getTokenDto {
     private String grant_type;

@@ -1,8 +1,7 @@
 package gift;
 
 
-import gift.domain.Member;
-import gift.domain.Menu;
+import gift.domain.other.Member;
 import gift.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ class MemberTest {
 
     @Test
     void save() {
-        Member expected = new Member("alswl4223@naver.com","dfsd",new LinkedList<>());
+        Member expected = new Member("alswl4223@naver.com", "김민지","dfsd",new LinkedList<>());
         Member actual = members.save(expected);
         assertAll(
                 () -> assertThat(actual).isNotNull(),

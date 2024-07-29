@@ -1,5 +1,6 @@
-package gift.domain;
+package gift.domain.other;
 
+import gift.domain.menu.Menu;
 import jakarta.persistence.*;
 
 import java.util.Objects;

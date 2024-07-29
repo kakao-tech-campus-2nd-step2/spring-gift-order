@@ -1,6 +1,10 @@
 package gift.RepositoryTest;
 
-import gift.domain.*;
+import gift.domain.menu.Menu;
+import gift.domain.other.Category;
+import gift.domain.other.Member;
+import gift.domain.other.Option;
+import gift.domain.other.WishList;
 import gift.repository.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,8 +1,8 @@
 package gift.ControllerTest;
 
 import gift.controller.KakaoController;
-import gift.domain.Member;
-import gift.domain.WishList;
+import gift.domain.other.Member;
+import gift.domain.other.WishList;
 import gift.service.KakaoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
