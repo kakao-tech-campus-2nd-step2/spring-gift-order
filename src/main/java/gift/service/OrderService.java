@@ -27,9 +27,7 @@ public class OrderService {
     @Transactional
     public void placeOrder(OrderRequest orderRequest, Long memberId) throws Exception {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
-        Order order = new Order();
-        order.setMember(member);
-        order.setRecipientMessage(orderRequest.getRecipientMessage());
+        Order order = new Order(member, orderRequest.getRecipientMessage());
 
         for (OrderItemRequest itemRequest : orderRequest.getItems()) {
             Product product = productService.getProductById(itemRequest.getProductId());
@@ -43,12 +41,7 @@ public class OrderService {
             }
 
             productService.subtractOptionQuantity(option.getProduct().getId(), option.getName(), itemRequest.getQuantity());
-
-            OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(product);
-            orderItem.setOption(option);
-            orderItem.setQuantity(itemRequest.getQuantity());
+            OrderItem orderItem = new OrderItem(order, product, option, itemRequest.getQuantity());
 
             order.getOrderItems().add(orderItem);
 

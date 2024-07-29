@@ -27,7 +27,11 @@ public class ProductService {
     }
 
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElse(null);
+        return productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid product ID"));
+    }
+
+    public Option getOptionById(Long optionId) {
+        return optionRepository.findById(optionId).orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
     }
 
     public Option getOptionById(Long optionId) {

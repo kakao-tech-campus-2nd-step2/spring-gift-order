@@ -9,6 +9,11 @@ public class OrderRequest {
     public OrderRequest() {
     }
 
+    public OrderRequest(List<OrderItemRequest> items, String recipientMessage) {
+        this.items = items;
+        this.recipientMessage = recipientMessage;
+    }
+
     public List<OrderItemRequest> getItems() {
         return items;
     }

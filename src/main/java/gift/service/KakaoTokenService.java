@@ -14,13 +14,14 @@ public class KakaoTokenService {
 
     @Transactional
     public KakaoToken saveToken(Long memberId, String email, String accessToken) {
-        KakaoToken kakaoToken = kakaoTokenRepository.findByMemberId(memberId);
+        KakaoToken kakaoToken = kakaoTokenRepository.findByMemberId(memberId)
+                .orElseGet(() -> {
+                    KakaoToken newToken = new KakaoToken();
+                    newToken.setMemberId(memberId);
+                    newToken.setEmail(email);
+                    return newToken;
 
-        if (kakaoToken == null) {
-            kakaoToken = new KakaoToken();
-            kakaoToken.setMemberId(memberId);
-            kakaoToken.setEmail(email);
-        }
+        });
 
         kakaoToken.setAccessToken(accessToken);
 

@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderServiceTest {
+class OrderServiceTest {
 
     @InjectMocks
     private OrderService orderService;
@@ -53,25 +53,19 @@ public class OrderServiceTest {
     private OrderRequest orderRequest;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         member = new Member(1L, "test@example.com", "password");
         product = new Product(1L, "Test Product", 1000L, "http://example.com/image.png", new Category("Test Category", "Red", "http://example.com/image.png", "Description"));
-        option = new Option();
-        option.setId(1L);
-        option.setName("Test Option");
-        option.setQuantity(10);
-        option.setProduct(product);
+        option = new Option("Test Option", 10, product);
 
         orderItemRequest = new OrderItemRequest(1L, 1L, 2);
 
-        orderRequest = new OrderRequest();
-        orderRequest.setItems(Arrays.asList(orderItemRequest));
-        orderRequest.setRecipientMessage("Happy Birthday!");
+        orderRequest = new OrderRequest(Arrays.asList(orderItemRequest), "Happy Birthday!");
     }
 
     @Test
     @DisplayName("주문 성공 테스트")
-    public void testPlaceOrder_Success() throws Exception {
+    void testPlaceOrder_Success() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(product);
         when(productService.getOptionById(any(Long.class))).thenReturn(option);
@@ -88,7 +82,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 멤버 찾기 실패")
-    public void testPlaceOrder_MemberNotFound() throws Exception {
+    void testPlaceOrder_MemberNotFound() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(Exception.class, () -> {
@@ -103,7 +97,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 상품 찾기 실패")
-    public void testPlaceOrder_ProductNotFound() throws Exception {
+    void testPlaceOrder_ProductNotFound() throws Exception {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(null);
 
@@ -120,11 +114,9 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 실패 테스트 - 옵션이 상품에 없음")
-    public void testPlaceOrder_OptionDoesNotBelongToProduct() throws Exception {
-        Option otherOption = new Option();
-        otherOption.setId(2L);
-        otherOption.setName("Other Option");
-        otherOption.setProduct(new Product(2L, "Other Product", 2000L, "http://example.com/image2.png", new Category("Other Category", "Blue", "http://example.com/image2.png", "Other Description")));
+    void testPlaceOrder_OptionDoesNotBelongToProduct() throws Exception {
+        Option otherOption = new Option("Other Option", 2,
+                new Product(2L, "Other Product", 2000L, "http://example.com/image2.png", new Category("Other Category", "Blue", "http://example.com/image2.png", "Other Description")));
 
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(productService.getProductById(any(Long.class))).thenReturn(product);

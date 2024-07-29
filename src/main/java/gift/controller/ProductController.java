@@ -4,6 +4,8 @@ import gift.domain.Option;
 import gift.domain.Product;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -19,6 +21,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/api/products")
+@Tag(name = "Product API", description = "상품 API 관련 엔드포인트")
 public class ProductController {
 
     private static final String REDIRECT_URL = "redirect:/api/products";
@@ -32,6 +35,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "상품 목록 조회", description = "모든 상품의 목록을 조회합니다.")
     public String getProducts(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Product> productPage = productService.getAllProducts(PageRequest.of(page, size));
         model.addAttribute("products", productPage.getContent());
@@ -41,6 +45,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(summary = "상품 추가", description = "새로운 상품을 추가합니다.")
     public String addProduct(@Valid @ModelAttribute Product product, @RequestParam List<String> optionNames, @RequestParam List<Integer> optionQuantities, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "addProduct";
@@ -60,6 +65,7 @@ public class ProductController {
     }
 
     @GetMapping("/new")
+    @Operation(summary = "상품 추가 폼 조회", description = "새로운 상품을 추가하기 위한 폼을 조회합니다.")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryService.getAllCategories());
@@ -67,6 +73,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/edit")
+    @Operation(summary = "상품 수정 폼 조회", description = "상품을 수정하기 위한 폼을 조회합니다.")
     public String showEditProductForm(@PathVariable("id") Long id, Model model) {
         Product product = productService.getProductById(id);
 
@@ -81,6 +88,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "상품 수정", description = "기존 상품을 수정합니다.")
     public String editProduct(@PathVariable("id") Long id, @Valid @ModelAttribute Product product, BindingResult bindingResult) {
         // 상품 정보 수정
         if (bindingResult.hasErrors()) {
@@ -92,6 +100,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "상품 삭제", description = "특정 상품을 삭제합니다.")
     public String deleteProduct(@PathVariable("id") Long id) {
         // 요청받은 id를 가진 상품을 삭제
         productService.deleteProduct(id);
@@ -100,6 +109,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}/options")
+    @Operation(summary = "상품 옵션 조회", description = "특정 상품의 옵션을 조회합니다.")
     public ResponseEntity<List<Option>> getOptions(@PathVariable("id") Long id) {
         Product product = productService.getProductById(id);
         if (product == null) {
@@ -110,6 +120,7 @@ public class ProductController {
     }
 
     @PostMapping("/{id}/options")
+    @Operation(summary = "상품 옵션 추가", description = "특정 상품에 옵션을 추가합니다.")
     public ResponseEntity<String> addOptionToProduct(@PathVariable("id") Long id, @RequestBody @Valid Option option) {
         try {
             productService.addOptionToProduct(id, option);

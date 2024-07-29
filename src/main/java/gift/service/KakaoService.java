@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class KakaoService {
@@ -86,16 +87,15 @@ public class KakaoService {
     }
 
     public void sendOrderMessage(Long memberId, Order order) throws Exception {
-        KakaoToken kakaoToken = kakaoTokenRepository.findByMemberId(memberId);
-        if (kakaoToken == null) {
-            throw new Exception("Kakao token not found for member ID " + memberId);
-        }
+        Optional<KakaoToken> optionalKakaoToken = kakaoTokenRepository.findByMemberId(memberId);
+
+        KakaoToken kakaoToken = optionalKakaoToken.orElseThrow(() -> new Exception("Kakao token not found for member ID " + memberId));
 
         String messageTemplate = createOrderMessage(order);
         sendMessage(kakaoToken.getAccessToken(), messageTemplate);
     }
 
-    private String createOrderMessage(Order order) throws JsonProcessingException {
+    private String createOrderMessage(Order order) throws Exception {
         StringBuilder message = new StringBuilder();
         message.append("주문 내역:\n");
         for (OrderItem item : order.getOrderItems()) {
@@ -111,7 +111,11 @@ public class KakaoService {
         templateObject.put("link", link);
         templateObject.put("button_title", "자세히 보기");
 
-        return objectMapper.writeValueAsString(templateObject);
+        try {
+            return objectMapper.writeValueAsString(templateObject);
+        } catch (JsonProcessingException e) {
+            throw new Exception("Error while creating order message", e);
+        }
     }
 
     private void sendMessage(String accessToken, String messageTemplate) throws Exception {

@@ -24,7 +24,14 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    public OrderItem() {
+    protected OrderItem() {
+    }
+
+    public OrderItem(Order order, Product product, Option option, int quantity) {
+        this.order = order;
+        this.product = product;
+        this.option = option;
+        this.quantity = quantity;
     }
 
     public Long getId() {
