@@ -28,7 +28,7 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "회원 가입", description = "새로운 회원을 등록합니다.")
+    @Operation(summary = "회원 가입", description = "새 회원을 등록하고 토큰을 받는다.")
     public ResponseEntity<Map<String, String>> register(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.register(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
@@ -40,7 +40,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "로그인", description = "회원 로그인을 처리합니다.")
+    @Operation(summary = "로그인", description = "회원을 인증하고 토큰을 받는다.")
     public ResponseEntity<Map<String, String>> login(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.authenticate(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
@@ -52,7 +52,7 @@ public class MemberController {
     }
 
     @GetMapping("/kakao/login")
-    @Operation(summary = "카카오 로그인 콜백", description = "카카오 로그인을 처리합니다.")
+    @Operation(summary = "카카오 로그인 콜백", description = "카카오 API로 회원을 인증하고 토큰을 받는다.")
     public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) {
         Map<String, String> response = memberService.handleKakaoLogin(code);
         return ResponseEntity.ok(response);

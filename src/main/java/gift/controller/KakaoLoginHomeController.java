@@ -20,7 +20,7 @@ public class KakaoLoginHomeController {
     private String scope;
 
     @GetMapping
-    @Operation(summary = "카카오 로그인 페이지", description = "카카오 로그인 페이지로 이동합니다.")
+    @Operation(summary = "카카오 로그인 페이지", description = "카카오 로그인 페이지로 이동한다.")
     public String kakaoLoginPage(Model model) {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=" + scope;
         model.addAttribute("kakaoAuthUrl", kakaoAuthUrl);

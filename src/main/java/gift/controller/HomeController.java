@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
     @GetMapping
-    @Operation(summary = "홈페이지", description = "홈페이지입니다.")
+    @Operation(summary = "홈페이지", description = "홈페이지로 이동한다.")
     public String home() {
         return "HomePage";
     }

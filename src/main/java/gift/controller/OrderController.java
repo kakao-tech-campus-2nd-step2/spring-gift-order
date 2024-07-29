@@ -24,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @Operation(summary = "주문 생성", description = "주문을 생성합니다.")
+    @Operation(summary = "주문하기", description = "새 주문을 생성한다.")
     public ResponseEntity<OrderResponse> createOrder(@LoginMember TokenAuth tokenAuth, @RequestBody OrderRequest orderRequest) {
         String token = tokenAuth.getToken();
         OrderResponse orderResponse = orderService.createOrder(token, orderRequest);
