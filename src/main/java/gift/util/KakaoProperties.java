@@ -8,4 +8,5 @@ public record KakaoProperties(
         String redirectUrl,
         String url,
         String code
+
 ) {}

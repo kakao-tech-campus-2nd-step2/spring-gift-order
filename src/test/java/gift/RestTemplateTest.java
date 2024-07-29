@@ -29,6 +29,7 @@ class RestTemplateTest {
 
     @Test
     void test1(){
+
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         var body = new LinkedMultiValueMap<String, String>();
@@ -37,5 +38,6 @@ class RestTemplateTest {
         body.add("redirect_uri", properties.redirectUrl());
         body.add("code", properties.code());
         var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(properties.url()));
+
     }
 }

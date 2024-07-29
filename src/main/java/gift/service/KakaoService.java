@@ -1,10 +1,12 @@
 package gift.service;
 
 
+
 import gift.dto.KakaoTokenDto;
 import gift.dto.MemberDto;
 import gift.dto.TokenResponse;
 import gift.entity.KakaoToken;
+
 import gift.exception.MemberNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -96,6 +98,7 @@ public class KakaoService {
         String accessToken = token.getAccessToken();
         String refreshToken = token.getRefreshToken();
         JSONObject userInfo = getUserInfo(accessToken);
+
         String email= null;
         if (userInfo.has("kakao_account")) {
             JSONObject kakaoAccount = userInfo.getJSONObject("kakao_account");
@@ -156,5 +159,4 @@ public class KakaoService {
             throw new RuntimeException("Exception while sending Kakao message", e);
         }
     }
-
 }

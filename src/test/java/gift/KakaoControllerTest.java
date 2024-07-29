@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class KakaoControllerTest {
 
@@ -27,11 +28,13 @@ public class KakaoControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+
     @Autowired
     private KakaoTokenRepository kakaoTokenRepository;
 
     @Autowired
     private MemberRepository memberRepository;
+
 
     @MockBean
     private KakaoService kakaoService;
@@ -44,7 +47,6 @@ public class KakaoControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
-
 
 
 
@@ -69,6 +71,7 @@ public class KakaoControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
+
         // DB에 토큰 정보가 저장되었는지 확인
         KakaoToken storedToken = kakaoTokenRepository.findByAccessToken(accessToken);
         assertThat(storedToken).isNotNull();
@@ -78,12 +81,15 @@ public class KakaoControllerTest {
     }
 
 
+
     // 회원을 찾을 수 없는 경우
     @Test
     public void testCallbackKakaoMemberNotFound() {
         String code = "valid_code";
 
+
         when(kakaoService.login(code)).thenThrow(MemberNotFoundException.class);
+
 
         String url = "http://localhost:" + port + "/kakao/oauth2/callback?code=" + code;
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
@@ -91,4 +97,4 @@ public class KakaoControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).contains("register");
     }
-}
+
