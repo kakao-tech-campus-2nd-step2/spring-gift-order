@@ -3,9 +3,12 @@ package gift.service.kakao;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.order.Order;
 import gift.domain.order.OrderRequest;
 import gift.domain.product.option.ProductOption;
 import gift.domain.user.User;
+import gift.domain.user.UserInfoDto;
+import gift.repository.order.OrderRepository;
 import gift.repository.product.option.ProductOptionRepository;
 import gift.repository.wish.WishRepository;
 import gift.service.user.UserService;
@@ -18,15 +21,19 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 import gift.util.JwtTokenUtil;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 public class KakaoService {
+    private static final Logger logger = LoggerFactory.getLogger(KakaoService.class);
 
     private final RestClient client;
     private final ObjectMapper objectMapper;
@@ -34,6 +41,7 @@ public class KakaoService {
     private final UserService userService;
     private final ProductOptionRepository productOptionRepository;
     private final WishRepository wishRepository;
+    private final OrderRepository orderRepository;
     private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
@@ -41,6 +49,7 @@ public class KakaoService {
                         UserService userService,
                         ProductOptionRepository productOptionRepository,
                         WishRepository wishRepository,
+                        OrderRepository orderRepository,
                         JwtTokenUtil jwtTokenUtil) {
         this.client = RestClient.builder().build();
         this.objectMapper = new ObjectMapper();
@@ -48,54 +57,83 @@ public class KakaoService {
         this.userService = userService;
         this.productOptionRepository = productOptionRepository;
         this.wishRepository = wishRepository;
+        this.orderRepository = orderRepository;
         this.jwtTokenUtil = jwtTokenUtil;
     }
 
-
-    public Map<String, Object> kakaoLogin(String authorizationCode) {
-        //String tokenUrl = "https://kauth.kakao.com/oauth/token";
+    public UserInfoDto kakaoLogin(String authorizationCode) {
+        logger.info("kakaoLogin 시작 - authorizationCode: {}", authorizationCode);
         String tokenUrl = kakaoProperties.tokenUrl();
         String clientId = kakaoProperties.clientId();
         String redirectUri = kakaoProperties.redirectUri();
-        /*
-        var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", authorizationCode);
 
-         */
         var body = createTokenRequestBody(clientId, redirectUri, authorizationCode);
 
         try {
             var tokenResponse = requestAccessToken(tokenUrl, body);
             String accessToken = extractAccessToken(tokenResponse);
+            logger.info("Access token 수신: {}", accessToken);
 
-            Map<String, Object> userInfo = getUserInfo(accessToken);
-            userInfo.put("access_token", accessToken);
+            UserInfoDto userInfoDto = getUserInfoDto(accessToken);
 
-            // 사용자 정보 조회 및 생성 로직 추가
-            Long id = (Long) userInfo.get("id");
-            String email = (String) userInfo.get("email");
+            Long id = userInfoDto.getId();
+            String email = userInfoDto.getEmail();
+            logger.info("사용자 정보 조회: id={}, email={}", id, email);
+
             User user = userService.findOrCreateUser(id, email);
-            // JWT 토큰을 생성하여 반환
-            /*
-            String jwtToken = jwtTokenUtil.generateAccessToken(user.getEmail());
-            userInfo.put("jwt_token", jwtToken);
-            String jwtRefresh = jwtTokenUtil.generateRefreshToken(user.getEmail());
-            userInfo.put("jwt_refresh", jwtRefresh);
-             */
+            logger.info("사용자 조회 또는 생성: id={}, email={}", user.getId(), user.getEmail());
+
             Map<String, String> tokens = userService.generateJwtToken(user);
-            userInfo.putAll(tokens);
 
-            // 필요하다면 user 객체의 정보를 userInfo에 추가
-            userInfo.put("server_user_id", user.getId());
-            userInfo.put("server_user_email", user.getEmail());
+            // Update userInfoDto with additional information
+            userInfoDto = new UserInfoDto(
+                    userInfoDto.getId(),
+                    userInfoDto.getNickname(),
+                    userInfoDto.getEmail(),
+                    accessToken,
+                    tokens.get("jwt_token"),
+                    tokens.get("jwt_refresh"),
+                    user.getId(),
+                    user.getEmail()
+            );
 
-            return userInfo;
+            logger.info("kakaoLogin 성공 - 사용자: {}", user.getId());
+            return userInfoDto;
 
         } catch (RestClientException e) {
-            throw new RuntimeException("Request failed", e);
+            logger.error("요청 실패", e);
+            throw new RuntimeException("요청 실패", e);
+        }
+    }
+
+    private UserInfoDto getUserInfoDto(String accessToken) {
+        logger.info("Access token을 사용하여 사용자 정보 가져오기: {}", accessToken);
+        String userInfoUrl = kakaoProperties.userInfoUrl();
+
+        try {
+            String response = client.post()
+                    .uri(URI.create(userInfoUrl))
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .body(String.class);
+
+            JsonNode jsonNode = objectMapper.readTree(response);
+            logger.debug("사용자 정보 응답: {}", response);
+
+            long id = jsonNode.path("id").asLong();
+            JsonNode properties = jsonNode.path("properties");
+            String nickname = properties.path("nickname").asText();
+            JsonNode kakaoAccount = jsonNode.path("kakao_account");
+            String email = kakaoAccount.path("email").asText();
+
+            return new UserInfoDto(id, nickname, email);
+
+        } catch (RestClientResponseException e) {
+            logger.error("사용자 정보 가져오기 실패: {}", e.getResponseBodyAsString(), e);
+            throw new RuntimeException("사용자 정보 가져오기 실패", e);
+        } catch (Exception e) {
+            logger.error("사용자 정보 가져오기 실패", e);
+            throw new RuntimeException("사용자 정보 가져오기 실패", e);
         }
     }
 
@@ -110,99 +148,68 @@ public class KakaoService {
 
     private String requestAccessToken(String url, LinkedMultiValueMap<String, String> body) {
         try {
+            logger.info("Access token 요청 - body: {}", body);
             var response = client.post()
                     .uri(URI.create(url))
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
                     .body(String.class);
+            logger.debug("Access token 응답: {}", response);
             return response;
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("Failed to request access token", e);
+            logger.error("Access token 요청 실패", e);
+            throw new RuntimeException("Access token 요청 실패", e);
         }
     }
 
     private String extractAccessToken(String response) {
         try {
             JsonNode jsonNode = objectMapper.readTree(response);
-            return jsonNode.get("access_token").asText();
+            String accessToken = jsonNode.get("access_token").asText();
+            logger.debug("Access token 추출: {}", accessToken);
+            return accessToken;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to extract access token", e);
+            logger.error("Access token 추출 실패", e);
+            throw new RuntimeException("Access token 추출 실패", e);
         }
     }
-
-    private Map<String, Object> getUserInfo(String accessToken) {
-        Map<String, Object> userInfo = new HashMap<>();
-        //String userInfoUrl = "https://kapi.kakao.com/v2/user/me";
-        String userInfoUrl = kakaoProperties.userInfoUrl();
-
-        try {
-            String response = client.post()
-                    .uri(URI.create(userInfoUrl))
-                    .header("Authorization", "Bearer " + accessToken)
-                    .retrieve()
-                    .body(String.class);
-
-            JsonNode jsonNode = objectMapper.readTree(response);
-
-            long id = jsonNode.path("id").asLong();
-            JsonNode properties = jsonNode.path("properties");
-            String nickname = properties.path("nickname").asText();
-            JsonNode kakaoAccount = jsonNode.path("kakao_account");
-            String email = kakaoAccount.path("email").asText();
-
-            userInfo.put("id", id);
-            userInfo.put("nickname", nickname);
-            userInfo.put("email", email);
-
-        } catch (RestClientResponseException e) {
-            throw new RuntimeException("Failed to get user info", e);
-        } catch (RestClientException e) {
-            throw new RuntimeException("Failed to get user info", e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return userInfo;
-    }
-
 
     @Transactional
     public Map<String, Object> createOrder(User user, String accessToken, OrderRequest orderRequest) {
         ProductOption productOption = productOptionRepository.findById(orderRequest.getOptionId())
-                .orElseThrow(() -> new IllegalArgumentException("Option not found"));
+                .orElseThrow(() -> new IllegalArgumentException("옵션을 찾을 수 없음"));
 
-        // Subtract quantity from product option
         productOption.subtract(orderRequest.getQuantity());
         productOptionRepository.save(productOption);
 
-        // Delete wish if exists
         wishRepository.findByUserIdAndProductIdAndIsDeletedFalse(user.getId(), productOption.getProduct().getId())
                 .ifPresent(wish -> {
                     wish.setIsDeleted(true);
                     wishRepository.save(wish);
                 });
 
-        // Send Kakao message
         sendKakaoMessage(user, accessToken, orderRequest.getMessage(), productOption.getName(), orderRequest.getQuantity());
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         String formattedNow = now.format(formatter);
 
-        // Return response
+        Order order = new Order(user, productOption, orderRequest.getQuantity(), orderRequest.getMessage(), now);
+        orderRepository.save(order);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("id", 1);  // This should be replaced with the actual order ID
+        response.put("id", order.getId());
         response.put("optionId", orderRequest.getOptionId());
         response.put("quantity", orderRequest.getQuantity());
-        response.put("orderDateTime", formattedNow);  // This should be replaced with the actual order date/time
+        response.put("orderDateTime", formattedNow);
         response.put("message", orderRequest.getMessage());
 
         return response;
     }
 
+
     private void sendKakaoMessage(User user, String accessToken, String message, String optionName, Long quantity) {
-        //String messageUrl = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         String messageUrl = kakaoProperties.messageUrl();
 
         var body = new LinkedMultiValueMap<String, String>();
@@ -217,22 +224,21 @@ public class KakaoService {
                     .retrieve()
                     .body(String.class);
         } catch (RestClientResponseException e) {
-            throw new RuntimeException("Failed to send Kakao message", e);
+            throw new RuntimeException("Kakao 메시지 전송 실패", e);
         }
     }
 
     private String createTemplateObject(User user, String message, String optionName, Long quantity) {
         Map<String, Object> templateObject = new HashMap<>();
         templateObject.put("object_type", "text");
-        templateObject.put("text", String.format("Order received: %s\nOption: %s\nQuantity: %d\nMessage: %s",
+        templateObject.put("text", String.format("주문 접수: %s\n옵션: %s\n수량: %d\n메시지: %s",
                 user.getEmail(), optionName, quantity, message));
         templateObject.put("link", Map.of("web_url", "http://your-web-url.com"));
-        //"web_url" 키에 해당하는 웹 URL을 지정하여 사용자가 메시지에서 클릭할 수 있는 링크를 제공
 
         try {
             return objectMapper.writeValueAsString(templateObject);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create template object", e);
+            throw new RuntimeException("템플릿 객체 생성 실패", e);
         }
     }
 }

@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -22,8 +25,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "로그인", description = "사용자가 이메일과 비밀번호로 로그인합니다.")
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(
+            @Parameter(description = "로그인 요청 정보", required = true)
+            @RequestBody LoginRequest loginRequest) {
         try {
             String accessToken = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
             String refreshToken = userService.generateRefreshToken(loginRequest.getEmail());
@@ -36,14 +42,18 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "모든 사용자 조회", description = "모든 사용자를 조회합니다.")
     @GetMapping
     public ResponseEntity<List<User>> findAllUsers() {
         List<User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
     }
 
+    @Operation(summary = "사용자 등록", description = "새로운 사용자를 등록합니다.")
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<String> registerUser(
+            @Parameter(description = "사용자 등록 요청 정보", required = true)
+            @RequestBody RegisterRequest registerRequest) {
         try {
             userService.registerUser(registerRequest.getEmail(), registerRequest.getPassword());
             return ResponseEntity.ok("User registered successfully");
@@ -52,6 +62,7 @@ public class UserController {
         }
     }
 }
+
 
 class LoginRequest {
     private String email;

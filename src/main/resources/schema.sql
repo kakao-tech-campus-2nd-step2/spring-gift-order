@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS wishes;
+DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS product;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS category;
+
 
 
 CREATE TABLE users (
@@ -45,6 +47,17 @@ CREATE TABLE product_option (
                                 product_id BIGINT NOT NULL,
                                 CONSTRAINT fk_product_option_product FOREIGN KEY (product_id) REFERENCES product(id),
                                 UNIQUE (product_id, name)
+);
+
+CREATE TABLE orders (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        message VARCHAR(255),
+                        order_date_time TIMESTAMP NOT NULL,
+                        product_option_id BIGINT NOT NULL,
+                        quantity INT NOT NULL,
+                        user_id BIGINT NOT NULL,
+                        CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id),
+                        CONSTRAINT fk_orders_product_option FOREIGN KEY (product_option_id) REFERENCES product_option(id)
 );
 
 /*
