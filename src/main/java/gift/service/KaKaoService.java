@@ -2,16 +2,10 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.LoginType;
-import gift.domain.KakaoToken;
-import gift.domain.Member;
 import gift.dto.KakaoTokenInfo;
 import gift.dto.KakaoUserInfo;
-import gift.dto.response.AuthResponse;
+import gift.dto.TemplateObject;
 import gift.exception.CustomException;
-import gift.repository.KakaoTokenRepository;
-import gift.repository.MemberRepository;
-import gift.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,11 +15,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 import java.net.URI;
-import java.util.Optional;
-import java.util.Random;
 
-import static gift.exception.ErrorCode.ALREADY_REGISTERED_ERROR;
 import static gift.exception.ErrorCode.KAKAO_LOGIN_FAILED_ERROR;
+import static gift.exception.ErrorCode.SEND_MSG_FAILED_ERROR;
 
 @Service
 public class KaKaoService {
@@ -45,22 +37,16 @@ public class KaKaoService {
     @Value("${kakao.get-uerInfo.url}")
     private String getUserInfoUrl;
 
-    private final MemberRepository memberRepository;
-    private final KakaoTokenRepository kakaoTokenRepository;
-    private final JwtUtil jwtUtil;
+    @Value("${kakao.send-message.url}")
+    private String sendMessageUrl;
 
-    public KaKaoService(MemberRepository memberRepository, KakaoTokenRepository kakaoTokenRepository, JwtUtil jwtUtil) {
-        this.memberRepository = memberRepository;
-        this.kakaoTokenRepository = kakaoTokenRepository;
-        this.jwtUtil = jwtUtil;
-    }
+    @Value("${service.home.web_url}")
+    private String homeUrl;
 
-    public AuthResponse kakaoLogin(String code) {
-        RestClient client = RestClient.builder().build();
+    private final RestClient client = RestClient.create();
+
+    public String getKakaoAccountEmail(String accessToken) {
         ObjectMapper objectMapper = new ObjectMapper();
-        KakaoTokenInfo kakaoTokenInfo = getAccessToken(code);
-        String accessToken = kakaoTokenInfo.access_token();
-        String email;
 
         ResponseEntity<String> response = client.get()
                 .uri(URI.create(getUserInfoUrl))
@@ -73,15 +59,13 @@ public class KaKaoService {
         }
 
         try {
-            email = objectMapper.readValue(response.getBody(), KakaoUserInfo.class).kakao_account().email;
-            return new AuthResponse(SaveMemberAndReturnJWT(email, kakaoTokenInfo));
+            return objectMapper.readValue(response.getBody(), KakaoUserInfo.class).kakao_account().email;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private KakaoTokenInfo getAccessToken(String code) {
-        RestClient client = RestClient.builder().build();
+    public KakaoTokenInfo getKakaoTokenInfo(String code) {
         ObjectMapper objectMapper = new ObjectMapper();
 
         LinkedMultiValueMap<String, String> body = createGetTokenBody(code);
@@ -113,20 +97,36 @@ public class KaKaoService {
         return body;
     }
 
-    private String SaveMemberAndReturnJWT(String email, KakaoTokenInfo kakaoTokenInfo) {
-        Optional<Member> existMember = memberRepository.findMemberByEmail(email);
-        if (existMember.isPresent()) {
-            throw new CustomException(ALREADY_REGISTERED_ERROR);
-        }
-        Member savedMember = memberRepository.save(new Member(email, generateRandomPassword(), LoginType.KAKAO));
-        kakaoTokenRepository.save(new KakaoToken(savedMember, kakaoTokenInfo.access_token(), kakaoTokenInfo.refresh_token()));
 
-        return jwtUtil.createJWT(savedMember.getId(), savedMember.getLoginType());
+    public void sendMessage(String message, String accessToken) {
+        LinkedMultiValueMap<String, String> body = createSendMsgBody(message);
+
+        ResponseEntity<String> response = client.post()
+                .uri(URI.create(sendMessageUrl))
+                .header("Authorization", "Bearer " + accessToken)
+                .body(body)
+                .retrieve()
+                .toEntity(String.class);
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new CustomException(SEND_MSG_FAILED_ERROR);
+        }
     }
 
-    private String generateRandomPassword() {
-        Random random = new Random();
-        return String.valueOf(1000 + random.nextInt(9000));
+    private LinkedMultiValueMap<String, String> createSendMsgBody(String message) {
+        LinkedMultiValueMap<String, String> templateObject = new LinkedMultiValueMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        TemplateObject template = new TemplateObject("text", message, new TemplateObject.Link(homeUrl));
+
+        try {
+            String jsonTemplateObject = objectMapper.writeValueAsString(template);
+            templateObject.add("template_object", jsonTemplateObject);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return templateObject;
     }
 
 }

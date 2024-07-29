@@ -39,10 +39,12 @@ public class Member {
     public Member() {
     }
 
-    public Member(String email, String password, LoginType loginType) {
+    public Member(String email, String password, LoginType loginType, String kakaoAccessToken, String kakaoRefreshToken) {
         this.email = email;
         this.password = password;
         this.loginType = loginType;
+        this.kakaoAccessToken = kakaoAccessToken;
+        this.kakaoRefreshToken = kakaoRefreshToken;
     }
 
     public Member(Long id, String email, String password, LoginType loginType) {

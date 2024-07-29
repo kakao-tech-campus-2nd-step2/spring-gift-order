@@ -16,11 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final KaKaoService kaKaoService;
-
-    public AuthController(AuthService authService, KaKaoService kaKaoService) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.kaKaoService = kaKaoService;
     }
 
     @PostMapping("/register")
@@ -38,6 +35,6 @@ public class AuthController {
     @GetMapping("/kakao")
     @Operation(summary = "카카오 회원가입 및 로그인 api")
     public ResponseEntity<AuthResponse> kakaoLogin(@RequestParam("code") String code) {
-        return new ResponseEntity<>(kaKaoService.kakaoLogin(code), HttpStatus.OK);
+        return new ResponseEntity<>(authService.kakaoLogin(code), HttpStatus.OK);
     }
 }
