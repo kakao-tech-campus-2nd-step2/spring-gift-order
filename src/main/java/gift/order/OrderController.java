@@ -34,7 +34,7 @@ public class OrderController {
         return orderService.getOrders(memberRequestDto);
     }
 
-    @DeleteMapping("/orderId")
+    @DeleteMapping("/{orderId}")
     public void deletOrder(@LoginMember MemberRequestDto memberRequestDto, @PathVariable Long orderId)
         throws NotFoundMember {
         orderService.deleteOrder(memberRequestDto, orderId);
