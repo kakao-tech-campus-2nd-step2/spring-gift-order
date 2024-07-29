@@ -53,7 +53,7 @@ public class Member {
         return password;
     }
 
-    public Boolean getKakao() {
+    public Boolean getIsKakao() {
         return isKakao;
     }
 
