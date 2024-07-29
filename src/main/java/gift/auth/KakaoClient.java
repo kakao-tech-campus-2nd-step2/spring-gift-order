@@ -2,6 +2,7 @@ package gift.auth;
 
 import gift.auth.dto.KakaoAccessToken;
 import gift.auth.dto.KakaoMessage;
+
 import gift.auth.dto.KakaoProperties;
 import gift.auth.dto.KakaoUserInfo;
 import java.net.URI;
@@ -60,7 +61,7 @@ public class KakaoClient {
             .retrieve()
             .toEntity(String.class);
     }
-
+  
     public KakaoProperties getProperties(){
         return properties;
     }
