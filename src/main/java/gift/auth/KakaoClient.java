@@ -65,5 +65,4 @@ public class KakaoClient {
             .toEntity(String.class);
     }
 
-
 }
