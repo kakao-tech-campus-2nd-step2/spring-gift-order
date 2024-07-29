@@ -2,7 +2,6 @@ package gift.controller;
 
 import gift.dto.OptionDto;
 import gift.dto.ProductDto;
-import gift.entity.Product;
 import gift.exception.ProductNotFoundException;
 import gift.service.ProductService;
 import org.springframework.data.domain.Page;
