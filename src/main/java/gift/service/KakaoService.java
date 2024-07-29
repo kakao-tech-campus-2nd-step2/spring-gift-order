@@ -28,6 +28,8 @@ public class KakaoService {
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
 
+    @Value("${kakao.url}")
+    private String url;
 
     private final MemberService memberService;
     private final RestTemplate restTemplate;
@@ -42,8 +44,6 @@ public class KakaoService {
     }
 
     private TokenResponse getKakaoToken(String code) {
-        String url = "https://kauth.kakao.com/oauth/token";
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
