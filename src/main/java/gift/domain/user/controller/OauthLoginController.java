@@ -2,6 +2,9 @@ package gift.domain.user.controller;
 
 import gift.auth.jwt.JwtToken;
 import gift.domain.user.service.OauthLoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/oauth/login")
+@Tag(name = "OAuth Login", description = "OAuth 로그인 API")
 public class OauthLoginController {
 
     private final OauthLoginService oauthLoginService;
@@ -22,12 +26,20 @@ public class OauthLoginController {
     }
 
     @GetMapping("/kakao")
-    public void getAuthCodeUrl(HttpServletResponse response) throws IOException {
+    @Operation(summary = "카카오 로그인", description = "카카오 로그인 주소로 redirect 합니다.")
+    public void getAuthCodeUrl(
+        @Parameter(hidden = true)
+        HttpServletResponse response
+    ) throws IOException {
         response.sendRedirect(oauthLoginService.getAuthCodeUrl());
     }
 
     @GetMapping("/kakao/callback")
-    public ResponseEntity<JwtToken> login(@RequestParam("code") String code) {
+    @Operation(summary = "카카오 로그인 콜백", description = "콜백을 처리해 카카오 계정으로 로그인합니다.")
+    public ResponseEntity<JwtToken> login(
+        @Parameter(description = "카카오 로그인 API에서 전달된 인증 코드")
+        @RequestParam("code") String code
+    ) {
         JwtToken jwtToken = oauthLoginService.login(code);
         return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
     }
