@@ -16,19 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
-    private final AuthService authService;
 
-    public OrderController(OrderService orderService, AuthService authService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.authService = authService;
     }
 
     @PostMapping
-    public void createOrder(
-        @LoginUser LoginResponse member,
-        @RequestBody OrderRequest order) {
+    public void createOrder(@LoginUser LoginResponse member, @RequestBody OrderRequest order) {
         ResponseEntity.status(HttpStatus.CREATED)
-            .body(orderService.save(member.id(), order, authService.getToken(
-                String.valueOf(member.id()))));
+            .body(orderService.save(member.id(), order));
     }
 }
