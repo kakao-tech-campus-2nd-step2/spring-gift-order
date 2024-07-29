@@ -9,6 +9,7 @@ import gift.member.MemberRepository;
 import gift.member.MemberRequestDto;
 import gift.option.Option;
 import gift.option.OptionRepository;
+import gift.option.OptionService;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,21 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final MemberRepository memberRepository;
     private final KakaoClient kakaoClient;
+    private final OptionService optionService;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, MemberRepository memberRepository, KakaoClient kakaoClient) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, MemberRepository memberRepository, KakaoClient kakaoClient, OptionService optionService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
         this.memberRepository = memberRepository;
         this.kakaoClient = kakaoClient;
+        this.optionService = optionService;
     }
 
     public OrderResponseDto createOrder(MemberRequestDto memberRequestDto, OrderRequestDto orderRequestDto) {
         Option option = optionRepository.findById(orderRequestDto.optionId())
             .orElseThrow(() -> new NotFoundOption("해당 옵션을 찾을 수 없습니다"));
+
+        optionService.substractQuantity(option.getId(), orderRequestDto.quantity());
 
         Order order = new Order(option, orderRequestDto.quantity(), orderRequestDto.message(), new Member(memberRequestDto.email(), memberRequestDto.password()));
 
