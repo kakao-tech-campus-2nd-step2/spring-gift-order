@@ -55,7 +55,7 @@ class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        productOptionService = new ProductOptionService(productOptionRepository);
+        productOptionService = new ProductOptionService(productOptionRepository, productRepository);
         productService = new ProductService(productRepository, categoryRepository, wishProductRepository, productOptionService);
     }
 
