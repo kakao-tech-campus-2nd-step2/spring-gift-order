@@ -19,6 +19,6 @@
 ### 기능 요구사항
 API 문서 만들기
 
-- [ ] Swagger 를 사용하여 KakaoApiController, OrderController 에 대한 API 문서 만들기
+- [z] Swagger 를 사용하여 KakaoApiController, OrderController 에 대한 API 문서 만들기
 - [ ] Product, WishList, Category 에 대한 API 문서 만들기
 - [ ] Member 에 대한 API 문서 만들기
