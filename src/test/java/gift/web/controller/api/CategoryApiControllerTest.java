@@ -48,6 +48,7 @@ import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -115,17 +116,17 @@ class CategoryApiControllerTest {
             .andDo(
                 restDocs.document(
                     requestFields(
-                        fieldWithPath("name").description("카테고리명"),
-                        fieldWithPath("description").description("카테고리 설명"),
-                        fieldWithPath("imageUrl").description("이미지 URL"),
-                        fieldWithPath("color").description("색상 코드")
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("color").type(JsonFieldType.STRING).description("색상 코드")
                     ),
                     responseFields(
-                        fieldWithPath("id").description("카테고리 ID"),
-                        fieldWithPath("name").description("카테고리명"),
-                        fieldWithPath("description").description("카테고리 설명"),
-                        fieldWithPath("imageUrl").description("이미지 URL"),
-                        fieldWithPath("color").description("색상 코드")
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("color").type(JsonFieldType.STRING).description("색상 코드")
                     )
                 )
             );
@@ -154,11 +155,11 @@ class CategoryApiControllerTest {
                         parameterWithName("sort").optional().description("정렬 조건")
                     ),
                     responseFields(
-                        fieldWithPath("categories[].id").description("카테고리 ID"),
-                        fieldWithPath("categories[].name").description("카테고리명"),
-                        fieldWithPath("categories[].description").description("카테고리 설명"),
-                        fieldWithPath("categories[].imageUrl").description("이미지 URL"),
-                        fieldWithPath("categories[].color").description("색상 코드")
+                        fieldWithPath("categories[].id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
+                        fieldWithPath("categories[].name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("categories[].description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("categories[].imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("categories[].color").type(JsonFieldType.STRING).description("색상 코드")
                     )
                 )
             );
@@ -179,11 +180,11 @@ class CategoryApiControllerTest {
             .andDo(
                 restDocs.document(
                     responseFields(
-                        fieldWithPath("id").description("카테고리 ID"),
-                        fieldWithPath("name").description("카테고리명"),
-                        fieldWithPath("description").description("카테고리 설명"),
-                        fieldWithPath("imageUrl").description("이미지 URL"),
-                        fieldWithPath("color").description("색상 코드")
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("color").type(JsonFieldType.STRING).description("색상 코드")
                     )
                 )
             );
@@ -211,17 +212,17 @@ class CategoryApiControllerTest {
             .andDo(
                 restDocs.document(
                     requestFields(
-                        fieldWithPath("name").description("카테고리명"),
-                        fieldWithPath("description").description("카테고리 설명"),
-                        fieldWithPath("imageUrl").description("이미지 URL"),
-                        fieldWithPath("color").description("색상 코드")
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("color").type(JsonFieldType.STRING).description("색상 코드")
                     ),
                     responseFields(
-                        fieldWithPath("id").description("카테고리 ID"),
-                        fieldWithPath("name").description("카테고리명"),
-                        fieldWithPath("description").description("카테고리 설명"),
-                        fieldWithPath("imageUrl").description("이미지 URL"),
-                        fieldWithPath("color").description("색상 코드")
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("카테고리 ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("카테고리명"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("카테고리 설명"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL"),
+                        fieldWithPath("color").type(JsonFieldType.STRING).description("색상 코드")
                     )
                 )
             );
