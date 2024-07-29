@@ -13,7 +13,7 @@
 
 ### 3단계 기능구현
 - [ ] Swagger-editor를 통해 api를 문서화하고 명세
-  - [ ] Swagger 환경설정 
+  - [x] Swagger 환경설정 
   - [ ] Swagger Tag 작성 
 
 # 2단계 기능목록 
