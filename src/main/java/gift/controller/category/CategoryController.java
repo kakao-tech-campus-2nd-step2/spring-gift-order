@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
@@ -21,33 +24,49 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "모든 카테고리 조회", description = "모든 카테고리를 조회합니다.")
     @GetMapping
     public ResponseEntity<List<Category>> getAllCategories() {
         List<Category> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
 
+    @Operation(summary = "카테고리 ID로 조회", description = "카테고리 ID로 카테고리를 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(
+            @Parameter(description = "조회할 카테고리의 ID", required = true)
+            @PathVariable Long id) {
         Category category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
     }
 
+    @Operation(summary = "새 카테고리 추가", description = "새로운 카테고리를 추가합니다.")
     @PostMapping
-    public ResponseEntity<Category> addCategory(@RequestBody @Valid Category category) {
+    public ResponseEntity<Category> addCategory(
+            @Parameter(description = "추가할 카테고리 정보", required = true)
+            @RequestBody @Valid Category category) {
         Category createdCategory = categoryService.addCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
 
+    @Operation(summary = "카테고리 수정", description = "카테고리 ID로 카테고리 정보를 수정합니다.")
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody @Valid Category updatedCategory) {
+    public ResponseEntity<Category> updateCategory(
+            @Parameter(description = "수정할 카테고리의 ID", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "수정할 카테고리 정보", required = true)
+            @RequestBody @Valid Category updatedCategory) {
         Category savedCategory = categoryService.updateCategory(id, updatedCategory);
         return ResponseEntity.ok(savedCategory);
     }
 
+    @Operation(summary = "카테고리 삭제", description = "카테고리 ID로 카테고리를 삭제합니다.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(
+            @Parameter(description = "삭제할 카테고리의 ID", required = true)
+            @PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
 }
+
