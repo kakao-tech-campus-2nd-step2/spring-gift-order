@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,21 @@ public class ApiGlobalExceptionHandler {
     public ProblemDetail handleOptionDuplicateException(OptionDuplicateException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
         problemDetail.setTitle(e.getMessage());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(KakaoApiHasProblemException.class)
+    public ProblemDetail handleKakaoApiHasProblem(KakaoApiHasProblemException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.SERVICE_UNAVAILABLE);
+
+        List<String> exceptionsMessages = new ArrayList<>();
+        for (Exception exception : e.getExceptions()) {
+            exceptionsMessages.add(exception.getMessage());
+        }
+
+        problemDetail.setTitle(e.getMessage());
+        problemDetail.setProperty("exceptionMessages", exceptionsMessages);
+
         return problemDetail;
     }
 }

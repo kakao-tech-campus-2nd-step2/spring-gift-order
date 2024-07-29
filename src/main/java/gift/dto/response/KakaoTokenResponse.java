@@ -1,13 +1,19 @@
 package gift.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record KakaoTokenResponse(
-        String token_type,
+        @JsonProperty("token_type")
+        String tokenType,
+        @JsonProperty("scope")
         String scope,
-        String access_token,
-        Long expires_in,
-
-        String refresh_token,
-
-        Long refresh_token_expires_in
+        @JsonProperty("access_token")
+        String accessToken,
+        @JsonProperty("expires_in")
+        Long expiresIn,
+        @JsonProperty("refresh_token")
+        String refreshToken,
+        @JsonProperty("refresh_token_expires_in")
+        Long refreshTokenExpiresIn
 ) {
 }

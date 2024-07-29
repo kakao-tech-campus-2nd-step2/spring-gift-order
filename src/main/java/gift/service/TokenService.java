@@ -1,6 +1,8 @@
 package gift.service;
 
-import gift.dto.response.TokenResponse;
+import gift.dto.response.JwtResponse;
+import gift.dto.response.KakaoTokenResponse;
+import gift.repository.KakaoAccessTokenRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import org.springframework.stereotype.Service;
@@ -9,12 +11,18 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Service
-public class JwtTokenService {
+public class TokenService {
 
     private static final SecretKey KEY = Jwts.SIG.HS256.key().build();
     private static final int JWT_EXPIRATION_IN_MS = 1000 * 60 * 60 * 2;
 
-    public TokenResponse generateToken(Long registeredMemberId) {
+    private final KakaoAccessTokenRepository kakaoAccessTokenRepository;
+
+    public TokenService(KakaoAccessTokenRepository kakaoAccessTokenRepository) {
+        this.kakaoAccessTokenRepository = kakaoAccessTokenRepository;
+    }
+
+    public JwtResponse generateJwt(Long registeredMemberId) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION_IN_MS);
         String tokenValue = Jwts.builder()
@@ -22,7 +30,7 @@ public class JwtTokenService {
                 .expiration(expiryDate)
                 .signWith(KEY)
                 .compact();
-        return new TokenResponse(tokenValue);
+        return new JwtResponse(tokenValue);
     }
 
     public Long getMemberId(String tokenValue) {
@@ -46,5 +54,9 @@ public class JwtTokenService {
         } catch (JwtException e) {
             return false;
         }
+    }
+
+    public void saveKakaoAccessToken(Long memberId, KakaoTokenResponse kakaoToken) {
+        kakaoAccessTokenRepository.saveAccessToken(memberId, kakaoToken.accessToken());
     }
 }

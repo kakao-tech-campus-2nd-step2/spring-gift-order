@@ -25,7 +25,7 @@ public class ProductAdminController {
     private final ProductService productService;
     private final CategoryService categoryService;
     @Value("${clientId}")
-    private String CLIENT_ID;
+    private String clientId;
 
     public ProductAdminController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
@@ -34,7 +34,7 @@ public class ProductAdminController {
 
     @GetMapping("/login")
     public String kakaoLogin(Model model) {
-        model.addAttribute("clientId", CLIENT_ID);
+        model.addAttribute("clientId", clientId);
         return "version-SSR/kakaoLogin";
     }
 

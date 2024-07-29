@@ -36,7 +36,7 @@ public class ProductService {
     public AddedProductIdResponse addProduct(AddProductRequest request) {
         Category category = categoryService.getCategory(request.categoryId());
 
-        List<Option> options = request.optionRequests()
+        List<Option> options = request.options()
                 .stream()
                 .map(optionRequest -> new Option(optionRequest.name(), optionRequest.quantity()))
                 .toList();
