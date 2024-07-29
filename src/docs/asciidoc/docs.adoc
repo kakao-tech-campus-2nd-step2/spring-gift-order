@@ -8,3 +8,4 @@
 include::product.adoc[]
 include::category.adoc[]
 include::member.adoc[]
+include::login.adoc[]
