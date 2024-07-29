@@ -29,7 +29,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest request, String accessToken) {
+    public OrderResponse createOrder(OrderRequest request) {
         Option option = optionRepository.findById(request.getOptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
@@ -55,8 +55,11 @@ public class OrderService {
         logger.info("Received sendMessageToMe request with Authorization: {}", bearerToken);
         logger.info("OrderRequest: {}", orderRequest);
 
+        // 트랜잭션 내에서 주문을 생성
+        OrderResponse orderResponse = createOrder(orderRequest);
+
+        // 트랜잭션 외부에서 카카오 메시지 전송
         String accessToken = sendMessageRequest.getAccessToken();
-        OrderResponse orderResponse = createOrder(orderRequest, accessToken);
         kakaoMessageService.sendMessage(orderResponse, accessToken);
     }
 }

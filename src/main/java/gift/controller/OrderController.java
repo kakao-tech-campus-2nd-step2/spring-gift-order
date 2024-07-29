@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.SendMessageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,19 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    // 페이지네이션 적용하기
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
         if (accessToken == null || !accessToken.startsWith("Bearer ")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         String token = accessToken.substring(7); // "Bearer " 이후의 실제 토큰 값
-        OrderResponse orderResponse = orderService.createOrder(orderRequest, token);
-        return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
+
+        // SendMessageRequest 생성
+        SendMessageRequest sendMessageRequest = new SendMessageRequest(accessToken, orderRequest);
+
+        // 주문 생성 및 메시지 전송 처리
+        orderService.processOrderAndSendMessage(sendMessageRequest);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

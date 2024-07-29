@@ -1,12 +1,18 @@
 package gift.dto;
 
 public class SendMessageRequest {
-    private String bearerToken;
-    private OrderRequest orderRequest;
+
+    private final String bearerToken;
+    private final OrderRequest orderRequest;
+    private final String accessToken;
 
     public SendMessageRequest(String bearerToken, OrderRequest orderRequest) {
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("Invalid Bearer token");
+        }
         this.bearerToken = bearerToken;
         this.orderRequest = orderRequest;
+        this.accessToken = bearerToken.substring(7); // "Bearer " 이후의 실제 토큰 값
     }
 
     public String getBearerToken() {
@@ -18,6 +24,6 @@ public class SendMessageRequest {
     }
 
     public String getAccessToken() {
-        return bearerToken.replace("Bearer ", "");
+        return accessToken;
     }
 }
