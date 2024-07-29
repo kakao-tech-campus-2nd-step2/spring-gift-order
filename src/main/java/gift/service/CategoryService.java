@@ -6,11 +6,8 @@ import gift.model.Category;
 import gift.model.Product;
 import gift.repository.CategoryRepository;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 
 @Service

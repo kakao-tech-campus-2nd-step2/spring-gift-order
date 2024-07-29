@@ -1,6 +1,5 @@
 package gift.service;
 
-import gift.dto.WishRequest;
 import gift.model.Member;
 import gift.model.Product;
 import gift.model.Wish;

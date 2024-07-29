@@ -2,17 +2,13 @@ package gift.service;
 
 
 import gift.dto.OptionRequest;
-import gift.exception.ForbiddenWordException;
-import gift.exception.NameExceptionHandler;
 import gift.exception.ResourceNotFoundException;
 import gift.model.Option;
 import gift.model.Options;
-import gift.model.Product;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service

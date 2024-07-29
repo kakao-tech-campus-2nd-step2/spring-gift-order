@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.exception.ForbiddenException;
 import gift.dto.ApiResponse;
+import gift.exception.ForbiddenException;
 import gift.model.HttpResult;
 import gift.model.Member;
 import gift.service.MemberService;
@@ -30,13 +30,11 @@ public class MemberController {
             .map(token -> { // Optional<String>을 mapping -> isPresent면 map 안 실행 // 매개변수 token으로
                 var memberRegisterSuccessResponse = new ApiResponse(HttpResult.OK,
                     "Member Register success", HttpStatus.OK);
-                return new ResponseEntity<>(memberRegisterSuccessResponse,
-                    memberRegisterSuccessResponse.getHttpStatus());
+                return ResponseEntity.ok(memberRegisterSuccessResponse);
             }).orElseGet(() -> { // isEmpty
                 var memberRegisterFailResponse = new ApiResponse(HttpResult.ERROR,
                     "Registration Failed, 올바른 이메일 형식이 아닙니다.", HttpStatus.BAD_REQUEST);
-                return new ResponseEntity<>(memberRegisterFailResponse,
-                    memberRegisterFailResponse.getHttpStatus());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(memberRegisterFailResponse);
             });
     }
 
@@ -49,10 +47,12 @@ public class MemberController {
                 response.put("token", token);
                 var memberLoginSucessResponse = new ApiResponse(HttpResult.OK,
                     "Request Success. 정상 로그인 되었습니다", HttpStatus.OK);
-                return new ResponseEntity<>(memberLoginSucessResponse,
-                    memberLoginSucessResponse.getHttpStatus());
-            }).orElseThrow(() -> // 토큰 리턴이 안됨 -> 로그인 안됨
-                new ForbiddenException("없는 계정입니다"));
+                return ResponseEntity.ok(memberLoginSucessResponse);
+            }).orElseGet(()->{
+                var apiResponse = new ApiResponse(HttpResult.ERROR, "로그인 실패",
+                    HttpStatus.BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(apiResponse);
+            });
     }
 
 }

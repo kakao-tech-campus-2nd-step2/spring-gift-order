@@ -1,7 +1,6 @@
 package gift.repository;
 
 import gift.model.Option;
-import gift.model.Options;
 import gift.model.Product;
 import java.util.List;
 import java.util.Optional;

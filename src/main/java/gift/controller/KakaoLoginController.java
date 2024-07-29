@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.ApiResponse;
 import gift.model.HttpResult;
-import gift.model.Member;
 import gift.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Controller
 public class KakaoLoginController {
 
@@ -44,7 +45,7 @@ public class KakaoLoginController {
             session.setAttribute("kakao_auth_code", code);
             authCode = code;
             model.addAttribute("message", "인가 코드 확인");
-            System.out.println(code);
+            log.info("This is an info code {}",code);
             return "redirect:/kakao/login";
         }
         return "kakaologin";
@@ -124,64 +125,64 @@ public class KakaoLoginController {
     }
 
     private static String getString() {
-        String templateObject = "{"
-            + "\"object_type\": \"feed\","
-            + "\"content\": {"
-            + "  \"title\": \"오늘의 디저트\","
-            + "  \"description\": \"아메리카노, 빵, 케익\","
-            + "  \"image_url\": \"https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg\","
-            + "  \"image_width\": 640,"
-            + "  \"image_height\": 640,"
-            + "  \"link\": {"
-            + "    \"web_url\": \"http://www.daum.net\","
-            + "    \"mobile_web_url\": \"http://m.daum.net\","
-            + "    \"android_execution_params\": \"contentId=100\","
-            + "    \"ios_execution_params\": \"contentId=100\""
-            + "  }"
-            + "},"
-            + "\"item_content\": {"
-            + "  \"profile_text\": \"Kakao\","
-            + "  \"profile_image_url\": \"https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png\","
-            + "  \"title_image_url\": \"https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png\","
-            + "  \"title_image_text\": \"Cheese cake\","
-            + "  \"title_image_category\": \"Cake\","
-            + "  \"items\": ["
-            + "    {\"item\": \"Cake1\", \"item_op\": \"1000원\"},"
-            + "    {\"item\": \"Cake2\", \"item_op\": \"2000원\"},"
-            + "    {\"item\": \"Cake3\", \"item_op\": \"3000원\"},"
-            + "    {\"item\": \"Cake4\", \"item_op\": \"4000원\"},"
-            + "    {\"item\": \"Cake5\", \"item_op\": \"5000원\"}"
-            + "  ],"
-            + "  \"sum\": \"Total\","
-            + "  \"sum_op\": \"15000원\""
-            + "},"
-            + "\"social\": {"
-            + "  \"like_count\": 100,"
-            + "  \"comment_count\": 200,"
-            + "  \"shared_count\": 300,"
-            + "  \"view_count\": 400,"
-            + "  \"subscriber_count\": 500"
-            + "},"
-            + "\"buttons\": ["
-            + "  {"
-            + "    \"title\": \"웹으로 이동\","
-            + "    \"link\": {"
-            + "      \"web_url\": \"http://www.daum.net\","
-            + "      \"mobile_web_url\": \"http://m.daum.net\""
-            + "    }"
-            + "  },"
-            + "  {"
-            + "    \"title\": \"앱으로 이동\","
-            + "    \"link\": {"
-            + "      \"android_execution_params\": \"contentId=100\","
-            + "      \"ios_execution_params\": \"contentId=100\""
-            + "    }"
-            + "  }"
-            + "]"
-            + "}";
-        return templateObject;
+        StringBuilder templateObject = new StringBuilder();
+        templateObject.append("{")
+            .append("\"object_type\": \"feed\",")
+            .append("\"content\": {")
+            .append("  \"title\": \"오늘의 디저트\",")
+            .append("  \"description\": \"아메리카노, 빵, 케익\",")
+            .append("  \"image_url\": \"https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg\",")
+            .append("  \"image_width\": 640,")
+            .append("  \"image_height\": 640,")
+            .append("  \"link\": {")
+            .append("    \"web_url\": \"http://www.daum.net\",")
+            .append("    \"mobile_web_url\": \"http://m.daum.net\",")
+            .append("    \"android_execution_params\": \"contentId=100\",")
+            .append("    \"ios_execution_params\": \"contentId=100\"")
+            .append("  }")
+            .append("},")
+            .append("\"item_content\": {")
+            .append("  \"profile_text\": \"Kakao\",")
+            .append("  \"profile_image_url\": \"https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png\",")
+            .append("  \"title_image_url\": \"https://mud-kage.kakao.com/dn/Q2iNx/btqgeRgV54P/VLdBs9cvyn8BJXB3o7N8UK/kakaolink40_original.png\",")
+            .append("  \"title_image_text\": \"Cheese cake\",")
+            .append("  \"title_image_category\": \"Cake\",")
+            .append("  \"items\": [")
+            .append("    {\"item\": \"Cake1\", \"item_op\": \"1000원\"},")
+            .append("    {\"item\": \"Cake2\", \"item_op\": \"2000원\"},")
+            .append("    {\"item\": \"Cake3\", \"item_op\": \"3000원\"},")
+            .append("    {\"item\": \"Cake4\", \"item_op\": \"4000원\"},")
+            .append("    {\"item\": \"Cake5\", \"item_op\": \"5000원\"}")
+            .append("  ],")
+            .append("  \"sum\": \"Total\",")
+            .append("  \"sum_op\": \"15000원\"")
+            .append("},")
+            .append("\"social\": {")
+            .append("  \"like_count\": 100,")
+            .append("  \"comment_count\": 200,")
+            .append("  \"shared_count\": 300,")
+            .append("  \"view_count\": 400,")
+            .append("  \"subscriber_count\": 500")
+            .append("},")
+            .append("\"buttons\": [")
+            .append("  {")
+            .append("    \"title\": \"웹으로 이동\",")
+            .append("    \"link\": {")
+            .append("      \"web_url\": \"http://www.daum.net\",")
+            .append("      \"mobile_web_url\": \"http://m.daum.net\"")
+            .append("    }")
+            .append("  },")
+            .append("  {")
+            .append("    \"title\": \"앱으로 이동\",")
+            .append("    \"link\": {")
+            .append("      \"android_execution_params\": \"contentId=100\",")
+            .append("      \"ios_execution_params\": \"contentId=100\"")
+            .append("    }")
+            .append("  }")
+            .append("]")
+            .append("}");
+        return templateObject.toString();
     }
-
     private Long getKakaoId(ResponseEntity<String> response) throws JsonProcessingException {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();

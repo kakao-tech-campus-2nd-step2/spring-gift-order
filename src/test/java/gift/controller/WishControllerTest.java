@@ -1,14 +1,17 @@
 package gift.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.model.Category;
 import gift.model.Member;
@@ -20,14 +23,23 @@ import gift.service.WishService;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(WishController.class)
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class WishControllerTest {
 
     @Autowired
@@ -38,6 +50,10 @@ class WishControllerTest {
 
     @MockBean
     private ProductService productService;
+
+    @Autowired
+    private WebApplicationContext context;
+
 
     @MockBean
     private LoginMemberArgumentResolver loginMemberArgumentResolver;
@@ -51,7 +67,14 @@ class WishControllerTest {
     private Category category;
 
     @BeforeEach
-    void setUp() {
+    void setUp(RestDocumentationContextProvider restDocumentation) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
+            .alwaysDo(document("{method-name}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())))
+            .build();
+
         member = new Member("Email@test.com", "password");
         member.setId(1L);
         product = new Product("product", 10000, "image.jpg");
@@ -71,9 +94,15 @@ class WishControllerTest {
 
         // when & then
         mockMvc.perform(get("/wishes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(member)))
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andDo(document("get-wishes",responseFields(
+                    fieldWithPath("wishes").description("위시 리스트"),
+                    fieldWithPath("wishes[].id").description("위시 ID").optional(),
+                    fieldWithPath("wishes[].productName").description("상품 이름"),
+                    fieldWithPath("wishes[].memberId").description("회원 ID")
+                )));
     }
 
 }

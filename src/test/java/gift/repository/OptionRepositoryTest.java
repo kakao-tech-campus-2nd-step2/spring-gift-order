@@ -5,13 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gift.model.Category;
 import gift.model.Option;
 import gift.model.Product;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.List;
-import java.util.Optional;
 
 @DataJpaTest
 class OptionRepositoryTest {
@@ -37,8 +36,7 @@ class OptionRepositoryTest {
         categoryRepository.deleteAll();
 
         category = categoryRepository.save(new Category("테스트 카테고리"));
-        product = productRepository.save(new Product(1L,"테스트 상품", 10000, "image.jpg", category));
-
+        product = productRepository.save(new Product("테스트 상품", 10000, "image.jpg", category));
         option1 = optionRepository.save(new Option("옵션1", 10, product));
         option2 = optionRepository.save(new Option("옵션2", 20, product));
     }

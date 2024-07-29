@@ -2,10 +2,7 @@ package gift.service;
 
 import gift.dto.MemberDto;
 import gift.dto.OrderRequest;
-import gift.model.Option;
-import gift.model.Wish;
 import gift.repository.MemberRepository;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;

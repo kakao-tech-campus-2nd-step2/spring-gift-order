@@ -1,36 +1,44 @@
 package gift.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.head;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.dto.KakaoProperties;
 import gift.security.LoginMemberArgumentResolver;
 import gift.service.MemberService;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @WebMvcTest(KakaoLoginController.class)
 @TestPropertySource(properties = {"kakao.client-id=", "kakao.redirect-url="})
+@AutoConfigureRestDocs(outputDir = "target/snippets")
 class KakaoLoginControllerTest {
 
     @Autowired
@@ -53,6 +61,20 @@ class KakaoLoginControllerTest {
 
     @Value("${kakao.redirect-url}")
     private String redirectUrl;
+
+    @Autowired
+    private WebApplicationContext context;
+
+
+    @BeforeEach
+    void setUp(RestDocumentationContextProvider restDocumentation) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .apply(MockMvcRestDocumentation.documentationConfiguration(restDocumentation))
+            .alwaysDo(document("{method-name}",
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint())))
+            .build();
+    }
 
     @Test
     void kakaoLoginPageWithoutAuthCodeTest() throws Exception {
@@ -86,7 +108,7 @@ class KakaoLoginControllerTest {
         mockMvc.perform(
                 get("/").contentType(MediaType.APPLICATION_JSON).param("code", testAuthCode))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/kakao/token"))
+            .andExpect(redirectedUrl("/kakao/login"))
             .andExpect(result -> {
                 HttpSession session = result.getRequest().getSession();
                 assertNotNull(session);
