@@ -16,6 +16,8 @@
     └── main
         ├── java
         │   └── gift
+        │       ├── client
+        │       │   └── KakaoClient.java
         │       ├── config
         │       │   ├── AppConfig.java
         │       │   └── WebConfig.java
@@ -34,6 +36,7 @@
         │       │   ├── OrderRequest.java
         │       │   ├── OrderResponse.java
         │       │   ├── ProductDto.java
+        │       │   ├── SendMessageRequest.java
         │       │   └── WishRequest.java
         │       ├── entity
         │       │   ├── Catogory.java
