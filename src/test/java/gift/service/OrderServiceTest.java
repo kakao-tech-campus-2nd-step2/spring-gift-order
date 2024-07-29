@@ -21,11 +21,17 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+    @Mock
+    private OptionService optionService;
+    @Mock
+    private WishService wishService;
+    @Mock
+    private KakaoApiService kakaoApiService;
     @InjectMocks
     private OrderService orderService;
 
     @Test
-    void saveOrder() {
+    void processOrder() {
         //Given
         Long optionId = 1L;
         OrderRequest orderRequest = new OrderRequest(optionId, 100, "hello!");
@@ -38,8 +44,10 @@ class OrderServiceTest {
         when(savedOrder.getOrderDateTime()).thenReturn(LocalDateTime.now());
         when(savedOrder.getMessage()).thenReturn("hello!");
 
+        when(optionService.getProductIdByOptionId(any())).thenReturn(1L);
+
         //When
-        OrderResponse response = orderService.saveOrder(orderRequest);
+        OrderResponse response = orderService.processOrder(1L, orderRequest);
 
         //Then
         assertThat(response).isNotNull();
