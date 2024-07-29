@@ -22,9 +22,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void signUpUser(RequestMemberDTO requestMemberDTO){
-        Member member  = new Member(requestMemberDTO.email(), requestMemberDTO.password());
-        memberRepository.save(member);
+    public Member signUpUser(RequestMemberDTO requestMemberDTO){
+        return memberRepository.save(new Member(requestMemberDTO.email(), requestMemberDTO.password()));
     }
 
     @Transactional(readOnly = true)
