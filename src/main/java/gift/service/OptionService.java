@@ -10,10 +10,7 @@ import gift.exception.BadRequestExceptions.NoSuchProductIdException;
 import gift.exception.InternalServerExceptions.InternalServerException;
 import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,21 +32,9 @@ public class OptionService {
     }
 
     @Transactional(readOnly = true)
-    public Map<String, String>  getOptionInfoForOrder(Long optionId) {
-
-        Map<String, String> orderInfo = new HashMap<>();
-
+    public Option getOption(Long optionId) {
         Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequestException("해당 옵션 Id를 찾지 못했습니다."));
-
-        orderInfo.put("optionName", option.getName());
-        orderInfo.put("productId", option.getProduct().getId().toString());
-        orderInfo.put("productName", option.getProduct().getName());
-        orderInfo.put("productImage", option.getProduct().getImageUrl());
-
-        DecimalFormat df = new DecimalFormat("###,###");
-        orderInfo.put("productPrice", df.format(Long.valueOf(option.getProduct().getPrice())));
-
-        return orderInfo;
+        return new Option(option.getProduct(), option.getName(), option.getQuantity());
     }
 
     @Transactional

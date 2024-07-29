@@ -10,11 +10,12 @@ import gift.dto.betweenKakaoApi.KakaoMsgResponseDTO;
 import gift.dto.betweenKakaoApi.KakaoUserInfoDTO;
 import gift.dto.betweenClient.member.MemberDTO;
 import gift.dto.betweenKakaoApi.TokenResponseDTO;
+import gift.entity.Option;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.InternalServerExceptions.InternalServerException;
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -102,11 +103,11 @@ public class KakaoTokenService {
         }
     }
 
-    public void sendMsgToMe(String accessToken, Map<String, String> optionInfo, String message){
+    public void sendMsgToMe(String accessToken, Option option, String message){
         try {
             var body = new LinkedMultiValueMap<String, String>();
             ObjectMapper mapper = new ObjectMapper();
-            body.add("template_object", mapper.writeValueAsString(makeOrderMsgDTO(optionInfo, message)));
+            body.add("template_object", mapper.writeValueAsString(makeOrderMsgDTO(option, message)));
 
             client.post()
                     .uri(URI.create(orderUrl))
@@ -139,15 +140,17 @@ public class KakaoTokenService {
         return body;
     }
 
-    private KakaoMsgRequestDTO makeOrderMsgDTO(Map<String, String> optionInfo, String message){
+    private KakaoMsgRequestDTO makeOrderMsgDTO(Option option, String message){
+        DecimalFormat df = new DecimalFormat("###,###");
+        Long price = Long.valueOf(option.getProduct().getPrice());
+
         Link link = new Link("https://github.com/rdme0/spring-gift-order");
         Content content = new Content("https://mud-kage.kakao.com/dn/NTmhS/btqfEUdFAUf/FjKzkZsnoeE4o19klTOVI1/openlink_640x640s.jpg", link);
 
-        ItemInfo itemInfo = new ItemInfo("가격", optionInfo.get("productPrice") +"원");
-
+        ItemInfo itemInfo = new ItemInfo("가격", df.format(price) +"원");
         ItemContent itemContent = new ItemContent(message,
-                optionInfo.get("productName"), optionInfo.get("productImage"),
-                optionInfo.get("optionName"), new ArrayList<>(), "합계", optionInfo.get("productPrice") +"원");
+                option.getProduct().getName(), option.getProduct().getImageUrl(),
+                option.getName(), new ArrayList<>(), "합계", df.format(price) +"원");
         itemContent.priceList().add(itemInfo);
 
         return new KakaoMsgRequestDTO("feed", content, itemContent);

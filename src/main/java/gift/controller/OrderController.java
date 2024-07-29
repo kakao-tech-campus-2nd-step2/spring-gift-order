@@ -6,12 +6,12 @@ import gift.annotation.LoginMember;
 import gift.dto.betweenClient.member.MemberDTO;
 import gift.dto.betweenClient.order.OrderRequestDTO;
 import gift.dto.betweenClient.order.OrderResponseDTO;
+import gift.entity.Option;
 import gift.service.KakaoTokenService;
 import gift.service.MemberService;
 import gift.service.OptionService;
 import gift.service.OrderService;
 import gift.service.WishListService;
-import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -47,11 +47,10 @@ public class OrderController {
             optionService.subtractOptionQuantity(orderRequestDTO.optionId(),
                     orderRequestDTO.quantity());
 
-            Map<String, String> orderInfo = optionService.getOptionInfoForOrder(
-                    orderRequestDTO.optionId());
+            Option option = optionService.getOption(orderRequestDTO.optionId());
 
-            wishListService.removeWishListProduct(memberDTO, Long.valueOf(orderInfo.get("productId")));
-            kakaoTokenService.sendMsgToMe(accessToken, orderInfo, orderRequestDTO.message());
+            wishListService.removeWishListProduct(memberDTO, option.getProduct().getId());
+            kakaoTokenService.sendMsgToMe(accessToken, option, orderRequestDTO.message());
             OrderResponseDTO orderResponseDTO = orderService.saveOrderHistory(orderRequestDTO);
 
             return new ResponseEntity<>(orderResponseDTO, HttpStatus.CREATED);
