@@ -36,6 +36,7 @@ public class KakaoMessageSender {
             .body(generateRequestBody(message))
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, RestClientErrorHandler.http4xxErrorHandler)
+            .onStatus(HttpStatusCode::is5xxServerError, RestClientErrorHandler.http5xxErrorHandler)
             .toEntity(String.class);
 
         logger.info(response.getStatusCode().toString());

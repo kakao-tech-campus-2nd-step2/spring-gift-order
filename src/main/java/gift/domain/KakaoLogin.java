@@ -30,6 +30,7 @@ public class KakaoLogin {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, RestClientErrorHandler.http4xxErrorHandler)
+            .onStatus(HttpStatusCode::is5xxServerError, RestClientErrorHandler.http5xxErrorHandler)
             .body(KakaoUserInfo.class);
     }
 
@@ -41,6 +42,7 @@ public class KakaoLogin {
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
             .onStatus(HttpStatusCode::is4xxClientError, RestClientErrorHandler.http4xxErrorHandler)
+            .onStatus(HttpStatusCode::is5xxServerError, RestClientErrorHandler.http5xxErrorHandler)
             .body(KakaoTokenResponse.class);
     }
 
