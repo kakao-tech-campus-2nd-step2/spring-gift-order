@@ -135,11 +135,12 @@ host: localhost:8080
 }
 ###
 POST http://localhost:8080/orders HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJwYXNzd29yZCIsImlhdCI6MTcyMjA3MTcyMywiZXhwIjoxNzIyMDc0MTIzfQ.X85Fk4ZB5LRsfpDIbmIgyzUIX_sm9oqfR468uqsWRsQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJwYXNzd29yZCIsImlhdCI6MTcyMjE0MjI2NSwiZXhwIjoxNzIyMTQ0NjY1fQ.4OgdjJSz3whQjZnkvlSvr6S5l-aOgNlhhPXFZmUe4gY
 Content-Type: application/json
 
 {
   "optionId": 1,
-  "quantity": 2,
-  "message": "Please handle this order with care."
+  "quantity": 1,
+  "message": "조심하세요."
+
 }
