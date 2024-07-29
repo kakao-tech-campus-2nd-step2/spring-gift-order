@@ -1,8 +1,8 @@
 package gift.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import gift.dto.OptionRequestDTO;
-import gift.dto.ProductRequestDTO;
+import gift.dto.request.OptionRequestDTO;
+import gift.dto.request.ProductRequestDTO;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

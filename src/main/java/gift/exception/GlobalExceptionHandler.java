@@ -1,6 +1,6 @@
 package gift.exception;
 
-import gift.dto.ErrorResponse;
+import gift.dto.response.ErrorResponse;
 import gift.exception.categortException.CategoryNotFoundException;
 import gift.exception.optionException.OptionException;
 import gift.exception.productException.ProductNotFoundException;

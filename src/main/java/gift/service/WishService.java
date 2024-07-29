@@ -1,7 +1,7 @@
 package gift.service;
 
-import gift.dto.TokenLoginRequestDTO;
-import gift.dto.WishResponseDTO;
+import gift.dto.request.TokenLoginRequestDTO;
+import gift.dto.response.WishResponseDTO;
 import gift.entity.Member;
 import gift.entity.Product;
 import gift.entity.Wish;

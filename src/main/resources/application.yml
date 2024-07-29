@@ -17,9 +17,8 @@ spring:
     show-sql: true
     defer-datasource-initialization:
       true
-
-
-
+  config :
+    import: application-secret.yml
 jwt:
   secret: Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=
   expiration: 86400

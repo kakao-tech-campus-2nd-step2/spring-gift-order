@@ -1,7 +1,7 @@
 package gift.controller;
 
-import gift.dto.TokenLoginRequestDTO;
-import gift.dto.MemberDTO;
+import gift.dto.request.TokenLoginRequestDTO;
+import gift.dto.request.MemberRequestDTO;
 import gift.entity.Member;
 import gift.service.LoginMember;
 import gift.service.MemberService;
@@ -39,8 +39,8 @@ public class MemberController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, String>> register(@ModelAttribute("memberDTO") MemberDTO memberDTO) {
-        String token = memberService.signUp(memberDTO);
+    public ResponseEntity<Map<String, String>> register(@ModelAttribute("memberDTO") MemberRequestDTO memberRequestDTO) {
+        String token = memberService.signUp(memberRequestDTO);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("token", token);
         return ResponseEntity.ok()
@@ -49,8 +49,8 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@ModelAttribute("memberDTO") MemberDTO memberDTO) {
-        String token = memberService.login(memberDTO);
+    public ResponseEntity<Map<String, String>> login(@ModelAttribute("memberDTO") MemberRequestDTO memberRequestDTO) {
+        String token = memberService.login(memberRequestDTO);
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("token", token);
         return ResponseEntity.ok()
@@ -61,7 +61,6 @@ public class MemberController {
     @PostMapping("/token-login")
     public ResponseEntity<String> tokenLogin(@LoginMember TokenLoginRequestDTO tokenLoginRequestDTO) {
         memberService.tokenLogin(tokenLoginRequestDTO);
-//      String token = tokenLoginRequestDTO.getToken();
         return ResponseEntity.status(HttpStatus.OK)
                 .body("토큰 인증 성공");
     }

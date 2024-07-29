@@ -1,6 +1,6 @@
 package gift.authorization;
 
-import gift.dto.TokenLoginRequestDTO;
+import gift.dto.request.TokenLoginRequestDTO;
 import gift.entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
