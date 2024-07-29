@@ -17,4 +17,8 @@ public interface WishlistRepository extends JpaRepository<Wishlist,Long>,
 
     Page<Wishlist> findAll(Pageable pageable);
 
+    boolean existsByProductIdAndMemberId(Long productId, Long memberId);
+
+    void deleteByMemberIdAndProductId(Long memberId, Long productId);
+      
 }
