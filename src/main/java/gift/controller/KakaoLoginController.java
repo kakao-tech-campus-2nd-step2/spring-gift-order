@@ -22,6 +22,7 @@ public class KakaoLoginController {
         this.kakaoProperties = kakaoProperties;
         this.kakaoService = kakaoService;
     }
+
     @GetMapping("/kakao/login")
     public String login(Model model) {
         model.addAttribute("kakaoClientId", kakaoProperties.clientId());
@@ -34,7 +35,6 @@ public class KakaoLoginController {
 
         try {
             String accessToken = kakaoService.login(code);
-            model.addAttribute("accessToken", accessToken);
             return "home";
         } catch (MemberNotFoundException e) {
             model.addAttribute("member", new Member()); // Member 객체 추가
@@ -47,8 +47,6 @@ public class KakaoLoginController {
     public String loginSuccess() {
         return "kakaoLoginSuccess";
     }
-
-
 
 
 }
