@@ -1,7 +1,7 @@
 package gift.domain.cartItem;
 
+import gift.domain.Member.Member;
 import gift.domain.product.Product;
-import gift.domain.user.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -12,17 +12,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaCartItemRepository extends JpaRepository<CartItem, Long> {
 
-    List<CartItem> findAllByUserId(Long userId);
+    List<CartItem> findAllByMemberId(Long memberId);
 
     void deleteById(Long id);
 
-    boolean existsByUserAndProduct(User user, Product product);
+    List<CartItem> findAllByMember(Member member);
 
-    List<CartItem> findAllByUser(User user);
-
-    Optional<CartItem> findByUserIdAndProductId(Long userId, Long productId);
+    Optional<CartItem> findByMemberIdAndProductId(Long memberId, Long productId);
 
     // paging
-    Page<CartItem> findAllByUserId(Long userId, PageRequest pageRequest);
+    Page<CartItem> findAllByMemberId(Long memberId, PageRequest pageRequest);
 
 }

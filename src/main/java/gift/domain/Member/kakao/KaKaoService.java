@@ -1,16 +1,15 @@
-package gift.domain.user.kakao;
+package gift.domain.Member.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
+import gift.domain.Member.Member;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import java.net.URI;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,28 +18,30 @@ import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KaKaoService {
+
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     private final KaKaoProperties kaKaoProperties;
-    private final JpaUserRepository userRepository;
+    private final JpaMemberRepository memberRepository;
 
     @Autowired
     public KaKaoService(
-        JpaUserRepository userRepository,
-        RestTemplateBuilder restTemplateBuilder,
+        JpaMemberRepository memberRepository,
+        RestTemplate restTemplate,
         ObjectMapper objectMapper,
         KaKaoProperties kaKaoProperties
     ) {
-        this.userRepository = userRepository;
-        this.restTemplate = restTemplateBuilder.build();
+        this.memberRepository = memberRepository;
+        this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.kaKaoProperties = kaKaoProperties;
     }
@@ -62,17 +63,20 @@ public class KaKaoService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return parseTokenResponse(response);
-        } else {
-            throw new BusinessException(ErrorCode.FORBIDDEN, "사용자 권한이 없습니다.");
         }
+
+        throw new BusinessException(ErrorCode.FORBIDDEN, "사용자 권한이 없습니다.");
     }
 
-    public User loginOrRegister(KaKaoToken kaKaoToken) {
+    @Transactional
+    public Member loginOrRegister(KaKaoToken kaKaoToken) {
         String email = getEmailFromKaKaoServer(kaKaoToken.accessToken());
-        if (!userRepository.existsByEmail(email)) {
+        if (!memberRepository.existsByEmail(email)) {
             return createKaKaoUser(email, kaKaoToken);
         }
-        return userRepository.findByEmail(email);
+        Member member = memberRepository.findByEmail(email);
+        member.updateKaKaoToken(kaKaoToken);
+        return member;
     }
 
     private String getEmailFromKaKaoServer(String accessToken) {
@@ -107,15 +111,15 @@ public class KaKaoService {
         }
     }
 
-    private User createKaKaoUser(String email, KaKaoToken kaKaoToken) {
+    private Member createKaKaoUser(String email, KaKaoToken kaKaoToken) {
         String salt = UUID.randomUUID().toString();
         String ori_password = salt + UUID.randomUUID().toString();
         String hashed_password = ori_password; // hash 과정 생략
 
-        User user = new User(email, hashed_password, kaKaoToken.accessToken(),
+        Member member = new Member(email, hashed_password, kaKaoToken.accessToken(),
             kaKaoToken.refreshToken());
-        userRepository.save(user);
-        return userRepository.findByEmail(email);
+        memberRepository.save(member);
+        return memberRepository.findByEmail(email);
     }
 
     public String buildLoginPageUrl() {

@@ -103,7 +103,7 @@ public class OptionService {
         if (Objects.equals(option.getQuantity(), quantity)) {
             // 상품에 옵션이 1개밖에 없을 때 - 옵션, 해당 옵션의 상품 모두 삭제
             if (product.hasOneOption()) {
-                productRepository.deleteById(option.getProduct().getId()); // Cascade 로 옵션도 삭제됨
+                productRepository.delete(option.getProduct()); // Cascade 로 옵션도 삭제됨
                 return;
             }
             // 상품에 옵션이 2개 이상일 때 - 옵션 삭제

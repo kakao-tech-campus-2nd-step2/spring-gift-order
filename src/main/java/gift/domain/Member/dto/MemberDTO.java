@@ -1,22 +1,22 @@
-package gift.domain.user.dto;
+package gift.domain.Member.dto;
 
-import gift.domain.user.User;
+import gift.domain.Member.Member;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public class UserDTO {
+public class MemberDTO {
 
     @Email
     private String email;
     @NotBlank
     private String password;
 
-    public UserDTO(String email, String password) {
+    public MemberDTO(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public UserDTO() {
+    public MemberDTO() {
     }
 
     public String getEmail() {
@@ -27,13 +27,13 @@ public class UserDTO {
         return password;
     }
 
-    public User toUser() {
-        return new User(this.email, this.password); // dto to entity
+    public Member toMember() {
+        return new Member(this.email, this.password); // dto to entity
     }
 
     @Override
     public String toString() {
-        return "UserDTO{" +
+        return "MemberDTO{" +
                "email='" + email + '\'' +
                ", password='" + password + '\'' +
                '}';

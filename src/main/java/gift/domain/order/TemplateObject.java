@@ -1,18 +1,11 @@
 package gift.domain.order;
 
 public record TemplateObject(
-    String object_type,
+    String objectType,
     String text,
     Link link,
-    String button_title
+    String buttonTitle
 ) {
-
-    public record Link(
-        String web_url,
-        String mobile_web_url
-    ) {
-
-    }
 
     public TemplateObject(String text) {
         this(
@@ -23,5 +16,12 @@ public record TemplateObject(
                 "https://developers.kakao.com"
             ),
             "check button");
+    }
+
+    public record Link(
+        String webUrl,
+        String mobileWebUrl
+    ) {
+
     }
 }

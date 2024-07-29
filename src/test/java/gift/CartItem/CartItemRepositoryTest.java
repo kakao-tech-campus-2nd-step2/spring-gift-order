@@ -3,14 +3,14 @@ package gift.CartItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import gift.domain.Member.Member;
 import gift.domain.category.Category;
 import gift.domain.category.JpaCategoryRepository;
 import gift.domain.cartItem.CartItem;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import jdk.jfr.Description;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,7 +33,7 @@ public class CartItemRepositoryTest {
     @Autowired
     private JpaCartItemRepository cartItemRepository;
     @Autowired
-    private JpaUserRepository userRepository;
+    private JpaMemberRepository memberRepository;
     @Autowired
     private JpaProductRepository productRepository;
     @Autowired
@@ -42,7 +41,7 @@ public class CartItemRepositoryTest {
     @Autowired
     private EntityManager entityManager;
 
-    private User user;
+    private Member member;
     private Product product1;
     private Product product2;
     private Category ethiopia;
@@ -52,9 +51,9 @@ public class CartItemRepositoryTest {
     void setUp() {
         ethiopia = categoryRepository.saveAndFlush(new Category("에티오피아산", "에티오피아 산 원두를 사용했습니다."));
         jamaica = categoryRepository.saveAndFlush(new Category("자메이카산", "자메이카산 원두를 사용했습니다."));
-        User user = new User("minji@example.com", "password1");
-        User savedUser = userRepository.saveAndFlush(user);
-        this.user = savedUser;
+        Member user = new Member("minji@example.com", "password1");
+        Member savedMember = memberRepository.saveAndFlush(user);
+        this.member = savedMember;
 
         Product product1 = new Product("아이스 아메리카노 T",  ethiopia, 4500, "https://example.com/image.jpg");
         Product product2 = new Product("아이스 카페모카 M", jamaica, 6300, "https://example.com/image.jpg");
@@ -69,9 +68,9 @@ public class CartItemRepositoryTest {
     @Description("장바구니 조회")
     void getCartItems() {
         // when
-        cartItemRepository.save(new CartItem(user, product1));
-        cartItemRepository.save(new CartItem(user, product2));
-        List<CartItem> cartItems = cartItemRepository.findAllByUserId(user.getId());
+        cartItemRepository.save(new CartItem(member, product1));
+        cartItemRepository.save(new CartItem(member, product2));
+        List<CartItem> cartItems = cartItemRepository.findAllByMemberId(member.getId());
         // then
         assertThat(cartItems.size()).isEqualTo(2);
     }
@@ -80,12 +79,12 @@ public class CartItemRepositoryTest {
     @Description("장바구니 추가")
     void addCartItem() {
         // when
-        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(user, product1));
-        List<CartItem> cartItems = cartItemRepository.findAllByUser(savedCartItem.getUser());
+        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(member, product1));
+        List<CartItem> cartItems = cartItemRepository.findAllByMember(savedCartItem.getMember());
         // then
         assertThat(cartItems.size()).isEqualTo(1);
         CartItem cartItem = cartItems.get(0);
-        assertThat(cartItem.getUser()).isEqualTo(user);
+        assertThat(cartItem.getMember()).isEqualTo(member);
         assertThat(cartItem.getProduct()).isEqualTo(product1);
     }
 
@@ -93,9 +92,9 @@ public class CartItemRepositoryTest {
     @Description("장바구니 삭제")
     void deleteCartItem() {
         // when
-        CartItem savedCartItem = cartItemRepository.save(new CartItem(user, product1));
+        CartItem savedCartItem = cartItemRepository.save(new CartItem(member, product1));
         cartItemRepository.deleteById(savedCartItem.getId());
-        List<CartItem> cartItems = cartItemRepository.findAllByUserId(user.getId());
+        List<CartItem> cartItems = cartItemRepository.findAllByMemberId(member.getId());
         // then
         assertThat(cartItems.size()).isEqualTo(0);
     }
@@ -104,7 +103,7 @@ public class CartItemRepositoryTest {
     @Description("지연 로딩 - 쿼리 확인")
     void fetchLazy() {
         // when
-        CartItem savedCartItem = cartItemRepository.save(new CartItem(user, product1));
+        CartItem savedCartItem = cartItemRepository.save(new CartItem(member, product1));
         clear();
 
         // then
@@ -115,16 +114,16 @@ public class CartItemRepositoryTest {
     @Description("지연 로딩 - 연관 엔티티 조회 시 쿼리 늦게 나감")
     void fetchLazyAndGetLater() {
         // given
-        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(user, product1));
+        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(member, product1));
         clear();
 
         // when
         CartItem findCartItem = cartItemRepository.findById(savedCartItem.getId()).get();
-        User findUser = findCartItem.getUser();
+        Member findMember = findCartItem.getMember();
         Product findProduct = findCartItem.getProduct();
 
         // then - 직접 사용해야 SELECT 쿼리 나감
-        System.out.println("findUser = " + findUser);
+        System.out.println("findMember = " + findMember);
         System.out.println("findProduct = " + findProduct);
     }
 
@@ -132,11 +131,11 @@ public class CartItemRepositoryTest {
     @Description("식별자 vs non 식별자를 사용했을 때 영속성 컨텍스트 내 엔티티 조회 가능 여부 확인")
     void testEntityRetrievalByIdVsByName() {
         // given
-        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(user, product1));
+        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(member, product1));
 
         // when - id(식별자) 조회 -> 영속성 컨텍스트에서 찾을 수 있음, 기타 필드로 조회 -> db 에 쿼리 날려야 함
         cartItemRepository.findById(savedCartItem.getId());
-        CartItem cartItem = cartItemRepository.findByUserIdAndProductId(user.getId(),
+        CartItem cartItem = cartItemRepository.findByMemberIdAndProductId(member.getId(),
             product1.getId()).orElseThrow();
     }
 
@@ -144,13 +143,13 @@ public class CartItemRepositoryTest {
     @Description("정상 페이징 확인")
     void testPagingSuccess() {
         // given
-        CartItem savedCartItem1 = cartItemRepository.saveAndFlush(new CartItem(user, product1));
-        CartItem savedCartItem2 = cartItemRepository.saveAndFlush(new CartItem(user, product2));
+        CartItem savedCartItem1 = cartItemRepository.saveAndFlush(new CartItem(member, product1));
+        CartItem savedCartItem2 = cartItemRepository.saveAndFlush(new CartItem(member, product2));
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Direction.DESC, "id"));
         clear();
 
         // when
-        Page<CartItem> cartItems = cartItemRepository.findAllByUserId(user.getId(), pageRequest);
+        Page<CartItem> cartItems = cartItemRepository.findAllByMemberId(member.getId(), pageRequest);
 
         // then
         assertAll(

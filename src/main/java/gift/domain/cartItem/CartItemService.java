@@ -1,10 +1,12 @@
 package gift.domain.cartItem;
 
+import gift.domain.Member.Member;
 import gift.domain.cartItem.dto.CartItemDTO;
+import gift.domain.option.JpaOptionRepository;
+import gift.domain.option.Option;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
 import gift.global.exception.cartItem.CartItemNotFoundException;
 import gift.global.exception.product.ProductNotFoundException;
 import gift.global.exception.user.UserNotFoundException;
@@ -21,36 +23,39 @@ public class CartItemService {
 
     private final JpaProductRepository productRepository;
     private final JpaCartItemRepository cartItemRepository;
-    private final JpaUserRepository userRepository;
+    private final JpaMemberRepository userRepository;
+    private final JpaOptionRepository optionRepository;
 
     public CartItemService(
         JpaProductRepository jpaProductRepository,
         JpaCartItemRepository jpaCartItemRepository,
-        JpaUserRepository jpaUserRepository
+        JpaMemberRepository jpaMemberRepository,
+        JpaOptionRepository jpaOptionRepository
     ) {
-        this.userRepository = jpaUserRepository;
+        this.userRepository = jpaMemberRepository;
         this.cartItemRepository = jpaCartItemRepository;
         this.productRepository = jpaProductRepository;
+        this.optionRepository = jpaOptionRepository;
     }
 
     /**
      * 장바구니에 상품 ID 추가
      */
     @Transactional
-    public int addCartItem(Long userId, Long productId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(userId));
+    public int addCartItem(Long memberId, Long productId) {
+        Member member = userRepository.findById(memberId)
+            .orElseThrow(() -> new UserNotFoundException(memberId));
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new ProductNotFoundException(productId));
 
         // 기존에 존재하면 update
-        Optional<CartItem> findCartItem = cartItemRepository.findByUserIdAndProductId(userId,
+        Optional<CartItem> findCartItem = cartItemRepository.findByMemberIdAndProductId(memberId,
             productId);
         if (findCartItem.isPresent()) {
             return findCartItem.get().addOneMore();
         }
         // 기존에 없었으면 new
-        CartItem newCartItem = new CartItem(user, product);
+        CartItem newCartItem = new CartItem(member, product);
         cartItemRepository.save(newCartItem);
         return newCartItem.getCount();
     }
@@ -58,10 +63,11 @@ public class CartItemService {
     /**
      * 장바구니 상품 조회 - 페이징(매개변수별)
      */
-    public List<CartItemDTO> getProductsInCartByUserIdAndPageAndSort(Long userId, int page, int size, Sort sort) {
+    public List<CartItemDTO> getProductsInCartByMemberIdAndPageAndSort(Long memberId, int page,
+        int size, Sort sort) {
         PageRequest pageRequest = PageRequest.of(page, size, sort);
 
-        Page<CartItem> cartItemsPage = cartItemRepository.findAllByUserId(userId,
+        Page<CartItem> cartItemsPage = cartItemRepository.findAllByMemberId(memberId,
             pageRequest);
 
         List<CartItemDTO> cartItemDTOS = cartItemsPage.getContent().stream()
@@ -91,5 +97,14 @@ public class CartItemService {
 
         findCartItem.updateCount(count); // 수량 수정
         return count;
+    }
+
+    /**
+     * 장바구니에 해당 옵션의 상품이 존재하면 삭제
+     */
+    public void deleteCartItemIfExists(Long memberId, Long optionId) {
+        Option option = optionRepository.findById(optionId).get();
+        cartItemRepository.findByMemberIdAndProductId(memberId, option.getProduct().getId())
+            .ifPresent(cartItemRepository::delete);
     }
 }

@@ -1,6 +1,7 @@
-package gift.domain.user;
+package gift.domain.Member;
 
 import gift.domain.BaseTimeEntity;
+import gift.domain.Member.kakao.KaKaoToken;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,13 +9,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Entity
-@Table(name = "users")
-public class User extends BaseTimeEntity {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,23 +26,24 @@ public class User extends BaseTimeEntity {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private MemberRole role;
 
     private String accessToken;
     private String refreshToken;
 
-    protected User() {
+    protected Member() {
     }
 
-    public User(String email, String password) {
+    public Member(String email, String password) {
         this.email = email;
         this.password = password;
-        this.role = UserRole.USER;
+        this.role = MemberRole.USER;
     }
-    public User(String email, String password, String accessToken, String refreshToken) {
+
+    public Member(String email, String password, String accessToken, String refreshToken) {
         this.email = email;
         this.password = password;
-        this.role = UserRole.USER;
+        this.role = MemberRole.USER;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
@@ -85,14 +85,19 @@ public class User extends BaseTimeEntity {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        User user = (User) o;
-        return Objects.equals(id, user.id) &&
-               Objects.equals(email, user.email) &&
-               Objects.equals(password, user.password);
+        Member member = (Member) o;
+        return Objects.equals(id, member.id) &&
+               Objects.equals(email, member.email) &&
+               Objects.equals(password, member.password);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, email, password);
+    }
+
+    public void updateKaKaoToken(KaKaoToken kaKaoToken) {
+        this.accessToken = kaKaoToken.accessToken();
+        this.refreshToken = kaKaoToken.refreshToken();
     }
 }

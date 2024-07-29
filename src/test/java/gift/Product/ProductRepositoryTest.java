@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import gift.domain.Member.Member;
 import gift.domain.category.Category;
 import gift.domain.category.JpaCategoryRepository;
 import gift.domain.cartItem.CartItem;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class ProductRepositoryTest {
     @Autowired
     private JpaCategoryRepository categoryRepository;
     @Autowired
-    private JpaUserRepository userRepository;
+    private JpaMemberRepository memberRepository;
     @Autowired
     private JpaCartItemRepository cartItemRepository;
 
@@ -134,8 +134,8 @@ public class ProductRepositoryTest {
     void deleteConstraintViolationError() {
         // given
         Product savedProduct = productRepository.saveAndFlush(product1);
-        User savedUser = userRepository.saveAndFlush(new User("minji@example.com", "password1"));
-        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(savedUser, savedProduct));
+        Member savedMember = memberRepository.saveAndFlush(new Member("minji@example.com", "password1"));
+        CartItem savedCartItem = cartItemRepository.saveAndFlush(new CartItem(savedMember, savedProduct));
         clear();
 
         // when

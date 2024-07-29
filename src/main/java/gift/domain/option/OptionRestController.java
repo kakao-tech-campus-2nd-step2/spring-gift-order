@@ -5,6 +5,9 @@ import gift.domain.option.dto.OptionResponseDTO;
 import gift.global.response.ResponseMaker;
 import gift.global.response.ResultResponseDto;
 import gift.global.response.SimpleResultResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Option", description = "Option API")
 public class OptionRestController {
 
     private final OptionService optionService;
@@ -31,6 +35,7 @@ public class OptionRestController {
      * 모든 옵션 목록 조회
      */
     @GetMapping("/options")
+    @Operation(summary = "모든 옵션 조회")
     public ResponseEntity<ResultResponseDto<List<Option>>> getOptions() {
         List<Option> options = optionService.getOptions();
         return ResponseMaker.createResponse(HttpStatus.OK, "모든 옵션 조회 성공", options);
@@ -40,8 +45,10 @@ public class OptionRestController {
      * 특정 상품의 옵션 목록 조회
      */
     @GetMapping("/products/{productId}/options")
+    @Operation(summary = "특정 상품의 옵션 목록 조회")
     public ResponseEntity<ResultResponseDto<OptionResponseDTO>> getOptionsByProductId(
-        @PathVariable("productId") Long productId) {
+        @Parameter(description = "상품 ID") @PathVariable("productId") Long productId
+    ) {
         List<Option> options = optionService.getOptionsByProductId(productId);
         OptionResponseDTO optionResponseDTO = new OptionResponseDTO(options);
 
@@ -52,9 +59,11 @@ public class OptionRestController {
      * 특정 상품에 옵션 추가
      */
     @PostMapping("/products/{productId}/options")
+    @Operation(summary = "특정 상품에 옵션 추가")
     public ResponseEntity<SimpleResultResponseDto> addOption(
-        @PathVariable("productId") Long productId,
-        OptionRequestDTO optionRequestDTO) {
+        @Parameter(description = "상품 ID") @PathVariable("productId") Long productId,
+        OptionRequestDTO optionRequestDTO
+    ) {
         optionService.addOption(productId, optionRequestDTO);
 
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "해당 상품에 옵션 추가 성공");
@@ -64,10 +73,12 @@ public class OptionRestController {
      * 특정 상품의 옵션 수정
      */
     @PutMapping("/products/{productId}/options/{optionId}")
+    @Operation(summary = "특정 상품의 옵션 수정")
     public ResponseEntity<SimpleResultResponseDto> updateOption(
-        @PathVariable("productId") Long productId,
-        @PathVariable("optionId") Long optionId,
-        @Valid @RequestBody OptionRequestDTO optionRequestDTO) {
+        @Parameter(description = "상품 ID") @PathVariable("productId") Long productId,
+        @Parameter(description = "옵션 ID") @PathVariable("optionId") Long optionId,
+        @Valid @RequestBody OptionRequestDTO optionRequestDTO
+    ) {
         optionService.updateOption(productId, optionId, optionRequestDTO);
 
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "해당 상품에 옵션 수정 성공");
