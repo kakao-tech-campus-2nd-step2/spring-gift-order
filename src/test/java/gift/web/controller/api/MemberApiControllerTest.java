@@ -110,7 +110,6 @@ class MemberApiControllerTest {
         mockMvc
             .perform(
                 post(BASE_URL + "/register")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(content)
             )
