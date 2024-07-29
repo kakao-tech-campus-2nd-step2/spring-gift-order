@@ -61,7 +61,7 @@ public class KakaoClient {
             .retrieve()
             .toEntity(String.class);
     }
-
+  
     public KakaoProperties getProperties(){
         return properties;
     }
