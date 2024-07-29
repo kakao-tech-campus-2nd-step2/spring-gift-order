@@ -7,12 +7,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Table
@@ -34,8 +37,8 @@ public class Option {
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
-  @ManyToOne
-  private Orders orders;
+  @ManyToMany(mappedBy = "option")
+  private List<Orders> orders;
 
   protected Option() {
   }
