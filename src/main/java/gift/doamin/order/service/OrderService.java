@@ -2,9 +2,7 @@ package gift.doamin.order.service;
 
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.doamin.category.entity.Category;
 import gift.doamin.order.dto.Link;
 import gift.doamin.order.dto.MessageTemplate;
 import gift.doamin.order.dto.OrderRequest;
@@ -12,15 +10,12 @@ import gift.doamin.order.dto.OrderResponse;
 import gift.doamin.order.entity.Order;
 import gift.doamin.order.repository.OrderRepository;
 import gift.doamin.product.entity.Option;
-import gift.doamin.product.entity.Product;
 import gift.doamin.product.repository.OptionRepository;
 import gift.doamin.user.entity.KakaoOAuthToken;
 import gift.doamin.user.entity.User;
-import gift.doamin.user.entity.UserRole;
 import gift.doamin.user.repository.KakaoOAuthTokenRepository;
 import gift.doamin.user.service.OAuthService;
 import gift.doamin.wishlist.repository.JpaWishListRepository;
-import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;

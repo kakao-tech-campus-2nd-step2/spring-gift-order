@@ -1,22 +1,31 @@
 package gift.doamin.product.dto;
 
 import gift.doamin.product.entity.Product;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+@Schema(description = "상품 정보")
 public class ProductParam {
 
+    @Schema(description = "상품 id")
     private Long id;
 
+    @Schema(description = "등록한 사용자 id")
     private Long userId;
 
+    @Schema(description = "상품의 카테고리 id")
     private Long categoryId;
 
+    @Schema(description = "상품명")
     private String name;
 
+    @Schema(description = "상품 가격")
     private Integer price;
 
+    @Schema(description = "상품 이미지 url")
     private String imageUrl;
 
+    @Schema(description = "상품의 옵션 목록")
     private List<OptionParam> options;
 
     public ProductParam(Product product) {

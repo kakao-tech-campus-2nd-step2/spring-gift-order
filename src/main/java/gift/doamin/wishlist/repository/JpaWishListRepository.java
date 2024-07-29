@@ -1,8 +1,6 @@
 package gift.doamin.wishlist.repository;
 
-import gift.doamin.user.entity.User;
 import gift.doamin.wishlist.entity.Wish;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

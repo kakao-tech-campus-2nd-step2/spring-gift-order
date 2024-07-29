@@ -1,6 +1,5 @@
 package gift.global;
 
-import gift.doamin.user.entity.User;
 import gift.doamin.user.exception.UserNotFoundException;
 import gift.doamin.user.repository.JpaUserRepository;
 import org.springframework.core.MethodParameter;
@@ -14,6 +13,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolver {
+
     private final JpaUserRepository userRepository;
 
     public LoginMemberArgumentResolver(JpaUserRepository userRepository) {
@@ -30,7 +30,7 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if(authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new IllegalArgumentException("로그인되지 않은 사용자입니다.");
         }
 

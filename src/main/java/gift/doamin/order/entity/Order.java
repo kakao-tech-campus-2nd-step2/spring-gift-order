@@ -35,7 +35,8 @@ public class Order {
 
     LocalDateTime orderDateTime;
 
-    protected Order() {}
+    protected Order() {
+    }
 
     public Order(User sender, User receiver, Option option, Integer quantity, String message) {
         this.sender = sender;
