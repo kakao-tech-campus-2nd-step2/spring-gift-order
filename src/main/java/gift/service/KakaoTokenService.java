@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class KakaoTokenService {
 
-    private final KakaoTokenRepository kakaoTokenRepository;
+    public final KakaoTokenRepository kakaoTokenRepository;
 
     @Autowired
     public KakaoTokenService(KakaoTokenRepository kakaoTokenRepository) {

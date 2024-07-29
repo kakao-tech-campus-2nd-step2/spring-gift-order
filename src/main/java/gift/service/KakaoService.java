@@ -126,4 +126,35 @@ public class KakaoService {
         kakaoTokenService.saveToken(kakaoTokenDto);
 
     }
+
+
+    public void sendKakaoMessage(String accessToken, String message) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.setBearerAuth(accessToken);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("template_object", new JSONObject()
+                .put("object_type", "text")
+                .put("text", message)
+                .put("link", new JSONObject()
+                        .put("web_url", "https://gift.kakao.com/home")
+                        .put("mobile_web_url", "https://gift.kakao.com/home"))
+                .put("button_title", "자세히 보기")
+                .toString());
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(params, headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            if (response.getStatusCode() != HttpStatus.OK) {
+                throw new RuntimeException("Failed to send Kakao message: " + response.getStatusCode() + " " + response.getBody());
+            }
+        } catch (Exception e) {
+            System.err.println("Exception while sending Kakao message: " + e.getMessage());
+            throw new RuntimeException("Exception while sending Kakao message", e);
+        }
+    }
+
 }
