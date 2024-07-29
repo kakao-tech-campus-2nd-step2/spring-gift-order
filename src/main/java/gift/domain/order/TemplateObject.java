@@ -1,10 +1,10 @@
 package gift.domain.order;
 
 public record TemplateObject(
-    String object_type,
+    String objectType,
     String text,
     Link link,
-    String button_title
+    String buttonTitle
 ) {
 
     public TemplateObject(String text) {
@@ -19,8 +19,8 @@ public record TemplateObject(
     }
 
     public record Link(
-        String web_url,
-        String mobile_web_url
+        String webUrl,
+        String mobileWebUrl
     ) {
 
     }
