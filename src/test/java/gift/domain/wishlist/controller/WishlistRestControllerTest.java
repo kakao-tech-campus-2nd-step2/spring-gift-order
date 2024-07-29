@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.domain.user.entity.AuthProvider;
 import gift.auth.jwt.JwtProvider;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Product;
@@ -58,7 +59,7 @@ class WishlistRestControllerTest {
     private ObjectMapper objectMapper;
 
 
-    private static final User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER);
+    private static final User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER, AuthProvider.LOCAL);
     private static final Category category = new Category(1L, "교환권", "#FFFFFF", "https://gift-s.kakaocdn.net/dn/gift/images/m640/dimm_theme.png", "test");
     private static final Product product = new Product(1L, category, "아이스 카페 아메리카노 T", 4500, "https://image.istarbucks.co.kr/upload/store/skuimg/2021/04/[110563]_20210426095937947.jpg");
 

@@ -14,8 +14,9 @@ import gift.domain.product.dto.ProductRequest;
 import gift.domain.product.dto.ProductResponse;
 import gift.domain.product.entity.Category;
 import gift.domain.product.entity.Product;
+import gift.domain.product.repository.CategoryJpaRepository;
 import gift.domain.product.repository.ProductJpaRepository;
-import gift.domain.wishlist.service.WishlistService;
+import gift.domain.wishlist.repository.WishlistJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -40,13 +41,13 @@ class ProductServiceTest {
     private ProductJpaRepository productJpaRepository;
 
     @MockBean
-    private CategoryService categoryService;
+    private CategoryJpaRepository categoryJpaRepository;
 
     @MockBean
     private OptionService optionService;
 
     @MockBean
-    private WishlistService wishlistService;
+    private WishlistJpaRepository wishlistJpaRepository;
 
     private static final List<OptionRequest> optionRequestDtos = List.of(
         new OptionRequest("수박맛", 969),
@@ -61,7 +62,7 @@ class ProductServiceTest {
         // given
         Product expected = PRODUCT_REQUEST_DTO.toProduct(category);
 
-        given(categoryService.readById(anyLong())).willReturn(category);
+        given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.of(category));
         given(productJpaRepository.save(any(Product.class))).willReturn(expected);
         doNothing().when(optionService).create(any(Product.class), any());
 
@@ -159,7 +160,7 @@ class ProductServiceTest {
         Product expected = productRequest.toProduct(category);
 
         given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
-        given(categoryService.readById(anyLong())).willReturn(category);
+        given(categoryJpaRepository.findById(anyLong())).willReturn(Optional.of(category));
         given(productJpaRepository.save(any(Product.class))).willReturn(expected);
 
         // when
@@ -176,7 +177,7 @@ class ProductServiceTest {
         Product product = PRODUCT_REQUEST_DTO.toProduct(category);
 
         given(productJpaRepository.findById(anyLong())).willReturn(Optional.of(product));
-        willDoNothing().given(wishlistService).deleteAllByProductId(anyLong());
+        willDoNothing().given(wishlistJpaRepository).deleteAllByProductId(anyLong());
         willDoNothing().given(productJpaRepository).delete(any(Product.class));
 
         // when

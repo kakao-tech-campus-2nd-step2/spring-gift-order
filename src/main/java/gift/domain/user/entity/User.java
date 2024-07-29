@@ -1,7 +1,5 @@
 package gift.domain.user.entity;
 
-import gift.domain.wishlist.entity.WishItem;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,10 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table
@@ -35,16 +30,22 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private AuthProvider authProvider;
+
     protected User() {
 
     }
 
-    public User(Long id, String name, String email, String password, Role role) {
+    public User(Long id, String name, String email, String password, Role role,
+        AuthProvider authProvider) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.authProvider = authProvider;
     }
 
     public Long getId() {
@@ -65,6 +66,10 @@ public class User {
 
     public Role getRole() {
         return role;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
     }
 
     public boolean checkPassword(String password) {

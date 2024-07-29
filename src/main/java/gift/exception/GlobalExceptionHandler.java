@@ -46,4 +46,10 @@ public class GlobalExceptionHandler {
         Locale locale = LocaleContextHolder.getLocale();
         return ResponseEntity.status(ex.getStatus()).body(messageSource.getMessage(ex.getMessage(), null, locale));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
 }

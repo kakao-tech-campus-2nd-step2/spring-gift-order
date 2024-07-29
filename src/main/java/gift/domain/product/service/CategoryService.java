@@ -1,13 +1,12 @@
 package gift.domain.product.service;
 
 import gift.domain.product.dto.CategoryResponse;
-import gift.domain.product.repository.CategoryJpaRepository;
 import gift.domain.product.entity.Category;
-import gift.exception.InvalidCategoryInfoException;
+import gift.domain.product.repository.CategoryJpaRepository;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class CategoryService {
 
     private final CategoryJpaRepository categoryJpaRepository;
@@ -19,10 +18,5 @@ public class CategoryService {
     public List<CategoryResponse> readAll() {
         List<Category> categories = categoryJpaRepository.findAll();
         return categories.stream().map(CategoryResponse::from).toList();
-    }
-
-    public Category readById(long categoryId) {
-        return categoryJpaRepository.findById(categoryId)
-            .orElseThrow(() -> new InvalidCategoryInfoException("error.invalid.category.id"));
     }
 }

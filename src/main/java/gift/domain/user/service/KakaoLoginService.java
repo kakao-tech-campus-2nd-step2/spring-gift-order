@@ -1,46 +1,72 @@
 package gift.domain.user.service;
 
-import gift.auth.dto.Token;
-import gift.external.api.kakao.KakaoApiProvider;
+import gift.auth.jwt.JwtProvider;
+import gift.auth.jwt.JwtToken;
+import gift.domain.user.entity.AuthProvider;
+import gift.domain.user.entity.OauthToken;
+import gift.domain.user.entity.Role;
+import gift.domain.user.entity.User;
+import gift.domain.user.repository.OauthTokenJpaRepository;
+import gift.domain.user.repository.UserJpaRepository;
+import gift.exception.InvalidUserInfoException;
+import gift.external.api.kakao.dto.KakaoToken;
 import gift.external.api.kakao.dto.KakaoUserInfo;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class KakaoLoginService {
+public class KakaoLoginService implements OauthLoginService {
 
-    private final KakaoApiProvider kakaoApiProvider;
-    private final UserService userService;
+    private final OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider;
+    private final UserJpaRepository userJpaRepository;
+    private final OauthTokenJpaRepository oauthTokenJpaRepository;
+    private final JwtProvider jwtProvider;
 
-    public KakaoLoginService(KakaoApiProvider kakaoApiProvider, UserService userService) {
-        this.kakaoApiProvider = kakaoApiProvider;
-        this.userService = userService;
+    public KakaoLoginService(
+        OauthApiProvider<KakaoToken, KakaoUserInfo> oauthApiProvider,
+        UserJpaRepository userJpaRepository,
+        OauthTokenJpaRepository oauthTokenJpaRepository,
+        JwtProvider jwtProvider
+    ) {
+        this.oauthApiProvider = oauthApiProvider;
+        this.userJpaRepository = userJpaRepository;
+        this.oauthTokenJpaRepository = oauthTokenJpaRepository;
+        this.jwtProvider = jwtProvider;
     }
 
     public String getAuthCodeUrl() {
-        return kakaoApiProvider.getAuthCodeUrl();
+        return oauthApiProvider.getAuthCodeUrl();
     }
 
-    public Token login(String code) {
-        String accessToken = kakaoApiProvider.getToken(code).accessToken();
-        kakaoApiProvider.validateAccessToken(accessToken);
-        KakaoUserInfo userInfo = kakaoApiProvider.getUserInfo(accessToken);
+    @Transactional
+    public JwtToken login(String code) {
+        KakaoToken kakaoToken = oauthApiProvider.getToken(code);
+        String accessToken = kakaoToken.accessToken();
+        String refreshToken = kakaoToken.refreshToken();
+
+        oauthApiProvider.validateAccessToken(accessToken);
+        KakaoUserInfo userInfo = oauthApiProvider.getUserInfo(accessToken);
 
         String email = userInfo.kakaoAccount().email();
         String name = userInfo.kakaoAccount().profile().nickname();
 
-        Optional<UserDto> userDto = userService.findByEmail(email);
-        if (userDto.isEmpty()) {
-            return signUp(name, email);
-        }
-
-        return userService.login(new UserLoginDto(email, userDto.get().password()));
+        return userJpaRepository.findByEmail(email)
+            .map(user -> {
+                if (user.getAuthProvider() != AuthProvider.KAKAO) {
+                    throw new InvalidUserInfoException("error.invalid.userinfo.provider");
+                }
+                oauthTokenJpaRepository.save(new OauthToken(null, user, AuthProvider.KAKAO, accessToken, refreshToken));
+                return jwtProvider.generateToken(user);
+            })
+            .orElseGet(() -> signUp(name, email, accessToken, refreshToken));
     }
 
-    private Token signUp(String name, String email) {
-        UserDto userDto = new UserDto(null, name, email, "kakao", null);
-        return userService.signUp(userDto);
+    private JwtToken signUp(String name, String email, String accessToken, String refreshToken) {
+        User user = new User(null, name, email, "kakao", Role.USER, AuthProvider.KAKAO);
+        User savedUser = userJpaRepository.save(user);
+
+        oauthTokenJpaRepository.save(new OauthToken(null, savedUser, AuthProvider.KAKAO, accessToken, refreshToken));
+
+        return jwtProvider.generateToken(savedUser);
     }
 }

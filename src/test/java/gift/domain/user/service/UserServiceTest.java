@@ -6,11 +6,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import gift.domain.user.entity.AuthProvider;
+import gift.auth.jwt.JwtToken;
 import gift.auth.jwt.JwtProvider;
-import gift.auth.dto.Token;
 import gift.domain.user.repository.UserJpaRepository;
-import gift.domain.user.dto.UserDto;
-import gift.domain.user.dto.UserLoginDto;
+import gift.domain.user.dto.UserRequest;
+import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.entity.Role;
 import gift.domain.user.entity.User;
 import gift.exception.InvalidUserInfoException;
@@ -40,45 +41,45 @@ class UserServiceTest {
     @DisplayName("회원 가입 서비스 테스트")
     void signUp_success() {
         // given
-        UserDto userDto = new UserDto(null, "testUser", "test@test.com", "test123", null);
+        UserRequest userRequest = new UserRequest("testUser", "test@test.com", "test123");
 
-        User user = userDto.toUser();
+        User user = userRequest.toUser();
         given(userJpaRepository.save(any(User.class))).willReturn(user);
 
-        Token expectedToken = new Token("token");
-        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedToken);
+        JwtToken expectedJwtToken = new JwtToken("token");
+        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedJwtToken);
 
         // when
-        Token actualToken = userService.signUp(userDto);
+        JwtToken actualJwtToken = userService.signUp(userRequest);
 
         // then
-        assertThat(actualToken).isEqualTo(expectedToken);
+        assertThat(actualJwtToken).isEqualTo(expectedJwtToken);
     }
 
     @Test
     @DisplayName("로그인 서비스 테스트")
     void login_success() {
         // given
-        UserLoginDto loginDto = new UserLoginDto("test@test.com", "test123");
+        UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "test123");
 
-        User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER);
+        User user = new User(1L, "testUser", "test@test.com", "test123", Role.USER, AuthProvider.LOCAL);
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.of(user));
 
-        Token expectedToken = new Token("token");
-        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedToken);
+        JwtToken expectedJwtToken = new JwtToken("token");
+        given(jwtProvider.generateToken(any(User.class))).willReturn(expectedJwtToken);
 
         // when
-        Token actualToken = userService.login(loginDto);
+        JwtToken actualJwtToken = userService.login(loginDto);
 
         // then
-        assertThat(actualToken).isEqualTo(expectedToken);
+        assertThat(actualJwtToken).isEqualTo(expectedJwtToken);
     }
 
     @Test
     @DisplayName("로그인 서비스 테스트 - 존재하지 않는 이메일")
     void login_fail_email_error() {
         // given
-        UserLoginDto loginDto = new UserLoginDto("test@test.com", "test123");
+        UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "test123");
 
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.empty());
 
@@ -92,10 +93,11 @@ class UserServiceTest {
     @DisplayName("로그인 서비스 테스트 - 틀린 비밀번호")
     void login_fail_password_error() {
         // given
-        UserLoginDto loginDto = new UserLoginDto("test@test.com", "test123");
+        UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "test123");
 
         User user = mock(User.class);
         given(userJpaRepository.findByEmail(eq("test@test.com"))).willReturn(Optional.of(user));
+        given(user.getAuthProvider()).willReturn(AuthProvider.LOCAL);
         given(user.checkPassword(eq("test123"))).willReturn(false);
 
         // when & then

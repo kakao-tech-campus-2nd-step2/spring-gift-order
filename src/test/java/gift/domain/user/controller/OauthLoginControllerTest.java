@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import gift.auth.dto.Token;
+import gift.auth.jwt.JwtToken;
 import gift.domain.user.service.KakaoLoginService;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ class OauthLoginControllerTest {
     @DisplayName("code를 통해 카카오 로그인 후 토큰을 반환한다.")
     void login() throws Exception {
         // given
-        Token expected = new Token("testToken");
+        JwtToken expected = new JwtToken("testToken");
         given(kakaoLoginService.login(anyString())).willReturn(expected);
 
         // when & then

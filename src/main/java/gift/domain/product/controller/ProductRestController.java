@@ -36,8 +36,8 @@ public class ProductRestController {
 
     @GetMapping
     public ResponseEntity<Page<ProductReadAllResponse>> readAll(Pageable pageable) {
-        Page<ProductReadAllResponse> productResponseDtos = productService.readAll(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(productResponseDtos);
+        Page<ProductReadAllResponse> productResponses = productService.readAll(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(productResponses);
     }
 
     @GetMapping("/{productId}")
