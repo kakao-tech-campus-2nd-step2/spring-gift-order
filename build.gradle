@@ -30,6 +30,8 @@ dependencies {
     // Spring AOP
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+    // Spring Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

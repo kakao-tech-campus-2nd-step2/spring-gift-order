@@ -21,11 +21,11 @@ public class Order {
 
     private final LocalDateTime orderDateTime = LocalDateTime.now();
 
-    public Order(Long userId, Long optionId, Long quantity, String message) {
+    public Order(Long userId, CreateOrderRequest request) {
         this.userId = userId;
-        this.optionId = optionId;
-        this.quantity = quantity;
-        this.message = message;
+        this.optionId = request.getOptionId();
+        this.quantity = request.getQuantity();
+        this.message = request.getMessage();
     }
 
     public Order() {

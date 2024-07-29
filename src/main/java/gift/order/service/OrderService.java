@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final AllimService allimService;
+    private final KakaoAllimService allimService;
 
     private final WishListService wishListService;
     private final KakaoOauthService kakaoOauthService;
 
-    public OrderService(OrderRepository orderRepository, AllimService allimService, WishListService wishListService, KakaoOauthService kakaoOauthService) {
+    public OrderService(OrderRepository orderRepository, KakaoAllimService allimService, WishListService wishListService, KakaoOauthService kakaoOauthService) {
         this.orderRepository = orderRepository;
         this.allimService = allimService;
         this.wishListService = wishListService;
@@ -27,7 +27,7 @@ public class OrderService {
         Long userId = kakaoOauthService.getKakaoUserProfile(accessToken).getId();
         wishListService.deleteProductFromWishList(userId, request.getOptionId());
 
-        Order order = orderRepository.save(new Order(userId, request.getOptionId(), request.getQuantity(), request.getMessage()));
+        Order order = orderRepository.save(new Order(userId, request));
         allimService.sendAllim(accessToken, order.toString());
 
         return order.toOrderCreateResponse();

@@ -22,6 +22,18 @@ public class KakaoOauthService {
     @Value("${kakao.redirect.uri}")
     private String redirectUri;
 
+    @Value("${kakao.ouath.token.uri}")
+    private String tokenUri;
+
+    @Value("${kakao.ouath.access.uri}")
+    private String accessUri;
+
+    @Value("${kakao.ouath.profile.uri}")
+    private String profileUri;
+
+    @Value("${kakao.ouath.logout.uri}")
+    private String logoutUri;
+
     private final RestClient restClient;
     private final UserService userManageService;
     private final JwtUtil jwtUtil;
@@ -44,7 +56,7 @@ public class KakaoOauthService {
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
-        return "https://kauth.kakao.com/oauth/authorize?" + queryString;
+        return tokenUri + queryString;
     }
 
     public KakaoLoginResponseDTO getKakaoAccessToken(String code) {
@@ -60,7 +72,7 @@ public class KakaoOauthService {
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
 
-        String uri = "https://kauth.kakao.com/oauth/token?" + queryString;
+        String uri = accessUri + queryString;
 
         return restClient
                 .post()
@@ -71,7 +83,7 @@ public class KakaoOauthService {
     }
 
     public KakaoProfile getKakaoUserProfile(String accessToken) {
-        String uri = "https://kapi.kakao.com/v2/user/me";
+        String uri = profileUri;
 
         return restClient
                 .get()
@@ -82,7 +94,7 @@ public class KakaoOauthService {
     }
 
     public void getKakaoLogout(String accessToken) {
-        String uri = "https://kapi.kakao.com/v1/user/logout";
+        String uri = logoutUri;
         restClient
                 .post()
                 .uri(uri)
