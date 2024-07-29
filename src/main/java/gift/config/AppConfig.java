@@ -1,7 +1,6 @@
 package gift.config;
 
 import gift.exception.ApiRequestException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -17,21 +16,17 @@ import java.io.IOException;
 @Configuration
 public class AppConfig {
 
-    @Value("${dev.connect.timeout}")
-    private int devConnectTimeout;
+    private final AppConfigProperties appConfigProperties;
 
-    @Value("${dev.read.timeout}")
-    private int devReadTimeout;
-
-    @Value("${prod.connect.timeout}")
-    private int prodConnectTimeout;
-
-    @Value("${prod.read.timeout}")
-    private int prodReadTimeout;
+    public AppConfig(AppConfigProperties appConfigProperties) {
+        this.appConfigProperties = appConfigProperties;
+    }
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate(clientHttpRequestFactory());
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
+        restTemplate.setErrorHandler(errorHandler());
+        return restTemplate;
     }
 
     private ClientHttpRequestFactory clientHttpRequestFactory() {
@@ -39,11 +34,11 @@ public class AppConfig {
 
         // 운영 환경에서는 prod 타임아웃값 사용
         if (isProduction()) {
-            factory.setConnectTimeout(prodConnectTimeout);
-            factory.setReadTimeout(prodReadTimeout);
+            factory.setConnectTimeout(appConfigProperties.getProdConnectTimeout());
+            factory.setReadTimeout(appConfigProperties.getProdReadTimeout());
         } else { // 개발 환경에서는 dev 타임아웃값 사용
-            factory.setConnectTimeout(devConnectTimeout);
-            factory.setReadTimeout(devReadTimeout);
+            factory.setConnectTimeout(appConfigProperties.getDevConnectTimeout());
+            factory.setReadTimeout(appConfigProperties.getDevReadTimeout());
         }
 
         return factory;

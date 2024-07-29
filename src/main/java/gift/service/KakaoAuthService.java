@@ -1,8 +1,8 @@
 package gift.service;
 
+import gift.config.KakaoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,16 +16,12 @@ public class KakaoAuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(KakaoAuthService.class);
 
-    @Value("${kakao.client-id}")
-    private String clientId;
-
-    @Value("${kakao.redirect-uri}")
-    private String redirectUri;
-
     private final RestTemplate kakaoRestTemplate;
+    private final KakaoProperties kakaoProperties;
 
-    public KakaoAuthService(RestTemplate kakaoRestTemplate) {
+    public KakaoAuthService(RestTemplate kakaoRestTemplate, KakaoProperties kakaoProperties) {
         this.kakaoRestTemplate = kakaoRestTemplate;
+        this.kakaoProperties = kakaoProperties;
     }
 
     public String getAccessToken(String code) {
@@ -36,8 +32,8 @@ public class KakaoAuthService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUri());
         body.add("code", code);
         body.add("scope", "talk_message");
 
@@ -63,10 +59,10 @@ public class KakaoAuthService {
     }
 
     public String getClientId() {
-        return clientId;
+        return kakaoProperties.getClientId();
     }
 
     public String getRedirectUri() {
-        return redirectUri;
+        return kakaoProperties.getRedirectUri();
     }
 }
