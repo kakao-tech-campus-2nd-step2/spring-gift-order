@@ -52,15 +52,23 @@ public class WishListService {
         wishListRepository.save(dtoToEntity(userId, product));
     }
 
+    // 특정 유저의 id로 만들어진 위시리스트 전체 삭제
     @Transactional
     public void removeWishList(Long userId) {
         List<WishListEntity> wishListEntities = wishListRepository.findByUserEntity_Id(userId,Pageable.unpaged()).getContent();
         wishListRepository.deleteAll(wishListEntities);
     }
 
+    // 특정 유저의 특정 상품 위시리스트 삭제
     @Transactional
     public void removeProductFromWishList(Long userId, Long productId) {
         Optional<WishListEntity> wishListEntityOpt = wishListRepository.findByUserEntity_IdAndProductEntity_Id(userId, productId);
+        wishListEntityOpt.ifPresent(wishListRepository::delete);
+    }
+
+    @Transactional
+    public void removeOptionFromWishList(Long userId, Long optionId) {
+        Optional<WishListEntity> wishListEntityOpt = wishListRepository.findByUserEntity_IdAndOptionEntity_Id(userId, optionId);
         wishListEntityOpt.ifPresent(wishListRepository::delete);
     }
 
