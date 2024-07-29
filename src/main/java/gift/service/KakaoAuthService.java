@@ -44,10 +44,14 @@ public class KakaoAuthService implements TokenHandler{
 
     private final RestTemplate restTemplate;
     private final UserRepository userRepository;
+    private final TokenService tokenService;
 
-    public KakaoAuthService(RestTemplate restTemplate, UserRepository userRepository) {
+    public KakaoAuthService(RestTemplate restTemplate, UserRepository userRepository,
+    		TokenService tokenService) {
         this.restTemplate = restTemplate;
         this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        tokenService.addTokenParser(this);
     }
 
     public Map<String, String> getAccessToken(String authorizationCode) {
