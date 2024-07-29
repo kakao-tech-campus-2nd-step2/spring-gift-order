@@ -2,6 +2,7 @@ package gift.Service;
 
 import gift.DTO.RequestOrderDTO;
 import gift.DTO.ResponseOrderDTO;
+import gift.Event.EventObject.SendMessageToMeEvent;
 import gift.Exception.InvalidEditTypeException;
 import gift.Exception.OptionNotFoundException;
 import gift.Exception.OrderNotFoundException;
@@ -12,6 +13,7 @@ import gift.Repository.OptionRepository;
 import gift.Repository.OrderRepository;
 import gift.Repository.WishRepository;
 import gift.Util.KakaoUtil;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,13 +29,15 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final OrderRepository orderRepository;
     private final KakaoUtil kakaoUtil;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public OrderService(OptionService optionService, WishRepository wishRepository, OptionRepository optionRepository, OrderRepository orderRepository, KakaoUtil kakaoUtil) {
+    public OrderService(OptionService optionService, WishRepository wishRepository, OptionRepository optionRepository, OrderRepository orderRepository, KakaoUtil kakaoUtil, ApplicationEventPublisher eventPublisher) {
         this.optionService = optionService;
         this.wishRepository = wishRepository;
         this.optionRepository = optionRepository;
         this.orderRepository = orderRepository;
         this.kakaoUtil = kakaoUtil;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -56,7 +60,7 @@ public class OrderService {
 
         Optional<AccessToken> accessToken = member.getAccessToken();
         if(accessToken.isPresent()){
-            kakaoUtil.sendMessageToMe(accessToken.get(), requestOrderDTO.message());
+            eventPublisher.publishEvent(new SendMessageToMeEvent(accessToken.get(), requestOrderDTO.message()));
         }
 
         return ResponseOrderDTO.of(order);
