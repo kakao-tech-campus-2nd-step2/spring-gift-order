@@ -2,7 +2,6 @@ package gift.controller;
 
 import gift.service.KakaoUserService;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,6 @@ public class KakaoUserController {
         String kakaoAuthUrl = kakaoUserService.getAuthorizeUrl();
         response.sendRedirect(kakaoAuthUrl);
     }
-
 
     @GetMapping("/token")
     public ResponseEntity<String> getTokenGET(@RequestParam String code) {
