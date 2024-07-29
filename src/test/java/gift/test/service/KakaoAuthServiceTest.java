@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import gift.entity.User;
 import gift.repository.UserRepository;
 import gift.service.KakaoAuthService;
+import gift.service.TokenService;
 
 public class KakaoAuthServiceTest {
 
@@ -32,6 +33,9 @@ public class KakaoAuthServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private KakaoAuthService kakaoAuthService;
@@ -51,12 +55,12 @@ public class KakaoAuthServiceTest {
         kakaoAuthService.authUrl = "http://test-auth-url";
         kakaoAuthService.tokenInfoUrl = "http://test-token-info-url";
 
-        user = new User("test@example.com", "pw");
+        user = new User("test@test.com", "pw");
         user.setId(1L);
 
         authorizationCode = "test-authorization-code";
         accessToken = "test-access-token";
-        email = "test@example.com";
+        email = "test@test.com";
 
         tokenMap = new HashMap<>();
         tokenMap.put("access_token", accessToken);
