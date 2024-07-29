@@ -52,24 +52,24 @@ public class ProductWebController {
         return "redirect:/web/products";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editProductForm(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id);
+    @GetMapping("/edit/{ProductId}")
+    public String editProductForm(@PathVariable Long ProductId, Model model) {
+        Product product = productService.getProductById(ProductId);
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "editProduct";
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateProduct(@PathVariable Long id,
+    @PostMapping("/edit/{ProductId}")
+    public String updateProduct(@PathVariable Long ProductId,
                                 @ModelAttribute @Valid ProductDto productDto) {
-        productService.updateProduct(id, productDto);
+        productService.updateProduct(ProductId, productDto);
         return "redirect:/web/products";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
+    @GetMapping("/delete/{ProductId}")
+    public String deleteProduct(@PathVariable Long ProductId) {
+        productService.deleteProduct(ProductId);
         return "redirect:/web/products";
     }
 }

@@ -69,7 +69,7 @@ public class KakaoLoginService {
             return "회원가입 및 로그인 되었습니다.";
         }
         Member existingMember = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Member not found with email: " + email));
+                .orElseThrow(() -> new RuntimeException(email+ " : 이메일을 찾을 수 없습니다."));
         Member updatedMember = new Member(existingMember, accessToken);
         memberRepository.save(updatedMember);
         return "로그인 되었습니다";

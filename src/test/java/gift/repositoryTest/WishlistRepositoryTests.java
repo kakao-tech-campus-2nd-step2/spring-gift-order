@@ -1,13 +1,8 @@
 package gift.repositoryTest;
 
-import gift.model.Category;
-import gift.model.Member;
-import gift.model.Option;
-import gift.model.Product;
-import gift.model.Wishlist;
+import gift.model.*;
 import gift.repository.CategoryRepository;
 import gift.repository.MemberRepository;
-import gift.repository.OptionRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishlistRepository;
 import org.junit.jupiter.api.Test;

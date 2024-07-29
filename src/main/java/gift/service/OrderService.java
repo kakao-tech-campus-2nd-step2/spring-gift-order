@@ -7,6 +7,8 @@ import gift.model.Product;
 import gift.repository.OrderRepository;
 import gift.repository.WishlistRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +43,9 @@ public class OrderService {
 
         kakaoMessageService.sendMessageToKakao(order, memberId);
         return order;
+    }
+
+    public Page<Order> getOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable);
     }
 }

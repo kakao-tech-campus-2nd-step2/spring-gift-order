@@ -46,8 +46,7 @@ public class ProductApiControllerTest {
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"name\": \"상품1\", \"price\": 1000, \"categoryId\": "
-                                + category.getId()
+                        .content("{ \"name\": \"상품1\", \"price\": 1000, \"categoryId\": " + category.getId()
                                 + ", \"options\": [ { \"name\": \"옵션1\", \"quantity\": 10 } ] }"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("상품1"))
@@ -63,13 +62,7 @@ public class ProductApiControllerTest {
         categoryRepository.save(category);
 
         Option option1 = new Option("옵션1", 10);
-        Product product1 = new Product(
-                "상품1",
-                1000,
-                "이미지URL",
-                category,
-                Collections.singletonList(option1)
-        );
+        Product product1 = new Product("상품1", 1000, "이미지URL", category, Collections.singletonList(option1));
         productRepository.save(product1);
 
         mockMvc.perform(get("/api/products"))

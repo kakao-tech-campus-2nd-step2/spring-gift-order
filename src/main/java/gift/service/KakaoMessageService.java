@@ -15,6 +15,7 @@ import java.util.NoSuchElementException;
 
 @Service
 public class KakaoMessageService {
+    public static final String TEMPLATE_ID = "110454";
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final KakaoLoginService kakaoLoginService;
@@ -31,17 +32,16 @@ public class KakaoMessageService {
 
     public void sendMessageToKakao(Order order, Long memberId) {
         String accessToken = kakaoLoginService.getAccessTokenForMember(memberId);
-        String url = properties.apiUrl() + "/v2/api/talk/memo/send";
+        String url = properties.apiUrl() + properties.messageSendUrl();
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        String templateId = "110454";
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         Product product = optionRepository.findProductByOptionId(order.getOption().getId())
                 .orElseThrow(() -> new NoSuchElementException("해당 옵션의 상품이 존재하지 않습니다."));
-        body.add("template_id", templateId);
+        body.add("template_id", TEMPLATE_ID);
         body.add("template_args", String.format(
                 "{\"TITLE\":\"%s\",\"PRODUCT\":\"%s\",\"OPTION\":\"%s\",\"QUANTITY\":\"%d\",\"MESSAGE\":\"%s\"}",
                 "주문이 완료되었습니다.",
@@ -52,7 +52,6 @@ public class KakaoMessageService {
         ));
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
-        System.out.println("Request: " + requestEntity);
 
         ResponseEntity<Map> responseEntity;
         try {
@@ -61,7 +60,6 @@ public class KakaoMessageService {
             System.out.println("카카오 메시지 전송 중 오류 발생: " + e.getMessage());
             throw new RuntimeException("카카오 메시지 전송 중 오류 발생", e);
         }
-        System.out.println("Response: " + responseEntity);
 
         if (responseEntity.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("카카오 메시지 전송 실패: " + responseEntity.getStatusCode());
