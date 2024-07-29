@@ -7,6 +7,7 @@ import gift.controller.dto.response.WishResponse;
 import gift.service.WishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -32,8 +33,9 @@ public class WishesRestController {
     @PostMapping("")
     @Operation(summary = "위시리스트 추가", description = "위시리스트를 추가합니다.")
     @SecurityRequirement(name = "Authorization")
+    @ApiResponse(responseCode = "201")
     public ResponseEntity<Void> insertWish(
-            @Valid @RequestBody WishRequest.Create request,
+            @Valid @RequestBody WishRequest.CreateWish request,
             @Parameter(hidden = true) @NotNull @LoginMember Long memberId) {
         wishService.save(request, 1, memberId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -54,7 +56,7 @@ public class WishesRestController {
     @Operation(summary = "위시리스트 수정", description = "위시리스트를 수정합니다.")
     @SecurityRequirement(name = "Authorization")
     public ResponseEntity<Integer> updateWish(
-            @Valid @RequestBody WishRequest.Update request,
+            @Valid @RequestBody WishRequest.UpdateWish request,
             @Parameter(hidden = true) @NotNull @LoginMember Long memberId
     ) {
         wishService.update(request, memberId);

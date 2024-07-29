@@ -12,7 +12,7 @@ import java.util.List;
 public class ProductRequest {
     private final static String SPECIAL_REGEX = "^[()\\[\\]+\\-&/_ㄱ-하-ㅣ가-힣a-zA-Z0-9\\s.,]*$";
 
-    public record Create(
+    public record CreateProduct(
             @NotBlank
             @Length(max = 15)
             @Pattern(regexp = SPECIAL_REGEX,
@@ -27,16 +27,16 @@ public class ProductRequest {
             Long categoryId,
             @Size(min = 1, message = "최소 1개의 옵션이 필요합니다.")
             @Valid
-            List<OptionRequest.Init> options
+            List<OptionRequest.InitOption> options
     ) {
         public CreateProductDto toDto() {
-            List<OptionRequest.Create> options = options().stream()
-                    .map(init -> new OptionRequest.Create(init.name(), init.quantity(), null)).toList();
+            List<OptionRequest.CreateOption> options = options().stream()
+                    .map(initOption -> new OptionRequest.CreateOption(initOption.name(), initOption.quantity(), null)).toList();
             return new CreateProductDto(name, price, imageUrl, categoryId, options);
         }
     }
 
-    public record AdminCreate(
+    public record AdminCreateProduct(
             @NotBlank
             @Length(max = 15)
             @Pattern(regexp = SPECIAL_REGEX,
@@ -55,12 +55,12 @@ public class ProductRequest {
             int optionQuantity
     ) {
         public CreateProductDto toDto() {
-            List<OptionRequest.Create> options = List.of(new OptionRequest.Create(optionName, optionQuantity, null));
+            List<OptionRequest.CreateOption> options = List.of(new OptionRequest.CreateOption(optionName, optionQuantity, null));
             return new CreateProductDto(name, price, imageUrl, categoryId, options);
         }
     }
 
-    public record Update(
+    public record UpdateProduct(
             @Min(1)
             Long id,
             @NotBlank
@@ -81,7 +81,7 @@ public class ProductRequest {
         }
     }
 
-    public record AdminUpdate(
+    public record AdminUpdateProduct(
             @Min(1)
             Long id,
             @NotBlank

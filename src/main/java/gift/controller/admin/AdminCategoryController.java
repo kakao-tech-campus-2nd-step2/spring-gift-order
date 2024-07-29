@@ -42,13 +42,13 @@ public class AdminCategoryController {
     }
 
     @PostMapping("/category")
-    public String createCategory(@Valid @ModelAttribute CategoryRequest.Create request) {
+    public String createCategory(@Valid @ModelAttribute CategoryRequest.CreateCategory request) {
         categoryService.save(request);
         return "redirect:/admin/categories";
     }
 
     @PutMapping("/category")
-    public String updateCategory(@Valid @ModelAttribute CategoryRequest.Update request) {
+    public String updateCategory(@Valid @ModelAttribute CategoryRequest.UpdateCategory request) {
         categoryService.updateById(request);
         return "redirect:/admin/categories";
     }

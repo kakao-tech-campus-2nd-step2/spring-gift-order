@@ -95,7 +95,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void addOption(OptionRequest.Create request) {
+    public void addOption(OptionRequest.CreateOption request) {
         checkProductExist(request.productId());
         Product product = productRepository.getReferenceById(request.productId());
         Option option = new Option(request.name(), request.quantity(), product);
@@ -103,7 +103,7 @@ public class ProductService {
     }
 
     @Transactional
-    public void updateOption(OptionRequest.Update request) {
+    public void updateOption(OptionRequest.UpdateOption request) {
         Product product = productRepository.findProductAndOptionByIdFetchJoin(request.productId())
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + request.productId() + " not found"));
         Option option = product.findOptionByOptionId(request.id());
@@ -117,6 +117,13 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product with id " + id + " not found"));
         Option option = product.findOptionByOptionId(optionId);
         return OptionResponse.from(option);
+    }
+
+    @Transactional
+    public void subtractQuantity(Long productId, Long optionId, int amount) {
+        Product product = productRepository.findProductAndOptionByIdFetchJoin(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product with id " + productId + " not found"));
+        product.subtractOptionQuantity(optionId, amount);
     }
 
     private void checkProductExist(Long id) {

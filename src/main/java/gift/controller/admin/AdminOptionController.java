@@ -40,14 +40,14 @@ public class AdminOptionController {
 
     @PostMapping("")
     public String createOption(
-            @Valid @ModelAttribute OptionRequest.Create request) {
+            @Valid @ModelAttribute OptionRequest.CreateOption request) {
         productService.addOption(request);
         return "redirect:/admin/product/" + request.productId();
     }
 
     @PutMapping("")
     public String updateOption(
-            @Valid @ModelAttribute OptionRequest.Update request) {
+            @Valid @ModelAttribute OptionRequest.UpdateOption request) {
         productService.updateOption(request);
         return "redirect:/admin/product/" + request.productId();
     }

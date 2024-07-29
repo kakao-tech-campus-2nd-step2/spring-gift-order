@@ -22,8 +22,8 @@ public class KakaoTokenService {
     }
 
     public void saveToken(Long memberId, KakaoTokenDto kakaoTokenDto) {
-        accessTokenRepository.save(new KakaoAccessToken(memberId, kakaoTokenDto.access_token(), kakaoTokenDto.expires_in()));
-        refreshTokenRepository.save(new KakaoRefreshToken(memberId, kakaoTokenDto.refresh_token(), kakaoTokenDto.refresh_token_expires_in()));
+        accessTokenRepository.save(new KakaoAccessToken(memberId, kakaoTokenDto.accessToken(), kakaoTokenDto.expiresIn()));
+        refreshTokenRepository.save(new KakaoRefreshToken(memberId, kakaoTokenDto.refreshToken(), kakaoTokenDto.refreshTokenExpiresIn()));
     }
 
     public void deleteAccessToken(Long memberId) {
@@ -41,7 +41,7 @@ public class KakaoTokenService {
                                 .orElseThrow(() -> new AuthenticationException("Login has expired"))
                                 .getRefreshToken();
                         KakaoTokenDto tokenDto = kakaoApiCaller.refreshAccessToken(refreshToken);
-                        return new KakaoAccessToken(memberId, tokenDto.access_token(), tokenDto.expires_in());
+                        return new KakaoAccessToken(memberId, tokenDto.accessToken(), tokenDto.expiresIn());
                     }).getAccessToken();
         }
 

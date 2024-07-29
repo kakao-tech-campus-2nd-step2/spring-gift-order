@@ -9,7 +9,7 @@ public record CreateProductDto(
         int price,
         String imageUrl,
         Long categoryId,
-        List<OptionRequest.Create> options
+        List<OptionRequest.CreateOption> options
 ) {
 }
 

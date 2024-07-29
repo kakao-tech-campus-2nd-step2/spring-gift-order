@@ -1,5 +1,7 @@
 package gift.service.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import gift.model.Orders;
 
 public class KakaoRequest {
@@ -10,10 +12,11 @@ public class KakaoRequest {
     private static final String DEFAULT_ITEM_TEXT = "가격";
     private static final String DEFAULT_ITEM_COUNT_TEXT = "개수";
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public record Feed (
-            String object_type,
+            String objectType,
             Content content,
-            ItemContent item_content
+            ItemContent itemContent
     ){
         public static Feed from(Orders orders) {
             return new Feed(
@@ -44,24 +47,27 @@ public class KakaoRequest {
         }
     }
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     record Content(
             String title,
             String description,
             Link[] link
     ){}
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     record ItemContent(
-            String profile_text,
-            String title_image_text,
-            String title_image_category,
+            String profileText,
+            String titleImageText,
+            String titleImageCategory,
             Item[] items,
             String sum,
-            String sum_op
+            String sumOp
     ){}
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     record Item(
             String item,
-            String item_op
+            String itemOp
     ){}
 
     record Link() {}

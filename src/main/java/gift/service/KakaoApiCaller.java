@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -90,6 +91,7 @@ public class KakaoApiCaller {
                 }).body(String.class);
     }
 
+    @Async
     public void sendKakaoMessage(String accessToken, Orders orders) {
         client.post()
                 .uri(URI.create(properties.selfMessageUrl()))
@@ -115,9 +117,9 @@ public class KakaoApiCaller {
 
     private @NotNull LinkedMultiValueMap<String, String> createBodyForRefreshAccessToken(String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "refresh_token");
+        body.add("grant_type", "refreshToken");
         body.add("client_id", properties.clientId());
-        body.add("refresh_token", refreshToken);
+        body.add("refreshToken", refreshToken);
         return body;
     }
 

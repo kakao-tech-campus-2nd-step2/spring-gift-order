@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.common.properties.KakaoProperties;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,8 @@ public class OAuthController {
     }
 
     @GetMapping("/kakao/login")
-    @Operation(summary = "카카오 로그인", description = "카카오로 로그인 주소를 반환합니다.")
+    @Operation(summary = "카카오 로그인", description = "카카오로 로그인 주소로 리다이렉션합니다.")
+    @ApiResponse(responseCode = "302")
     public RedirectView kakaoLogin() {
         return new RedirectView(properties.loginUrl() + properties.clientId());
     }

@@ -14,7 +14,7 @@ public class RedisService {
         this.orderService = orderService;
     }
 
-    @RedissonLock(value = "#orderRequest.optionId")
+    @RedissonLock(value = "#orderRequest.productId + ':' + #orderRequest.optionId")
     public OrderResponse createOrderRedisLock(Long memberId, OrderRequest orderRequest) {
         return orderService.createOrder(memberId, orderRequest);
     }
