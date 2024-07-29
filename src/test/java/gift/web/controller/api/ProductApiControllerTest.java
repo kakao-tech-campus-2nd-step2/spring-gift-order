@@ -128,6 +128,8 @@ class ProductApiControllerTest {
             .perform(
                 get(BASE_URL)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .param("page", "0")
+                    .param("size", "10")
             )
             .andExpect(status().isOk())
             .andDo(
