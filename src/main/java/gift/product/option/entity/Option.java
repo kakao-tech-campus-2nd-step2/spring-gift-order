@@ -64,6 +64,10 @@ public class Option {
         return quantity;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public void initProduct(Product product) {
         Assert.notNull(product, "product is null");
         this.product = product;

@@ -5,7 +5,8 @@
 
 0. 이번 주차
    1. [1단계(카카오 로그인)](#1단계카카오-로그인-요구사항)
-
+   1. [2단계(주문하기)](#2단계주문하기-요구사항)
+   
 1. [1주차 - product](#1주차-과제-요구사항spring-gift-product)
    1. [1단계(상품 API)](#1단계상품-api-요구사항)
    2. [2단계(관리자 화면)](#2단계관리자-화면-요구사항)
@@ -27,6 +28,92 @@
    3. [3단계(옵션 수량 차감)](#3단계옵션-수량-차감-요구사항)
 
 ---
+
+## 2단계(주문하기) 요구사항
+
+### 과제 진행 요구 사항
+
+- 카카오 API를 사용하기 위한 [애플리케이션을 등록](https://developers.kakao.com/docs/latest/ko/getting-started/quick-start#create)한다.
+- 등록한 후 아래 안내에 따라 설정한다.
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > **활성화 설정 ON** ([카카오 로그인 활성화 설정](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-activate))
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > **Redirect URI 등록 > `http://localhost:8080` 저장** ([Redirect URI 등록](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#kakao-login-redirect-uri))
+  - 내 애플리케이션 > 제품 설정 > 카카오 로그인 > 동의항목 > 접근권한 > **카카오톡 메시지 전송 > 선택 동의** ([접근권한 동의항목](https://developers.kakao.com/docs/latest/ko/kakaologin/prerequisite#permission))
+  - 내 애플리케이션 > 앱 설정 > **Web 플랫폼 등록 > `http://localhost:8080` 저장** ([Web](https://developers.kakao.com/docs/latest/ko/getting-started/app#platform-web))
+
+### 기능 요구 사항
+
+카카오톡 메시지 API를 사용하여 주문하기 기능을 구현한다.
+
+- 주문할 때 수령인에게 보낼 메시지를 작성할 수 있다.
+
+- 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감된다.
+
+- 해당 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제한다.
+
+- 나에게 보내기
+
+  를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
+
+  - 메시지는 [메시지 템플릿](https://developers.kakao.com/docs/latest/ko/message/message-template)의 기본 템플릿이나 사용자 정의 템플릿을 사용하여 자유롭게 작성한다.
+
+아래 예시와 같이 HTTP 메시지를 주고받도록 구현한다.
+
+#### Request
+
+```http
+POST /api/orders HTTP/1.1
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+    "optionId": 1,
+    "quantity": 2,
+    "message": "Please handle this order with care."
+}
+```
+
+#### Response
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "id": 1,
+    "optionId": 1,
+    "quantity": 2,
+    "orderDateTime": "2024-07-21T10:00:00",
+    "message": "Please handle this order with care."
+}
+```
+
+실제 카카오톡 메시지는 아래와 같이 전송된다. 하지만 이번 미션에서는 수신자가 나이기 때문에 카카오톡 친구 목록 가져오기는 생략한다.
+
+![message talk](./images/message_talk.png)
+
+### 시나리오
+
+1. order 요청 (상품 옵션과 개수 선택)
+2. order에서 요청된 만큼 옵션에서 개수 차감
+   * 남은 재고가 요청 개수보다 작다면 reject
+3. 해당 상품이 위시리스트에 있는 경우 위시리스트에서 삭제
+4. 카카오 메시지 api로 메시지 보내기
+
+
+### 기능 목록
+
+- 아래 과정은 하나의 Transaction
+- [x] 옵션 수량 차감 (`OptionService.subtractOptionQuantity()` 호출)
+- [x] 옵션 상품 불러오기 - Option을 불러와 productId 사용
+- [x] 옵션 상품 id로 위시리스트 존재 확인
+  - [x] 위시리스트에 존재하는 경우 위시리스트에서 해당 상품 삭제
+- [x] 카카오 메시지 api에 order message를 보내도록 요청
+  - [x] 카카오 로그인시 카카오 token 저장 필요
+    * user entity에 token 필드 추가
+  - [x] 메시지 템플릿 request 형식에 맞게 데이터 가공
+
+
+
 
 ## 1단계(카카오 로그인) 요구사항
 

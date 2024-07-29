@@ -20,6 +20,7 @@ import jakarta.persistence.PostLoad;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.util.Assert;
 
@@ -129,6 +130,23 @@ public class Product {
 
     public void changeName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !(o instanceof Product)) {
+            return false;
+        }
+        Product product = (Product) o;
+        return Objects.equals(id, product.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @PostLoad

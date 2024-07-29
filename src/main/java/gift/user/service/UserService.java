@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +38,17 @@ public class UserService {
             .ifPresent(user -> {
                 throw new CustomException(ErrorCode.USER_ALREADY_EXIST);
             });
-        User registeredUser = userRepository.save(
-            new User(
-                request.email(),
-                request.password(),
-                new HashSet<>()
-            )
+        User newUser = new User(
+            request.email(),
+            request.password(),
+            request.isKakao(),
+            new HashSet<>()
         );
+
+        Optional.ofNullable(request.accessToken())
+            .ifPresent(newUser::setAccessToken);
+
+        User registeredUser = userRepository.save(newUser);
         List<String> roles = new ArrayList<>();
 
         return UserResponse.from(jwtUtil.generateToken(registeredUser.getId(),
@@ -55,6 +60,10 @@ public class UserService {
         User user = userRepository.findByEmailAndPassword(userRequest.email(),
                 userRequest.password())
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        Optional.ofNullable(userRequest.accessToken())
+            .ifPresent(user::setAccessToken);
+
         List<Long> roleIds = user.getRoles()
             .stream()
             .filter(Objects::nonNull)

@@ -16,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = {"/sql/initialize.sql"})
 public class KakaoUserTest {
+
     @LocalServerPort
     private int port;
 
@@ -38,8 +39,7 @@ public class KakaoUserTest {
         var actualResponse = restTemplate.exchange(request, String.class);
 
         // then
-        System.out.println(actualResponse);
         assertThat(actualResponse).isNotNull();
-        assertThat(actualResponse.getStatusCode().is2xxSuccessful()).isTrue();
+        assertThat(actualResponse.getStatusCode().is3xxRedirection()).isTrue();
     }
 }
