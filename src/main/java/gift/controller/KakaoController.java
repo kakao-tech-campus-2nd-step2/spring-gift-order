@@ -4,7 +4,7 @@ import gift.config.KakaoProperties;
 import gift.dto.ApiResponse;
 import gift.dto.KakaoToken;
 import gift.dto.TokenResponseDto;
-import gift.service.KakaoService;
+import gift.service.KakaoOAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +16,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class KakaoController {
 
     private final KakaoProperties kakaoProperties;
-    private final KakaoService kakaoService;
+    private final KakaoOAuthService kakaoOAuthService;
 
-    public KakaoController(KakaoProperties kakaoProperties, KakaoService kakaoService) {
+    public KakaoController(KakaoProperties kakaoProperties, KakaoOAuthService kakaoOAuthService) {
         this.kakaoProperties = kakaoProperties;
-        this.kakaoService = kakaoService;
+        this.kakaoOAuthService = kakaoOAuthService;
     }
 
     @GetMapping
@@ -41,14 +41,14 @@ public class KakaoController {
     public ResponseEntity<TokenResponseDto> getTokenAndUserInfo(
             @RequestParam(value = "code") String kakaoCode
     ) {
-        KakaoToken kakaoToken = kakaoService.getKakaoToken(kakaoCode);
-        TokenResponseDto token = kakaoService.generateToken(kakaoToken.accessToken());
+        KakaoToken kakaoToken = kakaoOAuthService.getKakaoToken(kakaoCode);
+        TokenResponseDto token = kakaoOAuthService.kakaoMemberRegister(kakaoToken);
         return ResponseEntity.ok(token);
     }
 
     @PostMapping("/unlink")
     public ResponseEntity<ApiResponse> logout(@RequestHeader("Authorization") String token) {
-        kakaoService.unlink(token);
+        kakaoOAuthService.unlink(token);
         return ResponseEntity.ok(new ApiResponse(HttpStatus.NO_CONTENT, "계정 연결해제 성공적"));
     }
 }
