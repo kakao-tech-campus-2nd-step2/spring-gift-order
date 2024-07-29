@@ -3,7 +3,7 @@ package gift.controller;
 import gift.dto.request.AuthRequest;
 import gift.dto.response.AuthResponse;
 import gift.service.AuthService;
-import gift.service.KaKaoLoginService;
+import gift.service.KaKaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-    private final KaKaoLoginService kaKaoLoginService;
+    private final KaKaoService kaKaoService;
 
-    public AuthController(AuthService authService, KaKaoLoginService kaKaoLoginService) {
+    public AuthController(AuthService authService, KaKaoService kaKaoService) {
         this.authService = authService;
-        this.kaKaoLoginService = kaKaoLoginService;
+        this.kaKaoService = kaKaoService;
     }
 
     @PostMapping("/register")
@@ -38,6 +38,6 @@ public class AuthController {
     @GetMapping("/kakao")
     @Operation(summary = "카카오 회원가입 및 로그인 api")
     public ResponseEntity<AuthResponse> kakaoLogin(@RequestParam("code") String code) {
-        return new ResponseEntity<>(kaKaoLoginService.kakaoLogin(code), HttpStatus.OK);
+        return new ResponseEntity<>(kaKaoService.kakaoLogin(code), HttpStatus.OK);
     }
 }

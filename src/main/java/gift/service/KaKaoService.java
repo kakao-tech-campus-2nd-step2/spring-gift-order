@@ -28,7 +28,7 @@ import static gift.exception.ErrorCode.ALREADY_REGISTERED_ERROR;
 import static gift.exception.ErrorCode.KAKAO_LOGIN_FAILED_ERROR;
 
 @Service
-public class KaKaoLoginService {
+public class KaKaoService {
 
     @Value("${kakao.clientId}")
     private String clientId;
@@ -49,7 +49,7 @@ public class KaKaoLoginService {
     private final KakaoTokenRepository kakaoTokenRepository;
     private final JwtUtil jwtUtil;
 
-    public KaKaoLoginService(MemberRepository memberRepository, KakaoTokenRepository kakaoTokenRepository, JwtUtil jwtUtil) {
+    public KaKaoService(MemberRepository memberRepository, KakaoTokenRepository kakaoTokenRepository, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.kakaoTokenRepository = kakaoTokenRepository;
         this.jwtUtil = jwtUtil;
