@@ -4,6 +4,8 @@ import gift.config.LoginAdmin;
 import gift.config.LoginUser;
 import gift.controller.auth.LoginResponse;
 import gift.service.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "Option", description = "Option API")
 @RequestMapping("/api")
 public class OptionController {
 
@@ -31,6 +34,7 @@ public class OptionController {
     }
 
     @GetMapping("/options")
+    @Operation(summary = "get All Options", description = "모든 옵션 불러오기")
     public ResponseEntity<Page<OptionResponse>> getAllOptions(
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -38,6 +42,7 @@ public class OptionController {
     }
 
     @GetMapping("/products/{productId}/options")
+    @Operation(summary = "get All Options By ProductId", description = "해당 옵션의 모든 옵션불러오기")
     public ResponseEntity<Page<OptionResponse>> getAllOptionsByProductId(
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size,
         @PathVariable UUID productId) {
@@ -47,11 +52,13 @@ public class OptionController {
     }
 
     @GetMapping("/options/{optionId}")
+    @Operation(summary = "get Option", description = "옵션 조회")
     public ResponseEntity<OptionResponse> getOption(@PathVariable UUID optionId) {
-        return ResponseEntity.status(HttpStatus.OK).body(optionService.find(optionId));
+        return ResponseEntity.status(HttpStatus.OK).body(optionService.getOptionResponseById(optionId));
     }
 
     @PostMapping("/options/{productId}")
+    @Operation(summary = "create Option", description = "옵션 생성")
     public ResponseEntity<OptionResponse> createOption(@LoginUser LoginResponse member,
         @RequestBody OptionRequest option,
         @PathVariable UUID productId) {
@@ -60,19 +67,22 @@ public class OptionController {
     }
 
     @PutMapping("/options/{optionId}")
+    @Operation(summary = "modify Option", description = "옵션 수정")
     public ResponseEntity<OptionResponse> updateOption(@LoginAdmin LoginResponse member,
         @PathVariable UUID optionId, @RequestBody OptionRequest option) {
         return ResponseEntity.status(HttpStatus.OK).body(optionService.update(optionId, option));
     }
 
     @PutMapping("/options/{optionId}/buy/{quantity}")
-    public ResponseEntity<OptionResponse> subtractOption(@LoginAdmin LoginResponse member,
+    @Operation(summary = "substract option count", description = "옵션 구매(옵션 개수 1차감)")
+    public ResponseEntity<OptionResponse> subtractOption(@LoginUser LoginResponse member,
         @PathVariable UUID optionId, @PathVariable Integer quantity) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(optionService.subtract(optionId, quantity));
     }
 
     @DeleteMapping("/{optionId}")
+    @Operation(summary = "delete Option", description = "옵션 삭제")
     public ResponseEntity<Void> deleteOption(@LoginAdmin LoginResponse loginMember,
         @PathVariable UUID optionId) {
         optionService.delete(optionId);

@@ -4,6 +4,8 @@ import gift.config.LoginAdmin;
 import gift.config.LoginUser;
 import gift.controller.auth.LoginResponse;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Tag(name = "Category", description = "Category API")
 @RequestMapping("/api/categories")
 public class CategoryController {
 
@@ -31,6 +34,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "get All Categories", description = "모든 카테고리 불러오기(기본 개수 : 5개)")
     public ResponseEntity<Page<CategoryResponse>> getAllCategories(
         @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
@@ -38,11 +42,13 @@ public class CategoryController {
     }
 
     @PostMapping
+    @Operation(summary = "create Cateogory", description = "카테고리 생성")
     public ResponseEntity<CategoryResponse> createCategory(@LoginUser LoginResponse member, @RequestBody CategoryRequest category) {
         return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.save(category));
     }
 
     @PutMapping("/{categoryId}")
+    @Operation(summary = "modify Category", description = "카테고리 변경")
     public ResponseEntity<CategoryResponse> updateCategory(@LoginAdmin LoginResponse member,
         @PathVariable UUID categoryId, @RequestBody CategoryRequest category) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -50,6 +56,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
+    @Operation(summary = "Delete Category", description = "카테고리 삭제")
     public ResponseEntity<Void> deleteCategory(@LoginAdmin LoginResponse member,
         @PathVariable UUID categoryId) {
         categoryService.delete(categoryId);

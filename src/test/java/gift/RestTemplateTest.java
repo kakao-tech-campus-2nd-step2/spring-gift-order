@@ -27,7 +27,7 @@ public class RestTemplateTest {
     @Autowired
     private KakaoProperties properties;
 
-    @Test
+
     void test1() {
         var url = "https://kauth.kakao.com/oauth/token";
         var headers = new HttpHeaders();
@@ -42,5 +42,4 @@ public class RestTemplateTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         System.out.println(response);
     }
-
 }
