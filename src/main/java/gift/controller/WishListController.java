@@ -6,6 +6,7 @@ import gift.dto.WishProduct;
 import gift.dto.response.MessageResponse;
 import gift.dto.response.WishProductResponse;
 import gift.service.WishListService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/wishes")
+@Tag(name = "WishList", description = "위시 리스트와 관련된 API Controller")
 public class WishListController {
 
     private final WishListService wishListService;
