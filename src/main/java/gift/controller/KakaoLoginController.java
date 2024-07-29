@@ -6,15 +6,20 @@ import gift.model.member.KakaoProperties;
 import gift.model.member.Member;
 import gift.service.KakaoService;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("")
+@ResponseBody
+@Tag(name = "KakaoLogin", description = "KakaoLogin API")
 public class KakaoLoginController {
 
     private final KakaoProperties kakaoProperties;
@@ -26,6 +31,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/kakao/login")
+    @Operation(summary = "카카오를 통한 회원가입", description = "카카오를 통해 회원가입 할 때 사용하는 API")
     public String kakaoLogin() {
         StringBuffer url = new StringBuffer();
         url.append("https://kauth.kakao.com/oauth/authorize?");
@@ -36,6 +42,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/callback")
+    @Operation(summary = "카카오 권한 동의 후 callback", description = "권한 동의 후 callback 할 때 사용하는 API")
     public ResponseEntity<String> callback(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
@@ -51,6 +58,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/kakao/logout")
+    @Operation(summary = "카카오 로그아웃", description = "카카오를 통해 로그아웃 할 때 사용하는 API")
     public String kakaoLogout(HttpSession session) {
         String accessToken = (String) session.getAttribute("kakaoToken");
 
