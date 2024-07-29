@@ -30,10 +30,8 @@ public class AppConfig {
     private int prodReadTimeout;
 
     @Bean
-    public RestTemplate kakaoRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
-        restTemplate.setErrorHandler(errorHandler());
-        return restTemplate;
+    public RestTemplate restTemplate() {
+        return new RestTemplate(clientHttpRequestFactory());
     }
 
     private ClientHttpRequestFactory clientHttpRequestFactory() {
