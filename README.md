@@ -21,4 +21,4 @@
 - [x] RestClient timeout 설정
 # step3
 - [ ] api 문서 작성
-  - [ ] swagger 설정
+  - [x] swagger 설정

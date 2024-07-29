@@ -29,6 +29,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
 
+    //swagger
+    //implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    //implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
     ext {
         JJWT_VERSION = "0.12.3"
     }
