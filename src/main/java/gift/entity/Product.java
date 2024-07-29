@@ -2,6 +2,7 @@ package gift.entity;
 
 
 import gift.exception.MinimumOptionException;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,27 +19,35 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@Schema(description = "Product entity representing a product")
 @Entity
 @Table(name = "products")
 public class Product {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @Schema(description = "Unique identifier of the product", example = "1")
     private Long id;
     @NotNull
     @Size(max = 15, message = "상품 이름은 공백을 포함하여 최대 15자까지 입력할 수 있습니다.")
+    @Schema(description = "Name of the product", example = "Product 1")
     private String name;
     @NotNull
+    @Schema(description = "Price of the product", example = "100")
     private Integer price;
+    @Schema(description = "Image URL of the product", example = "image1.jpg")
     private String img;
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    @Schema(description = "List of wishes associated with this product")
     private List<Wish> wishes = new ArrayList<>();
     @ManyToOne
     @JoinColumn(name = "category_id")
     @NotNull
+    @Schema(description = "Category to which this product belongs")
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @Schema(description = "List of options for this product")
     private List<Option> options = new ArrayList<>();
 
     protected Product() {

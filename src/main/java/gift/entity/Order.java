@@ -40,7 +40,7 @@ public class Order {
         this.message = message;
     }
 
-    public Order() {
+    protected Order() {
 
     }
 
@@ -66,9 +66,5 @@ public class Order {
 
     public String getMessage() {
         return message;
-    }
-
-    public Integer getTotalPrice(Product product) {
-        return product.getPrice() * this.quantity;
     }
 }

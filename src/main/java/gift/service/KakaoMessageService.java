@@ -1,10 +1,6 @@
 package gift.service;
 
 import gift.config.KakaoProperties;
-import gift.entity.Order;
-import gift.entity.Product;
-import gift.exception.ProductNotFoundException;
-import gift.repository.OptionRepository;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -18,24 +14,21 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class KakaoMessageService {
 
-    private final RestTemplate restTemplate;
     private final KakaoProperties kakaoProperties;
-    private final OptionRepository optionRepository;
+    private final RestTemplate restTemplate;
 
-    public KakaoMessageService(RestTemplate restTemplate, KakaoProperties kakaoProperties,
-        OptionRepository optionRepository) {
-        this.restTemplate = restTemplate;
+    public KakaoMessageService(KakaoProperties kakaoProperties, RestTemplate restTemplate) {
         this.kakaoProperties = kakaoProperties;
-        this.optionRepository = optionRepository;
+        this.restTemplate = restTemplate;
     }
 
-    public void sendOrderMessage(Order order) {
+    public void sendOrderMessage(String message, String productName, Integer quantity, Integer totalPrice) {
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         headers.setBearerAuth(kakaoProperties.getAccessToken());
 
-        String templateObject = createTemplateObject(order);
+        String templateObject = createTemplateObject(message, productName, quantity, totalPrice);
         String encodedTemplateObject = URLEncoder.encode(templateObject, StandardCharsets.UTF_8);
 
         RequestEntity<String> request = new RequestEntity<>(
@@ -45,9 +38,7 @@ public class KakaoMessageService {
         restTemplate.exchange(request, String.class);
     }
 
-    private String createTemplateObject(Order order) {
-        Product product = optionRepository.findProductByOptionId(order.getOption().getId())
-            .orElseThrow(() -> new ProductNotFoundException("상품이 없습니다."));
+    private String createTemplateObject(String message, String productName, Integer quantity, Integer totalPrice) {
         return """
                 {
                     "object_type": "feed",
@@ -67,7 +58,6 @@ public class KakaoMessageService {
                         ]
                     }
                 }
-            """.formatted(order.getMessage(), product.getName(), order.getQuantity(),
-            order.getTotalPrice(product));
+            """.formatted(message, productName, quantity, totalPrice);
     }
 }

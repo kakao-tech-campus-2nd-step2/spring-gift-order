@@ -10,7 +10,6 @@ import gift.entity.Product;
 import gift.entity.User;
 import gift.exception.OptionNotFoundException;
 import gift.exception.ProductNotFoundException;
-import gift.exception.UnauthorizedException;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.UserRepository;
@@ -40,9 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse createOrder(Long userId, OrderRequest request) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new UnauthorizedException("로그인된 유저가 없습니다."));
+    public OrderResponse createOrder(User user, OrderRequest request) {
         Option option = optionRepository.findById(request.getOptionId())
             .orElseThrow(() -> new OptionNotFoundException("선택한 옵션이 존재하지 않습니다."));
         Product product = optionRepository.findProductByOptionId(request.getOptionId())
@@ -55,8 +52,9 @@ public class OrderService {
         option.subtractQuantity(request.getQuantity());
         user.subtractWishNumber(request.getQuantity(), product);
 
-        if (kakaoProperties.checkKakaoLogin()) { //kakaologin을 수행하지 않으면 카카오 메시지를 보내지 않음
-            kakaoMessageService.sendOrderMessage(order);
+        if (kakaoProperties.isKakaoLoginCompleted()) { //kakaologin이 수행되지 않으면 accessToken이 지정되지 않아 메시지를 보내지 않음
+            kakaoMessageService.sendOrderMessage(request.getMessage(), product.getName(),
+                request.getQuantity(), request.getTotalPrice(product));
         }
 
         return new OrderResponse(order.getId(), option.getId(), request.getQuantity(),

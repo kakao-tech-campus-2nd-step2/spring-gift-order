@@ -52,14 +52,11 @@ public class User {
     }
 
     public void subtractWishNumber(Integer number, Product product) {
-        wishes.stream()
-            .filter(wish -> wish.sameProduct(product))
-            .forEach(wish -> wish.subtractNumber(number));
-
-        deleteEmptyWish();
-    }
-
-    public void deleteEmptyWish() {
-        wishes.removeIf(Wish::checkLeftWishNumber);
+        wishes.removeIf(wish -> {
+            if(wish.sameProduct(product)) {
+                wish.subtractNumber(number);
+            }
+            return wish.checkLeftWishNumber();
+        });
     }
 }

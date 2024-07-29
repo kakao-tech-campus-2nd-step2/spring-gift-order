@@ -44,7 +44,7 @@ public class KakaoProperties {
         this.accessToken = accessToken;
     }
 
-    public boolean checkKakaoLogin() {
-        return !this.accessToken.equals("demoToken");
+    public boolean isKakaoLoginCompleted() {
+        return !this.accessToken.equals("demoToken"); //Token의 default값 = "demoToken"
     }
 }
