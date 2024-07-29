@@ -40,8 +40,12 @@ public class WishService {
             .toList();
     }
 
-    public Page<Product> getPagedWishList(Long memberId, Pageable pageable) {
-        return wishRepository.findPageBy(memberId, pageable);
+    public List<ProductResponse> getPagedWishList(Long memberId, Pageable pageable) {
+        return wishRepository.findPageBy(memberId, pageable)
+            .getContent()
+            .stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
     @Transactional

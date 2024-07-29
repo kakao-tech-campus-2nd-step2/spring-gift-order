@@ -3,6 +3,7 @@ package gift.restdocs.product;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -18,6 +19,7 @@ import gift.controller.ProductApiController;
 import gift.model.Category;
 import gift.model.Options;
 import gift.model.Product;
+import gift.paging.PagingService;
 import gift.request.ProductAddRequest;
 import gift.request.ProductUpdateRequest;
 import gift.response.OptionResponse;
@@ -36,6 +38,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
@@ -57,6 +62,8 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
     private ProductService productService;
     @MockBean
     private OptionsService optionsService;
+    @MockBean
+    private PagingService pagingService;
 
     private String token = "{ACCESS_TOKEN}";
 
@@ -65,7 +72,10 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
     void getAllProducts() throws Exception {
         //given
         Product product = demoProduct(1L);
-
+        int page = 1;
+        String sort = "id";
+        PageRequest pageRequest = PageRequest.of(page - 1, 10,
+            Sort.by(Direction.ASC, sort));
         List<Product> products = new ArrayList<>();
         LongStream.range(1, 6)
             .forEach(i -> products.add(demoProduct(i)));
@@ -74,15 +84,20 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
             .map(ProductResponse::createProductResponse)
             .toList();
 
-        given(productService.getAllProducts())
+        given(pagingService.makeProductsPageRequest(any(int.class), any(String.class)))
+            .willReturn(pageRequest);
+        given(productService.getPagedAllProducts(any(PageRequest.class)))
             .willReturn(response);
 
         //when //then
-        mockMvc.perform(
-                get("/api/products", product.getId())
-                    .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/products?page=" + page + "&sort=" + sort)
+                .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(document("rest-docs-product-test/get-all-products",
+                queryParameters(
+                    parameterWithName("page").description("page number"),
+                    parameterWithName("sort").description("sort option ex) id, name, quantity")
+                )));
     }
 
     @Test
@@ -103,8 +118,9 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
             .willReturn(response);
 
         //when //then
-        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/products/{id}/all", product.getId())
-                .header("Authorization", "Bearer " + token))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/products/{id}/all", product.getId())
+                    .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
             .andDo(document("rest-docs-product-test/get-product-with-all-options",
                 pathParameters(
@@ -128,8 +144,9 @@ public class RestDocsProductTest extends AbstractRestDocsTest {
 
         //when //then
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/products/{id}?option_id=" + optionId, product.getId())
-                .header("Authorization", "Bearer " + token))
+                RestDocumentationRequestBuilders.get("/api/products/{id}?option_id=" + optionId,
+                        product.getId())
+                    .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
             .andDo(document("rest-docs-product-test/get-product-with-option",
                 pathParameters(

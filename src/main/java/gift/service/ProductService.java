@@ -32,8 +32,12 @@ public class ProductService {
             .toList();
     }
 
-    public Page<Product> getPagedAllProducts(Pageable pageable) {
-        return productRepository.findPageBy(pageable);
+    public List<ProductResponse> getPagedAllProducts(Pageable pageable) {
+        return productRepository.findPageBy(pageable)
+            .getContent()
+            .stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
     public Product getProduct(Long id) {

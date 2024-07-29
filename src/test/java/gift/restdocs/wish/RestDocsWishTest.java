@@ -3,6 +3,9 @@ package gift.restdocs.wish;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,6 +19,7 @@ import gift.controller.WishListApiController;
 import gift.model.Category;
 import gift.model.Options;
 import gift.model.Product;
+import gift.paging.PagingService;
 import gift.request.ProductAddRequest;
 import gift.request.ProductUpdateRequest;
 import gift.request.WishListRequest;
@@ -32,6 +36,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 
@@ -48,6 +55,8 @@ public class RestDocsWishTest extends AbstractRestDocsTest {
     private JwtTokenProvider tokenProvider;
     @MockBean
     private WishService wishService;
+    @MockBean
+    private PagingService pagingService;
 
     private String token = "{ACCESS_TOKEN}";
 
@@ -56,6 +65,10 @@ public class RestDocsWishTest extends AbstractRestDocsTest {
     void getWishList() throws Exception {
         //given
         Long memberId = 1L;
+        int page = 1;
+        String sort = "id";
+        PageRequest pageRequest = PageRequest.of(page - 1, 10,
+            Sort.by(Direction.ASC, sort));
         List<Product> products = new ArrayList<>();
         LongStream.range(1, 6)
             .forEach(i -> products.add(demoProduct(i)));
@@ -64,14 +77,20 @@ public class RestDocsWishTest extends AbstractRestDocsTest {
             .map(ProductResponse::createProductResponse)
             .toList();
 
-        given(wishService.getMyWishList(any(Long.class)))
+        given(pagingService.makeWishPageRequest(any(int.class), any(String.class)))
+            .willReturn(pageRequest);
+        given(wishService.getPagedWishList(any(Long.class), any(PageRequest.class)))
             .willReturn(response);
 
         //when //then
-        mockMvc.perform(get("/api/wishlist")
+        mockMvc.perform(get("/api/wishlist?page=" + page + "&sort=" + sort)
                     .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(document("rest-docs-wish-test/get-wish-list",
+                queryParameters(
+                    parameterWithName("page").description("page number"),
+                    parameterWithName("sort").description("sort option ex) id, name, quantity")
+                )));
     }
 
     @Test

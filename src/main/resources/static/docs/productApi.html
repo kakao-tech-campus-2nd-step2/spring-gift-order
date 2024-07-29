@@ -557,11 +557,36 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_전체_상품_조회_http_request">HTTP request</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/products HTTP/1.1
+<pre class="CodeRay highlight nowrap"><code data-lang="http">GET /api/products?page=1&amp;sort=id HTTP/1.1
 Authorization: Bearer {ACCESS_TOKEN}
 Host: localhost:8080</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_전체_상품_조회_query_parameters">Query parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>page</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page number</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sort</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sort option\n\tex) id, name, quantity</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="_전체_상품_조회_http_response">HTTP response</h3>
@@ -569,39 +594,9 @@ Host: localhost:8080</code></pre>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 607
+Content-Length: 471
 
-[ {
-  &quot;id&quot; : 1,
-  &quot;name&quot; : &quot;상품1&quot;,
-  &quot;price&quot; : 1000,
-  &quot;image_url&quot; : &quot;http://a.com&quot;,
-  &quot;category_name&quot; : &quot;교환권&quot;
-}, {
-  &quot;id&quot; : 2,
-  &quot;name&quot; : &quot;상품2&quot;,
-  &quot;price&quot; : 1000,
-  &quot;image_url&quot; : &quot;http://a.com&quot;,
-  &quot;category_name&quot; : &quot;교환권&quot;
-}, {
-  &quot;id&quot; : 3,
-  &quot;name&quot; : &quot;상품3&quot;,
-  &quot;price&quot; : 1000,
-  &quot;image_url&quot; : &quot;http://a.com&quot;,
-  &quot;category_name&quot; : &quot;교환권&quot;
-}, {
-  &quot;id&quot; : 4,
-  &quot;name&quot; : &quot;상품4&quot;,
-  &quot;price&quot; : 1000,
-  &quot;image_url&quot; : &quot;http://a.com&quot;,
-  &quot;category_name&quot; : &quot;교환권&quot;
-}, {
-  &quot;id&quot; : 5,
-  &quot;name&quot; : &quot;상품5&quot;,
-  &quot;price&quot; : 1000,
-  &quot;image_url&quot; : &quot;http://a.com&quot;,
-  &quot;category_name&quot; : &quot;교환권&quot;
-} ]</code></pre>
+[{&quot;id&quot;:1,&quot;name&quot;:&quot;상품1&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},{&quot;id&quot;:2,&quot;name&quot;:&quot;상품2&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},{&quot;id&quot;:3,&quot;name&quot;:&quot;상품3&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},{&quot;id&quot;:4,&quot;name&quot;:&quot;상품4&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},{&quot;id&quot;:5,&quot;name&quot;:&quot;상품5&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;}]</code></pre>
 </div>
 </div>
 </div>
@@ -621,31 +616,36 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_상품_전체_옵션_조회_path_parameters">Path parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}/all</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product id</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_상품_전체_옵션_조회_http_response">HTTP response</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 295
+Content-Length: 195
 
-{
-  &quot;product&quot; : {
-    &quot;id&quot; : 1,
-    &quot;name&quot; : &quot;상품1&quot;,
-    &quot;price&quot; : 1000,
-    &quot;image_url&quot; : &quot;http://a.com&quot;,
-    &quot;category_name&quot; : &quot;교환권&quot;
-  },
-  &quot;options&quot; : [ {
-    &quot;id&quot; : 1,
-    &quot;name&quot; : &quot;옵션1&quot;,
-    &quot;quantity&quot; : 1
-  }, {
-    &quot;id&quot; : 2,
-    &quot;name&quot; : &quot;옵션2&quot;,
-    &quot;quantity&quot; : 1
-  } ]
-}</code></pre>
+{&quot;product&quot;:{&quot;id&quot;:1,&quot;name&quot;:&quot;상품1&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},&quot;options&quot;:[{&quot;id&quot;:1,&quot;name&quot;:&quot;옵션1&quot;,&quot;quantity&quot;:1},{&quot;id&quot;:2,&quot;name&quot;:&quot;옵션2&quot;,&quot;quantity&quot;:1}]}</code></pre>
 </div>
 </div>
 </div>
@@ -665,23 +665,57 @@ Host: localhost:8080</code></pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_상품_단일_옵션_조회_path_parameters">Path parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. /api/products/{id}</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product id</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_상품_단일_옵션_조회_query_parameters">Query parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>option_id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Option id</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="_상품_단일_옵션_조회_http_response">HTTP response</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="http">HTTP/1.1 200 OK
 Content-Type: application/json;charset=UTF-8
-Content-Length: 168
+Content-Length: 118
 
-{
-  &quot;product&quot; : {
-    &quot;id&quot; : 1,
-    &quot;name&quot; : &quot;상품1&quot;,
-    &quot;price&quot; : 1000,
-    &quot;image_url&quot; : &quot;http://a.com&quot;,
-    &quot;category_name&quot; : &quot;교환권&quot;
-  },
-  &quot;options&quot; : [ ]
-}</code></pre>
+{&quot;product&quot;:{&quot;id&quot;:1,&quot;name&quot;:&quot;상품1&quot;,&quot;price&quot;:1000,&quot;image_url&quot;:&quot;http://a.com&quot;,&quot;category_name&quot;:&quot;교환권&quot;},&quot;options&quot;:[]}</code></pre>
 </div>
 </div>
 </div>
@@ -784,7 +818,7 @@ Host: localhost:8080</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Product id를 입력해야 합니다.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Product id</p></td>
 </tr>
 </tbody>
 </table>
@@ -802,7 +836,7 @@ Host: localhost:8080</code></pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-07-28 16:21:47 +0900
+Last updated 2024-07-29 14:51:29 +0900
 </div>
 </div>
 <script>
