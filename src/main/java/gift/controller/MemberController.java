@@ -5,6 +5,8 @@ import gift.service.JwtService;
 import gift.util.LoginMember;
 import gift.domain.Member;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "회원 API", description = "회원 관련된 API")
 @RestController
 @RequestMapping("/members")
 public class MemberController {
@@ -28,6 +31,7 @@ public class MemberController {
         this.jwtService = jwtService;
     }
 
+    @Operation(summary = "회원 가입", description = "새로운 회원을 등록합니다.")
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@Valid @RequestBody MemberDTO memberDTO) {
         Member member = memberDTO.toEntity();
@@ -37,6 +41,7 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "회원 로그인", description = "회원 로그인을 처리합니다.")
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody MemberDTO memberDTO) {
         Member member = memberDTO.toEntity();
@@ -62,6 +67,7 @@ public class MemberController {
         return foundMember.getPassword().equals(password);
     }
 
+    @Operation(summary = "회원 프로필 조회", description = "회원의 프로필 정보를 조회합니다.")
     @GetMapping("/profile")
     public ResponseEntity<Member> getProfile(@LoginMember Member member) {
         if (member == null) {
