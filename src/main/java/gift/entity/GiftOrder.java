@@ -12,7 +12,7 @@ import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 
 @Entity
-public class Order {
+public class GiftOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
@@ -38,17 +38,17 @@ public class Order {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public Order() {
+    public GiftOrder() {
     }
 
-    public Order(Option option, Long quantity, LocalDateTime orderDateTime, String message) {
+    public GiftOrder(Option option, Long quantity, LocalDateTime orderDateTime, String message) {
         this.option = option;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;
         this.message = message;
     }
 
-    public Order(Long id, LocalDateTime orderDateTime, Product product, Member member, Option option, String message) {
+    public GiftOrder(Long id, LocalDateTime orderDateTime, Product product, Member member, Option option, String message) {
         this.id = id;
         this.orderDateTime = orderDateTime;
         this.product = product;
@@ -57,13 +57,13 @@ public class Order {
         this.message = message;
     }
 
-    public Order(String message, Product product, Member member) {
+    public GiftOrder(String message, Product product, Member member) {
         this.message = message;
         this.product = product;
         this.member = member;
     }
 
-    public Order(Option option, Long quantity, LocalDateTime orderDateTime, String message, Member member) {
+    public GiftOrder(Option option, Long quantity, LocalDateTime orderDateTime, String message, Member member) {
         this.option = option;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;

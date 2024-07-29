@@ -1,11 +1,11 @@
 package gift.dto;
 
-public class OrderRequestDto {
+public class GiftOrderRequestDto {
     private Long optionId;
     private Long quantity;
     private String message;
 
-    public OrderRequestDto(Long optionId, Long quantity, String message) {
+    public GiftOrderRequestDto(Long optionId, Long quantity, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
         this.message = message;

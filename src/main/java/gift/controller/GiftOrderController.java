@@ -1,9 +1,9 @@
 package gift.controller;
 
-import gift.dto.OrderRequestDto;
-import gift.dto.OrderResponseDto;
+import gift.dto.GiftOrderRequestDto;
+import gift.dto.GiftOrderResponseDto;
 import gift.service.BasicTokenService;
-import gift.service.OrderService;
+import gift.service.GiftOrderService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,29 +17,29 @@ import java.net.URI;
 
 @RequestMapping("/api/orders")
 @RestController
-public class OrderController {
-    private final OrderService orderService;
+public class GiftOrderController {
+    private final GiftOrderService giftOrderService;
     private final BasicTokenService basicTokenService;
 
-    public OrderController(OrderService orderService, BasicTokenService basicTokenService) {
-        this.orderService = orderService;
+    public GiftOrderController(GiftOrderService giftOrderService, BasicTokenService basicTokenService) {
+        this.giftOrderService = giftOrderService;
         this.basicTokenService = basicTokenService;
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> placeOrderWithMessage(
+    public ResponseEntity<GiftOrderResponseDto> placeOrderWithMessage(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
-            @RequestBody OrderRequestDto orderRequestDto
+            @RequestBody GiftOrderRequestDto giftOrderRequestDto
     ) throws IllegalAccessException {
 
         Long orderMemberId = basicTokenService.getUserIdByDecodeTokenValue(authorizationHeader);
-        OrderResponseDto orderResponseDto = orderService.placeOrderWithMessage(orderRequestDto, orderMemberId);
+        GiftOrderResponseDto giftOrderResponseDto = giftOrderService.placeOrderWithMessage(giftOrderRequestDto, orderMemberId);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(orderResponseDto.getId())
+                .buildAndExpand(giftOrderResponseDto.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(orderResponseDto);
+        return ResponseEntity.created(location).body(giftOrderResponseDto);
     }
 }

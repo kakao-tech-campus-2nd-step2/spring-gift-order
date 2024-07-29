@@ -1,17 +1,17 @@
 package gift.dto;
 
-import gift.entity.Order;
+import gift.entity.GiftOrder;
 
 import java.time.LocalDateTime;
 
-public class OrderResponseDto {
+public class GiftOrderResponseDto {
     private Long id;
     private Long optionId;
     private Long quantity;
     private LocalDateTime orderDateTime;
     private String message;
 
-    public OrderResponseDto(Long id, Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
+    public GiftOrderResponseDto(Long id, Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
         this.id = id;
         this.optionId = optionId;
         this.quantity = quantity;
@@ -19,15 +19,15 @@ public class OrderResponseDto {
         this.message = message;
     }
 
-    public OrderResponseDto(Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
+    public GiftOrderResponseDto(Long optionId, Long quantity, LocalDateTime orderDateTime, String message) {
         this.optionId = optionId;
         this.quantity = quantity;
         this.orderDateTime = orderDateTime;
         this.message = message;
     }
 
-    public static OrderResponseDto fromEntity(Order order) {
-        return new OrderResponseDto(order.getId(), order.getQuantity(), order.getOrderDateTime(), order.getMessage());
+    public static GiftOrderResponseDto fromEntity(GiftOrder giftOrder) {
+        return new GiftOrderResponseDto(giftOrder.getId(), giftOrder.getQuantity(), giftOrder.getOrderDateTime(), giftOrder.getMessage());
     }
 
     public Long getId() {

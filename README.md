@@ -8,7 +8,7 @@
 ### 시작전 할일 
 - [ ] 2단계 : 주문내역 카카오톡 메세지 전송
 - [ ] 코드리뷰 반영 
-  - [ ] Order 네이밍 변경 ( DB예약어임 )
+  - [x] Order 네이밍 변경 ( DB예약어임 ) -> GiftOrder 로 변경 
   - [ ] ExternalAPIService 에서 URL 을 상수로 작성
 
 ### 3단계 기능구현
@@ -44,7 +44,7 @@ Content-Type: application/json
 {
 "optionId": 1,
 "quantity": 2,
-"message": "Please handle this order with care."
+"message": "Please handle this giftOrder with care."
 }
 
 Response
@@ -56,7 +56,7 @@ Content-Type: application/json
 "optionId": 1,
 "quantity": 2,
 "orderDateTime": "2024-07-21T10:00:00",
-"message": "Please handle this order with care."
+"message": "Please handle this giftOrder with care."
 }
 
 ### 준비사항
