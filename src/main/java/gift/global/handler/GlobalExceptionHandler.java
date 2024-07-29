@@ -2,7 +2,7 @@ package gift.global.handler;
 
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
-import gift.global.exception.RestTemplateException;
+import gift.global.exception.restTemplate.RestTemplateException;
 import gift.global.exception.cartItem.CartItemNotFoundException;
 import gift.global.exception.category.CategoryDuplicateException;
 import gift.global.exception.category.CategoryNotFoundException;
@@ -10,6 +10,8 @@ import gift.global.exception.option.OptionDuplicateException;
 import gift.global.exception.option.OptionNotFoundException;
 import gift.global.exception.product.ProductDuplicateException;
 import gift.global.exception.product.ProductNotFoundException;
+import gift.global.exception.restTemplate.RestTemplateClientException;
+import gift.global.exception.restTemplate.RestTemplateServerException;
 import gift.global.exception.user.UserDuplicateException;
 import gift.global.exception.user.UserNotFoundException;
 import gift.global.response.ErrorResponseDto;
@@ -73,7 +75,18 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(RestTemplateException.class)
     public ResponseEntity<ErrorResponseDto> RestTemplateException(RestTemplateException e) {
-        return ResponseMaker.createErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage());
+        return ResponseMaker.createErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR,
+            "카카오톡 메시지 전송에 실패했습니다. " + e.getMessage());
+    }
+    @ExceptionHandler(RestTemplateClientException.class)
+    public ResponseEntity<ErrorResponseDto> RestTemplateClientException(RestTemplateClientException e) {
+        return ResponseMaker.createErrorResponse(ErrorCode.BAD_REQUEST,
+            "카카오톡 메시지 전송에 실패했습니다. " + e.getMessage());
+    }
+    @ExceptionHandler(RestTemplateServerException.class)
+    public ResponseEntity<ErrorResponseDto> RestTemplateServerException(RestTemplateServerException e) {
+        return ResponseMaker.createErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR,
+            "예상치 못한 문제가 발생했습니다. " + e.getMessage());
     }
 
     /**

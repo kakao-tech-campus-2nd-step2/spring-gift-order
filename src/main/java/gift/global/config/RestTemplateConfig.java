@@ -1,6 +1,8 @@
 package gift.global.config;
 
-import gift.global.exception.RestTemplateException;
+import gift.global.exception.restTemplate.RestTemplateException;
+import gift.global.exception.restTemplate.RestTemplateClientException;
+import gift.global.exception.restTemplate.RestTemplateServerException;
 import java.time.Duration;
 import java.util.Collections;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -11,6 +13,7 @@ import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -43,9 +46,14 @@ public class RestTemplateConfig {
             retryTemplate.setRetryPolicy(retryPolicy);
 
             try {
-                return retryTemplate.execute(context -> execution.execute(request, body)); // HTTP 요청 실행
+                return retryTemplate.execute(
+                    context -> execution.execute(request, body)); // HTTP 요청 실행
+            } catch (HttpClientErrorException e) {
+                throw new RestTemplateClientException(e.getMessage());
+            } catch (HttpServerErrorException e) {
+                throw new RestTemplateServerException(e.getMessage());
             } catch (Throwable throwable) {
-                throw new RestTemplateException();
+                throw new RestTemplateException(throwable.getMessage());
             }
         });
     }
