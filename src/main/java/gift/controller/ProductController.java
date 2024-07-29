@@ -1,20 +1,19 @@
 package gift.controller;
 
+import gift.dto.KakaoTokenDto;
 import gift.dto.ProductDto;
 
 import gift.dto.OptionDto;
 import gift.entity.Category;
 import gift.entity.Product;
-import gift.service.CategoryService;
-import gift.service.OptionService;
-
-import gift.service.ProductService;
+import gift.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -33,13 +32,18 @@ public class ProductController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private OptionService optionService;
-
+    private WishlistService wishlistService;
+    private final KakaoTokenService kakaoTokenService;
+    private final KakaoService kakaoService;
 
     @Autowired
-    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService) {
+    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService, WishlistService wishlistService,KakaoService kakaoService, KakaoTokenService kakaoTokenService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.optionService = optionService;
+        this.wishlistService = wishlistService;
+        this.kakaoService = kakaoService;
+        this.kakaoTokenService = kakaoTokenService;
     }
 
 
@@ -79,5 +83,16 @@ public class ProductController {
         return "redirect:/view/products";
     }
 
+    @Transactional
+    @PostMapping("/order/{productId}")
+    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId, @RequestParam("message") String message) {
+        optionService.subtractOptionQuantity(optionId, quantity);
+        wishlistService.deleteWishlistItem(email, productId);
+        System.out.println(message);
+        KakaoTokenDto tokenDto = kakaoTokenService.getTokenByEmail(email);
+        String accessToken = tokenDto.getAccessToken();
+        kakaoService.sendKakaoMessage(accessToken, message);
+        return ResponseEntity.ok().build();
+    }
 
 }

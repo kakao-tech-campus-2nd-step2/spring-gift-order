@@ -22,10 +22,36 @@
 </div>
 <a href="/view/home">Back to Home</a>
 
+<!-- Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Order Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="order-form">
+                    <div class="form-group">
+                        <label for="order-message">Enter a message for your order:</label>
+                        <input type="text" class="form-control" id="order-message" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {
         let currentPage = 1;
         const pageSize = 9;
+        let productId;
+        let currentOptionId;
+        let currentQuantity;
 
         function getEmailFromToken() {
             const token = localStorage.getItem('token');
@@ -60,8 +86,10 @@
                     }
 
                     products.forEach(product => {
+                        const options = product.options.map(option => `<option value="${option.id}" data-quantity="${option.quantity}">${option.name} (Quantity: ${option.quantity})</option>`).join('');
 
-                        const options = product.options.map(option => `<option value="${option.id}">${option.name} (Quantity: ${option.quantity})</option>`).join('');
+                        const quantityOptions = Array.from({length: 5}, (v, i) => i + 1)
+                            .map(num => `<option value="${num}">${num}</option>`).join('');
 
                         const productCard = `
                             <div class="col-md-4 mb-3">
@@ -77,7 +105,13 @@
                                             ${options}
                                         </select>
 
+                                        <select class="form-control mb-2 quantity-select">
+                                            <option value="" disabled selected>-- Select Quantity --</option>
+                                            ${quantityOptions}
+                                        </select>
+
                                         <button class="btn btn-primary add-to-wishlist" data-id="${product.id}">Add to Wishlist</button>
+                                        <button class="btn btn-success order-item" data-id="${product.id}">Order Item</button>
                                     </div>
                                 </div>
                             </div>
@@ -89,29 +123,61 @@
                     $('.add-to-wishlist').click(function() {
                         const productId = $(this).data('id');
                         const email = getEmailFromToken();
-
-                        const selectedOptionId = $(this).siblings('.option-select').val();
-                        if (!selectedOptionId) {
-                            alert('Please select an option.');
-                            return;
-                        }
-
-
                         if (!email) return;
 
                         $.ajax({
                             url: `/api/wishlist/${productId}`,
                             method: 'POST',
                             data: {
-                                email: email,
-                                optionId: selectedOptionId
-
+                                email: email
                             },
                             success: function() {
                                 alert('Product added to wishlist!');
                             },
                             error: function() {
                                 alert('Failed to add product to wishlist.');
+                            }
+                        });
+                    });
+
+                    // order item functionality
+                    $('.order-item').click(function() {
+                        productId = $(this).data('id');
+                        const selectedOption = $(this).siblings('.option-select').find('option:selected');
+                        currentOptionId = selectedOption.val();
+                        currentQuantity = $(this).siblings('.quantity-select').val();
+
+                        if (!currentOptionId || !currentQuantity) {
+                            alert('Please select an option and quantity.');
+                            return;
+                        }
+
+                        $('#orderModal').modal('show');
+                    });
+
+                    // Order form submit
+                    $('#order-form').submit(function(event) {
+                        event.preventDefault();
+                        const email = getEmailFromToken();
+                        const orderMessage = $('#order-message').val();
+
+                        if (!email) return;
+
+                        $.ajax({
+                            url: `/api/products/order/${productId}`,
+                            method: 'POST',
+                            data: {
+                                email: email,
+                                optionId: currentOptionId,
+                                quantity: currentQuantity,
+                                message: orderMessage
+                            },
+                            success: function() {
+                                alert('Product ordered successfully!');
+                                $('#orderModal').modal('hide');
+                            },
+                            error: function() {
+                                alert('Failed to order product.');
                             }
                         });
                     });
@@ -148,5 +214,6 @@
         });
     });
 </script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
