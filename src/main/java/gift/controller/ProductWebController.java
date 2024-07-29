@@ -6,6 +6,8 @@ import gift.dto.OptionDTO;
 import gift.dto.ProductDTO;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Tag(name = "웹 제품 관리", description = "웹에서 제품을 관리하는 API")
 @Controller
 @RequestMapping("/web/products")
 public class ProductWebController {
@@ -28,6 +31,7 @@ public class ProductWebController {
         this.categoryService = categoryService;
     }
 
+    @Operation(summary = "제품 페이지 조회", description = "웹 페이지에서 모든 제품을 조회합니다.")
     @GetMapping
     public String getProductsPage(Model model) {
         List<ProductDTO> products = productService.findAllProducts();
@@ -37,6 +41,7 @@ public class ProductWebController {
         return "products";
     }
 
+    @Operation(summary = "제품 등록", description = "새로운 제품을 등록합니다.")
     @PostMapping(consumes = "application/x-www-form-urlencoded;charset=UTF-8")
     public String postProduct(@RequestParam String name, @RequestParam BigDecimal price,
         @RequestParam String imageUrl, @RequestParam String description,
@@ -60,6 +65,7 @@ public class ProductWebController {
         return "redirect:/web/products";
     }
 
+    @Operation(summary = "제품 삭제", description = "선택한 제품들을 삭제합니다.")
     @PostMapping(value = "/delete", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
     public String deleteProduct(@RequestParam List<Long> productIds) {
         for (Long id : productIds) {
@@ -68,6 +74,7 @@ public class ProductWebController {
         return "redirect:/web/products";
     }
 
+    @Operation(summary = "제품 수정 폼 조회", description = "특정 제품을 수정하기 위한 폼을 조회합니다.")
     @GetMapping("/edit/{id}")
     public String getEditForm(@PathVariable Long id, Model model) {
         ProductDTO product = productService.getProductById(id);
@@ -77,6 +84,7 @@ public class ProductWebController {
         return "productEdit";
     }
 
+    @Operation(summary = "제품 수정", description = "특정 제품을 수정합니다.")
     @PostMapping(value = "/edit/{id}", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
     public String editProduct(@PathVariable Long id, @RequestParam String name,
         @RequestParam BigDecimal price, @RequestParam String imageUrl,

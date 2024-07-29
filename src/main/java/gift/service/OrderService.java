@@ -30,7 +30,7 @@ public class OrderService {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new IllegalArgumentException("Option not found"));
 
-        if (option.getQuantity() < quantity) {
+        if (option.quantityLessThan(quantity)) {
             throw new IllegalArgumentException("Insufficient stock for the option");
         }
 

@@ -41,6 +41,10 @@ public class Option {
         this.quantity -= quantity;
     }
 
+    public boolean quantityLessThan(int quantity) {
+        return this.quantity < quantity;
+    }
+
     public OptionBuilder toBuilder() {
         return new OptionBuilder()
             .id(this.id)
