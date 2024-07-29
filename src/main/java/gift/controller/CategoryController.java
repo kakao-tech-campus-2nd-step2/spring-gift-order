@@ -53,7 +53,8 @@ public class CategoryController {
     @PostMapping
     @Operation(summary = "카테고리 추가", description = "카테고리를 추가할 때 사용하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "카테고리 추가 성공")
+        @ApiResponse(responseCode = "200", description = "카테고리 추가 성공"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public ResponseEntity<RequestStateDTO> addCategory(
         @RequestBody RequestCategoryDto requestCategoryDto) {
@@ -68,7 +69,9 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     @Operation(summary = "카테고리 삭제", description = "카테고리를 삭제할 때 사용하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공")
+        @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공"),
+        @ApiResponse(responseCode = "404", description = "카테고리 없음 - 해당 ID로 카테고리를 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);

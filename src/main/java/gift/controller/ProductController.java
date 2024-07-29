@@ -32,7 +32,8 @@ public class ProductController {
     @GetMapping
     @Operation(summary = "모든 제품 조회", description = "저장된 모든 제품 정보를 조회하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "제품 목록 조회 성공")
+        @ApiResponse(responseCode = "200", description = "제품 목록 조회 성공"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public List<ProductDto> getAllProducts() {
         return productService.getAllProducts();
@@ -42,7 +43,9 @@ public class ProductController {
     @GetMapping("/{id}")
     @Operation(summary = "특정 제품 조회", description = "주어진 ID에 해당하는 제품 정보를 조회하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "제품 조회 성공")
+        @ApiResponse(responseCode = "200", description = "제품 조회 성공"),
+        @ApiResponse(responseCode = "404", description = "제품을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public ProductDto getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
@@ -52,7 +55,10 @@ public class ProductController {
     @PostMapping("/add")
     @Operation(summary = "제품 추가", description = "새로운 제품을 추가하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "제품 추가 성공")
+        @ApiResponse(responseCode = "200", description = "제품 추가 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
+
     })
     public ProductDto addProduct(@Valid @ModelAttribute RequestProductDto requestProductDto) {
         return productService.addProduct(requestProductDto);
@@ -62,7 +68,10 @@ public class ProductController {
     @PostMapping("/update/{id}")
     @Operation(summary = "제품 수정", description = "주어진 ID에 해당하는 제품 정보를 수정하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "제품 수정 성공")
+        @ApiResponse(responseCode = "200", description = "제품 수정 성공"),
+        @ApiResponse(responseCode = "404", description = "제품을 찾을 수 없음"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public ProductDto updateProduct(@Valid @ModelAttribute RequestProductDto requestProductDto) {
         return productService.updateProduct(requestProductDto);
@@ -71,7 +80,9 @@ public class ProductController {
     // 제품 삭제
     @GetMapping("/delete/{id}")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "제품 삭제 성공")
+        @ApiResponse(responseCode = "200", description = "제품 삭제 성공"),
+        @ApiResponse(responseCode = "404", description = "제품을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     @Operation(summary = "제품 삭제", description = "주어진 ID에 해당하는 제품을 삭제하는 API")
     public String deleteProduct(@PathVariable Long id) {

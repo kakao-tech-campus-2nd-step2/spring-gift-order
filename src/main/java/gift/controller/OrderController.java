@@ -30,7 +30,10 @@ public class OrderController {
     @PostMapping
     @Operation(summary = "주문 추가", description = "KaKao 로그인 후, 주문을 추가하는 API")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "주문 추가 성공")
+        @ApiResponse(responseCode = "200", description = "주문 추가 성공"),
+        @ApiResponse(responseCode = "404", description = "제품을 찾을 수 없음"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
     })
     public ResponseEntity<OrderRequestStateDTO> addOrder(
         @RequestBody RequestOrderDto requestOrderDto,
