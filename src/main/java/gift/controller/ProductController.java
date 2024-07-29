@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/api/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -41,38 +41,40 @@ public class ProductController {
         return productService.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{productId}")
     public ProductDto getProductById(@PathVariable("id") Long id) {
         return productService.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("상품을 찾을 수 없습니다. ID: " + id));
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public Long addProduct(@RequestBody ProductDto productDto) {
         return productService.save(productDto);
     }
     
-    @PutMapping("/update/{id}")
+    @PutMapping("/{productId}")
     public void updateProduct(@PathVariable Long id, @RequestBody ProductDto productDto) {
         productService.update(id, productDto);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{productId}")
     public void deleteProduct(@PathVariable Long id) {
         productService.delete(id);
     }
 
-    @GetMapping("/{productId}/option")
+    // 상품 옵션 api
+
+    @GetMapping("/{productId}/options")
     public List<OptionDto> getProductOptions(@PathVariable Long productId) {
         return productService.getProductOptions(productId);
     }
 
-    @PostMapping("/{productId}/addOption")
+    @PostMapping("/{productId}/options")
     public void addOptionToProduct(@PathVariable Long productId, @RequestBody OptionDto optionDto) {
         productService.addOptionToProduct(productId, optionDto);
     }
 
-    @PostMapping("/{productId}/option/{optionId}/subtract")
+    @PostMapping("/{productId}/options/{optionId}/subtract")
     public void subtractOptionQuantity(@PathVariable Long productId, @PathVariable Long optionId, @RequestParam int quantity) {
         productService.subtractOptionQuantity(productId, optionId, quantity);
     }

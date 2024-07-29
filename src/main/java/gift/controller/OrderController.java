@@ -8,7 +8,7 @@ import gift.dto.OrderResponse;
 import gift.service.OrderService;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController {
 
     private final OrderService orderService;
@@ -17,7 +17,8 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/create")
+    // 페이지네이션 적용하기
+    @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
         if (accessToken == null || !accessToken.startsWith("Bearer ")) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

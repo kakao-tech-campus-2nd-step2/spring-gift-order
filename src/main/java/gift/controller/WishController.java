@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/wish")
+@RequestMapping("/api/wishes")
 public class WishController {
 
     private final WishService wishService;
@@ -19,19 +19,19 @@ public class WishController {
         this.wishService = wishService;
     }
 
-    @GetMapping("/list")
+    @GetMapping
     public ResponseEntity<Page<Wish>> getWishes(Pageable pageable) {
         Page<Wish> wishes = wishService.getWishes(pageable);
         return ResponseEntity.ok(wishes);
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Wish> addWish(@RequestBody WishRequest wishRequest, @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String token) {
         Wish wish = wishService.addWish(token, wishRequest);
         return ResponseEntity.ok(wish);
     }
 
-    @DeleteMapping("/remove")
+    @DeleteMapping("/{wishId}")
     public ResponseEntity<Void> removeWish(@RequestBody WishRequest wishRequest, @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String token) {
         wishService.removeWish(token, wishRequest.getProductId());
         return ResponseEntity.ok().build();
