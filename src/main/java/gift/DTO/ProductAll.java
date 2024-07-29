@@ -11,8 +11,8 @@ public record ProductAll(
     /**
      * ProductAll 생성자
      *
-     * @param productDTO         상품 정보
-     * @param productOptionDTO   상품 옵션 정보
+     * @param productDTO       상품 정보
+     * @param productOptionDTO 상품 옵션 정보
      */
     public ProductAll(ProductDTO productDTO, ProductOptionDTO productOptionDTO) {
         this(productDTO, Collections.singletonList(productOptionDTO));

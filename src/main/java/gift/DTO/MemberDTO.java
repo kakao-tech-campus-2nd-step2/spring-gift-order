@@ -17,10 +17,21 @@ public record MemberDTO(
 
         @Size(min = 4, max = 30, message = "비밀번호는 4자 이상 30자 미만입니다.")
         @NotNull
-        String password) {
+        String password,
+
+        String kakaoAccessToken
+) {
+
+    public MemberDTO(long id, String email, String password) {
+        this(id, email, password, null);
+    }
 
     public MemberDTO(String email, String password) {
-        this(null, email, password);
+        this(null, email, password, null);
+    }
+
+    public MemberDTO(String email, String password, String kakaoAccessToken) {
+        this(null, email, password, kakaoAccessToken);
     }
 
     /**

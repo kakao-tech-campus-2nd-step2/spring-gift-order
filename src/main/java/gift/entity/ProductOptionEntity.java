@@ -1,10 +1,13 @@
 package gift.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 제품 옵션 엔티티. 데이터베이스 테이블과 매핑된다.
@@ -27,6 +30,10 @@ public class ProductOptionEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity productEntity;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "productOptionEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderEntity> orderEntities;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -34,6 +41,14 @@ public class ProductOptionEntity {
     private LocalDateTime updatedAt;
 
     protected ProductOptionEntity() {
+    }
+
+    public List<OrderEntity> getOrderEntities() {
+        return orderEntities;
+    }
+
+    public void setOrderEntities(List<OrderEntity> orderEntities) {
+        this.orderEntities = orderEntities;
     }
 
     public LocalDateTime getCreatedAt() {

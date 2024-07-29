@@ -16,5 +16,5 @@ public interface ProductOptionRepository extends JpaRepository<ProductOptionEnti
 
     boolean existsByProductEntityAndName(ProductEntity productEntity, String name);
 
-    List<ProductOptionEntity> findByProductId(Long id);
+    List<ProductOptionEntity> findByProductEntityId(Long productId);
 }

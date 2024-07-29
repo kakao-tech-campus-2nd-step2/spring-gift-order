@@ -50,7 +50,8 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
             if (claims != null) {
                 String email = claims.get("email", String.class);
                 Long id = claims.get("id", Long.class);
-                return new MemberDTO(id, email, null);
+                String kakao = claims.get("kakao", String.class);
+                return new MemberDTO(id, email, null, kakao);
             }
         }
 

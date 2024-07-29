@@ -56,7 +56,7 @@ public class MemberService {
      * @throws AuthException 사용자가 존재하지 않는 경우 예외를 발생시킴
      */
     @Transactional(readOnly = true)
-    public TokenDTO login(MemberDTO loginRequestDTO) {
+    public TokenDTO login(MemberDTO loginRequestDTO, long tokenExpTime) {
         if (!isExist(loginRequestDTO)) {
             throw new AuthException("유저가 존재하지 않습니다.", HttpStatus.UNAUTHORIZED);
         }
@@ -64,7 +64,7 @@ public class MemberService {
         long userId = getUserId(loginRequestDTO);
         var memberDetailsDTO = new MemberDTO(userId, loginRequestDTO.getEmail(),
                 loginRequestDTO.getPassword());
-        return jwtToken.createToken(memberDetailsDTO);
+        return jwtToken.createToken(memberDetailsDTO, tokenExpTime);
     }
 
     /**
@@ -75,15 +75,25 @@ public class MemberService {
      * @throws AuthException 사용자가 회원가입에 실패한 경우 예외를 발생시킴
      */
     @Transactional
-    public TokenDTO signUp(MemberDTO loginRequestDTO) {
+    public TokenDTO signUp(MemberDTO loginRequestDTO, long tokenExpTime) {
         try {
             var member = memberMapper.toMemberEntity(loginRequestDTO, false);
             memberRepository.save(member);
 
             var memberDTO = new MemberDTO(member.getId(), member.getEmail(), member.getPassword());
-            return jwtToken.createToken(memberDTO);
+            return jwtToken.createToken(memberDTO, tokenExpTime);
         } catch (Exception e) {
             throw new AuthException("회원가입에 실패했습니다.", HttpStatus.FORBIDDEN);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public TokenDTO login(MemberDTO memberDTO) {
+        return login(memberDTO, 60 * 60 * 24 * 7);
+    }
+
+    @Transactional(readOnly = true)
+    public TokenDTO signUp(MemberDTO memberDTO) {
+        return signUp(memberDTO, 60 * 60 * 24 * 7);
     }
 }
