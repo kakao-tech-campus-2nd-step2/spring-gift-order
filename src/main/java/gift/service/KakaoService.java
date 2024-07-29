@@ -1,14 +1,14 @@
 package gift.service;
 
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.DTO.kakao.KakaoMemberResponse;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import gift.DTO.kakao.KakaoMemberInfo;
+import gift.DTO.kakao.KakaoMessageResponse;
 import gift.controller.kakao.KakaoProperties;
+import gift.domain.Order;
 import java.io.IOException;
-import java.net.URI;
 import org.springframework.http.HttpHeaders;
-
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,11 +30,9 @@ public class KakaoService {
 
     public String sendTokenRequest(String authCode) {
 
-        String tokenRequestUrl = "https://kauth.kakao.com/oauth/token";
         var body = createRequestBody(authCode);
-
         String tokenResponse =  restClient.post()
-                                        .uri(URI.create(tokenRequestUrl))
+                                        .uri(kakaoProperties.getTokenUri())
                                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                                         .body(body)
                                         .retrieve()
@@ -46,8 +44,8 @@ public class KakaoService {
     private MultiValueMap<String, String> createRequestBody(String authCode) {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoProperties.clientId());
-        body.add("redirect_uri", kakaoProperties.redirectUri());
+        body.add("client_id", kakaoProperties.getClientId());
+        body.add("redirect_uri", kakaoProperties.getRedirectUri().toString());
         body.add("code", authCode);
         return body;
     }
@@ -61,17 +59,19 @@ public class KakaoService {
         }
     }
 
-    public KakaoMemberResponse getMemberInfo(String accessToken) {
+    public KakaoMemberInfo getMemberInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
         var response = restClient.post()
-            .uri(URI.create(kakaoProperties.apiUserUri()))
+            .uri(kakaoProperties.getUserUri())
             .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(body)
             .retrieve()
-            .body(String.class);
+            .toEntity(KakaoMemberInfo.class);
 
-        return new KakaoMemberResponse(extractIdFromApiResponse(response));
+        return response.getBody();
     }
 
     private Long extractIdFromApiResponse(String response) {
@@ -83,4 +83,37 @@ public class KakaoService {
         }
     }
 
+    protected KakaoMessageResponse sendKakaoMessage(String accessToken, Order order) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
+
+        ObjectNode linkObject = objectMapper.createObjectNode();
+        linkObject.put("web_url", "https://developers.kakao.com");
+        linkObject.put("mobile_web_url", "https://developers.kakao.com");
+
+        ObjectNode templateObject = objectMapper.createObjectNode();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", order.getMessage());
+        templateObject.set("link", linkObject);
+        templateObject.put("button_title", "바로 확인");
+
+        String templateObjectString;
+        try {
+            templateObjectString = objectMapper.writeValueAsString(templateObject);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create JSON string");
+        }
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("template_object", templateObjectString);
+
+        return restClient.post()
+            .uri(kakaoProperties.getMessageUri())
+            .headers(httpHeaders -> httpHeaders.addAll(headers))
+            .body(body)
+            .retrieve()
+            .toEntity(KakaoMessageResponse.class)
+            .getBody();
+    }
 }

@@ -1,7 +1,9 @@
 package gift.service;
 
+import gift.DTO.kakao.KakaoSignupRequest;
 import gift.DTO.member.LoginRequest;
 import gift.DTO.member.LoginResponse;
+import gift.DTO.member.MemberResponse;
 import gift.DTO.member.SignupRequest;
 import gift.DTO.member.SignupResponse;
 import gift.domain.Member;
@@ -9,6 +11,7 @@ import gift.exception.member.DuplicatedEmailException;
 import gift.exception.member.InvalidAccountException;
 import gift.exception.member.PasswordMismatchException;
 import gift.repository.MemberRepository;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,12 +34,20 @@ public class MemberService {
         memberRepository.findByEmail(signupRequest.getEmail()).ifPresent(p -> {
             throw new DuplicatedEmailException();
         });
-        Member member = new Member(signupRequest.getEmail(), signupRequest.getPassword());
+        Member member = new Member(signupRequest.getEmail(),
+                                    signupRequest.getPassword(),
+                                    signupRequest.getKakaoId());
         memberRepository.save(member);
 
         confirmPassword(signupRequest.getPassword(), signupRequest.getConfirmPassword());
 
         return new SignupResponse(member.getEmail());
+    }
+
+    @Transactional
+    public SignupResponse registerKakaoMember(KakaoSignupRequest kakaoSignupRequest) {
+        SignupRequest signupRequest = new SignupRequest(kakaoSignupRequest.kakaoId());
+        return registerMember(signupRequest);
     }
 
     @Transactional(readOnly = true)
@@ -59,6 +70,12 @@ public class MemberService {
         return member;
     }
 
+    @Transactional(readOnly = true)
+    public Member getMemberByKakaoId(Long kakaoId) {
+        return memberRepository.findByKakaoId(kakaoId).orElse(null);
+
+    }
+
     private void validatePassword(Member member, String password) {
         if (!member.getPassword().equals(password)) {
             throw new InvalidAccountException();
@@ -71,4 +88,10 @@ public class MemberService {
         }
     }
 
+    public List<MemberResponse> getMembers() {
+        return memberRepository.findAll()
+                            .stream()
+                            .map(MemberResponse::fromEntity)
+                            .toList();
+    }
 }

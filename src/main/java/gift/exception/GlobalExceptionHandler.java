@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     ) {
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
-  
+
     @ExceptionHandler(HttpClientErrorException.class)
     protected ResponseEntity<String> HandleHttpClientError(
         HttpClientErrorException e

@@ -25,6 +25,7 @@ public class OptionService {
         this.productRepository = productRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<OptionResponse> getAllOptionsByProductId(Long productId) {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new RuntimeException("No such product with id" + productId));
@@ -67,5 +68,11 @@ public class OptionService {
                     optionRequest.name(), productId)
             );
         }
+    }
+
+    @Transactional(readOnly = true)
+    protected Option getOptionById(Long optionId) {
+        return optionRepository.findById(optionId)
+            .orElseThrow(() -> new RuntimeException("No such option" + optionId));
     }
 }

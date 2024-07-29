@@ -1,5 +1,7 @@
 package gift.controller.kakao;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +18,10 @@ public class KakaoViewController {
     }
 
     @GetMapping
-    public String kakaoLogin(Model model) {
+    public ResponseEntity<?> kakaoLogin(Model model) {
         model.addAttribute("kakao", kakaoProperties);
-        return "kakaoLogin";
+
+        return ResponseEntity.status(HttpStatus.PERMANENT_REDIRECT)
+                            .location(kakaoProperties.getLoginUri()).build();
     }
 }
