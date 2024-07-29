@@ -117,9 +117,9 @@ public class KakaoApiCaller {
 
     private @NotNull LinkedMultiValueMap<String, String> createBodyForRefreshAccessToken(String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "refresh_token");
+        body.add("grant_type", "refreshToken");
         body.add("client_id", properties.clientId());
-        body.add("refresh_token", refreshToken);
+        body.add("refreshToken", refreshToken);
         return body;
     }
 

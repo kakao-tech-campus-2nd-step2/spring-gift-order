@@ -36,7 +36,7 @@ public class OAuthService {
     @Transactional
     public TokenResponse signIn(String code, String redirectUrl) {
         KakaoTokenDto kakaoTokenDto = kakaoApiCaller.getKakaoAccessToken(code, redirectUrl);
-        String email = kakaoApiCaller.getKakaoMemberInfo(kakaoTokenDto.access_token());
+        String email = kakaoApiCaller.getKakaoMemberInfo(kakaoTokenDto.accessToken());
 
         Member member = memberRepository.findByEmail(email)
                 .orElseGet(() -> memberRepository.save(new Member(email, "", Role.USER, SocialLoginType.KAKAO)));

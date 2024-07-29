@@ -63,11 +63,11 @@
 //
 //    @Test
 //    void getKakaoMemberInfo() {
-//        var access_token = "EXzy9fHlc7wjc6GlfR1uRVo9yKYPTqJHAAAAAQorDR8AAAGQ3w6vZyn2EFsnJsRZ?";
+//        var accessToken = "EXzy9fHlc7wjc6GlfR1uRVo9yKYPTqJHAAAAAQorDR8AAAGQ3w6vZyn2EFsnJsRZ?";
 //        var response = client.post()
 //                .uri(URI.create(properties.memberInfoUrl()))
 //                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                .header("Authorization", "Bearer " + access_token)
+//                .header("Authorization", "Bearer " + accessToken)
 //                .retrieve()
 //                .toEntity(String.class);
 //
@@ -138,9 +138,9 @@
 //
 //    private @NotNull LinkedMultiValueMap<String, String> createBodyForRefreshAccessToken(String refreshToken) {
 //        var body = new LinkedMultiValueMap<String, String>();
-//        body.add("grant_type", "refresh_token");
+//        body.add("grant_type", "refreshToken");
 //        body.add("client_id", properties.clientId());
-//        body.add("refresh_token", refreshToken);
+//        body.add("refreshToken", refreshToken);
 //        return body;
 //    }
 //}
