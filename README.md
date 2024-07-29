@@ -53,3 +53,9 @@ Content-Type: application/json
 "message": "Please handle this order with care."
 }
 ````
+
+<hr>
+
+## Step2. 주문하기
+### 1. 기능 요구 사항
+API 사양에 관해 클라이언트와 어떻게 소통할 수 있을까? 어떻게 하면 편하게 소통할 수 있을지 고민해 보고 그 방법을 구현한다.
