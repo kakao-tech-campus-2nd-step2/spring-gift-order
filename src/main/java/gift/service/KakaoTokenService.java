@@ -36,4 +36,14 @@ public class KakaoTokenService {
                 kakaoToken.getRefreshToken()
         );
     }
+
+
+    public String getEmailFromAccessToken(String accessToken) {
+        // 액세스 토큰을 사용하여 이메일을 가져오는 로직
+        KakaoToken kakaoToken = kakaoTokenRepository.findByAccessToken(accessToken);
+        if (kakaoToken != null) {
+            return kakaoToken.getEmail();
+        }
+        return null;
+    }
 }
