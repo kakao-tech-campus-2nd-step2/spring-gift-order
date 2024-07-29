@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import gift.entity.User;
 import gift.repository.UserRepository;
 import gift.service.AuthService;
+import gift.service.TokenService;
 import gift.service.UserService;
 
 public class AuthServiceTest {
@@ -25,6 +26,9 @@ public class AuthServiceTest {
 
     @Mock
     private UserService userService;
+    
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private AuthService authService;
