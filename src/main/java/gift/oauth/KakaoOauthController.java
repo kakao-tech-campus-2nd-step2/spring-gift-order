@@ -1,5 +1,6 @@
 package gift.oauth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ public class KakaoOauthController {
         this.configProperties = configProperties;
     }
 
+    @Operation(summary = "oauth page", description = "작동하지 않습니다.")
     @GetMapping()
     public String getKakaoOauthPage(Model model) {
         model.addAttribute("redirectUri", configProperties.getRedirectUrl());
@@ -27,6 +29,7 @@ public class KakaoOauthController {
         return "kakaoOauth.html";
     }
 
+    @Operation(summary = "kakaologin", description = "카카오에서 리다이렉트 토큰 받아오는 곳")
     @GetMapping("/code")
     public ResponseEntity<KakaoToken> kakoLogin(@RequestParam("code") String code) {
         return ResponseEntity.ok(oauthService.getKakaoToken(code));

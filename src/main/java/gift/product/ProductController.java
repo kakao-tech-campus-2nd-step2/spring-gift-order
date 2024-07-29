@@ -5,6 +5,8 @@ import gift.option.Option;
 import gift.option.OptionRequest;
 import gift.option.OptionResponse;
 import gift.option.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
+@Tag(name = "product", description = "상품 관련 API")
 @Controller
 @RequestMapping("/products")
 public class ProductController {
@@ -45,6 +48,7 @@ public class ProductController {
         return "admin"; // Thymeleaf 템플릿 이름
     }
 
+    @Operation(summary = "상품 생성", description = "생성한 상품 반환함")
     @PostMapping("/post")
     public ResponseEntity<ProductResponse> createProduct(
         @Valid @RequestBody ProductRequest newProduct) {
@@ -55,6 +59,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ProductResponse(product));
     }
 
+    @Operation(summary = "상품 수정", description = "수정한 상품 반환함")
     @PutMapping("/update")
     public ResponseEntity<ProductResponse> updateProduct(
         @Valid @RequestBody ProductRequest changeProduct) {
@@ -62,18 +67,21 @@ public class ProductController {
             new ProductResponse(productService.updateProduct(changeProduct.toEntity())));
     }
 
+    @Operation(summary = "상품 삭제")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("delete");
     }
 
+    @Operation(summary = "옵션 조회", description = "상품별 옵션 목록 조회")
     @GetMapping("{id}/options")
     public ResponseEntity<List<Option>> getOptions(@PathVariable("id") Long productId) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(optionService.findAllByProductId(productId));
     }
 
+    @Operation(summary = "옵션 생성", description = "상품별 옵션 생성")
     @PostMapping("{id}/options")
     public ResponseEntity<List<OptionResponse>> addOption(
         @RequestBody @Valid OptionRequest optionRequest,
@@ -84,6 +92,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addOption(id, option));
     }
 
+    @Operation(summary = "옵션 수정", description = "상품별 옵션 수정")
     @PutMapping("{id}/options")
     public ResponseEntity<String> updateOption(@RequestBody @Valid OptionRequest optionRequest,
         @PathVariable Long id) {
@@ -92,6 +101,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body("update");
     }
 
+    @Operation(summary = "옵션 삭제", description = "상품에 옵션을 삭제함")
     @DeleteMapping("{id}/options")
     public ResponseEntity<List<Option>> deleteOption(@PathVariable("id") Long productId,
         @RequestParam Long optionId) {
