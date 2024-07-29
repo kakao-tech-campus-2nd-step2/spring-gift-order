@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 
 @Service
-public class KakaoLoginService {
+public class KakaoAuthService {
 
     private static final String GRANT_TYPE = "authorization_code";
     private static final String TOKEN_URL_SUFFIX = "/oauth/token";
@@ -32,7 +32,7 @@ public class KakaoLoginService {
     private final RestTemplate restTemplate;
 
     @Autowired
-    public KakaoLoginService(RestTemplate restTemplate) {
+    public KakaoAuthService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

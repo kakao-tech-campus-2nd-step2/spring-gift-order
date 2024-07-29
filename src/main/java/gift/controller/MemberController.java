@@ -6,7 +6,7 @@ import gift.dto.request.MemberRequest;
 import gift.dto.response.KakaoProfileResponse;
 import gift.dto.response.KakaoTokenResponse;
 import gift.exception.DuplicateMemberEmailException;
-import gift.service.KakaoLoginService;
+import gift.service.KakaoAuthService;
 import gift.service.MemberService;
 import gift.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +28,13 @@ public class MemberController {
 
     private final MemberService memberService;
     private final TokenService tokenService;
-    private final KakaoLoginService kakaoLoginService;
+    private final KakaoAuthService kakaoAuthService;
 
     @Autowired
-    public MemberController(MemberService memberService, TokenService tokenService, KakaoLoginService kakaoLoginService) {
+    public MemberController(MemberService memberService, TokenService tokenService, KakaoAuthService kakaoAuthService) {
         this.memberService = memberService;
         this.tokenService = tokenService;
-        this.kakaoLoginService = kakaoLoginService;
+        this.kakaoAuthService = kakaoAuthService;
     }
 
     @PostMapping("/register")
@@ -61,9 +61,9 @@ public class MemberController {
 
     @GetMapping("/kakao/login")
     public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) {
-        KakaoTokenResponse tokenResponse = kakaoLoginService.getKakaoToken(code);
+        KakaoTokenResponse tokenResponse = kakaoAuthService.getKakaoToken(code);
 
-        KakaoProfileResponse profileResponse = kakaoLoginService.getUserProfile(tokenResponse.accessToken());
+        KakaoProfileResponse profileResponse = kakaoAuthService.getUserProfile(tokenResponse.accessToken());
 
         String email = profileResponse.kakaoAccount().profile().nickname() + KAKAO_EMAIL_SUFFIX;
 
