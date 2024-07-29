@@ -11,6 +11,7 @@ import org.springframework.validation.BindingResult;
 import gift.entity.User;
 import gift.exception.InvalidUserException;
 import gift.exception.UnauthorizedException;
+import gift.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -18,20 +19,26 @@ import io.jsonwebtoken.security.Keys;
 public class AuthService implements TokenHandler{
 	
 	private final UserService userService;
+	private final UserRepository userRepository;
+	private final TokenService tokenService;
 	
-	public AuthService(UserService userService) {
+	public AuthService(UserService userService, UserRepository userRepository,
+			TokenService tokenService) {
 		this.userService = userService;
+		this.userRepository = userRepository;
+		this.tokenService = tokenService;
+		tokenService.addTokenParser(this);
 	}
 	
 	private final String secret = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
 	
-	public User searchUser(String email, BindingResult bindingResult) {
-		validateBindingResult(bindingResult);       
-        return userService.findByEmail(email);
+	public void createUser(User user, BindingResult bindingResult) {
+		validateBindingResult(bindingResult);
+		userRepository.save(user);
 	}
 	
 	public Map<String, String> loginUser(User user, BindingResult bindingResult){
-		User registeredUser = searchUser(user.getEmail(), bindingResult);
+		User registeredUser = userService.findByEmail(user.getEmail());
 		registeredUser.validatePassword(user.getPassword());
 		String token = grantAccessToken(registeredUser);
 		return loginResponse(token);
