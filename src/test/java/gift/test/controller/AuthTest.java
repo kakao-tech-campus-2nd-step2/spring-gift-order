@@ -19,12 +19,8 @@ import org.springframework.validation.BindingResult;
 import gift.controller.AuthController;
 import gift.entity.User;
 import gift.service.AuthService;
-import gift.service.UserService;
 
 public class AuthTest {
-
-	@Mock
-	private UserService userService;
 	
 	@Mock
 	private AuthService authService;
@@ -45,7 +41,7 @@ public class AuthTest {
 	
 	@Test
     public void testRegister() {
-        doNothing().when(userService).createUser(any(User.class), any(BindingResult.class));
+        doNothing().when(authService).createUser(any(User.class), any(BindingResult.class));
         ResponseEntity<Void> response = authController.register(user, bindingResult);
         
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
