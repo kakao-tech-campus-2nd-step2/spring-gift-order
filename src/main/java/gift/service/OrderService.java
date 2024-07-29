@@ -25,16 +25,16 @@ public class OrderService {
 
     private final OptionService optionService;
 
-    private final KakaoMessageSender kakaoSendMessage;
+    private final KakaoMessageSender kakaoMessageSender;
 
     public OrderService(ProductJpaDao productJpaDao, MemberJpaDao memberJpaDao,
         WishlistJpaDao wishlistJpaDao, OptionService optionService,
-        KakaoMessageSender kakaoSendMessage) {
+        KakaoMessageSender kakaoMessageSender) {
         this.productJpaDao = productJpaDao;
         this.memberJpaDao = memberJpaDao;
         this.wishlistJpaDao = wishlistJpaDao;
         this.optionService = optionService;
-        this.kakaoSendMessage = kakaoSendMessage;
+        this.kakaoMessageSender = kakaoMessageSender;
     }
 
     /**
@@ -42,23 +42,34 @@ public class OrderService {
      */
     @Transactional
     public void order(OrderRequest orderRequest, String email) throws JsonProcessingException {
+        Member member = findMember(email);
+        Product product = findProduct(orderRequest.getProductId());
+
+        sendMessageForMe(product, orderRequest, email);
+        optionService.subtractOption(new OptionSubtractRequest(orderRequest));
+
+        if (member.containsWish(product.getId())) {
+            wishlistJpaDao.deleteByMember_EmailAndProduct_Id(email, product.getId());
+        }
+    }
+
+    private void sendMessageForMe(Product product, OrderRequest orderRequest, String email)
+        throws JsonProcessingException {
         String kakaoToken = KakaoTokenRepository.getAccessToken(email);
-        Member member = memberJpaDao.findByEmail(email)
-            .orElseThrow(() -> new NoSuchElementException(ErrorMessage.MEMBER_NOT_EXISTS_MSG));
-        Product product = productJpaDao.findById(orderRequest.getProductId())
-            .orElseThrow(() -> new NoSuchElementException(ErrorMessage.PRODUCT_NOT_EXISTS_MSG));
-
-        kakaoSendMessage.sendForMe(kakaoToken, new KakaoCommerceMessage(
-                product.getName(), product.getImageUrl(), orderRequest.getMessage(),
-                product.getImageUrl(), (int) product.getPrice()
-            )
+        kakaoMessageSender.sendForMe(kakaoToken,
+            new KakaoCommerceMessage(product.getName(), product.getImageUrl(),
+                orderRequest.getMessage(),
+                product.getImageUrl(), (int) product.getPrice())
         );
+    }
 
-        OptionSubtractRequest optionSubtractRequest = new OptionSubtractRequest(orderRequest);
-        optionService.subtractOption(optionSubtractRequest);
-        wishlistJpaDao.findByMember_EmailAndProduct_Id(email, product.getId())
-            .ifPresent(wishlist -> {
-                wishlistJpaDao.deleteByMember_EmailAndProduct_Id(email, product.getId());
-            });
+    private Member findMember(String email) {
+        return memberJpaDao.findByEmail(email)
+            .orElseThrow(() -> new NoSuchElementException(ErrorMessage.MEMBER_NOT_EXISTS_MSG));
+    }
+
+    private Product findProduct(Long productId) {
+        return productJpaDao.findById(productId)
+            .orElseThrow(() -> new NoSuchElementException(ErrorMessage.PRODUCT_NOT_EXISTS_MSG));
     }
 }
