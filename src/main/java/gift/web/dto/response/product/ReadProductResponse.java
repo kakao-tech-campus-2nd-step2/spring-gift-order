@@ -11,16 +11,16 @@ public class ReadProductResponse {
     private final String name;
     private final Integer price;
     private final String imageUrl;
-    private final List<ReadProductOptionResponse> productOptions;
+    private final List<ReadProductOptionResponse> options;
     private final ReadCategoryResponse category;
 
     public ReadProductResponse(Long id, String name, Integer price, String imageUrl,
-        List<ReadProductOptionResponse> productOptions, ReadCategoryResponse category) {
+        List<ReadProductOptionResponse> options, ReadCategoryResponse category) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.productOptions = productOptions;
+        this.options = options;
         this.category = category;
     }
 
@@ -51,8 +51,8 @@ public class ReadProductResponse {
         return imageUrl;
     }
 
-    public List<ReadProductOptionResponse> getProductOptions() {
-        return productOptions;
+    public List<ReadProductOptionResponse> getOptions() {
+        return options;
     }
 
     public ReadCategoryResponse getCategory() {
