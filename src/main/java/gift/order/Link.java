@@ -1,5 +1,8 @@
 package gift.order;
 
+import com.google.gson.annotations.SerializedName;
+
 public record Link(
-    String web_url
+    @SerializedName("web_url")
+    String webUrl
 ) { }

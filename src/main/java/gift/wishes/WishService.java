@@ -5,11 +5,11 @@ import gift.member.Member;
 import gift.member.MemberService;
 import gift.product.Product;
 import gift.product.ProductService;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class WishService {

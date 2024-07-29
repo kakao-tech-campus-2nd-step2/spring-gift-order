@@ -65,7 +65,7 @@ public class Option {
     }
 
     public boolean subtract(int quantity){
-        if(quantity > this.quantity){
+        if(quantity >= this.quantity){
             //throw new IllegalArgumentException("옵션의 수량은 최소 1개 입니다.");
             return false;
         }

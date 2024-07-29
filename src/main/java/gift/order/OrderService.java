@@ -7,7 +7,9 @@ import gift.product.Product;
 import gift.wishes.Wish;
 import gift.wishes.WishService;
 import java.net.URI;
+import java.time.Duration;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -53,7 +55,9 @@ public class OrderService {
     }
 
     public void sendMessage(OrderRequest orderRequest, String accessToken) {
-        RestClient client = RestClient.builder().build();
+        RestClient client = RestClient.builder()
+            .requestFactory(timeout())
+            .build();
         String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
         var template = setMessage(orderRequest);
@@ -67,11 +71,17 @@ public class OrderService {
             .toEntity(String.class);
     }
 
-    public void deleteOrderedProduct(OrderRequest orderRequest, Long memberId){
+    public void deleteOrderedProduct(OrderRequest orderRequest, Long memberId) {
         Long optionId = orderRequest.getOptionId();
         Product product = optionService.getProduct(optionId);
         Wish wish = wishService.getWish(product.getId(), memberId);
         wishService.deleteWish(wish.getId(), memberId);
+    }
+
+    private HttpComponentsClientHttpRequestFactory timeout() {
+        var factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofSeconds(5));
+        return factory;
     }
 
 
