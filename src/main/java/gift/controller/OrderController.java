@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import gift.dto.OrderRequest;
 import gift.dto.OrderResponse;
 import gift.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "주문 관리", description = "주문 관련 API")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -24,6 +28,8 @@ public class OrderController {
 		this.orderService = orderService;
 	}
 	
+	@Operation(summary = "주문 생성", description = "새 주문을 생성합니다.")
+	@ApiResponse(responseCode = "201", description = "주문 생성 성공")
 	@PostMapping
 	public ResponseEntity<OrderResponse> createOrdeer(@RequestHeader("Authorization") String token,
 			@Valid @RequestBody OrderRequest request, BindingResult bindingResult){
