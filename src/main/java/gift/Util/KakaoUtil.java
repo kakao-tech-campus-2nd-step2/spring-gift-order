@@ -9,6 +9,7 @@ import gift.Exception.KaKaoBadRequestException;
 import gift.Exception.KaKaoServerErrorException;
 import gift.Model.Value.AccessToken;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -30,19 +31,18 @@ public class KakaoUtil {
 
     public void sendMessageToMe(AccessToken accessToken, String message){
         LinkedMultiValueMap<String, String> body = generateBodyOfSendMessageToMe(message);
-        try{
-            client.post().
-                    uri(URI.create(properties.messageToMeUri()))
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getValue()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(body)
-                    .retrieve()
-                    .toEntity(String.class);
-        } catch (HttpClientErrorException e) {
-            throw new KaKaoBadRequestException("카카오 나에게 메세지 보내기 API : "+e.getStatusCode() + "에러 발생. ");
-        } catch (HttpServerErrorException e) {
-            throw new KaKaoServerErrorException("카카오 나에게 메세지 보내기 API : "+e.getStatusCode() + "에러 발생");
-        }
-
+        client.post().
+                uri(URI.create(properties.messageToMeUri()))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getValue()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new KaKaoBadRequestException("카카오 나에게 메세지 보내기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new KaKaoServerErrorException("카카오 나에게 메세지 보내기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
+                .toEntity(String.class);
     }
 
     private LinkedMultiValueMap<String, String> generateBodyOfSendMessageToMe(String message) {

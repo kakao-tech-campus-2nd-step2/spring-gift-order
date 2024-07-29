@@ -11,6 +11,7 @@ import gift.Repository.MemberRepository;
 import gift.Util.JwtUtil;
 import gift.Util.KakaoProperties;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,21 +62,21 @@ public class KakaoLoginService {
     public String loginOrRegisterUser(String oauthCode) {
         String kakaoAccessToken = getToken(oauthCode);
         String userEmail;
-        try {
         userEmail = client.post()
                 .uri(URI.create(properties.getUserInfoUri()))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "+kakaoAccessToken)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new KaKaoBadRequestException("카카오 정보 가져오기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new KaKaoServerErrorException("카카오 정보 가져오기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
                 .toEntity(ResponseKaKaoUserInfo.class)
                 .getBody()
                 .getKakaoAccount()
                 .getEmail();
-        } catch (HttpClientErrorException e) {
-            throw new KaKaoBadRequestException("카카오 사용자 정보 가져오기 API : " +  e.getStatusCode() + "에러 발생");
-        } catch (HttpServerErrorException e) {
-            throw new KaKaoServerErrorException("카카오 사용자 정보 가져오기 API : " + e.getStatusCode() + "에러발생");
-        }
 
         Email email = new Email(userEmail);
         Member member = memberRepository.findByEmail(email).orElseGet(()->memberRepository.save(new Member(email, new Password("카카오 유저"))));
@@ -86,22 +87,21 @@ public class KakaoLoginService {
     private String getToken(String oauthCode){
         String uri = properties.generateTokenUri();
         LinkedMultiValueMap<String, String> body = generateBodyForKakaoToken(oauthCode);
-        try {
-            String accessToken = client.post()
-                    .uri(URI.create(uri))
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                    .body(body)
-                    .retrieve()
-                    .toEntity(ResponseKakaoTokenDTO.class)
-                    .getBody()
-                    .getAccessToken();
-
-            return accessToken;
-        } catch (HttpClientErrorException e){
-            throw new KaKaoBadRequestException("카카오 토큰 가져오기 API : "+e.getStatusCode()+"에러 발생");
-        } catch (HttpServerErrorException e){
-            throw new KaKaoServerErrorException("카카오 토큰 가져오기 API : "+ e.getStatusCode()+"에러발생");
-        }
+        String accessToken = client.post()
+                .uri(URI.create(uri))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(body)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new KaKaoBadRequestException("카카오 토큰 가져오기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new KaKaoServerErrorException("카카오 토큰 가져오기 API : " + response.getStatusCode() + "에러 발생. ");
+                })
+                .toEntity(ResponseKakaoTokenDTO.class)
+                .getBody()
+                .getAccessToken();
+        return accessToken;
     }
 
     private LinkedMultiValueMap<String, String> generateBodyForKakaoToken(String oauthCode) {
