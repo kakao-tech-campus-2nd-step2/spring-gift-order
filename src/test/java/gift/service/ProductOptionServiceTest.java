@@ -4,13 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import gift.domain.Product;
 import gift.domain.ProductOption;
 import gift.domain.ProductOption.Builder;
 import gift.repository.ProductOptionRepository;
+import gift.repository.ProductRepository;
 import gift.web.dto.request.productoption.CreateProductOptionRequest;
 import gift.web.dto.request.productoption.SubtractProductOptionQuantityRequest;
 import gift.web.dto.request.productoption.UpdateProductOptionRequest;
@@ -37,6 +38,9 @@ class ProductOptionServiceTest {
     @Mock
     private ProductOptionRepository productOptionRepository;
 
+    @Mock
+    private ProductRepository productRepository;
+
     @Test
     @DisplayName("상품 옵션 생성 요청이 정상적일 때, 상품 옵션을 성공적으로 생성합니다.")
     void createOption() {
@@ -44,6 +48,7 @@ class ProductOptionServiceTest {
         Long productId = 1L;
         CreateProductOptionRequest request = new CreateProductOptionRequest("optionName", 1000);
         given(productOptionRepository.save(any())).willReturn(request.toEntity(productId));
+        given(productRepository.findById(any())).willReturn(Optional.of(new Product.Builder().productOptions(List.of(request.toEntity(productId))).build()));
 
         //when
         CreateProductOptionResponse response = productOptionService.createOption(productId, request);
