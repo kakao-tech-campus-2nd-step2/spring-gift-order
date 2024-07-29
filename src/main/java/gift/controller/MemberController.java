@@ -4,6 +4,7 @@ import gift.domain.Member;
 import gift.dto.request.MemberRequest;
 import gift.service.MemberService;
 import gift.service.TokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ public class MemberController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "회원 가입", description = "새로운 회원을 등록합니다.")
     public ResponseEntity<Map<String, String>> register(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.register(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
@@ -38,6 +40,7 @@ public class MemberController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "로그인", description = "회원 로그인을 처리합니다.")
     public ResponseEntity<Map<String, String>> login(@RequestBody MemberRequest memberRequest) {
         Member member = memberService.authenticate(memberRequest, NORMAL);
         String token = tokenService.saveToken(member);
@@ -49,6 +52,7 @@ public class MemberController {
     }
 
     @GetMapping("/kakao/login")
+    @Operation(summary = "카카오 로그인 콜백", description = "카카오 로그인을 처리합니다.")
     public ResponseEntity<Map<String, String>> kakaoCallback(@RequestParam String code) {
         Map<String, String> response = memberService.handleKakaoLogin(code);
         return ResponseEntity.ok(response);
