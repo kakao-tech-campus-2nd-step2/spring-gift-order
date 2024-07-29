@@ -20,15 +20,6 @@ public class KakaoAuthService {
     private final RestClient restClient;
     private final MemberService memberService;
 
-    @Value("${kakao.token-post-url}")
-    private String kakaoTokenPostUrl;
-
-    @Value("${kakao.member-info-post-url}")
-    private String kakaoMemberInfoPostUrl;
-
-    @Value("${kakao.auth-setting-url}")
-    private String kakaoAuthSettingUrl;
-
     public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties,
         MemberService memberService) {
         this.restClient = restClient;
@@ -51,7 +42,7 @@ public class KakaoAuthService {
 
     public String getKakaoAuthUrl() {
         StringBuffer str = new StringBuffer();
-        str.append(kakaoAuthSettingUrl);
+        str.append(kakaoProperties.authSettingUrl());
         str.append("&redirect_uri=" + kakaoProperties.redirectUri());
         str.append("&client_id=" + kakaoProperties.clientId());
 
@@ -62,7 +53,7 @@ public class KakaoAuthService {
         var body = kakaoProperties.createBody(code);
 
         var response = restClient.post()
-            .uri(URI.create(kakaoTokenPostUrl))
+            .uri(URI.create(kakaoProperties.tokenPostUrl()))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
@@ -74,7 +65,7 @@ public class KakaoAuthService {
     public KakaoInfo getMemberInfoFromKakaoServer(Token accessToken) {
 
         ResponseEntity<Map<String, Object>> response = restClient.post()
-            .uri(URI.create(kakaoMemberInfoPostUrl))
+            .uri(URI.create(kakaoProperties.memberInfoPostUrl()))
             .header("Authorization", "Bearer " + accessToken.token())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .retrieve()
