@@ -1,4 +1,4 @@
-package gift.domain.user.kakao;
+package gift.domain.Member.kakao;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

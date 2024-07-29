@@ -1,6 +1,6 @@
-package gift.domain.user.kakao;
+package gift.domain.Member.kakao;
 
-import gift.domain.user.User;
+import gift.domain.Member.Member;
 import gift.global.jwt.JwtProvider;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 @RestController
-@RequestMapping("/api/users/oauth")
+@RequestMapping("/api/members/oauth")
 @Tag(name = "KaKao", description = "KaKao API")
 public class KaKaoController {
 
@@ -44,9 +44,9 @@ public class KaKaoController {
         @Parameter(description = "카카오 로그인 인가코드") @RequestParam(value = "code") String authorizedCode
     ) {
         KaKaoToken kaKaoToken = kaKaoService.getKaKaoToken(authorizedCode);
-        User findUser = kaKaoService.loginOrRegister(kaKaoToken);
+        Member findMember = kaKaoService.loginOrRegister(kaKaoToken);
 
-        String jwt = JwtProvider.generateToken(findUser);
+        String jwt = JwtProvider.generateToken(findMember);
         return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "카카오 로그인 성공", jwt);
     }
 }

@@ -1,5 +1,6 @@
 package gift.global.dataLoader;
 
+import gift.domain.Member.Member;
 import gift.domain.cartItem.CartItem;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.category.Category;
@@ -8,8 +9,7 @@ import gift.domain.option.JpaOptionRepository;
 import gift.domain.option.Option;
 import gift.domain.product.JpaProductRepository;
 import gift.domain.product.Product;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class DataLoader {
 
     private final JpaProductRepository jpaProductRepository;
-    private final JpaUserRepository jpaUserRepository;
+    private final JpaMemberRepository jpaMemberRepository;
     private final JpaCategoryRepository jpaCategoryRepository;
     private final JpaCartItemRepository jpaCartItemRepository;
     private final JpaOptionRepository jpaOptionRepository;
@@ -28,13 +28,13 @@ public class DataLoader {
     @Autowired
     public DataLoader(
         JpaProductRepository jpaProductRepository,
-        JpaUserRepository jpaUserRepository,
+        JpaMemberRepository jpaMemberRepository,
         JpaCartItemRepository jpaCartItemRepository,
         JpaCategoryRepository jpaCategoryRepository,
         JpaOptionRepository jpaOptionRepository
     ) {
         this.jpaProductRepository = jpaProductRepository;
-        this.jpaUserRepository = jpaUserRepository;
+        this.jpaMemberRepository = jpaMemberRepository;
         this.jpaCartItemRepository = jpaCartItemRepository;
         this.jpaCategoryRepository = jpaCategoryRepository;
         this.jpaOptionRepository = jpaOptionRepository;
@@ -74,12 +74,12 @@ public class DataLoader {
         }
 
         // User
-        User minji = new User("minji@example.com", "password1");
-        User junseo = new User("junseo@example.com", "password2");
-        User donghyun = new User("donghyun@example.com", "password3");
-        jpaUserRepository.save(minji);
-        jpaUserRepository.save(junseo);
-        jpaUserRepository.save(donghyun);
+        Member minji = new Member("minji@example.com", "password1");
+        Member junseo = new Member("junseo@example.com", "password2");
+        Member donghyun = new Member("donghyun@example.com", "password3");
+        jpaMemberRepository.save(minji);
+        jpaMemberRepository.save(junseo);
+        jpaMemberRepository.save(donghyun);
 
         // CartItem
         jpaCartItemRepository.save(new CartItem(minji, malcha));

@@ -1,7 +1,7 @@
 package gift.domain.cartItem;
 
+import gift.domain.Member.dto.LoginInfo;
 import gift.domain.cartItem.dto.CartItemDTO;
-import gift.domain.user.dto.UserInfo;
 import gift.global.resolver.Login;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/users/cart")
+@RequestMapping("/members/cart")
 public class CartItemController {
 
     private final CartItemService cartItemService;
@@ -28,12 +28,12 @@ public class CartItemController {
         @PageableDefault(page = 0, sort = "id_asc")
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "sort", defaultValue = "id_asc") String sort,
-        @Login UserInfo userInfo) {
+        @Login LoginInfo loginInfo) {
         int size = 10; // default
         Sort sortObj = getSortObject(sort);
 
-        List<CartItemDTO> cartItemDTOS = cartItemService.getProductsInCartByUserIdAndPageAndSort(
-            userInfo.getId(),
+        List<CartItemDTO> cartItemDTOS = cartItemService.getProductsInCartByMemberIdAndPageAndSort(
+            loginInfo.getId(),
             page,
             size,
             sortObj

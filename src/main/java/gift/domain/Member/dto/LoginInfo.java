@@ -1,20 +1,20 @@
-package gift.domain.user.dto;
+package gift.domain.Member.dto;
 
 
 /**
  * 토큰에서 추출한 사용자 정보를 담음
  */
-public class UserInfo {
+public class LoginInfo {
 
     private Long id;
     private String email;
 
-    public UserInfo(Long id, String email) {
+    public LoginInfo(Long id, String email) {
         this.id = id;
         this.email = email;
     }
 
-    public UserInfo() {
+    public LoginInfo() {
     }
 
     public String getEmail() {
@@ -27,7 +27,7 @@ public class UserInfo {
 
     @Override
     public String toString() {
-        return "UserInfo{" +
+        return "LoginInfo{" +
                "email='" + email + '\'' +
                ", id=" + id +
                '}';

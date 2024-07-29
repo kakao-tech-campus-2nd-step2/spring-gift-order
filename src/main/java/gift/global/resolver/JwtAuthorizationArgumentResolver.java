@@ -1,6 +1,6 @@
 package gift.global.resolver;
 
-import gift.domain.user.dto.UserInfo;
+import gift.domain.Member.dto.LoginInfo;
 import gift.global.jwt.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
@@ -25,13 +25,13 @@ public class JwtAuthorizationArgumentResolver implements HandlerMethodArgumentRe
     }
 
     @Override
-    public UserInfo resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+    public LoginInfo resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         Long id = (Long) request.getAttribute("id");
         String email = (String) request.getAttribute("email");
 
-        return new UserInfo(id, email);
+        return new LoginInfo(id, email);
     }
 }

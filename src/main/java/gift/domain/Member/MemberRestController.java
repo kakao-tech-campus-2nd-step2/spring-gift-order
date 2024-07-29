@@ -1,6 +1,6 @@
-package gift.domain.user;
+package gift.domain.Member;
 
-import gift.domain.user.dto.UserDTO;
+import gift.domain.Member.dto.MemberDTO;
 import gift.global.response.ResponseMaker;
 import gift.global.response.SimpleResultResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
-@Tag(name = "User", description = "User API")
-public class UserRestController {
+@RequestMapping("/api/members")
+@Tag(name = "Member", description = "Member API")
+public class MemberRestController {
 
-    private final UserService userService;
+    private final MemberService memberService;
 
-    public UserRestController(UserService userService) {
-        this.userService = userService;
+    public MemberRestController(MemberService memberService) {
+        this.memberService = memberService;
     }
 
     /**
@@ -29,8 +29,8 @@ public class UserRestController {
      */
     @PostMapping
     @Operation(summary = "회원가입")
-    public ResponseEntity<SimpleResultResponseDto> join(@Valid @RequestBody UserDTO userDTO) {
-        userService.join(userDTO);
+    public ResponseEntity<SimpleResultResponseDto> join(@Valid @RequestBody MemberDTO memberDTO) {
+        memberService.join(memberDTO);
 
         return ResponseMaker.createSimpleResponse(HttpStatus.OK, "회원 가입에 성공했습니다");
     }
@@ -40,8 +40,8 @@ public class UserRestController {
      */
     @PostMapping("/login")
     @Operation(summary = "로그인")
-    public ResponseEntity<SimpleResultResponseDto> login(@Valid @RequestBody UserDTO userDTO) {
-        String jwt = userService.login(userDTO);
+    public ResponseEntity<SimpleResultResponseDto> login(@Valid @RequestBody MemberDTO memberDTO) {
+        String jwt = memberService.login(memberDTO);
 
         return ResponseMaker.createSimpleResponseWithJwtOnHeader(HttpStatus.OK, "로그인에 성공했습니다", jwt);
     }

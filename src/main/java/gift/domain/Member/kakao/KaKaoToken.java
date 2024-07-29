@@ -1,4 +1,4 @@
-package gift.domain.user.kakao;
+package gift.domain.Member.kakao;
 
 public record KaKaoToken(
     String accessToken,

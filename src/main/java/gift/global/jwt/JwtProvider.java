@@ -1,7 +1,7 @@
 package gift.global.jwt;
 
-import gift.domain.user.User;
-import gift.domain.user.dto.UserInfo;
+import gift.domain.Member.Member;
+import gift.domain.Member.dto.LoginInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -23,10 +23,10 @@ public class JwtProvider {
     /**
      * JWT 토큰 생성
      */
-    public static String generateToken(User user) {
+    public static String generateToken(Member member) {
         return Jwts.builder()
-            .claim("email", user.getEmail())
-            .claim("id", user.getId())
+            .claim("email", member.getEmail())
+            .claim("id", member.getId())
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
             .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -61,10 +61,10 @@ public class JwtProvider {
     /**
      * 현재 로그인한 사용자 정보 추출
      */
-    public UserInfo getUserInfo(String token) {
+    public LoginInfo getLoginInfo(String token) {
         Claims claimsBody = getClaimsBody(token);
 
-        UserInfo currentUser = new UserInfo(
+        LoginInfo currentUser = new LoginInfo(
             (claimsBody.get("id") instanceof Integer) ? Long.valueOf((Integer) claimsBody.get("id"))
                 : (Long) claimsBody.get("id"), claimsBody.get("email").toString());
 

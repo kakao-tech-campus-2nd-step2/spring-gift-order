@@ -1,7 +1,7 @@
 package gift.domain.cartItem;
 
+import gift.domain.Member.Member;
 import gift.domain.product.Product;
-import gift.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -19,8 +19,8 @@ public class CartItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
@@ -31,8 +31,8 @@ public class CartItem {
     protected CartItem() {
     }
 
-    public CartItem(User user, Product product) {
-        this.user = user;
+    public CartItem(Member member, Product product) {
+        this.member = member;
         this.product = product;
     }
 
@@ -44,12 +44,12 @@ public class CartItem {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Member getMember() {
+        return member;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public Product getProduct() {
@@ -68,7 +68,7 @@ public class CartItem {
     public String toString() {
         return "CartItem{" +
                "id=" + id +
-               ", user=" + user +
+               ", member=" + member +
                ", product=" + product +
                '}';
     }
@@ -93,17 +93,17 @@ public class CartItem {
         CartItem cartItem = (CartItem) o;
 
 //        // 프록시 객체 초기화
-//        Hibernate.initialize(cartItem.getUser());
-//        Hibernate.initialize(user);
+//        Hibernate.initialize(cartItem.getMember());
+//        Hibernate.initialize(member);
 
         return count == cartItem.count &&
                Objects.equals(id, cartItem.id) &&
-               Objects.equals(user, cartItem.user) &&
+               Objects.equals(member, cartItem.member) &&
                Objects.equals(product.getId(), cartItem.product.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, product, count);
+        return Objects.hash(id, member, product, count);
     }
 }

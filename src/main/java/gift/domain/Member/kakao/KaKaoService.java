@@ -1,10 +1,10 @@
-package gift.domain.user.kakao;
+package gift.domain.Member.kakao;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
+import gift.domain.Member.JpaMemberRepository;
+import gift.domain.Member.Member;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import java.net.URI;
@@ -31,16 +31,16 @@ public class KaKaoService {
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     private final KaKaoProperties kaKaoProperties;
-    private final JpaUserRepository userRepository;
+    private final JpaMemberRepository memberRepository;
 
     @Autowired
     public KaKaoService(
-        JpaUserRepository userRepository,
+        JpaMemberRepository memberRepository,
         RestTemplate restTemplate,
         ObjectMapper objectMapper,
         KaKaoProperties kaKaoProperties
     ) {
-        this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.kaKaoProperties = kaKaoProperties;
@@ -69,14 +69,14 @@ public class KaKaoService {
     }
 
     @Transactional
-    public User loginOrRegister(KaKaoToken kaKaoToken) {
+    public Member loginOrRegister(KaKaoToken kaKaoToken) {
         String email = getEmailFromKaKaoServer(kaKaoToken.accessToken());
-        if (!userRepository.existsByEmail(email)) {
+        if (!memberRepository.existsByEmail(email)) {
             return createKaKaoUser(email, kaKaoToken);
         }
-        User user = userRepository.findByEmail(email);
-        user.updateKaKaoToken(kaKaoToken);
-        return user;
+        Member member = memberRepository.findByEmail(email);
+        member.updateKaKaoToken(kaKaoToken);
+        return member;
     }
 
     private String getEmailFromKaKaoServer(String accessToken) {
@@ -111,15 +111,15 @@ public class KaKaoService {
         }
     }
 
-    private User createKaKaoUser(String email, KaKaoToken kaKaoToken) {
+    private Member createKaKaoUser(String email, KaKaoToken kaKaoToken) {
         String salt = UUID.randomUUID().toString();
         String ori_password = salt + UUID.randomUUID().toString();
         String hashed_password = ori_password; // hash 과정 생략
 
-        User user = new User(email, hashed_password, kaKaoToken.accessToken(),
+        Member member = new Member(email, hashed_password, kaKaoToken.accessToken(),
             kaKaoToken.refreshToken());
-        userRepository.save(user);
-        return userRepository.findByEmail(email);
+        memberRepository.save(member);
+        return memberRepository.findByEmail(email);
     }
 
     public String buildLoginPageUrl() {

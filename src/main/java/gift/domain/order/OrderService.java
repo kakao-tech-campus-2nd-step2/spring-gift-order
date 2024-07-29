@@ -3,13 +3,13 @@ package gift.domain.order;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import gift.domain.Member.Member;
+import gift.domain.Member.dto.LoginInfo;
 import gift.domain.cartItem.CartItemService;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.option.JpaOptionRepository;
 import gift.domain.option.OptionService;
-import gift.domain.user.JpaUserRepository;
-import gift.domain.user.User;
-import gift.domain.user.dto.UserInfo;
+import gift.domain.Member.JpaMemberRepository;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class OrderService {
     private final JpaCartItemRepository cartItemRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-    private final JpaUserRepository userRepository;
+    private final JpaMemberRepository memberRepository;
     private final CartItemService cartItemService;
 
     @Autowired
@@ -44,7 +44,7 @@ public class OrderService {
         JpaCartItemRepository jpaCartItemRepository,
         RestTemplate restTemplate,
         ObjectMapper objectMapper,
-        JpaUserRepository userRepository,
+        JpaMemberRepository memberRepository,
         CartItemService cartItemService
     ) {
         optionRepository = jpaOptionRepository;
@@ -52,27 +52,27 @@ public class OrderService {
         cartItemRepository = jpaCartItemRepository;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
-        this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.cartItemService = cartItemService;
     }
 
     /**
      * (나에게) 상품 선물하기
      */
-    public void order(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
-        orderProduct(orderRequestDTO, userInfo);
-        sendMessage(orderRequestDTO, userInfo);
+    public void order(OrderRequestDTO orderRequestDTO, LoginInfo loginInfo) {
+        orderProduct(orderRequestDTO, loginInfo);
+        sendMessage(orderRequestDTO, loginInfo);
     }
     @Transactional
-    public void orderProduct(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
+    public void orderProduct(OrderRequestDTO orderRequestDTO, LoginInfo loginInfo) {
         // 해당 상품의 옵션의 수량을 차감
         optionService.decreaseOptionQuantity(orderRequestDTO.optionId(),
             orderRequestDTO.quantity());
 
         // 해당 상품이 (나의) 위시리스트에 있는 경우 위시 리스트에서 삭제
-        cartItemService.deleteCartItemIfExists(userInfo.getId(), orderRequestDTO.optionId());
+        cartItemService.deleteCartItemIfExists(loginInfo.getId(), orderRequestDTO.optionId());
     }
-    private void sendMessage(OrderRequestDTO orderRequestDTO, UserInfo userInfo) {
+    private void sendMessage(OrderRequestDTO orderRequestDTO, LoginInfo loginInfo) {
         // 메세지 작성
         MultiValueMap<String, String> body = createTemplateObject(
             orderRequestDTO);
@@ -80,8 +80,8 @@ public class OrderService {
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        User user = userRepository.findById(userInfo.getId()).get();
-        headers.setBearerAuth(user.getAccessToken()); // 엑세스 토큰
+        Member member = memberRepository.findById(loginInfo.getId()).get();
+        headers.setBearerAuth(member.getAccessToken()); // 엑세스 토큰
 
         // (나에게) 메시지 전송
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
