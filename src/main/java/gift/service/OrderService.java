@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.LoginType;
 import gift.domain.*;
 import gift.dto.LoginMember;
 import gift.dto.TemplateObject;
@@ -53,10 +54,12 @@ public class OrderService {
 
         deleteFromWishList(loginMember.getId(), option.getProduct());
 
-        KakaoToken token = kakaoTokenRepository.findKakaoTokensByMember_Id(loginMember.getId());
-        sendMessage(orderRequest.message(), token.getAccessToken());
-
         Member member = memberRepository.findMemberById(loginMember.getId()).get();
+        if (member.getLoginType().equals(LoginType.KAKAO)) {
+            KakaoToken token = kakaoTokenRepository.findKakaoTokensByMember_Id(loginMember.getId());
+            sendMessage(orderRequest.message(), token.getAccessToken());
+        }
+
         Order savedOrder = orderRepository.save(new Order(option, member, orderRequest));
 
         return new OrderResponse(savedOrder);
