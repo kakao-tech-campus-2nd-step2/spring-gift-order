@@ -1,7 +1,6 @@
 package gift.member.presentation;
 
 import gift.auth.KakaoService;
-import gift.auth.KakaoToken;
 import gift.auth.TokenService;
 import gift.member.application.MemberService;
 import gift.member.application.MemberServiceResponse;
@@ -12,7 +11,6 @@ import gift.member.presentation.request.MemberLoginRequest;
 import gift.member.presentation.request.ResolvedMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -136,7 +134,7 @@ public class MemberControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk());
 
-        verify(memberService).updateEmail(eq(expectedCommand), eq(resolvedMember));
+        verify(memberService).updateEmail(eq(expectedCommand), eq(resolvedMember.id()));
     }
 
     @Test
@@ -156,7 +154,7 @@ public class MemberControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk());
 
-        verify(memberService).updatePassword(eq(updateCommand), eq(member));
+        verify(memberService).updatePassword(eq(updateCommand), eq(member.id()));
     }
 
     @Test
@@ -171,26 +169,7 @@ public class MemberControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNoContent());
 
-        verify(memberService).delete(eq(member));
-    }
-
-    @Test
-    void refreshToken_정상작동_테스트() throws Exception {
-        // Given
-        String refreshToken = "valid_refresh_token";
-        KakaoToken kakaoToken = new KakaoToken("bearer", "new_access_token", null, 3600, refreshToken, 5184000, "scope");
-        when(kakaoService.refreshToken(refreshToken)).thenReturn(kakaoToken);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + refreshToken);
-
-        // When & Then
-        mockMvc.perform(post("/api/member/login/kakao/refresh-token")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + refreshToken))
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer " + kakaoToken.accessToken()));
-
-        verify(kakaoService, times(1)).refreshToken(refreshToken);
+        verify(memberService).delete(eq(member.id()));
     }
 
     @Test

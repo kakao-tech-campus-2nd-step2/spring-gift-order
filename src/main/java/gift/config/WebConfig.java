@@ -1,9 +1,7 @@
 package gift.config;
 
 import gift.member.application.MemberService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestClient;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -28,8 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/member/join")
                 .excludePathPatterns("/api/member/login")
                 .excludePathPatterns("/api/member/login/kakao/callback")
-                .excludePathPatterns("/api/member/login/kakao")
-                .excludePathPatterns("api/member/login/kakao/refresh-token");
+                .excludePathPatterns("/api/member/login/kakao");
     }
 
     @Override

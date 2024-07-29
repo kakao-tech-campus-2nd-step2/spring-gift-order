@@ -1,8 +1,6 @@
 package gift.member.presentation;
 
-import gift.auth.KakaoOauthProperty;
 import gift.auth.KakaoService;
-import gift.auth.KakaoToken;
 import gift.auth.TokenService;
 import gift.member.application.MemberService;
 import gift.member.presentation.request.*;
@@ -10,16 +8,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/api/member")
-public class MemberController {
+public class MemberController implements MemberApi {
     private final MemberService memberService;
     private final TokenService tokenService;
     private final KakaoService kakaoService;
@@ -78,17 +75,6 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).build();
     }
 
-    @PostMapping("/login/kakao/refresh-token")
-    public ResponseEntity<?> refreshToken(@RequestHeader(AUTHORIZATION) String authorizationHeader) {
-        String refreshToken = authorizationHeader.replace(AUTHENTICATION_TYPE, "");
-        KakaoToken newToken = kakaoService.refreshToken(refreshToken);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(AUTHORIZATION, AUTHENTICATION_TYPE + newToken.accessToken());
-
-        return ResponseEntity.ok().headers(headers).build();
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<MemberControllerResponse> findById(
             @PathVariable("id") Long memberId
@@ -106,7 +92,7 @@ public class MemberController {
             @RequestBody MemberEmailUpdateRequest request,
             ResolvedMember resolvedMember
     ) {
-        memberService.updateEmail(request.toCommand(), resolvedMember);
+        memberService.updateEmail(request.toCommand(), resolvedMember.id());
         return ResponseEntity.ok().build();
     }
 
@@ -115,7 +101,7 @@ public class MemberController {
             @RequestBody MemberPasswordUpdateRequest request,
             ResolvedMember resolvedMember
     ) {
-        memberService.updatePassword(request.toCommand(), resolvedMember);
+        memberService.updatePassword(request.toCommand(), resolvedMember.id());
         return ResponseEntity.ok().build();
     }
 
@@ -123,7 +109,7 @@ public class MemberController {
     public ResponseEntity<?> delete(
             ResolvedMember resolvedMember
     ) {
-        memberService.delete(resolvedMember);
+        memberService.delete(resolvedMember.id());
         return ResponseEntity.noContent().build();
     }
 }

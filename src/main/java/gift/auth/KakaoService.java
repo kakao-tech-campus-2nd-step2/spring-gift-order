@@ -1,5 +1,10 @@
 package gift.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.exception.type.InvalidTokenException;
+import gift.member.domain.Member;
+import gift.member.domain.MemberRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -8,14 +13,25 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 public class KakaoService {
     private final KakaoOauthProperty kakaoOauthProperty;
     private final RestClient restClient;
+    private final ObjectMapper objectMapper;
+    private final MemberRepository memberRepository;
 
-    public KakaoService(KakaoOauthProperty kakaoOauthProperty, RestClient restClient) {
+    public KakaoService(KakaoOauthProperty kakaoOauthProperty,
+                        RestClient restClient,
+                        ObjectMapper objectMapper,
+                        MemberRepository memberRepository
+    ) {
         this.kakaoOauthProperty = kakaoOauthProperty;
         this.restClient = restClient;
+        this.objectMapper = objectMapper;
+        this.memberRepository = memberRepository;
     }
 
     public String getKakaoRedirectUrl() {
@@ -57,6 +73,16 @@ public class KakaoService {
                 .body(KakaoToken.class);
     }
 
+    public void saveToken(KakaoToken kakaoToken, Member member) {
+        member.updateKakaoTokens(
+                kakaoToken.accessToken(),
+                kakaoToken.refreshToken(),
+                LocalDateTime.now().plusSeconds(kakaoToken.expiresIn()),
+                LocalDateTime.now().plusSeconds(kakaoToken.refreshTokenExpiresIn())
+        );
+        memberRepository.save(member);
+    }
+
     public KakaoResponse fetchMemberInfo(String accessToken) {
         return restClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me")
@@ -77,5 +103,48 @@ public class KakaoService {
                 .body(formData)
                 .retrieve()
                 .body(String.class);
+    }
+
+    public String sendOrderMessage(Long kakaoId, KakaoMessageSend form, String accessToken) {
+        JsonNode receiverUuidsNode = objectMapper.valueToTree(List.of(kakaoId.toString()));
+        JsonNode templateObjectNode = objectMapper.valueToTree(form);
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("receiver_uuids", receiverUuidsNode.toString());
+        formData.add("template_object", templateObjectNode.toString());
+
+        return restClient.post()
+                .uri("https://kapi.kakao.com/v2/api/talk/memo/default/send")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
+                .retrieve()
+                .body(String.class);
+    }
+
+    public String getValidAccessToken(Member member) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (member.getKakaoAccessTokenExpiresAt().isBefore(now)) {
+            validateRefreshTokenExpiry(member, now);
+
+            KakaoToken newToken = refreshToken(member.getKakaoRefreshToken());
+            member.updateKakaoTokens(
+                    newToken.accessToken(),
+                    newToken.refreshToken(),
+                    now.plusSeconds(newToken.expiresIn()),
+                    now.plusSeconds(newToken.refreshTokenExpiresIn())
+            );
+            memberRepository.save(member);
+            return newToken.accessToken();
+        }
+
+        return member.getKakaoAccessToken();
+    }
+
+    private static void validateRefreshTokenExpiry(Member member, LocalDateTime now) {
+        if (member.getKakaoRefreshTokenExpiresAt().isBefore(now)) {
+            throw new InvalidTokenException("카카오 토큰 갱신이 불가능합니다.");
+        }
     }
 }

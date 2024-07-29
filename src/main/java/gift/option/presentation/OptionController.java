@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/options")
-public class OptionController {
+public class OptionController implements OptionApi{
 
     private final OptionService optionService;
 
