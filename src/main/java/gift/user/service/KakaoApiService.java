@@ -32,6 +32,7 @@ public class KakaoApiService {
   private final OptionRepository optionRepository;
   private final ProductRepository productRepository;
 
+
   @Value("${kakao.client-id}")
   private String clientId;
 

@@ -18,7 +18,6 @@ public class UserPageController {
   @Value("${kakao.redirect-uri}")
   private String kakaoRedirectUri;
 
-
   @GetMapping("/register")
   public String showRegisterationPage(Model model){
     model.addAttribute("userDto", new UserDto());
