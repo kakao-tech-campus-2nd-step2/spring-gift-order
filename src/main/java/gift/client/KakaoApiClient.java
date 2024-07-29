@@ -36,6 +36,7 @@ public class KakaoApiClient {
                         .uri(TOKEN_REQUEST_URI)
                         .body(bodyParams)
                         .retrieve()
+                        .onStatus(new RestClientResponseErrorHandler())
                         .body(KakaoTokenResponse.class);
             } catch (Exception e) {
                 exceptions.add(e);
@@ -57,6 +58,7 @@ public class KakaoApiClient {
                                 .uri(USER_INFO_REQUEST_URI)
                                 .header("Authorization", String.format("Bearer %s", token))
                                 .retrieve()
+                                .onStatus(new RestClientResponseErrorHandler())
                                 .body(KakaoUserInfoResponse.class))
                         .kakaoAccount()
                         .email();
@@ -80,7 +82,8 @@ public class KakaoApiClient {
                         .uri(MESSAGE_SEND_REQUEST_URI)
                         .body(bodyParams)
                         .header("Authorization", String.format("Bearer %s", accessToken))
-                        .retrieve();
+                        .retrieve()
+                        .onStatus(new RestClientResponseErrorHandler());
                 return;
             } catch (Exception e) {
                 exceptions.add(e);
