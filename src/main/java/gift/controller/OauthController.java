@@ -111,7 +111,7 @@ public class OauthController {
         try{
             KakaoResponse kakaoResponse = objectMapper.readValue(response.getBody(),KakaoResponse.class);
             String email = kakaoResponse.getKakao_account().getEmail();
-            memberService.OauthSave(email,password,accessToken);
+            memberService.oauthSave(email,password,accessToken);
         }catch (JsonMappingException e){
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid JSON format");

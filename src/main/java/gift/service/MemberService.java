@@ -25,7 +25,7 @@ public class MemberService {
             .orElseThrow(() -> new MemberNotFoundException("등록된 유저가 존재하지 않습니다"));
     }
 
-    public void OauthSave(String email, String password, String accessToken) {
+    public void oauthSave(String email, String password, String accessToken) {
         memberRepository.save(new Member(email,password,accessToken));
     }
 
