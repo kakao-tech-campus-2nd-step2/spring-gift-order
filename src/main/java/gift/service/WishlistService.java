@@ -42,11 +42,9 @@ public class WishlistService {
         }
     }
 
-    public void addWishlistItem(String email, Long optionId, Long productId) {
+    public void addWishlistItem(String email, Long productId) {
         Member member = memberService.getMember(email);
         Product product = productService.getProductById(productId);
-        Option option = optionService.getOptionById(optionId);
-        String optionName = option.getName();
-        wishlistRepository.save(new Wishlist(member, product, optionName));
+        wishlistRepository.save(new Wishlist(member, product));
     }
 }

@@ -64,8 +64,8 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractOptionQuantity(OptionDto optionDto, int quantity) {
-        Option option = getOptionById(optionDto.getId());
+    public void subtractOptionQuantity(Long optionId, int quantity) {
+        Option option = getOptionById(optionId);
         option.subtractQuantity(quantity);
         optionRepository.save(option);
     }

@@ -7,8 +7,8 @@ import gift.entity.Category;
 import gift.entity.Product;
 import gift.service.CategoryService;
 import gift.service.OptionService;
-
 import gift.service.ProductService;
+import gift.service.WishlistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,13 +33,14 @@ public class ProductController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private OptionService optionService;
-
+    private WishlistService wishlistService;
 
     @Autowired
-    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService) {
+    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService, WishlistService wishlistService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.optionService = optionService;
+        this.wishlistService = wishlistService;
     }
 
 
@@ -79,5 +80,12 @@ public class ProductController {
         return "redirect:/view/products";
     }
 
+    @PostMapping("/order/{productId}")
+    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId, @RequestParam("message") String message) {
+        optionService.subtractOptionQuantity(optionId, quantity);
+        wishlistService.deleteWishlistItem(email, productId);
+        System.out.println(message);
+        return ResponseEntity.ok().build();
+    }
 
 }
