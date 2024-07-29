@@ -2,6 +2,7 @@ package gift.service;
 
 import gift.dto.response.KakaoProfileResponse;
 import gift.dto.response.KakaoTokenResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,13 @@ public class KakaoLoginService {
     @Value("${kakao.api.url}")
     private String kakaoApiUrl;
 
+    private final RestTemplate restTemplate;
+
+    @Autowired
+    public KakaoLoginService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     public KakaoTokenResponse getKakaoToken(String authorizationCode) {
         String url = kakaoApiUrl + TOKEN_URL_SUFFIX;
 
@@ -42,7 +50,6 @@ public class KakaoLoginService {
 
         RequestEntity<MultiValueMap<String, String>> request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(
                     request,
@@ -67,7 +74,6 @@ public class KakaoLoginService {
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
             ResponseEntity<KakaoProfileResponse> response = restTemplate.exchange(
                     url,
