@@ -44,7 +44,7 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "카테고리 등록 성공")
     public ResponseEntity<SuccessBody<Long>> addCategory(
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
-        @LoginUser @Parameter(hidden = true) User user ) {
+        @LoginUser User user) {
         authService.authorizeAdminUser(user);
         Long categoryId = categoryService.addCategory(categoryRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.CREATED, "카테고리가 생성되었습니다.", categoryId);
@@ -76,7 +76,7 @@ public class CategoryController {
     public ResponseEntity<SuccessBody<Long>> updateCategory(
         @PathVariable("id") Long categoryId,
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
-        @LoginUser @Parameter(hidden = true) User user ) {
+        @LoginUser User user) {
         authService.authorizeAdminUser(user);
         Long updatedCategoryId = categoryService.updateCategory(categoryId, categoryRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.OK, "카테고리가 수정되었습니다.", updatedCategoryId);
@@ -87,7 +87,7 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공")
     public ResponseEntity<SuccessBody<Long>> deleteCategory(
         @PathVariable("id") Long categoryId,
-        @LoginUser @Parameter(hidden = true) User user ){
+        @LoginUser User user){
         authService.authorizeAdminUser(user);
         Long deletedCategoryId = categoryService.deleteCategory(categoryId);
         return ApiResponseGenerator.success(HttpStatus.OK, "카테고리가 삭제되었습니다.", deletedCategoryId);

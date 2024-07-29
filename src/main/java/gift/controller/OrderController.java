@@ -38,7 +38,7 @@ public class OrderController {
     @Operation(summary = "주문 api", description = "주문 api입니다")
     @ApiResponse(responseCode = "201", description = "주문 성공")
     public ResponseEntity<SuccessBody<OrderResponseDTO>> createOrder(
-        @LoginUser @Parameter(hidden = true) User user ,
+        @LoginUser User user,
         @Valid @RequestBody OrderRequestDTO orderRequestDTO
     ) {
         Option option = optionService.getOption(orderRequestDTO.optionId());

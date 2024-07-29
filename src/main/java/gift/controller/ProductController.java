@@ -77,7 +77,7 @@ public class ProductController {
     @ApiResponse(responseCode = "201", description = "상품 추가 성공")
     public ResponseEntity<SuccessBody<Long>> addProduct(
         @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
-        @LoginUser @Parameter(hidden = true) User user ) {
+        @LoginUser User user) {
         authService.authorizeAdminUser(user);
         Long productId = productService.addProduct(productCreateRequestDTO);
 
@@ -90,7 +90,7 @@ public class ProductController {
     public ResponseEntity<SuccessBody<Long>> updateProduct(
         @PathVariable("id") Long productId,
         @Valid @RequestBody ProductRequestDTO productRequestDTO,
-        @LoginUser @Parameter(hidden = true) User user ) {
+        @LoginUser User user) {
         authService.authorizeAdminUser(user);
         Long updatedProductId = productService.updateProduct(productId, productRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.OK, "상품이 수정되었습니다.", updatedProductId);
@@ -101,7 +101,7 @@ public class ProductController {
     @ApiResponse(responseCode = "200", description = "상품 삭제 성공")
     public ResponseEntity<SuccessBody<Long>> deleteProduct(
         @PathVariable("id") Long productId,
-        @LoginUser @Parameter(hidden = true) User user ) {
+        @LoginUser User user) {
         authService.authorizeAdminUser(user);
         Long deletedProductId = productService.deleteProduct(productId);
         return ApiResponseGenerator.success(HttpStatus.OK, "상품이 삭제되었습니다.", deletedProductId);
