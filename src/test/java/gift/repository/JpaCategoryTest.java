@@ -18,7 +18,7 @@ public class JpaCategoryTest {
     @Test
     @DisplayName("카테고리 저장 테스트")
     void saveCategory() {
-        Category category = new Category("name", "color", "imageUrl", "description");
+        Category category = new Category("name", "#aaaaaa", "https://asdf", "description");
         Category real = categoryRepository.save(category);
 
         assertAll(

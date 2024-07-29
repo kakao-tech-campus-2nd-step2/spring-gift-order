@@ -22,11 +22,11 @@ public class JpaProductTest {
     @Test
     @DisplayName("상품 저장 테스트")
     void saveProduct() {
-        Category category = new Category("name", "color", "imageUrl", "description");
+        Category category = new Category("name", "#aaa", "https://asdfadf", "description");
 
         categoryRepository.save(category);
 
-        Product product = new Product("name", 134, "asdf", category);
+        Product product = new Product("name", 134, "https://asdf", category);
         Product real = productRepository.save(product);
         assertAll(
                 () -> assertThat(real.getId()).isNotNull(),
