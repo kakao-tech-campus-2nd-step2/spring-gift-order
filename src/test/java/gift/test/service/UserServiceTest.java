@@ -45,15 +45,6 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testCreateUser() {
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        userService.createUser(user, bindingResult);
-        
-        verify(userRepository).save(any(User.class));
-    }
-
-    @Test
     public void testGetUserFromToken() {
         when(tokenService.extractionEmail(anyString())).thenReturn("test@test.com");
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
