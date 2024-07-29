@@ -5,6 +5,9 @@ import gift.domain.user.dto.UserRequest;
 import gift.domain.user.dto.UserLoginRequest;
 import gift.domain.user.service.UserService;
 import gift.exception.DuplicateEmailException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User", description = "회원 API")
 public class UserRestController {
 
     private final UserService userService;
@@ -25,7 +29,11 @@ public class UserRestController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<JwtToken> create(@RequestBody @Valid UserRequest userRequest) {
+    @Operation(summary = "회원 가입", description = "회원 정보를 등록합니다.")
+    public ResponseEntity<JwtToken> create(
+        @Parameter(description = "회원 등록 정보", required = true)
+        @RequestBody @Valid UserRequest userRequest
+    ) {
         try {
             JwtToken jwtToken = userService.signUp(userRequest);
             return ResponseEntity.status(HttpStatus.CREATED).body(jwtToken);
@@ -35,7 +43,11 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtToken> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+    @Operation(summary = "로그인", description = "회원 정보를 통해 로그인합니다.")
+    public ResponseEntity<JwtToken> login(
+        @Parameter(description = "회원 로그인 정보", required = true)
+        @RequestBody @Valid UserLoginRequest userLoginRequest
+    ) {
         JwtToken jwtToken = userService.login(userLoginRequest);
         return ResponseEntity.status(HttpStatus.OK).body(jwtToken);
     }
