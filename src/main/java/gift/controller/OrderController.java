@@ -12,6 +12,7 @@ import gift.service.MemberService;
 import gift.service.OptionService;
 import gift.service.OrderService;
 import gift.service.WishListService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -40,6 +41,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<?> order(@LoginMember MemberDTO memberDTO, @RequestBody OrderRequestDTO orderRequestDTO) {
         try {
             String accessToken = memberService.getMemberAccessToken(memberDTO.getEmail());
