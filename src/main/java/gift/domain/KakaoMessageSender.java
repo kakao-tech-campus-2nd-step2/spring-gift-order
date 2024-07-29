@@ -2,11 +2,8 @@ package gift.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.constants.ErrorMessage;
 import gift.dto.KakaoCommerceMessage;
-import gift.exception.KakaoLoginBadRequestException;
-import gift.exception.KakaoLoginForbiddenException;
-import gift.exception.KakaoLoginUnauthorizedException;
+import gift.exceptionHandler.RestClientErrorHandler;
 import gift.properties.KakaoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,19 +35,7 @@ public class KakaoMessageSender {
             .header("Authorization", "Bearer " + token)
             .body(generateRequestBody(message))
             .retrieve()
-            .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
-                switch (res.getStatusCode().value()) {
-                    case 400:
-                        throw new KakaoLoginBadRequestException(
-                            ErrorMessage.KAKAO_BAD_REQUEST_MSG);
-                    case 401:
-                        throw new KakaoLoginUnauthorizedException(
-                            ErrorMessage.KAKAO_UNAUTHORIZED_MSG);
-                    case 403:
-                        throw new KakaoLoginForbiddenException(
-                            ErrorMessage.KAKAO_FORBIDDEN_MSG);
-                }
-            })
+            .onStatus(HttpStatusCode::is4xxClientError, RestClientErrorHandler.http4xxErrorHandler)
             .toEntity(String.class);
 
         logger.info(response.getStatusCode().toString());
