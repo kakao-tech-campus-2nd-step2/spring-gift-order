@@ -8,8 +8,11 @@ import gift.exception.KakaoLoginBadRequestException;
 import gift.exception.KakaoLoginForbiddenException;
 import gift.exception.KakaoLoginUnauthorizedException;
 import gift.properties.KakaoProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -20,6 +23,7 @@ public class KakaoMessageSender {
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient = RestClient.create();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Logger logger = LoggerFactory.getLogger(KakaoMessageSender.class);
 
     public KakaoMessageSender(KakaoProperties kakaoProperties) {
         this.kakaoProperties = kakaoProperties;
@@ -28,7 +32,7 @@ public class KakaoMessageSender {
     public void sendForMe(String token, KakaoCommerceMessage message)
         throws JsonProcessingException {
 
-        restClient.post()
+        ResponseEntity<String> response = restClient.post()
             .uri(kakaoProperties.getSendMessageForMe())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .header("Authorization", "Bearer " + token)
@@ -46,7 +50,11 @@ public class KakaoMessageSender {
                         throw new KakaoLoginForbiddenException(
                             ErrorMessage.KAKAO_FORBIDDEN_MSG);
                 }
-            });
+            })
+            .toEntity(String.class);
+
+        logger.info(response.getStatusCode().toString());
+        logger.info(response.getBody());
     }
 
     private LinkedMultiValueMap<String, String> generateRequestBody(KakaoCommerceMessage message)

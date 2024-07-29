@@ -31,6 +31,7 @@ public class KakaoCommerceMessage {
         return commerce;
     }
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     private class Content {
 
         private String title;
@@ -65,6 +66,7 @@ public class KakaoCommerceMessage {
         }
     }
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     private class Link {
 
         private String webUrl;
@@ -81,6 +83,7 @@ public class KakaoCommerceMessage {
         }
     }
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     private class Commerce {
 
         private Integer regularPrice;
