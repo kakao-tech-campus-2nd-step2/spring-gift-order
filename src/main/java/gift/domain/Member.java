@@ -30,6 +30,9 @@ public class Member {
     @Column(nullable = false)
     private LoginType loginType;
 
+    private String kakaoAccessToken;
+    private String kakaoRefreshToken;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Wish> wishes;
 
@@ -65,6 +68,14 @@ public class Member {
         return loginType;
     }
 
+    public String getKakaoAccessToken() {
+        return kakaoAccessToken;
+    }
+
+    public String getKakaoRefreshToken() {
+        return kakaoRefreshToken;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -79,5 +90,13 @@ public class Member {
 
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
+    }
+
+    public void setKakaoAccessToken(String kakaoAccessToken) {
+        this.kakaoAccessToken = kakaoAccessToken;
+    }
+
+    public void setKakaoRefreshToken(String kakaoRefreshToken) {
+        this.kakaoRefreshToken = kakaoRefreshToken;
     }
 }
