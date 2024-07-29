@@ -30,7 +30,7 @@ public class CategoryController {
 
     @Operation(summary="카테고리 추가", description = "카테고리를 추가합니다")
     @ApiResponse(responseCode = "201", description = "추가 완료")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 입력값을 확인해주세요")
+    @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 입력값을 확인해주세요.")
     @ApiResponse(responseCode = "500", description = "서버 내부 에러 발생")
     @PostMapping
     public ResponseEntity<String> addCategory(@RequestBody RequestCategoryDTO requestCategoryDTO){
