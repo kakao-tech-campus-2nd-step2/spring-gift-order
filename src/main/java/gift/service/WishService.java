@@ -58,7 +58,7 @@ public class WishService {
     @Transactional
     public void deleteWish(User user, Long productId) {
         productService.validateExistProductId(productId);
-        validateExistWishProduct(user.getEmail(), productId);
+        validateExistWishProduct(user, productId);
         wishRepository.deleteByUserEmailAndProductId(user.getEmail(), productId);
     }
 
@@ -66,7 +66,7 @@ public class WishService {
     public WishResponseDto updateWish(Long productId, User user,
         WishUpdateRequestDto wishUpdateRequestDto) {
         productService.validateExistProductId(productId);
-        Wish wish = validateExistWishProduct(user.getEmail(), productId);
+        Wish wish = validateExistWishProduct(user, productId);
         wish.setCount(wishUpdateRequestDto.getCount());
         return convertToWishResponseDto(wishRepository.save(wish));
     }

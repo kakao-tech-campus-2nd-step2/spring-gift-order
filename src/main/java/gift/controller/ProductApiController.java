@@ -5,6 +5,8 @@ import gift.domain.model.dto.ProductResponseDto;
 import gift.domain.model.dto.ProductUpdateRequestDto;
 import gift.domain.model.enums.ProductSortBy;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/products")
 @Validated
+@Tag(name = "Product", description = "상품 관리 API")
 public class ProductApiController {
 
     private final ProductService productService;
@@ -32,13 +35,13 @@ public class ProductApiController {
         this.productService = productService;
     }
 
-    //    id로 상품 조회
+    @Operation(summary = "상품 조회", description = "지정된 ID의 상품을 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getProduct(id));
     }
 
-    //    전체 상품 조회
+    @Operation(summary = "모든 상품 조회", description = "모든 상품을 페이지네이션하여 조회합니다.")
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
         @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
@@ -46,14 +49,14 @@ public class ProductApiController {
         return ResponseEntity.ok(productService.getAllProducts(page, sortBy));
     }
 
-    //    상품 추가
+    @Operation(summary = "상품 추가", description = "새로운 상품을 추가합니다.")
     @PostMapping
     public ResponseEntity<ProductResponseDto> addProduct(
         @Valid @RequestBody ProductAddRequestDto productAddRequestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(productAddRequestDto));
     }
 
-    //    상품 수정
+    @Operation(summary = "상품 수정", description = "지정된 ID의 상품을 수정합니다.")
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(
         @PathVariable Long id,
@@ -61,7 +64,7 @@ public class ProductApiController {
         return ResponseEntity.ok(productService.updateProduct(id, productUpdateRequestDto));
     }
 
-    //    상품 삭제
+    @Operation(summary = "상품 삭제", description = "지정된 ID의 상품을 삭제합니다.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
