@@ -21,6 +21,10 @@ public class MemberService {
         this.memberMapper = memberMapper;
     }
 
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
     public List<MemberDto> getMembers() {
         return memberRepository.findAll()
             .stream()

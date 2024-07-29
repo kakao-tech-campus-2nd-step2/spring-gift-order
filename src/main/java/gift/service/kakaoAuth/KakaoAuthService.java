@@ -28,12 +28,7 @@ public class KakaoAuthService {
     }
 
     public boolean isSignedUp(KakaoInfo kakaoInfo) {
-        try {
-            MemberDto memberDto = memberService.getMemberByEmail(kakaoInfo.email());
-        } catch (MemberNotFoundException e) {
-            return false;
-        }
-        return true;
+        return memberService.existsByEmail(kakaoInfo.email());
     }
 
     public MemberDto getMemberInfo(KakaoInfo kakaoInfo) {
