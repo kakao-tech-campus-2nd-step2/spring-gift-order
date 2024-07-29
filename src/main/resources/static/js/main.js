@@ -10,12 +10,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 상품 수정 폼
-    if (document.getElementById('product-edit-form')) {
+    else if (document.getElementById('product-edit-form')) {
         document.getElementById('product-edit-form').addEventListener('submit', function(event) {
             const url = new URL(window.location.href);
             const pathSegments = url.pathname.split('/');
             const productId = pathSegments[pathSegments.length - 1];
             handleProductFormSubmit(event, `/api/products/${productId}`, 'PUT');
+        });
+    }
+
+    // 회원가입 폼
+    else if (document.getElementById('member-registration-form')) {
+        document.getElementById('member-registration-form').addEventListener('submit', function(event) {
+            handleMemberFormSubmit(event, '/api/members/register', 'POST');
         });
     }
 });
@@ -149,6 +156,36 @@ function editOption(productId, optionId) {
         } else {
             return response.json().then(errorData => {
                 throw new Error(errorData.message || '옵션을 처리하지 못하였습니다.');
+            });
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error.message);
+    });
+}
+
+function handleMemberFormSubmit(event, url, method) {
+    event.preventDefault();
+
+    const memberData = {
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+
+    return fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(memberData)
+    })
+    .then(response => {
+        if (response.ok) {
+            // 임시 로그인 화면
+            window.location.href = '/kakao/login';
+        } else {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || '회원가입을 처리하지 못하였습니다.');
             });
         }
     })

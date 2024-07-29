@@ -30,12 +30,13 @@ public class MemberService {
             .toDTO();
     }
 
-    public void register(MemberDTO memberDTO) {
+    public JwtResponse register(MemberDTO memberDTO) {
         try {
             findMember(memberDTO.email());
             throw new AlreadyExistMemberException();
         } catch (NoSuchMemberException e) {
-            memberRepository.save(memberDTO.toEntity()).toDTO();
+            MemberDTO savedMemberDTO = memberRepository.save(memberDTO.toEntity()).toDTO();
+            return new JwtResponse(jwtProvider.createAccessToken(savedMemberDTO));
         }
     }
 

@@ -7,6 +7,7 @@ import gift.dto.KakaoTalkRequest;
 import gift.dto.KakaoTalkResponse;
 import gift.dto.MemberDTO;
 import gift.exception.InvalidKakaoTalkTemplateException;
+import gift.exception.InvalidKakaoTokenException;
 import gift.exception.NoKakaoTokenException;
 import gift.repository.KakaoTokenRepository;
 import java.net.URI;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,11 +47,15 @@ public class KakaoTalkService {
         var client = RestClient.builder(restTemplate).build();
         var body = new LinkedMultiValueMap<String, String>();
         body.add("template_object", templateObject);
-        return client.post()
-            .uri(URI.create(KAKAO_SEND_TALK_URL))
-            .header("Authorization", "Bearer " + kakaoToken.getAccessToken())
-            .body(body)
-            .retrieve()
-            .body(KakaoTalkResponse.class);
+        try {
+            return client.post()
+                .uri(URI.create(KAKAO_SEND_TALK_URL))
+                .header("Authorization", "Bearer " + kakaoToken.getAccessToken())
+                .body(body)
+                .retrieve()
+                .body(KakaoTalkResponse.class);
+        } catch (HttpClientErrorException e) {
+            throw new InvalidKakaoTokenException(e.getStatusCode(), e.getMessage());
+        }
     }
 }
