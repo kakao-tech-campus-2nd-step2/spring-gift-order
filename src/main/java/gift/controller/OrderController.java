@@ -5,6 +5,7 @@ import gift.dto.LoginMember;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @Operation(summary = "주문 요청 api")
     public ResponseEntity<OrderResponse> order(@Login LoginMember member, @Valid @RequestBody OrderRequest orderRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.order(member, orderRequest));
     }

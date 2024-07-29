@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.domain.Category;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "모든 카테고리 목록 조회 api")
     public ResponseEntity<List<Category>> getCategories() {
         return ResponseEntity.ok(categoryService.getCategories());
     }
