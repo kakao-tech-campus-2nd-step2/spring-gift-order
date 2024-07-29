@@ -20,20 +20,19 @@ import java.net.URI;
 
 @Component
 public class KakaoUtil {
-    private static final String MESSAGE_TO_ME_URI = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
-    private static final String SEND_TO_ME_WEB_URL = "http://localhost:8080";
-
     private final RestClient client;
+    private final KakaoProperties properties;
 
-    public KakaoUtil(RestClient client) {
+    public KakaoUtil(RestClient client, KakaoProperties kakaoProperties) {
         this.client = client;
+        this.properties = kakaoProperties;
     }
 
     public void sendMessageToMe(AccessToken accessToken, String message){
         LinkedMultiValueMap<String, String> body = generateBodyOfSendMessageToMe(message);
         try{
             client.post().
-                    uri(URI.create(MESSAGE_TO_ME_URI))
+                    uri(URI.create(properties.messageToMeUri()))
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getValue()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
@@ -52,7 +51,7 @@ public class KakaoUtil {
         SendToMeTemplate templateObject = new SendToMeTemplate(
                 "text",
                 message,
-                new Link(SEND_TO_ME_WEB_URL,SEND_TO_ME_WEB_URL));
+                new Link(properties.messageToMeWebUri(), properties.messageToMeUri()));
         try {
             body.add("template_object", objectMapper.writeValueAsString(templateObject));
         } catch (JsonProcessingException e){

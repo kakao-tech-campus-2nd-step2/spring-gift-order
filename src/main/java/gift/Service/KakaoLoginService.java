@@ -24,11 +24,6 @@ import java.net.URI;
 
 @Service
 public class KakaoLoginService {
-
-    private static final String GENERATE_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-    private static final String LOGIN_URI= "https://kauth.kakao.com/oauth/authorize";
-    private static final String GET_USER_INFO_URI = "https://kapi.kakao.com/v2/user/me";
-
     private final RestClient client;
     private final KakaoProperties properties;
     private final MemberRepository memberRepository;
@@ -54,7 +49,7 @@ public class KakaoLoginService {
     }
 
     private String generateLoginUrl() {
-       return UriComponentsBuilder.fromUriString(LOGIN_URI)
+       return UriComponentsBuilder.fromUriString(properties.loginUri())
                 .queryParam("client_id", properties.clientId())
                 .queryParam("redirect_uri", properties.redirectUrl())
                 .queryParam("response_type", "code")
@@ -68,7 +63,7 @@ public class KakaoLoginService {
         String userEmail;
         try {
         userEmail = client.post()
-                .uri(URI.create(GET_USER_INFO_URI))
+                .uri(URI.create(properties.getUserInfoUri()))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "+kakaoAccessToken)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .retrieve()
@@ -89,11 +84,11 @@ public class KakaoLoginService {
     }
 
     private String getToken(String oauthCode){
-        String url = GENERATE_TOKEN_URL;
+        String uri = properties.generateTokenUri();
         LinkedMultiValueMap<String, String> body = generateBodyForKakaoToken(oauthCode);
         try {
             String accessToken = client.post()
-                    .uri(URI.create(url))
+                    .uri(URI.create(uri))
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                     .body(body)
                     .retrieve()
