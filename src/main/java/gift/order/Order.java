@@ -1,5 +1,6 @@
 package gift.order;
 
+import gift.member.Member;
 import gift.option.Option;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,13 +32,18 @@ public class Order {
 
     private String message;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     protected Order() {}
 
-    public Order(Option option, int quantity, String message) {
+    public Order(Option option, int quantity, String message, Member member) {
         this.option = option;
         this.quantity = quantity;
         this.orderDateTime = LocalDateTime.now();
         this.message = message;
+        this.member = member;
     }
 
     public Long getId() {
@@ -58,5 +64,9 @@ public class Order {
 
     public String getMessage() {
         return message;
+    }
+
+    public Member getMember() {
+        return member;
     }
 }
