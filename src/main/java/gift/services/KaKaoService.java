@@ -66,7 +66,7 @@ public class KaKaoService {
             JSONObject jsonObj = (JSONObject) jsonParser.parse(response.getBody());
 
             accessToken = (String) jsonObj.get("access_token");
-            
+
         } catch (Exception e) {
             throw new AuthException("API call failed");
         }

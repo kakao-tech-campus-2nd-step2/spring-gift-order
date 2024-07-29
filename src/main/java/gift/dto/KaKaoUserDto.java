@@ -1,6 +1,7 @@
 package gift.dto;
 
 public class KaKaoUserDto {
+
     private long id;
 
     public KaKaoUserDto() {
@@ -10,4 +11,7 @@ public class KaKaoUserDto {
         this.id = id;
     }
 
+    public long getId() {
+        return id;
+    }
 }
