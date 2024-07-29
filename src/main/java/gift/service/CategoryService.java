@@ -32,7 +32,7 @@ public class CategoryService {
 	
 	public void updateCategory(Long categoryId, Category updatedCategory, BindingResult bindingResult) {
 		validateBindingResult(bindingResult);
-		validCategoryId(categoryId, updatedCategory);
+		updatedCategory.validateIdMatch(categoryId);
 		validateCategoryId(categoryId);
 		categoryRepository.save(updatedCategory);
 	}
@@ -43,12 +43,6 @@ public class CategoryService {
 					.getFieldError()
 					.getDefaultMessage();
 			throw new InvalidCategoryException(errorMessage, HttpStatus.BAD_REQUEST);
-		}
-	}
-	
-	private void validCategoryId(Long categoryId, Category updatedCategory) {
-		if (!updatedCategory.getId().equals(categoryId)) {
-			throw new InvalidCategoryException("Category Id mismath.", HttpStatus.BAD_REQUEST);
 		}
 	}
 	

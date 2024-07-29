@@ -32,7 +32,7 @@ public class AuthController {
 	
 	@PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody User user, BindingResult bindingResult){
-		Map<String, String> loginResponse = authService.loginUser(user, bindingResult);
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+		Map<String, String> accessToken = authService.loginUser(user, bindingResult);
+        return ResponseEntity.status(HttpStatus.OK).body(accessToken);
     }
 }

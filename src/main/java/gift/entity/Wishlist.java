@@ -1,6 +1,8 @@
 package gift.entity;
 
+import gift.dto.WishlistResponse;
 import gift.exception.InvalidOptionException;
+import gift.exception.UnauthorizedException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 
 @Entity
 @Table(name = "wishlist")
@@ -28,8 +29,9 @@ public class Wishlist {
 	private Product product;
 	
 	@Column(nullable = false)
-	@Min(value = 0, message = "음수를 입력할 수 없습니다.")
 	private int quantity;
+	
+	public Wishlist() {}
 	
 	public Wishlist(User user, Product product) {
 		this.user = user;
@@ -40,7 +42,7 @@ public class Wishlist {
 		return id;
 	}
 	
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	
@@ -48,16 +50,8 @@ public class Wishlist {
 		return user;
 	}
 	
-	public void setUser(User user) {
-		this.user = user;
-	}
-	
 	public Product getProduct() {
 		return product;
-	}
-	
-	public void setProduct(Product product) {
-		this.product = product;
 	}
 	
 	public int getQuantity() {
@@ -70,4 +64,16 @@ public class Wishlist {
 		}
 		this.quantity = quantity;
 	}
+	
+	public void validateUserPermission(User user) {
+		if (!this.user.equals(user)) {
+			throw new UnauthorizedException("You do not have permission to perform this action on the wishlist item.");
+		}
+	}
+	
+	public WishlistResponse toDto() {
+        WishlistResponse dto = new WishlistResponse(this.id, this.product.getId(),
+        		this.product.getName(), this.quantity);
+        return dto;
+    }
 }

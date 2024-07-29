@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import gift.entity.Wishlist;
+import gift.dto.WishlistRequest;
+import gift.dto.WishlistResponse;
 import gift.service.WishlistService;
 
 @RestController
@@ -29,9 +30,9 @@ public class WishlistController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<Wishlist>> getWishlist(@RequestHeader("Authorization") String token,
-			BindingResult bindingResult, @PageableDefault(sort = "name") Pageable pageable) {
-		Page<Wishlist> wishlist = wishlistService.getWishlist(token, bindingResult, pageable);
+	public ResponseEntity<Page<WishlistResponse>> getWishlist(@RequestHeader("Authorization") String token,
+			@PageableDefault(sort = "product.name") Pageable pageable) {
+		Page<WishlistResponse> wishlist = wishlistService.getWishlist(token, pageable);
 		if (wishlist.isEmpty()) {
 			return ResponseEntity.noContent().build();
 		}
@@ -40,22 +41,22 @@ public class WishlistController {
 
 	@PostMapping
 	public ResponseEntity<Void> addWishlist(@RequestHeader("Authorization") String token,
-			@RequestBody Wishlist wishlist, BindingResult bindingResult) {
-		wishlistService.addWishlist(token, wishlist, bindingResult);
+			@RequestBody WishlistRequest request, BindingResult bindingResult) {
+		wishlistService.addWishlist(token, request, bindingResult);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@DeleteMapping
 	public ResponseEntity<Void> removeWishlist(@RequestHeader("Authorization") String token,
-			@RequestBody Wishlist wishlist, BindingResult bindingResult) {
-		wishlistService.removeWishlist(token, wishlist, bindingResult);
+			@RequestBody WishlistRequest request, BindingResult bindingResult) {
+		wishlistService.removeWishlist(token, request, bindingResult);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@PutMapping
 	public ResponseEntity<Void> updateWishlist(@RequestHeader("Authorization") String token,
-			@RequestBody Wishlist wishlist, BindingResult bindingResult) {
-		wishlistService.updateWishlistQuantity(token, wishlist, bindingResult);
+			@RequestBody WishlistRequest request, BindingResult bindingResult) {
+		wishlistService.updateWishlistQuantity(token, request, bindingResult);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

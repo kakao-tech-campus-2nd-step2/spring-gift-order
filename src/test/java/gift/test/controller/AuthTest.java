@@ -21,7 +21,7 @@ import gift.entity.User;
 import gift.service.AuthService;
 
 public class AuthTest {
-
+	
 	@Mock
 	private AuthService authService;
 	

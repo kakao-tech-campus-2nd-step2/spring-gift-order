@@ -59,6 +59,8 @@ public class ProductRequest {
 		this.categoryName = categoryName;
 	}
 	
+	public ProductRequest() {}
+	
 	public ProductRequest(String name, int price, String imageUrl, String categoryName) {
 		this.setName(name);
 		this.price = price;

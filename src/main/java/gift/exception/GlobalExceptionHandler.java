@@ -52,4 +52,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleKakaoNotEnabledException(KakaoNotEnabledException e){
     	return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
     }
+    
+    @ExceptionHandler(InvalidTokenFormatException.class)
+    public ResponseEntity<String> handleInvalidTokenFormatException(InvalidTokenFormatException e){
+    	return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
