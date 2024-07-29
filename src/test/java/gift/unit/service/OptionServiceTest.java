@@ -16,6 +16,7 @@ import gift.product.option.entity.Option;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.option.service.OptionService;
 import gift.product.repository.ProductJpaRepository;
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -142,16 +143,16 @@ public class OptionServiceTest {
     void updateOptionQuantityUnder1() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("a", 0);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
-        then(optionRepository).should().findById(any());
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -159,16 +160,17 @@ public class OptionServiceTest {
     void updateOptionQuantityOver1Million() {
         // given
         Option option = new Option("a", 1000, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
+        setIdUsingReflection(product, 1L);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("a", 100_000_000);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
-        then(optionRepository).should().findById(any());
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -176,10 +178,12 @@ public class OptionServiceTest {
     void updateOptionIfNameDuplicate() {
         // given
         Option option1 = new Option("a", 100, null);
+        setIdUsingReflection(option1, 1L);
         Option option2 = new Option("b", 100, null);
+        setIdUsingReflection(option2, 2L);
         Product product = createProductWithOptions(option1, option2);
+        setIdUsingReflection(product, 1L);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option1));
 
         UpdateOptionRequest newOption = new UpdateOptionRequest("b", 1000);
 
@@ -187,6 +191,7 @@ public class OptionServiceTest {
         assertThatThrownBy(
             () -> optionService.updateOption(1L, 1L, newOption))
             .isInstanceOf(CustomException.class);
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -194,15 +199,16 @@ public class OptionServiceTest {
     void updateOptionSpecialCharacterException() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("!@#$", 100);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -210,9 +216,9 @@ public class OptionServiceTest {
     void updateOptionTest() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("updated", 1000);
 
@@ -220,6 +226,7 @@ public class OptionServiceTest {
         optionService.updateOption(1L, 1L, request);
 
         // then
+        then(productRepository).should().findById(any());
         assertThat(option.getName()).isEqualTo("updated");
         assertThat(option.getQuantity()).isEqualTo(1000);
     }
@@ -321,6 +328,16 @@ public class OptionServiceTest {
             new Category("category"),
             Set.of(option)
         );
+    }
+
+    private void setIdUsingReflection(Object entity, Long id) {
+        try {
+            Field idField = entity.getClass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(entity, id);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 }
