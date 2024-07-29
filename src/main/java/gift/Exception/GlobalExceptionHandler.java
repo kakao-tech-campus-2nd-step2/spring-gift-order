@@ -21,10 +21,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<Map<String, String>> handleForbiddenException(BusinessException e) {
+    public ResponseEntity<Map<String, String>> handleBusinessException(BusinessException e) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", e.getMessage());
-        return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
