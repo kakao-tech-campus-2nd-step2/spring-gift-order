@@ -6,3 +6,4 @@
 :sectlinks:
 
 include::product.adoc[]
+include::category.adoc[]
