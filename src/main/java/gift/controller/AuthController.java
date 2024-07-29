@@ -30,7 +30,7 @@ public class AuthController {
         return new ResponseEntity<>(authService.login(authRequest), HttpStatus.OK);
     }
 
-    @GetMapping()
+    @GetMapping("/kakao")
     public ResponseEntity<AuthResponse> kakaoLogin(@RequestParam("code") String code) {
         return new ResponseEntity<>(kaKaoLoginService.kakaoLogin(code), HttpStatus.OK);
     }
