@@ -48,21 +48,13 @@ public class KakaoLoginService {
                     request,
                     KakaoTokenResponse.class
             );
+            validateResponse(response);
 
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("access token 얻기 실패: HTTP 상태 " + response.getStatusCode());
-            }
-
-            KakaoTokenResponse bodyResponse = response.getBody();
-            if (bodyResponse == null) {
-                throw new RuntimeException("access token 얻기 실패: 응답 바디가 null입니다.");
-            }
-
-            return bodyResponse;
+            return response.getBody();
         } catch (HttpClientErrorException e) {
-            throw new RuntimeException("access token 얻기 실패: "  + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
+            throw new RuntimeException("Access token 얻기 실패: "  + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
-            throw new RuntimeException("access token을 얻는 중 예상치 못한 오류가 발생했습니다", e);
+            throw new RuntimeException("Access token을 얻는 중 예상치 못한 오류가 발생했습니다", e);
         }
     }
 
@@ -83,22 +75,23 @@ public class KakaoLoginService {
                     request,
                     KakaoProfileResponse.class
             );
+            validateResponse(response);
 
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                throw new RuntimeException("사용자 정보 얻기 실패: HTTP 상태 " + response.getStatusCode());
-            }
-
-            KakaoProfileResponse body = response.getBody();
-            if (body == null) {
-                throw new RuntimeException("사용자 정보 얻기 실패: 응답 바디가 null입니다.");
-            }
-
-            return body;
-
+            return response.getBody();
         } catch (HttpClientErrorException e) {
             throw new RuntimeException("사용자 정보 얻기 실패: " + e.getStatusCode() + " - " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
             throw new RuntimeException("사용자 정보를 얻는 중 예상치 못한 오류가 발생했습니다", e);
         }
     }
+
+    private <T> void validateResponse(ResponseEntity<T> response) {
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("HTTP 상태 " + response.getStatusCode());
+        }
+        if (response.getBody() == null){
+            throw new RuntimeException("응답 바디가 null입니다.");
+        }
+    }
+
 }
