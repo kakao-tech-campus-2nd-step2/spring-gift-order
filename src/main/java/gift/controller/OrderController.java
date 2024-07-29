@@ -13,8 +13,13 @@ import gift.dto.response.OrderResponse;
 import gift.exception.CustomException;
 import gift.service.OrderService;
 import gift.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@Tag(name = "order", description = "Order API")
 @RequestMapping("/api/orders")
 public class OrderController {
 
@@ -27,6 +32,12 @@ public class OrderController {
     }
     
     @PostMapping
+    @Operation(summary = "주문하기", description = "파라미터로 받은 주문을 진행합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "주문 성공"),
+        @ApiResponse(responseCode = "400", description = "잘못된 토큰 형식"),
+        @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity<OrderResponse> order(@RequestHeader("Authorization") String authorizationHeader, @RequestBody OrderRequest orderRequest){
         
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
