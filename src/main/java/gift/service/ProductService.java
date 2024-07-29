@@ -47,9 +47,10 @@ public class ProductService {
         return new PageImpl<>(productResponseDtoList, pageable, productPage.getTotalElements());
     }
 
-    public Product findById(Long id) {
-        return productRepository.findById(id)
+    public ProductResponseDto findById(Long id) {
+        Product product =  productRepository.findById(id)
             .orElseThrow(() -> new BusinessException("해당 아이디에 대한 상품이 존재하지 않습니다."));
+        return new ProductResponseDto(product);
     }
 
     public void save(ProductWithOptionRequest request) {

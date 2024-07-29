@@ -5,6 +5,7 @@ import gift.entity.Member;
 import gift.entity.Product;
 import gift.entity.Wish;
 import gift.exception.BusinessException;
+import gift.repository.ProductRepository;
 import gift.repository.WishRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,14 @@ public class WishService {
 
     private final WishRepository wishRepository;
     private final MemberService memberService;
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Autowired
     public WishService(WishRepository wishRepository, MemberService memberService,
-        ProductService productService) {
+        ProductRepository productRepository) {
         this.wishRepository = wishRepository;
         this.memberService = memberService;
-        this.productService = productService;
+        this.productRepository = productRepository;
     }
 
     public Page<WishResponseDto> getWishlist(Long memberId, Pageable pageable) {
@@ -44,7 +45,7 @@ public class WishService {
         Optional<Wish> wishlists = wishRepository.findByMemberIdAndProductId(memberId,
             productId);
         Member member = memberService.getMemberById(memberId);
-        Product product = productService.findById(productId);
+        Product product = productRepository.findById(productId).orElseThrow(() -> new BusinessException("해당 id에 대한 상품 정보가 없습니다."));
         Wish wish = new Wish(member, product, quantity);
 
         if (wishlists.isPresent()) {
