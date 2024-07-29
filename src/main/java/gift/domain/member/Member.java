@@ -18,12 +18,25 @@ public class Member {
 
     @NotNull
     private String password;
+
+    private String accessToken;
+
+    private String refreshToken;
     private int role;
 
     public Member(String email, String name, String password, int role) {
         this.email = email;
         this.name = name;
         this.password = password;
+        this.role = role;
+    }
+
+    public Member(String email, String name, String password, String accessToken, String refreshToken, int role) {
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.role = role;
     }
 
@@ -40,6 +53,10 @@ public class Member {
 
     public String getName() {
         return name;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
     }
 
     public boolean isMatch(String password) {
