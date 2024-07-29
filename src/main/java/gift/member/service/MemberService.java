@@ -26,7 +26,7 @@ public class MemberService{
     }
 
     public void register(MemberRequest memberRequest) {
-        if (checkEmailDuplication(memberRequest.getEmail())) {
+        if (jpaMemberRepository.existsByEmail(memberRequest.getEmail())) {
             throw new GiftUnauthorizedException("사용할 수 없는 이메일입니다.");
         }
         Member member = new Member(null, memberRequest.getEmail(), memberRequest.getPassword(),
@@ -55,16 +55,6 @@ public class MemberService{
             .orElseThrow(() -> new GiftNotFoundException("회원이 존재하지 않습니다."));
 
         return new MemberRequest(id, member.getEmail(), member.getPassword(), member.getRole());
-    }
-
-
-    private boolean checkEmailDuplication(String email) {
-        try {
-            jpaMemberRepository.findByEmail(email).orElseThrow(NoSuchElementException::new);
-            return true;
-        } catch (NoSuchElementException e) {
-            return false;
-        }
     }
 
     private Member findByEmail(String email) {
