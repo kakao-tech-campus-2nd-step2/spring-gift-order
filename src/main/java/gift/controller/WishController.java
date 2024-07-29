@@ -9,6 +9,7 @@ import gift.dto.responsedto.WishResponseDTO;
 import gift.service.AuthService;
 import gift.service.WishService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -38,6 +39,7 @@ public class WishController {
 
     @GetMapping()
     @Operation(summary = "위시리스트 전체 조회 api", description = "위시리스트 전체 조회 api입니다")
+    @ApiResponse(responseCode = "200", description = "위시리스트 전체 조회 성공")
     public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishes(@LoginUser @Parameter(hidden = true) User user ) {
         List<WishResponseDTO> wishListResponseDTO = wishService.getAllWishes(user.getId());
         return ApiResponseGenerator.success(HttpStatus.OK, "위시리스트를 조회했습니다.", wishListResponseDTO);
@@ -45,6 +47,7 @@ public class WishController {
 
     @GetMapping("/page")
     @Operation(summary = "위시리스트 전체 페이지 조회 api", description = "위시리스트 전체 페이지 조회 api입니다")
+    @ApiResponse(responseCode = "200", description = "위시리스트 전체 페이지 조회 성공")
     public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishPages(@LoginUser @Parameter(hidden = true) User user ,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "0") int size,
@@ -55,6 +58,7 @@ public class WishController {
 
     @PostMapping()
     @Operation(summary = "위시리스트 등록 api", description = "위시리스트 등록 api입니다")
+    @ApiResponse(responseCode = "201", description = "위시리스트 등록 성공")
     public ResponseEntity<SuccessBody<Long>> addWishes(@LoginUser @Parameter(hidden = true) User user ,
         @Valid @RequestBody WishRequestDTO wishRequestDTO) {
         authService.authorizeUser(user, wishRequestDTO.userId());
@@ -64,6 +68,7 @@ public class WishController {
 
     @DeleteMapping("/{wishId}")
     @Operation(summary = "위시리스트 단일 삭제 api", description = "위시리스트 단일 삭제 api입니다")
+    @ApiResponse(responseCode = "200", description = "위시리스트 단일 삭제 성공")
     public ResponseEntity<SuccessBody<Long>> deleteWishes(@LoginUser @Parameter(hidden = true) User user ,
         @PathVariable Long wishId) {
         WishResponseDTO wishResponseDTO = wishService.getOneWish(wishId);

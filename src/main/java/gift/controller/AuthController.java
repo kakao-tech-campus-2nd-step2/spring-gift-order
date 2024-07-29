@@ -10,6 +10,7 @@ import gift.dto.requestdto.UserSignupRequestDTO;
 import gift.dto.responsedto.UserResponseDTO;
 import gift.service.AuthService;
 import gift.service.UserService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class AuthController {
 
     @ResponseBody
     @PostMapping("/api/auth/register")
-    @Tag(name = "일반 회원가입 api", description = "일반 회원가입 api입니다")
+    @ApiResponse(responseCode = "200", description = "일반 회원가입 성공")
     public ResponseEntity<SuccessBody<UserResponseDTO>> signUp(
         @Valid @RequestBody UserSignupRequestDTO userSignupRequestDTO) {
         userService.join(userSignupRequestDTO);
@@ -45,7 +46,7 @@ public class AuthController {
 
     @ResponseBody
     @PostMapping("/api/auth/login")
-    @Tag(name = "일반 로그인 api", description = "일반 로그인 api입니다")
+    @ApiResponse(responseCode = "200", description = "일반 로그인 성공")
     public ResponseEntity<SuccessBody<UserResponseDTO>> login(
         @Valid @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         User user = userService.findByEmail(userLoginRequestDTO);
@@ -66,7 +67,7 @@ public class AuthController {
 
     @ResponseBody
     @GetMapping("/")
-    @Tag(name = "인가 코드 추출 api", description = "인가 코드 추출 api입니다")
+    @ApiResponse(responseCode = "200", description = "인가 코드 추출 성공")
     public ResponseEntity<SuccessBody<String>> getAuthorizationCode(
         @RequestParam("code") String code
     ) {
@@ -75,7 +76,7 @@ public class AuthController {
 
     @ResponseBody
     @PostMapping("/api/oauth/login")
-    @Tag(name = "카카오 로그인 api", description = "카카오 로그인 api입니다")
+    @ApiResponse(responseCode = "200", description = "카카오 로그인 성공")
     public ResponseEntity<SuccessBody<UserResponseDTO>> kakaoLogin(
         @RequestParam("code") String code
     ) {
