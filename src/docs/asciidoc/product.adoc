@@ -1,35 +1,35 @@
 == 상품 API
 
 === 전체 상품 조회
-operation::product-api-controller-test/read-all-products[snippets='http-request,http-response']
+operation::product-api-controller-test/read-all-products[]
 
 === 단일 상품 조회
-operation::product-api-controller-test/read-product[snippets='http-request,http-response']
+operation::product-api-controller-test/read-product[]
 
 === 상품 생성
-operation::product-api-controller-test/create-product[snippets='http-request,http-response']
+operation::product-api-controller-test/create-product[]
 
 === 상품 수정
-operation::product-api-controller-test/update-product[snippets='http-request,http-response']
+operation::product-api-controller-test/update-product[]
 
 === 상품 삭제
-operation::product-api-controller-test/delete-product[snippets='http-request,http-response']
+operation::product-api-controller-test/delete-product[]
 
 === 상품 주문
-operation::product-api-controller-test/order-product[snippets='http-request,http-response']
+operation::product-api-controller-test/order-product[]
 
 === 위시 상품 추가
-operation::product-api-controller-test/create-wish-product[snippets='http-request,http-response']
+operation::product-api-controller-test/create-wish-product[]
 
 === 상품 옵션 생성
-operation::product-api-controller-test/create-option[snippets='http-request,http-response']
+operation::product-api-controller-test/create-option[]
 
 === 상품 옵션 조회
-operation::product-api-controller-test/read-options[snippets='http-request,http-response']
+operation::product-api-controller-test/read-options[]
 
 === 상품 옵션 수정
-operation::product-api-controller-test/update-option[snippets='http-request,http-response']
+operation::product-api-controller-test/update-option[]
 
 === 상품 옵션 삭제
-operation::product-api-controller-test/delete-option[snippets='http-request,http-response']
+operation::product-api-controller-test/delete-option[]
 
