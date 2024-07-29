@@ -1,5 +1,6 @@
 package gift.auth;
 
+import gift.order.KakaoMessage;
 import java.net.URI;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,9 @@ public class KakaoClient {
 
     @Value("${kakao.user.api.url}")
     private String kakaoUserApiUrl;
+
+    @Value("${kakao.message-url")
+    private String kakaoMessageUrl;
 
     private final RestClient restClient;
     private final KakaoProperties kakaoProperties;
@@ -48,5 +52,18 @@ public class KakaoClient {
             .toEntity(KakaoUserInfo.class)
             .getBody();
     }
+
+    public void sendMessage(String accessToken, String message) {
+        var body = KakaoMessage.createBody(message);
+
+        restClient.post()
+            .uri(URI.create(kakaoMessageUrl))
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            .body(body)
+            .retrieve()
+            .toEntity(String.class);
+    }
+
 
 }
