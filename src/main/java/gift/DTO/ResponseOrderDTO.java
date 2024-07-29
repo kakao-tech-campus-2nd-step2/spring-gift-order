@@ -1,12 +1,23 @@
 package gift.DTO;
 
 import gift.Model.Entity.Order;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "주문 응답 DTO")
 public class ResponseOrderDTO {
+    @Schema(description = "주문 Id")
     private Long id;
+
+    @Schema(description = "옵션 Id")
     private Long optionId;
+
+    @Schema(description = "주문 수량")
     private Integer quantity;
+
+    @Schema(description = "주문 시간")
     private String orderDateTime;
+
+    @Schema(description = "주문 메세지")
     private String message;
 
     public ResponseOrderDTO(Long id, Long optionId, Integer quantity, String orderDateTime, String message) {
