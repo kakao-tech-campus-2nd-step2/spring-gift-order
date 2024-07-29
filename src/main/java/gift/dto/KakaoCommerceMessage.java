@@ -30,73 +30,70 @@ public class KakaoCommerceMessage {
     public Commerce getCommerce() {
         return commerce;
     }
-}
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-class Content {
+    private class Content {
 
-    private String title;
-    private String imageUrl;
-    private String description;
-    private Link link;
+        private String title;
+        private String imageUrl;
+        private String description;
+        private Link link;
 
-    protected Content() {
+        protected Content() {
+        }
+
+        public Content(String title, String imageUrl, String description, Link link) {
+            this.title = title;
+            this.imageUrl = imageUrl;
+            this.description = description;
+            this.link = link;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public Link getLink() {
+            return link;
+        }
     }
 
-    public Content(String title, String imageUrl, String description, Link link) {
-        this.title = title;
-        this.imageUrl = imageUrl;
-        this.description = description;
-        this.link = link;
+    private class Link {
+
+        private String webUrl;
+
+        protected Link() {
+        }
+
+        public Link(String webUrl) {
+            this.webUrl = webUrl;
+        }
+
+        public String getWebUrl() {
+            return webUrl;
+        }
     }
 
-    public String getTitle() {
-        return title;
-    }
+    private class Commerce {
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+        private Integer regularPrice;
 
-    public String getDescription() {
-        return description;
-    }
+        protected Commerce() {
+        }
 
-    public Link getLink() {
-        return link;
-    }
-}
+        public Commerce(Integer regularPrice) {
+            this.regularPrice = regularPrice;
+        }
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-class Link {
-
-    private String webUrl;
-
-    protected Link() {
-    }
-
-    public Link(String webUrl) {
-        this.webUrl = webUrl;
-    }
-
-    public String getWebUrl() {
-        return webUrl;
-    }
-}
-
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-class Commerce {
-
-    private Integer regularPrice;
-
-    protected Commerce() {
-    }
-
-    public Commerce(Integer regularPrice) {
-        this.regularPrice = regularPrice;
-    }
-
-    public Integer getRegularPrice() {
-        return regularPrice;
+        public Integer getRegularPrice() {
+            return regularPrice;
+        }
     }
 }
