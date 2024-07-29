@@ -19,6 +19,7 @@ public class Option {
     );
 
     @Id
+    @Column(name = "option_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

@@ -4,10 +4,10 @@ import static gift.util.ResponseEntityUtil.responseError;
 
 import gift.annotation.LoginMember;
 import gift.constants.ResponseMsgConstants;
-import gift.dto.MemberDTO;
-import gift.dto.ProductRequestDTO;
-import gift.dto.ResponseDTO;
-import gift.dto.WishDTO;
+import gift.dto.betweenClient.member.MemberDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
+import gift.dto.betweenClient.ResponseDTO;
+import gift.dto.betweenClient.wish.WishDTO;
 import gift.service.WishListService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;

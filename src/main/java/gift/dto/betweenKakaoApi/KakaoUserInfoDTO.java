@@ -1,4 +1,4 @@
-package gift.dto;
+package gift.dto.betweenKakaoApi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;

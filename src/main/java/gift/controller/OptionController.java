@@ -3,8 +3,8 @@ package gift.controller;
 import static gift.util.ResponseEntityUtil.responseError;
 
 import gift.constants.ResponseMsgConstants;
-import gift.dto.OptionRequestDTO;
-import gift.dto.ResponseDTO;
+import gift.dto.betweenClient.option.OptionRequestDTO;
+import gift.dto.betweenClient.ResponseDTO;
 import gift.service.OptionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

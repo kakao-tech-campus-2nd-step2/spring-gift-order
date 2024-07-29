@@ -41,6 +41,9 @@ public class Member {
     @Column(nullable = false)
     private String role;
 
+    @Column(nullable = true)
+    private String accessToken;
+
     protected Member() {
     }
 
@@ -72,6 +75,9 @@ public class Member {
     public Long getId() {
         return id;
     }
+
+    public String getAccessToken() { return accessToken;}
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
 
     @Override
     public boolean equals(Object o) {

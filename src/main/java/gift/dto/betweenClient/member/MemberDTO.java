@@ -1,4 +1,4 @@
-package gift.dto;
+package gift.dto.betweenClient.member;
 
 import gift.entity.Member;
 import jakarta.validation.constraints.Email;

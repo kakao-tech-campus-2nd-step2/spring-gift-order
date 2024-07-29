@@ -1,6 +1,7 @@
-package gift.dto;
+package gift.dto.betweenClient.product;
 
 
+import gift.dto.betweenClient.category.CategoryDTO;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;
 

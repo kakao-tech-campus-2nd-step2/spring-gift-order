@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +24,14 @@ class KakaoLogisterAndTokenServiceTest {
     @Mock
     private MemberService memberService;
 
-    private KakaoLogisterService kakaoLogisterService;
+    private KakaoAuthService kakaoAuthService;
 
     private MemberDTO memberDTO;
     private MemberDTO memberDTOInDb;
 
     @BeforeEach
     void setUp() {
-        kakaoLogisterService = new KakaoLogisterService(kakaoTokenService, memberService);
+        kakaoAuthService = new KakaoAuthService(kakaoTokenService, memberService);
         memberDTO = new MemberDTO("1234@1234.com", "1234", "social", "nickname");
         memberDTOInDb = new MemberDTO("1234@1234.com", "1234", "basic", "nickname");
     }
@@ -42,7 +42,7 @@ class KakaoLogisterAndTokenServiceTest {
         given(kakaoTokenService.getUserInfo(any())).willReturn(memberDTO);
         given(memberService.getMember(any())).willThrow(new UserNotFoundException("없는 유저 입니다."));
 
-        assertThat(kakaoLogisterService.logister("아무 인가 코드")).isEqualTo(memberDTO);
+        assertThat(kakaoAuthService.logister("아무 인가 코드")).isEqualTo(memberDTO);
         verify(memberService).register(memberDTO);
     }
 
@@ -52,13 +52,13 @@ class KakaoLogisterAndTokenServiceTest {
         given(kakaoTokenService.getUserInfo(any())).willReturn(memberDTO);
         given(memberService.getMember(any())).willReturn(memberDTOInDb);
 
-        assertThrows(BadRequestException.class, () -> kakaoLogisterService.logister("아무 인가 코드"));
+        assertThrows(BadRequestException.class, () -> kakaoAuthService.logister("아무 인가 코드"));
     }
 
     @Test
     void logister_WhenTokenServiceThrowsException_ShouldPropagateException() {
         given(kakaoTokenService.getAccessToken(any())).willThrow(new BadRequestException("Invalid token"));
 
-        assertThrows(BadRequestException.class, () -> kakaoLogisterService.logister("아무 인가 코드"));
+        assertThrows(BadRequestException.class, () -> kakaoAuthService.logister("아무 인가 코드"));
     }
 }

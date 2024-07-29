@@ -1,9 +1,9 @@
 package gift.service;
 
-import gift.dto.OptionRequestDTO;
-import gift.dto.ProductPostRequestDTO;
-import gift.dto.ProductResponseDTO;
-import gift.dto.ProductRequestDTO;
+import gift.dto.betweenClient.option.OptionRequestDTO;
+import gift.dto.betweenClient.product.ProductPostRequestDTO;
+import gift.dto.betweenClient.product.ProductResponseDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
 import gift.entity.Category;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;

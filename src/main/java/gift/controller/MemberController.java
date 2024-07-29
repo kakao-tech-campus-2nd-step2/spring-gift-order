@@ -3,8 +3,8 @@ package gift.controller;
 
 import static gift.util.ResponseEntityUtil.responseError;
 
-import gift.dto.JwtDTO;
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.JwtDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.exception.BadRequestExceptions.EmailAlreadyHereException;
 import gift.service.MemberService;
 import gift.util.JwtUtil;

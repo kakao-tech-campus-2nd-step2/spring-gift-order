@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.exception.BadRequestExceptions.BadRequestException;
-import gift.service.KakaoLogisterService;
+import gift.service.KakaoAuthService;
 import gift.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,22 +14,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/oauth/kakao")
-public class KakaoLogisterController {
-    private final Logger logger = LoggerFactory.getLogger(KakaoLogisterController.class);
-
-    private final KakaoLogisterService kakaoLogisterService;
+public class kakaoAuthController {
+    private final KakaoAuthService kakaoAuthService;
     private final JwtUtil jwtUtil;
+    private final Logger logger = LoggerFactory.getLogger(kakaoAuthController.class);
 
     @Autowired
-    KakaoLogisterController(KakaoLogisterService kakaoLogisterService, JwtUtil jwtUtil) {
-        this.kakaoLogisterService = kakaoLogisterService;
+    kakaoAuthController(KakaoAuthService kakaoAuthService, JwtUtil jwtUtil) {
+        this.kakaoAuthService = kakaoAuthService;
         this.jwtUtil = jwtUtil;
     }
 
     @GetMapping
     public String logister(@RequestParam String code, Model model) {
         try {
-            String token = jwtUtil.generateToken(kakaoLogisterService.logister(code));
+            String token = jwtUtil.generateToken(kakaoAuthService.logister(code));
             model.addAttribute("token", token);
             model.addAttribute("success", true);
         } catch (BadRequestException e){

@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.dto.CategoryDTO;
+import gift.dto.betweenClient.category.CategoryDTO;
 import gift.entity.Category;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.InternalServerExceptions.InternalServerException;

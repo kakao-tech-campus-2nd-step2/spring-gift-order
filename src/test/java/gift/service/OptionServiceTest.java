@@ -9,7 +9,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 
-import gift.dto.OptionRequestDTO;
+import gift.dto.betweenClient.option.OptionRequestDTO;
 import gift.entity.Category;
 import gift.entity.Option;
 import gift.entity.Product;
@@ -130,9 +130,9 @@ class OptionServiceTest {
 
     @Test
     void subtractOptionQuantity(){
-        given(optionRepository.findByIdAndProductId(any(), any())).willReturn(Optional.of(option1));
-        assertThatNoException().isThrownBy(() -> optionService.subtractOptionQuantity(1L, 1L, 50));
-        assertThrows(BadRequestException.class, () -> optionService.subtractOptionQuantity(1L, 1L, 100));
-        assertThrows(BadRequestException.class, () -> optionService.subtractOptionQuantity(1L, 1L, 0));
+        given(optionRepository.findById((Long) any())).willReturn(Optional.of(option1));
+        assertThatNoException().isThrownBy(() -> optionService.subtractOptionQuantity(1L, 50));
+        assertThrows(BadRequestException.class, () -> optionService.subtractOptionQuantity(1L, 100));
+        assertThrows(BadRequestException.class, () -> optionService.subtractOptionQuantity(1L, 0));
     }
 }

@@ -1,7 +1,7 @@
 package gift.util;
 
 import gift.constants.ResponseMsgConstants;
-import gift.dto.ResponseDTO;
+import gift.dto.betweenClient.ResponseDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

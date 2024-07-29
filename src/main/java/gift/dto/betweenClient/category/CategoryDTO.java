@@ -1,4 +1,4 @@
-package gift.dto;
+package gift.dto.betweenClient.category;
 
 import gift.entity.Category;
 import jakarta.validation.constraints.NotBlank;

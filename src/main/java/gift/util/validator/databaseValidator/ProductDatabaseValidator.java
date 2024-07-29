@@ -1,7 +1,7 @@
 package gift.util.validator.databaseValidator;
 
-import gift.dto.ProductResponseDTO;
-import gift.dto.ProductRequestDTO;
+import gift.dto.betweenClient.product.ProductResponseDTO;
+import gift.dto.betweenClient.product.ProductRequestDTO;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.NoSuchProductIdException;

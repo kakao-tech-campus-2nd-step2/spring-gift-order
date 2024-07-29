@@ -1,6 +1,6 @@
 package gift.exception;
 
-import gift.dto.ResponseDTO;
+import gift.dto.betweenClient.ResponseDTO;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import gift.exception.InternalServerExceptions.InternalServerException;
 import gift.util.ResponseEntityUtil;

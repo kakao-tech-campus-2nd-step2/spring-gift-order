@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.dto.MemberDTO;
+import gift.dto.betweenClient.member.MemberDTO;
 import gift.exception.BadRequestExceptions.BadRequestException;
 import gift.exception.BadRequestExceptions.UserNotFoundException;
 import gift.exception.InternalServerExceptions.InternalServerException;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class KakaoLogisterService {
+public class KakaoAuthService {
     private final KakaoTokenService kakaoTokenService;
     private final MemberService memberService;
 
-    public KakaoLogisterService(KakaoTokenService kakaoTokenService, MemberService memberService) {
+    public KakaoAuthService(KakaoTokenService kakaoTokenService, MemberService memberService) {
         this.kakaoTokenService = kakaoTokenService;
         this.memberService = memberService;
     }
@@ -27,9 +27,11 @@ public class KakaoLogisterService {
                 throw new BadRequestException("해당 email로 가입된 계정이 이미 존재합니다.");
 
             memberService.login(memberDTO);
+            memberService.setMemeberAccessToken(memberDTO.getEmail(), accessToken);
             return memberDTO;
         } catch (UserNotFoundException e) {
             memberService.register(memberDTO);
+            memberService.setMemeberAccessToken(memberDTO.getEmail(), accessToken);
             return memberDTO;
         } catch (InternalServerException | BadRequestException e){
             throw e;

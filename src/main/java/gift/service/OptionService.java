@@ -1,7 +1,7 @@
 package gift.service;
 
-import gift.dto.OptionRequestDTO;
-import gift.dto.OptionResponseDTO;
+import gift.dto.betweenClient.option.OptionRequestDTO;
+import gift.dto.betweenClient.option.OptionResponseDTO;
 import gift.entity.Option;
 import gift.entity.Product;
 import gift.exception.BadRequestExceptions.BadRequestException;
@@ -29,6 +29,12 @@ public class OptionService {
     public List<OptionResponseDTO> getOneProductIdAllOptions(Long productId) {
         List<Option> optionList = optionRepository.findAllByProductId(productId);
         return optionList.stream().map(OptionResponseDTO::convertToDTO).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Option getOption(Long optionId) {
+        Option option = optionRepository.findById(optionId).orElseThrow(() -> new BadRequestException("해당 옵션 Id를 찾지 못했습니다."));
+        return new Option(option.getProduct(), option.getName(), option.getQuantity());
     }
 
     @Transactional
@@ -67,9 +73,9 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractOptionQuantity(Long productId, Long optionId, Integer quantity){
+    public void subtractOptionQuantity(Long optionId, Integer quantity){
         try {
-            Option optionInDb = optionRepository.findByIdAndProductId(optionId, productId).orElseThrow(
+            Option optionInDb = optionRepository.findById(optionId).orElseThrow(
                     () -> new BadRequestException("그러한 Id를 가지는 옵션을 찾을 수 없습니다."));
             optionInDb.subtractQuantity(quantity);
         } catch (BadRequestException e) {
