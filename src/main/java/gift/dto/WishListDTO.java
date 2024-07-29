@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.dto;
 
 
 public class WishListDTO {

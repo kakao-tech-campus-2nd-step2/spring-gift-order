@@ -1,6 +1,6 @@
 package gift.service;
 
-import gift.domain.OptionDTO;
+import gift.dto.OptionDTO;
 import gift.entity.OptionEntity;
 import gift.entity.ProductEntity;
 import gift.repository.OptionRepository;

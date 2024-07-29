@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

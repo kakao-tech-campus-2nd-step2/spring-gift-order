@@ -1,7 +1,7 @@
 package gift.service;
 
 import gift.entity.MemberEntity;
-import gift.domain.MemberDTO;
+import gift.dto.MemberDTO;
 import gift.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

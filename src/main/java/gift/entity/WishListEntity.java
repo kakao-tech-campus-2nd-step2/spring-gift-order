@@ -1,6 +1,6 @@
 package gift.entity;
 
-import gift.domain.WishListDTO;
+import gift.dto.WishListDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

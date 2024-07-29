@@ -1,6 +1,6 @@
 package gift.entity;
 
-import gift.domain.CategoryDTO;
+import gift.dto.CategoryDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

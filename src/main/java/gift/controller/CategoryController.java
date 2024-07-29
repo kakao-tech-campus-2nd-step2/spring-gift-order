@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.domain.CategoryDTO;
+import gift.dto.CategoryDTO;
 import gift.service.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;

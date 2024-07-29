@@ -1,4 +1,4 @@
-package gift.domain;
+package gift.dto;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

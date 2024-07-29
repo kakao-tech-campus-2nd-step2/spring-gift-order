@@ -1,6 +1,6 @@
 package gift.controller;
 
-import gift.domain.OptionDTO;
+import gift.dto.OptionDTO;
 import gift.entity.OptionEntity;
 import gift.service.OptionService;
 import jakarta.validation.Valid;
