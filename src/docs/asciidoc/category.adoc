@@ -1,0 +1,19 @@
+== 카테고리 API
+
+=== 카테고리 생성
+operation::category-api-controller-test/create-category[snippets='http-request,http-response']
+
+=== 카테고리 수정
+operation::category-api-controller-test/update-category[snippets='http-request,http-response']
+
+=== 카테고리 삭제
+operation::category-api-controller-test/delete-category[snippets='http-request,http-response']
+
+=== 단일 카테고리 조회
+operation::category-api-controller-test/read-category[snippets='http-request,http-response']
+
+=== 전체 카테고리 조회
+operation::category-api-controller-test/read-all-categories[snippets='http-request,http-response']
+
+
+
