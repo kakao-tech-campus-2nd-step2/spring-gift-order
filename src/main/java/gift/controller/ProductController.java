@@ -42,7 +42,7 @@ public class ProductController {
     @PutMapping("/products")
     public ResponseEntity putProduct(@RequestBody @Valid ProductRequest request) {
         productService.putProduct(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @DeleteMapping("/products/{id}")
