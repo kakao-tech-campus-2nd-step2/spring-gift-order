@@ -3,9 +3,13 @@ package gift.dto;
 import gift.domain.Category;
 import jakarta.validation.constraints.NotNull;
 
-public record CategoryDto(Long id, @NotNull(message = "카테고리 name 입력은 필수 입니다.") String name,
-                          @NotNull(message = "카테고리 color 입력은 필수 입니다.") String color,
-                          @NotNull(message = "카테고리 imageUrl 입력은 필수 입니다.") String imageUrl,
+public record CategoryDto(Long id,
+                          @NotNull(message = "카테고리 name 입력은 필수 입니다.")
+                          String name,
+                          @NotNull(message = "카테고리 color 입력은 필수 입니다.")
+                          String color,
+                          @NotNull(message = "카테고리 imageUrl 입력은 필수 입니다.")
+                          String imageUrl,
                           String description) {
 
     public CategoryDto(Long id, String name, String color, String imageUrl, String description) {
