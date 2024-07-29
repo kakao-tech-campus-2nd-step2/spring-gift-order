@@ -18,8 +18,8 @@ import java.net.URI;
 @Service
 public class ExternalAPIService {
 
-    String kakaoOauthAuthorizeUrl = "https://kauth.kakao.com/oauth/authorize";
-    String kakaoOauthTokenUrl = "https://kauth.kakao.com/oauth/token";
+    final String  kakaoOauthAuthorizeUrl = "https://kauth.kakao.com/oauth/authorize";
+    final String kakaoOauthTokenUrl = "https://kauth.kakao.com/oauth/token";
     Properties properties;
     private static final Logger logger = LoggerFactory.getLogger(ExternalAPIService.class);
 

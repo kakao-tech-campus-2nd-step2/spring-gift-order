@@ -7,12 +7,14 @@
 
 ### 시작전 할일 
 - [ ] 2단계 : 주문내역 카카오톡 메세지 전송
-- [ ] 코드리뷰 반영 
+- [x] 코드리뷰 반영 
   - [x] Order 네이밍 변경 ( DB예약어임 ) -> GiftOrder 로 변경 
-  - [ ] ExternalAPIService 에서 URL 을 상수로 작성
+  - [x] ExternalAPIService 에서 URL 을 상수로 수정
 
 ### 3단계 기능구현
 - [ ] Swagger-editor를 통해 api를 문서화하고 명세
+  - [ ] Swagger 환경설정 
+  - [ ] Swagger Tag 작성 
 
 # 2단계 기능목록 
 
