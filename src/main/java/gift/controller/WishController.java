@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @RequestMapping("/api/wishes")
@@ -37,14 +38,14 @@ public class WishController {
 
     @GetMapping()
     @Operation(summary = "위시리스트 전체 조회 api", description = "위시리스트 전체 조회 api입니다")
-    public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishes(@LoginUser User user) {
+    public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishes(@LoginUser @Parameter(hidden = true) User user ) {
         List<WishResponseDTO> wishListResponseDTO = wishService.getAllWishes(user.getId());
         return ApiResponseGenerator.success(HttpStatus.OK, "위시리스트를 조회했습니다.", wishListResponseDTO);
     }
 
     @GetMapping("/page")
     @Operation(summary = "위시리스트 전체 페이지 조회 api", description = "위시리스트 전체 페이지 조회 api입니다")
-    public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishPages(@LoginUser User user,
+    public ResponseEntity<SuccessBody<List<WishResponseDTO>>> getAllWishPages(@LoginUser @Parameter(hidden = true) User user ,
         @RequestParam(value = "page", defaultValue = "0") int page,
         @RequestParam(value = "size", defaultValue = "0") int size,
         @RequestParam(value = "criteria", defaultValue = "id") String criteria) {
@@ -54,7 +55,7 @@ public class WishController {
 
     @PostMapping()
     @Operation(summary = "위시리스트 등록 api", description = "위시리스트 등록 api입니다")
-    public ResponseEntity<SuccessBody<Long>> addWishes(@LoginUser User user,
+    public ResponseEntity<SuccessBody<Long>> addWishes(@LoginUser @Parameter(hidden = true) User user ,
         @Valid @RequestBody WishRequestDTO wishRequestDTO) {
         authService.authorizeUser(user, wishRequestDTO.userId());
         Long wishInsertedId = wishService.addWish(wishRequestDTO);
@@ -63,7 +64,7 @@ public class WishController {
 
     @DeleteMapping("/{wishId}")
     @Operation(summary = "위시리스트 단일 삭제 api", description = "위시리스트 단일 삭제 api입니다")
-    public ResponseEntity<SuccessBody<Long>> deleteWishes(@LoginUser User user,
+    public ResponseEntity<SuccessBody<Long>> deleteWishes(@LoginUser @Parameter(hidden = true) User user ,
         @PathVariable Long wishId) {
         WishResponseDTO wishResponseDTO = wishService.getOneWish(wishId);
         authService.authorizeUser(user, wishResponseDTO.userId());

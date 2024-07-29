@@ -9,6 +9,7 @@ import gift.dto.responsedto.CategoryResponseDTO;
 import gift.service.AuthService;
 import gift.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -40,7 +41,7 @@ public class CategoryController {
     @Operation(summary = "카테고리 등록 api", description = "카테고리 등록 api입니다")
     public ResponseEntity<SuccessBody<Long>> addCategory(
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
-        @LoginUser User user) {
+        @LoginUser @Parameter(hidden = true) User user ) {
         authService.authorizeAdminUser(user);
         Long categoryId = categoryService.addCategory(categoryRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.CREATED, "카테고리가 생성되었습니다.", categoryId);
@@ -69,7 +70,7 @@ public class CategoryController {
     public ResponseEntity<SuccessBody<Long>> updateCategory(
         @PathVariable("id") Long categoryId,
         @Valid @RequestBody CategoryRequestDTO categoryRequestDTO,
-        @LoginUser User user) {
+        @LoginUser @Parameter(hidden = true) User user ) {
         authService.authorizeAdminUser(user);
         Long updatedCategoryId = categoryService.updateCategory(categoryId, categoryRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.OK, "카테고리가 수정되었습니다.", updatedCategoryId);
@@ -79,7 +80,7 @@ public class CategoryController {
     @Operation(summary = "카테고리 삭제 api", description = "카테고리 삭제ㄴ api입니다")
     public ResponseEntity<SuccessBody<Long>> deleteCategory(
         @PathVariable("id") Long categoryId,
-        @LoginUser User user){
+        @LoginUser @Parameter(hidden = true) User user ){
         authService.authorizeAdminUser(user);
         Long deletedCategoryId = categoryService.deleteCategory(categoryId);
         return ApiResponseGenerator.success(HttpStatus.OK, "카테고리가 삭제되었습니다.", deletedCategoryId);

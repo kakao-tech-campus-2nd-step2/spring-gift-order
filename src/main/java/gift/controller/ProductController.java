@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
+
 
 @RestController
 @RequestMapping("/api")
@@ -70,7 +72,7 @@ public class ProductController {
     @Operation(summary = "상품 추가 api", description = "상품 추가 api입니다")
     public ResponseEntity<SuccessBody<Long>> addProduct(
         @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
-        @LoginUser User user) {
+        @LoginUser @Parameter(hidden = true) User user ) {
         authService.authorizeAdminUser(user);
         Long productId = productService.addProduct(productCreateRequestDTO);
 
@@ -82,7 +84,7 @@ public class ProductController {
     public ResponseEntity<SuccessBody<Long>> updateProduct(
         @PathVariable("id") Long productId,
         @Valid @RequestBody ProductRequestDTO productRequestDTO,
-        @LoginUser User user) {
+        @LoginUser @Parameter(hidden = true) User user ) {
         authService.authorizeAdminUser(user);
         Long updatedProductId = productService.updateProduct(productId, productRequestDTO);
         return ApiResponseGenerator.success(HttpStatus.OK, "상품이 수정되었습니다.", updatedProductId);
@@ -92,7 +94,7 @@ public class ProductController {
     @Operation(summary = "상품 삭제 api", description = "상품 삭제 api입니다")
     public ResponseEntity<SuccessBody<Long>> deleteProduct(
         @PathVariable("id") Long productId,
-        @LoginUser User user) {
+        @LoginUser @Parameter(hidden = true) User user ) {
         authService.authorizeAdminUser(user);
         Long deletedProductId = productService.deleteProduct(productId);
         return ApiResponseGenerator.success(HttpStatus.OK, "상품이 삭제되었습니다.", deletedProductId);

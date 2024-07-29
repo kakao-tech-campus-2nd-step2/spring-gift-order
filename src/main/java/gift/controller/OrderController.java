@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Parameter;
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -34,7 +36,7 @@ public class OrderController {
     @PostMapping()
     @Operation(summary = "주문 api", description = "주문 api입니다")
     public ResponseEntity<SuccessBody<OrderResponseDTO>> createOrder(
-        @LoginUser User user,
+        @LoginUser @Parameter(hidden = true) User user ,
         @Valid @RequestBody OrderRequestDTO orderRequestDTO
     ) {
         Option option = optionService.getOption(orderRequestDTO.optionId());
