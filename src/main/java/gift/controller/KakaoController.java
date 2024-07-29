@@ -45,11 +45,12 @@ public class KakaoController {
     }
 
     @GetMapping("/callback")
-    public String callback(@RequestParam String code, HttpServletRequest request) {
+    public String callback(@RequestParam("code") String code, HttpServletRequest request) {
         String accessToken = kakaoAuthService.getAccessToken(code);
         request.getSession().setAttribute("accessToken", accessToken);
         return "redirect:/home";
     }
+
 
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String bearerToken, @RequestBody OrderRequest orderRequest) {
