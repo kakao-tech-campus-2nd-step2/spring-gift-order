@@ -45,7 +45,6 @@ public class KakaoApiService {
     this.userRepository = userRepository;
     this.optionRepository = optionRepository;
     this.productRepository = productRepository;
-
   }
 
   public Mono<String> getKakaoToken(String authorizationCode) {
@@ -141,5 +140,4 @@ public class KakaoApiService {
         "  }\n" +
         "}";
   }
-
 }

@@ -36,8 +36,6 @@ public class WishController {
       @RequestParam(defaultValue = "10") @Parameter(description = "페이지 크기", example = "10") int size,
       @RequestParam(defaultValue = "id") @Parameter(description = "정렬 필드", example = "id") String sort,
       @RequestParam(defaultValue = "asc") @Parameter(description = "정렬 방향", example = "asc") String direction) {
-
-
     Sort.Direction sortDirection = Sort.Direction.fromString(direction);
     Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sort));
     Page<WishDto> wishes = wishService.getWishesByMemberEmail(user.getEmail(), pageable);
@@ -64,4 +62,3 @@ public class WishController {
     return ResponseEntity.ok().build();
   }
 }
-

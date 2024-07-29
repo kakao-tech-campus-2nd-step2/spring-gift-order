@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @Tag(name = "Kakao API", description = "카카오 로그인 관련 API")
-
 public class KakaoApiController {
 
   private final KakaoApiService kakaoApiService;
@@ -40,4 +39,3 @@ public class KakaoApiController {
     return token.substring(startIndex, endIndex);
   }
 }
-
