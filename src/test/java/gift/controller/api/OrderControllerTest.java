@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.dto.request.OrderRequest;
 import gift.dto.response.OrderResponse;
 import gift.interceptor.AuthInterceptor;
-import gift.service.*;
+import gift.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -42,14 +42,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 class OrderControllerTest {
 
-    @MockBean
-    OptionService optionService;
-    @MockBean
-    KakaoApiService kakaoApiService;
-    @MockBean
-    WishService wishService;
-    @MockBean
-    private TokenService tokenService;
     @MockBean
     private JpaMetamodelMappingContext jpaMetamodelMappingContext;
     @MockBean
@@ -75,12 +67,10 @@ class OrderControllerTest {
         OrderRequest orderRequest = new OrderRequest(1L, 10, "잘 부탁드립니다.");
         OrderResponse orderResponse = new OrderResponse(1L, 1L, 10, LocalDateTime.now(), "잘 부탁드립니다.");
 
-        Long productId = 1L;
-        when(orderService.saveOrder(orderRequest)).thenReturn(orderResponse);
-        when(optionService.getProductIdByOptionId(orderRequest)).thenReturn(productId);
+        when(orderService.processOrder(any(), any())).thenReturn(orderResponse);
 
         //When
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/orders")
+        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/orders")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer validTokenValue")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderRequest)))
@@ -108,10 +98,6 @@ class OrderControllerTest {
                                         fieldWithPath("message").description("전달된 배송 메시지").type(JsonFieldType.STRING)
                                 )
                         )
-
-
                 );
-
-
     }
 }
