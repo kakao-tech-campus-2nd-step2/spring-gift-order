@@ -13,37 +13,41 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrderApiController {
 
     private final OrderService orderService;
-    private final KakaoMessageService kakaoMessageService;
 
-    public OrderApiController(OrderService orderService,
-        KakaoMessageService kakaoMessageService) {
+    public OrderApiController(OrderService orderService) {
         this.orderService = orderService;
-        this.kakaoMessageService = kakaoMessageService;
     }
 
     @CheckRole("ROLE_USER")
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> makeOrder(HttpServletRequest request, @RequestBody @Valid OrderRequest orderRequest,
-        BindingResult bindingResult) {
+    public ResponseEntity<OrderResponse> makeOrder(HttpServletRequest request,
+        @RequestBody @Valid OrderRequest orderRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new InputException(bindingResult.getAllErrors());
         }
-        //주문 생성 및 수량 차감 처리
+        //주문 생성 및 수량 차감 처리, 이후 카카오톡 메시지 API 호출
         Long memberId = Long.valueOf(request.getAttribute("member_id").toString());
         OrderResponse dto = orderService.makeOrder(memberId, orderRequest.productId(),
             orderRequest.optionId(), orderRequest.quantity(), orderRequest.message());
-        //카카오톡 메시지 API 호출
-        kakaoMessageService.sendMessageToMe(memberId, orderRequest.message());
+
         return new ResponseEntity<>(dto, HttpStatus.OK);
 
+    }
+
+    @CheckRole("ROLE_USER")
+    @GetMapping("/api/orders")
+    public ResponseEntity<OrderResponse> getOrder(@RequestParam("id") Long id) {
+        return new ResponseEntity<>(orderService.getOrder(id), HttpStatus.OK);
     }
 
 }

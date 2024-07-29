@@ -9,6 +9,6 @@ public record OptionResponse(Long id, String name, Integer quantity) {
     }
 
     public static OptionResponse createOptionResponse(Options options) {
-        return new OptionResponse(options.getId(), options.getName(), options.getQuantity());
+        return new OptionResponse(options);
     }
 }

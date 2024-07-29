@@ -12,6 +12,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,7 +24,8 @@ import reactor.core.publisher.Mono;
 @Service
 public class KakaoMessageService {
 
-    public static final String MESSAGE_REQUEST_TO_ME_URI = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+    @Value("${kakao.message-to-me-request-uri}")
+    public String MESSAGE_REQUEST_TO_ME_URI;
 
     private final WebClient client;
     private final OAuth2AccessTokenRepository accessTokenRepository;
@@ -67,19 +69,18 @@ public class KakaoMessageService {
     }
 
 
-    public LinkedMultiValueMap<String,String> createTextMessage(String message, KakaoLink link)
+    public LinkedMultiValueMap<String, String> createTextMessage(String message, KakaoLink link)
         throws JsonProcessingException {
-        LinkedMultiValueMap<String,String> body = new LinkedMultiValueMap<>();
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
-        HashMap<String,Object> templateObject = new HashMap<>();
+        HashMap<String, Object> templateObject = new HashMap<>();
         templateObject.put("object_type", "text");
         templateObject.put("text", message);
-        templateObject.put("link",  link);
+        templateObject.put("link", link);
 
         body.add("template_object", objectMapper.writeValueAsString(templateObject));
         return body;
     }
-
 
 
 }

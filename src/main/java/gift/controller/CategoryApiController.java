@@ -5,6 +5,7 @@ import gift.exception.InputException;
 import gift.model.Category;
 import gift.request.CategoryAddRequest;
 import gift.request.CategoryUpdateRequest;
+import gift.response.CategoryResponse;
 import gift.service.CategoryService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -31,13 +32,13 @@ public class CategoryApiController {
 
     @CheckRole("ROLE_ADMIN")
     @GetMapping("/api/categories")
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryResponse>> getAllCategories() {
         return new ResponseEntity<>(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
     @CheckRole("ROLE_ADMIN")
     @GetMapping("/api/categories/{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable("id") Long id) {
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable("id") Long id) {
         return new ResponseEntity<>(categoryService.getCategory(id), HttpStatus.OK);
     }
 

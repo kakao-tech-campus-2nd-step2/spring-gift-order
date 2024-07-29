@@ -5,6 +5,7 @@ import gift.exception.product.NotFoundProductException;
 import gift.model.Product;
 import gift.repository.CategoryRepository;
 import gift.repository.ProductRepository;
+import gift.response.ProductResponse;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,12 +25,19 @@ public class ProductService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
-    public Page<Product> getPagedAllProducts(Pageable pageable) {
-        return productRepository.findPageBy(pageable);
+    public List<ProductResponse> getPagedAllProducts(Pageable pageable) {
+        return productRepository.findPageBy(pageable)
+            .getContent()
+            .stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
     public Product getProduct(Long id) {

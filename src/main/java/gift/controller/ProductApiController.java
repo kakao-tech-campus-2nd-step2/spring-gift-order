@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.auth.CheckRole;
+import gift.paging.PagingService;
 import gift.request.ProductAddRequest;
 import gift.response.ProductOptionsResponse;
 import gift.response.ProductResponse;
@@ -11,6 +12,8 @@ import gift.service.OptionsService;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,22 +31,22 @@ public class ProductApiController {
 
     private final ProductService productService;
     private final OptionsService optionsService;
+    private final PagingService pagingService;
 
-    public ProductApiController(ProductService productService, OptionsService optionsService) {
+    public ProductApiController(ProductService productService, OptionsService optionsService,
+        PagingService pagingService) {
         this.productService = productService;
         this.optionsService = optionsService;
+        this.pagingService = pagingService;
     }
 
     @CheckRole("ROLE_ADMIN")
     @GetMapping("/api/products")
-    public ResponseEntity<List<ProductResponse>> getAllProducts() {
-        List<ProductResponse> dtoList;
-        List<Product> productsList = productService.getAllProducts();
-
-        dtoList = productsList.stream()
-            .map(ProductResponse::new)
-            .toList();
-        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+    public ResponseEntity<List<ProductResponse>> getAllProducts(@RequestParam(defaultValue = "1", name = "page") int page,
+        @RequestParam(defaultValue = "id", name = "sort") String sort) {
+        PageRequest pageRequest = pagingService.makeProductsPageRequest(page, sort);
+        List<ProductResponse> dto = productService.getPagedAllProducts(pageRequest);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @CheckRole("ROLE_ADMIN")

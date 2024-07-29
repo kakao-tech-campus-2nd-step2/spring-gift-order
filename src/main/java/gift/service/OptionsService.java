@@ -11,6 +11,7 @@ import gift.repository.OptionsRepository;
 import gift.repository.ProductRepository;
 import gift.response.OptionResponse;
 import gift.response.ProductOptionsResponse;
+import gift.response.ProductResponse;
 import java.util.List;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.ExhaustedRetryException;
@@ -38,7 +39,13 @@ public class OptionsService {
         List<OptionResponse> optionResponse = options.stream()
             .map(OptionResponse::createOptionResponse)
             .toList();
-        return new ProductOptionsResponse(product, optionResponse);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
+        return new ProductOptionsResponse(productResponse, optionResponse);
+    }
+
+    public Options getOption(Long id) {
+        return optionsRepository.findById(id)
+            .orElseThrow(NotFoundOptionsException::new);
     }
 
     public ProductOptionsResponse getProductOption(Product product, Long optionId) {
@@ -48,7 +55,8 @@ public class OptionsService {
         List<OptionResponse> optionResponse = options.stream()
             .map(OptionResponse::createOptionResponse)
             .toList();
-        return new ProductOptionsResponse(product, optionResponse);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
+        return new ProductOptionsResponse(productResponse, optionResponse);
     }
 
     @Transactional

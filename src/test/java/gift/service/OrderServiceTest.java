@@ -16,6 +16,7 @@ import gift.model.Options;
 import gift.model.Order;
 import gift.model.Product;
 import gift.model.Role;
+import gift.model.Wish;
 import gift.repository.OptionsRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishRepository;
@@ -50,7 +51,7 @@ class OrderServiceTest {
     @MockBean
     private WishRepository wishRepository;
     @MockBean
-    private WishService wishService;
+    private KakaoMessageService kakaoMessageService;
 
     private Member member;
     private Product product;
@@ -71,21 +72,31 @@ class OrderServiceTest {
         //given
         Integer orderQuantity = 1;
         String message = "message";
-        Order order = mock(Order.class);
         Order savedOrder = new Order(1L, 1L,
             option, orderQuantity, message, LocalDateTime.now(), LocalDateTime.now());
+        Wish wish = new Wish(member, product);
 
-        given(optionsRepository.findById(any(Long.class)))
-            .willReturn(Optional.ofNullable(option));
+        given(optionsService.getOption(any(Long.class)))
+            .willReturn(option);
         doNothing().when(optionsService).subtractQuantity(any(Long.class),
             any(Integer.class), any(Long.class));
+        doNothing().when(kakaoMessageService).sendMessageToMe(any(Long.class),
+            any(String.class));
+        given(wishRepository.findByMemberIdAndProductId(any(Long.class), any(Long.class)))
+            .willReturn(Optional.of(wish));
         given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
+
         //when
-        orderService.makeOrder(member.getId(), product.getId(),option.getId(),
+        orderService.makeOrder(member.getId(), product.getId(), option.getId(),
             orderQuantity, message);
+
         //then
-        then(optionsRepository).should().findById(any(Long.class));
+        then(optionsService).should().getOption(any(Long.class));
         then(orderRepository).should().save(any(Order.class));
+        then(optionsService).should().subtractQuantity(any(Long.class),
+            any(Integer.class), any(Long.class));
+        then(wishRepository).should().findByMemberIdAndProductId(any(Long.class), any(Long.class));
+        then(kakaoMessageService).should().sendMessageToMe(any(Long.class), any(String.class));
     }
 
     @DisplayName("주문 실패 테스트 - 재고 부족")
@@ -98,12 +109,15 @@ class OrderServiceTest {
             orderQuantity, message);
         given(optionsRepository.findById(any(Long.class)))
             .willReturn(Optional.ofNullable(option));
+        given(optionsService.getOption(any(Long.class)))
+            .willReturn(option);
         doThrow(OptionsQuantityException.class).when(optionsService)
             .subtractQuantity(any(Long.class),
                 any(Integer.class), any(Long.class));
+
         //when //then
         Assertions.assertThatThrownBy(
-            () -> orderService.makeOrder(member.getId(), product.getId(), option.getId(),
+            () -> orderService.addOrder(member.getId(), product.getId(), option.getId(),
                 orderQuantity, message)).isInstanceOf(OptionsQuantityException.class);
     }
 }

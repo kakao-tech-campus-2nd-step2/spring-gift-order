@@ -4,6 +4,7 @@ import gift.exception.category.DuplicateCategoryException;
 import gift.exception.category.NotFoundCategoryException;
 import gift.model.Category;
 import gift.repository.CategoryRepository;
+import gift.response.CategoryResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +19,15 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+            .map(CategoryResponse::createCategoryResponse)
+            .toList();
     }
 
-    public Category getCategory(Long id) {
+    public CategoryResponse getCategory(Long id) {
         return categoryRepository.findById(id)
+            .map(CategoryResponse::createCategoryResponse)
             .orElseThrow(NotFoundCategoryException::new);
     }
 

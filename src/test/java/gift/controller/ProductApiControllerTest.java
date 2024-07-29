@@ -17,6 +17,7 @@ import gift.model.Role;
 import gift.request.ProductAddRequest;
 import gift.response.OptionResponse;
 import gift.response.ProductOptionsResponse;
+import gift.response.ProductResponse;
 import gift.service.OptionsService;
 import gift.service.ProductService;
 import java.util.ArrayList;
@@ -66,7 +67,8 @@ public class ProductApiControllerTest {
         //given
         Product product = demoProduct();
         List<OptionResponse> options = new ArrayList<>();
-        ProductOptionsResponse response = new ProductOptionsResponse(product, options);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
+        ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
 
         given(productService.getProduct(any(Long.class)))
             .willReturn(product);
@@ -88,7 +90,8 @@ public class ProductApiControllerTest {
         Long optionId = 1L;
         Product product = demoProduct();
         List<OptionResponse> options = new ArrayList<>();
-        ProductOptionsResponse response = new ProductOptionsResponse(product, options);
+        ProductResponse productResponse = ProductResponse.createProductResponse(product);
+        ProductOptionsResponse response = new ProductOptionsResponse(productResponse, options);
 
         given(productService.getProduct(any(Long.class)))
             .willReturn(product);

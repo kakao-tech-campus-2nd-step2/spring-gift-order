@@ -10,6 +10,7 @@ import gift.model.Wish;
 import gift.repository.MemberRepository;
 import gift.repository.ProductRepository;
 import gift.repository.WishRepository;
+import gift.response.ProductResponse;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -32,12 +33,19 @@ public class WishService {
         this.memberRepository = memberRepository;
     }
 
-    public List<Product> getMyWishList(Long memberId) {
-        return wishRepository.findAllByMemberId(memberId);
+    public List<ProductResponse> getMyWishList(Long memberId) {
+        return wishRepository.findAllByMemberId(memberId)
+            .stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
-    public Page<Product> getPagedWishList(Long memberId, Pageable pageable) {
-        return wishRepository.findPageBy(memberId, pageable);
+    public List<ProductResponse> getPagedWishList(Long memberId, Pageable pageable) {
+        return wishRepository.findPageBy(memberId, pageable)
+            .getContent()
+            .stream()
+            .map(ProductResponse::createProductResponse)
+            .toList();
     }
 
     @Transactional

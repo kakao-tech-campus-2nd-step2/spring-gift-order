@@ -17,6 +17,7 @@ import gift.model.Category;
 import gift.model.Member;
 import gift.model.Role;
 import gift.request.CategoryUpdateRequest;
+import gift.response.CategoryResponse;
 import gift.service.CategoryService;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,10 +104,11 @@ class CategoryApiControllerTest {
     void getAll() throws Exception {
         //given
         int dataCounts = 35;
-        List<Category> categories = new ArrayList<>();
+        List<CategoryResponse> categories = new ArrayList<>();
         IntStream.range(0, dataCounts)
             .forEach(i -> {
-                categories.add(new Category("카테고리 " + i));
+                Category category = new Category("카테고리 " + i);
+                categories.add(CategoryResponse.createCategoryResponse(category));
             });
 
         given(categoryService.getAllCategories())
@@ -127,8 +129,9 @@ class CategoryApiControllerTest {
         //given
         Long categoryId = 1L;
         Category category = new Category(categoryId, "찾는 카테고리");
+        CategoryResponse categoryResponse = CategoryResponse.createCategoryResponse(category);
         given(categoryService.getCategory(categoryId))
-            .willReturn(category);
+            .willReturn(categoryResponse);
 
         //when then
         mockMvc.perform(
