@@ -24,6 +24,9 @@ public class KakaoProperties {
     @Value("${kakao.message-url}")
     private String messageUrl;
 
+    @Value("${kakao.access-token-info-url}")
+    private String accessTokenInfoUrl;
+
     public String getClientId() {
         return clientId;
     }
@@ -46,5 +49,9 @@ public class KakaoProperties {
 
     public String getMessageUrl() {
         return messageUrl;
+    }
+
+    public String getAccessTokenInfoUrl() {
+        return accessTokenInfoUrl;
     }
 }

@@ -58,6 +58,29 @@ public class KakaoAuthService {
         }
     }
 
+    public void validateAccessToken(String accessToken) {
+        String url = kakaoProperties.getAccessTokenInfoUrl();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        ResponseEntity<Map> response;
+        try {
+            logger.info("Validating access token: {}", accessToken);
+            response = kakaoRestTemplate.exchange(url, HttpMethod.GET, request, Map.class);
+            logger.info("Access token validation response: {}", response);
+        } catch (Exception e) {
+            logger.error("Failed to validate access token", e);
+            throw new RuntimeException("엑세스 토큰 검증에 실패했습니다.", e);
+        }
+
+        if (response.getStatusCode() != HttpStatus.OK || response.getBody() == null) {
+            throw new RuntimeException("엑세스 토큰 검증에 실패했습니다.");
+        }
+    }
+
     public String getClientId() {
         return kakaoProperties.getClientId();
     }
