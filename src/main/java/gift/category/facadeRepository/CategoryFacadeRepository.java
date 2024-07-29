@@ -15,12 +15,12 @@ public class CategoryFacadeRepository {
 
     private final JpaCategoryRepository jpaCategoryRepository;
 
-    private final JpaProductRepository productRepository;
+    private final JpaProductRepository jpaProductRepository;
 
     public CategoryFacadeRepository(JpaCategoryRepository jpaCategoryRepository,
-        JpaProductRepository productRepository) {
+        JpaProductRepository jpaProductRepository) {
         this.jpaCategoryRepository = jpaCategoryRepository;
-        this.productRepository = productRepository;
+        this.jpaProductRepository = jpaProductRepository;
     }
 
     public Category get(Long id) {
@@ -34,6 +34,12 @@ public class CategoryFacadeRepository {
             throw new GiftNotFoundException("카테고리가 존재하지 않습니다. 카테고리를 먼저 생성해주세요");
         }
 
+        category.getProductList().stream()
+            .map(product -> jpaProductRepository.existsById(product.getId())).forEach(exists -> {
+                if (!exists) {
+                    throw new GiftNotFoundException("상품이 존재하지 않습니다.");
+                }
+            }); //TODO : 한번에 묶어서 실행하는 방법은 없는가?
 
         return jpaCategoryRepository.save(category);
     }
