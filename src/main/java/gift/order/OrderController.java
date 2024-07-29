@@ -23,7 +23,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderResponseDto createdOrder(@LoginMember MemberRequestDto memberRequestDto, @RequestBody OrderRequestDto orderRequestDto) {
+    public OrderResponseDto createdOrder(@LoginMember MemberRequestDto memberRequestDto, @RequestBody OrderRequestDto orderRequestDto)
+        throws NotFoundMember {
         return orderService.createOrder(memberRequestDto, orderRequestDto);
     }
 
