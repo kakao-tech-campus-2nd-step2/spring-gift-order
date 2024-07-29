@@ -36,7 +36,7 @@ public class WishlistRepositoryTest {
     @DirtiesContext
     @Test
     void findAllByEmail(){
-        Member member = memberRepository.save(new Member(1L, "1234@google.com","1234"));
+        Member member = memberRepository.save(new Member(1L, "1234@google.com","1234",""));
         Product expected1 = productService.addProduct(new Product(1L,"A",1000,"A",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
         Product expected2 = productService.addProduct(new Product(2L,"B",2000,"B",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
 
@@ -62,7 +62,7 @@ public class WishlistRepositoryTest {
     @DirtiesContext
     @Test
     void addProductInWishlist(){
-        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234"));
+        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234",""));
         Product expectedProduct = productService.addProduct(new Product(1L,"A",1000,"A",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
 
         wishlistRepository.addProductInWishlist(expectedMember.getId(), expectedMember.getId());
@@ -82,7 +82,7 @@ public class WishlistRepositoryTest {
     @DirtiesContext
     @Test
     void getWishlistId(){
-        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234"));
+        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234",""));
         Product expectedProduct = productService.addProduct(new Product(1L,"A",1000,"A",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
 
         wishlistRepository.addProductInWishlist(expectedMember.getId(), expectedMember.getId());
@@ -94,7 +94,7 @@ public class WishlistRepositoryTest {
     @DirtiesContext
     @Test
     void changeProductMemberNull(){
-        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234"));
+        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234",""));
         Product expectedProduct = productService.addProduct(new Product(1L,"A",1000,"A",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
 
         wishlistRepository.addProductInWishlist(expectedMember.getId(), expectedMember.getId());
@@ -110,7 +110,7 @@ public class WishlistRepositoryTest {
     @DirtiesContext
     @Test
     void deleteByWishlistId(){
-        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234"));
+        Member expectedMember = memberRepository.save(new Member(1L, "1234@google.com","1234",""));
         Product expectedProduct = productService.addProduct(new Product(1L,"A",1000,"A",new Category(1L, "A","B","C","D",new ArrayList<>()),new ArrayList<>()));
 
         wishlistRepository.addProductInWishlist(expectedMember.getId(), expectedMember.getId());

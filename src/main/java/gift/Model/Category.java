@@ -1,5 +1,6 @@
 package gift.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,15 +21,20 @@ import java.util.List;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "카테고리 ID(자동으로 설정)", defaultValue = "1")
     private Long id;
     @NotBlank
     @Column(name = "name", nullable = false)
+    @Schema(description = "카테고리 이름", defaultValue = "카테고리 이름")
     private String name;
     @Column(name = "color", nullable = false)
+    @Schema(description = "카테고리 색상", defaultValue = "카테고리 색상")
     private String color;
     @Column(name = "imageUrl", nullable = false)
+    @Schema(description = "카테고리 이미지URL", defaultValue = "카테고리 이미지URL")
     private String imageUrl;
     @Column(name = "description", nullable = false)
+    @Schema(description = "카테고리에 대한 설명", defaultValue = "카테고리 설명")
     private String description;
 
     @OneToMany(fetch = FetchType.EAGER)

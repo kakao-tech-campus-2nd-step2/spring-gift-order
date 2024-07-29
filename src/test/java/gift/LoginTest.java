@@ -41,7 +41,7 @@ public class LoginTest {
         var response = loginService.makeResponse("인가코드");
         String accessToken = loginService.abstractToken(response);
         String id = loginService.getId(accessToken);
-        Member actual = loginService.signupMember(id);
+        Member actual = loginService.signupMember(id,accessToken);
 
         assertThat(actual.getEmail()).isEqualTo(id+"@kakao.com");
         assertThat(actual.getPassword()).isEqualTo(id);
@@ -52,7 +52,7 @@ public class LoginTest {
         var response = loginService.makeResponse("VPw0Io5LfRC3VJR5mJaRG3RB_Mke-wNF3ZYunZPNwVW5B-jyrdKfAwAAAAQKKiVQAAABkONPeD2t1856Xp2T3g");
         String accessToken = loginService.abstractToken(response);
         String id = loginService.getId(accessToken);
-        Member actual = loginService.getMemberOrSignup(id);
+        Member actual = loginService.getMemberOrSignup(id,accessToken);
 
         assertThat(actual.getEmail()).isEqualTo(id+"@kakao.com");
         assertThat(actual.getPassword()).isEqualTo(id);
@@ -63,8 +63,8 @@ public class LoginTest {
         var response = loginService.makeResponse("dLtWwhkW-uhH_FUhXRDR6C8NxE3CqaIiz_3Cg2OuinBvozE0RMloVQAAAAQKKiVRAAABkONT5r37Ewsnpgvovw");
         String accessToken = loginService.abstractToken(response);
         String id = loginService.getId(accessToken);
-        Member expect = loginService.signupMember(id);
-        Member actual = loginService.getMemberOrSignup(id);
+        Member expect = loginService.signupMember(id,accessToken);
+        Member actual = loginService.getMemberOrSignup(id,accessToken);
 
         assertThat(actual.getEmail()).isEqualTo(expect.getEmail());
         assertThat(actual.getPassword()).isEqualTo(expect.getPassword());

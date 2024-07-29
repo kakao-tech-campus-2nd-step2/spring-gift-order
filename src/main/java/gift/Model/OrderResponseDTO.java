@@ -1,10 +1,17 @@
 package gift.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class OrderResponseDTO {
+    @Schema(description = "주문한 상품의 ID", defaultValue = "1")
     private Long id;
+    @Schema(description = "주문한 옵션의 ID", defaultValue = "1")
     private Long optionId;
+    @Schema(description = "주문한 상품의 수량", defaultValue = "1")
     private int quantity;
+    @Schema(description = "주문한 시간", defaultValue = "2024-01-01T00:00:00")
     private String orderDateTime;
+    @Schema(description = "전달된 메세지", defaultValue = "전달된 메세지")
     private String message;
 
     public Long getId() {

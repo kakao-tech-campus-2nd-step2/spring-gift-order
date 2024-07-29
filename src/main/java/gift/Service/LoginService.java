@@ -99,17 +99,17 @@ public class LoginService {
         return responseBody.get("id").toString();
     }
 
-    public Member getMemberOrSignup(String id){
+    public Member getMemberOrSignup(String id, String accessToken){
         Member checkMember = memberRepository.findByEmail(id+"@kakao.com");
         if(checkMember == null){
-            checkMember = signupMember(id);
+            checkMember = signupMember(id,accessToken);
         }
         return checkMember;
     }
 
 
-    public Member signupMember(String id){ // 기본 비밀번호 id로 설정
-        return memberRepository.save(new Member(null, id+"@kakao.com",id));
+    public Member signupMember(String id, String accessToken){ // 기본 비밀번호 id로 설정
+        return memberRepository.save(new Member(null, id+"@kakao.com",id,accessToken));
     }
 
 }

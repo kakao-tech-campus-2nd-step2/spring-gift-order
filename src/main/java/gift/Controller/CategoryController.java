@@ -3,6 +3,11 @@ package gift.Controller;
 import gift.Model.Category;
 import gift.Service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Category", description = "Category 관련 API")
 @RestController
 public class CategoryController {
     private final CategoryService categoryService;
@@ -22,26 +28,70 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    @Operation(
+        summary = "모든 카테고리",
+        description = "등록된 모든 카테고리 가져오기"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "모든 카테고리 가져오기 성공"
+    )
     @GetMapping("/api/category")
     public ResponseEntity<List<Category>> getCategory(){
         return ResponseEntity.ok().body(categoryService.getAllCategory());
     }
 
+    @Operation(
+        summary = "특정 카테고리 가져오기",
+        description = "해당되는 카테고리 가져오기"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "해당 카테고리 가져오기 성공"
+    )
+    @Parameter(name = "categoryId", description = "해당하는 카테고리 ID")
     @GetMapping("/api/category/{categoryId}")
     public ResponseEntity<Category> getCategoryById(@PathVariable(value = "categoryId") Long categoryId){
         return ResponseEntity.ok().body(categoryService.getCategoryById(categoryId));
     }
 
+    @Operation(
+        summary = "카테고리 추가하기",
+        description = "새로운 카테고리를 객체를 전달해 추가"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "카테고리 추가 성공"
+    )
+    @Parameter(name = "category", description = "추가할 새로운 카테고리")
     @PostMapping("/api/category")
     public ResponseEntity<Category> addCategory(@RequestBody Category category){
         return ResponseEntity.ok().body(categoryService.addCategory(category));
     }
 
+    @Operation(
+        summary = "카테고리 수정",
+        description = "전달된 카테고리로 수정"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "카테고리 수정 성공"
+    )
+    @Parameter(name = "category", description = "해당하는 카테고리 ID")
     @PutMapping("/api/category")
     public ResponseEntity<Category> updateCategory(@RequestBody Category category){
         return ResponseEntity.ok().body(categoryService.updateCategory(category));
     }
 
+    @Operation(
+        summary = "카테고리 삭제",
+        description = "특정 카테고리 삭제"
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "카테고리 삭제 성공"
+    )
+    @Parameter(name = "categoryId", description = "해당하는 카테고리 ID")
     @DeleteMapping("/api/category/{categoryId}")
     public ResponseEntity<Category> deleteCategory(@PathVariable(value = "categoryId") Long categoryId){
         return ResponseEntity.ok().body(categoryService.deleteCategory(categoryId));
