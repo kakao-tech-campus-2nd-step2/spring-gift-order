@@ -22,55 +22,44 @@ public class Order {
 
     private Long quantity;
     private String message;
+
     @Column(name = "order_date_time")
     private LocalDateTime orderDateTime;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    // Default constructor
+    protected Order() {}
+
+    // Constructor with all fields
+    public Order(User user, ProductOption productOption, Long quantity, String message, LocalDateTime orderDateTime) {
+        this.user = user;
+        this.productOption = productOption;
+        this.quantity = quantity;
+        this.message = message;
+        this.orderDateTime = orderDateTime;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    // Getters only
+    public Long getId() {
+        return id;
     }
 
     public User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public ProductOption getProductOption() {
         return productOption;
-    }
-
-    public void setProductOption(ProductOption productOption) {
-        this.productOption = productOption;
     }
 
     public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
-    }
-
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public LocalDateTime getOrderDateTime() {
         return orderDateTime;
-    }
-
-    public void setOrderDateTime(LocalDateTime orderDateTime) {
-        this.orderDateTime = orderDateTime;
     }
 }

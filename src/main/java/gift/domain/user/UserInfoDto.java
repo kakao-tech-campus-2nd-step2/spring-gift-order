@@ -1,79 +1,62 @@
 package gift.domain.user;
 
-
 public class UserInfoDto {
-    private Long id;
+    private long id;
     private String nickname;
     private String email;
     private String accessToken;
-    private Long serverUserId;
-    private String serverUserEmail;
     private String jwtToken;
     private String refreshToken;
+    private Long serverUserId;
+    private String serverUserEmail;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
+    // All-arguments constructor
+    public UserInfoDto(long id, String nickname, String email, String accessToken,
+                       String jwtToken, String refreshToken, Long serverUserId,
+                       String serverUserEmail) {
+        this.id = id;
+        this.nickname = nickname;
+        this.email = email;
+        this.accessToken = accessToken;
+        this.jwtToken = jwtToken;
+        this.refreshToken = refreshToken;
+        this.serverUserId = serverUserId;
+        this.serverUserEmail = serverUserEmail;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public UserInfoDto(long id, String nickname, String email) {
+        this(id, nickname, email, "", "", "", 0L, "");
+    }
+    // Getters only
+    public long getId() {
+        return id;
     }
 
     public String getNickname() {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getAccessToken() {
         return accessToken;
     }
 
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public Long getServerUserId() {
-        return serverUserId;
-    }
-
-    public void setServerUserId(Long serverUserId) {
-        this.serverUserId = serverUserId;
-    }
-
-    public String getServerUserEmail() {
-        return serverUserEmail;
-    }
-
-    public void setServerUserEmail(String serverUserEmail) {
-        this.serverUserEmail = serverUserEmail;
-    }
-
     public String getJwtToken() {
         return jwtToken;
-    }
-
-    public void setJwtToken(String jwtToken) {
-        this.jwtToken = jwtToken;
     }
 
     public String getRefreshToken() {
         return refreshToken;
     }
 
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public Long getServerUserId() {
+        return serverUserId;
+    }
+
+    public String getServerUserEmail() {
+        return serverUserEmail;
     }
 }
-

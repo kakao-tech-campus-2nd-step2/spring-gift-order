@@ -75,7 +75,6 @@ public class KakaoService {
             logger.info("Access token 수신: {}", accessToken);
 
             UserInfoDto userInfoDto = getUserInfoDto(accessToken);
-            userInfoDto.setAccessToken(accessToken);
 
             Long id = userInfoDto.getId();
             String email = userInfoDto.getEmail();
@@ -85,11 +84,18 @@ public class KakaoService {
             logger.info("사용자 조회 또는 생성: id={}, email={}", user.getId(), user.getEmail());
 
             Map<String, String> tokens = userService.generateJwtToken(user);
-            userInfoDto.setJwtToken(tokens.get("jwt_token"));
-            userInfoDto.setRefreshToken(tokens.get("jwt_refresh"));
 
-            userInfoDto.setServerUserId(user.getId());
-            userInfoDto.setServerUserEmail(user.getEmail());
+            // Update userInfoDto with additional information
+            userInfoDto = new UserInfoDto(
+                    userInfoDto.getId(),
+                    userInfoDto.getNickname(),
+                    userInfoDto.getEmail(),
+                    accessToken,
+                    tokens.get("jwt_token"),
+                    tokens.get("jwt_refresh"),
+                    user.getId(),
+                    user.getEmail()
+            );
 
             logger.info("kakaoLogin 성공 - 사용자: {}", user.getId());
             return userInfoDto;
@@ -120,13 +126,7 @@ public class KakaoService {
             JsonNode kakaoAccount = jsonNode.path("kakao_account");
             String email = kakaoAccount.path("email").asText();
 
-            UserInfoDto userInfoDto = new UserInfoDto();
-            userInfoDto.setId(id);
-            userInfoDto.setNickname(nickname);
-            userInfoDto.setEmail(email);
-
-            logger.info("사용자 정보 파싱 완료: id={}, nickname={}, email={}", id, nickname, email);
-            return userInfoDto;
+            return new UserInfoDto(id, nickname, email);
 
         } catch (RestClientResponseException e) {
             logger.error("사용자 정보 가져오기 실패: {}", e.getResponseBodyAsString(), e);
@@ -195,12 +195,7 @@ public class KakaoService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         String formattedNow = now.format(formatter);
 
-        Order order = new Order();
-        order.setUser(user);
-        order.setProductOption(productOption);
-        order.setQuantity(orderRequest.getQuantity());
-        order.setMessage(orderRequest.getMessage());
-        order.setOrderDateTime(now);
+        Order order = new Order(user, productOption, orderRequest.getQuantity(), orderRequest.getMessage(), now);
         orderRepository.save(order);
 
         Map<String, Object> response = new HashMap<>();
@@ -212,6 +207,7 @@ public class KakaoService {
 
         return response;
     }
+
 
     private void sendKakaoMessage(User user, String accessToken, String message, String optionName, Long quantity) {
         String messageUrl = kakaoProperties.messageUrl();
