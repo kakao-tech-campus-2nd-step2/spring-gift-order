@@ -1,7 +1,10 @@
 package gift.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.controller.auth.KakaoToken;
+import gift.controller.auth.KakaoMemberInfoResponse;
+import gift.controller.auth.KakaoTokenResponse;
 import gift.controller.order.OrderRequest;
 import gift.exception.KakaoMessageException;
 import java.util.HashMap;
@@ -10,9 +13,10 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
 public class KakaoUtil {
@@ -22,16 +26,16 @@ public class KakaoUtil {
     private static final String BUTTON_TITLE = "선물 확인하기";
 
     public static void SendKakaoMessageToMe(
-        OrderRequest orderRequest, KakaoToken kakaoToken) {
-        HttpHeaders headers = createHeaders(kakaoToken);
+        OrderRequest orderRequest, KakaoTokenResponse kakaoToken) {
+        HttpHeaders headers = createAuthorizationHeaders(kakaoToken);
         MultiValueMap<String, String> body = createTemplateObject(orderRequest);
         new RestTemplate().exchange(SEND_MSG_URL, HttpMethod.POST,
             new HttpEntity<>(body, headers), String.class);
     }
 
-    private static HttpHeaders createHeaders(KakaoToken kakaoToken) {
+    private static HttpHeaders createAuthorizationHeaders(KakaoTokenResponse kakaoToken) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + kakaoToken.accessToken());
+        headers.add("Authorization", "Bearer " + kakaoToken.getAccessToken());
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         return headers;
     }
