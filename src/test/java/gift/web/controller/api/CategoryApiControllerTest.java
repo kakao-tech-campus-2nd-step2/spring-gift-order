@@ -1,6 +1,5 @@
 package gift.web.controller.api;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
@@ -20,12 +19,7 @@ import gift.config.RestDocsConfiguration;
 import gift.domain.Member;
 import gift.domain.Member.Builder;
 import gift.domain.vo.Email;
-import gift.mock.MockLoginMemberArgumentResolver;
 import gift.service.CategoryService;
-import gift.service.OrderService;
-import gift.service.ProductOptionService;
-import gift.service.ProductService;
-import gift.service.WishProductService;
 import gift.web.dto.request.category.CreateCategoryRequest;
 import gift.web.dto.request.category.UpdateCategoryRequest;
 import gift.web.dto.response.category.CreateCategoryResponse;
