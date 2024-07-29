@@ -9,6 +9,7 @@ import gift.domain.Option;
 import gift.domain.Order;
 import gift.domain.Product;
 import gift.domain.WishProduct;
+import gift.exception.LogicalException;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.ProductRepository;
@@ -54,14 +55,18 @@ public class OrderService {
      */
     @Transactional
     public OrderResponse order(
-            OrderRequest orderRequest, UserResponse userResponse, Long productId) throws JsonProcessingException {
+            OrderRequest orderRequest, UserResponse userResponse, Long productId) throws JsonProcessingException
+    {
+        if(userResponse.getToken() == null)
+            throw new NoSuchFieldError("카카오 유저만 구매할 수 있습니다!");
+
         Option option = optionRepository.findById(orderRequest.getOptionId()).orElseThrow(NoSuchFieldError::new);
         Long before = option.getQuantity();
         option.subtract(orderRequest.getQuantity());
         Long after = option.getQuantity();
 
         if(before.equals(after)){
-            return new OrderResponse();
+            throw new LogicalException("수량보다 많은 수는 주문할 수 없습니다!");
         }
 
         Product product = productRepository.findById(productId).orElseThrow(NoSuchFieldError::new);

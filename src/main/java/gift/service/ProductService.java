@@ -89,7 +89,7 @@ public class ProductService {
      */
     @Transactional
     public void updateProduct(ProductRequest productRequest, Long id){
-        Product savedProduct = productRepository.findById(id).orElseThrow(NullPointerException::new);
+        Product savedProduct = productRepository.findById(id).orElseThrow(NoSuchFieldError::new);
         Category category = categoryRepository.findByName(productRequest.getCategoryName());
 
         savedProduct.updateEntity(

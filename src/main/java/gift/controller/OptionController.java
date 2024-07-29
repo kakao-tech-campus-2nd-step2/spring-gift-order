@@ -2,6 +2,8 @@ package gift.controller;
 
 import gift.DTO.Option.OptionRequest;
 import gift.DTO.Option.OptionResponse;
+import gift.DTO.User.UserResponse;
+import gift.security.AuthenticateMember;
 import gift.service.OptionService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -17,7 +19,9 @@ public class OptionController {
     public OptionController(OptionService optionService){
         this.optionService = optionService;
     }
-
+    /*
+     * 옵션 조회
+     */
     @GetMapping("/api/products/{product_id}/options")
     public ResponseEntity<Page<OptionResponse>> readOption(
             @PathVariable("product_id") Long product_id,
@@ -33,30 +37,40 @@ public class OptionController {
         Page<OptionResponse> oneProductOption = optionService.findOptionDESC(product_id, page, size, field);
         return new ResponseEntity<>(oneProductOption, HttpStatus.OK);
     }
-
+    /*
+     * 옵션 추가
+     */
     @PostMapping("/api/products/{product_id}/options")
     public ResponseEntity<Void> createOption(
-            @PathVariable("product_id") Long product_id, @Valid @RequestBody OptionRequest optionRequest
+            @PathVariable("product_id") Long product_id,
+            @Valid @RequestBody OptionRequest optionRequest,
+            @AuthenticateMember UserResponse user
     ){
         optionService.save(product_id, optionRequest);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-
+    /*
+     * 옵션 수정
+     */
     @PutMapping("/api/products/{product_id}/options/{option_id}")
     public ResponseEntity<Void> updateOption(
             @PathVariable("option_id") Long option_id,
-            @Valid @RequestBody OptionRequest optionRequest
+            @Valid @RequestBody OptionRequest optionRequest,
+            @AuthenticateMember UserResponse user
     ){
         optionService.update(option_id, optionRequest);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    /*
+     * 옵션 삭제
+     */
     @DeleteMapping("/api/products/{product_id}/options/{option_id}")
     public ResponseEntity<Void> deleteOption(
             @PathVariable("product_id") Long productId,
-            @PathVariable("option_id") Long optionId
+            @PathVariable("option_id") Long optionId,
+            @AuthenticateMember UserResponse user
     ){
         optionService.delete(productId, optionId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

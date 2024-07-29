@@ -36,20 +36,17 @@ public class AuthenticateMemberArgumentResolver implements HandlerMethodArgument
             WebDataBinderFactory binderFactory
     ) throws Exception {
         String token = webRequest.getHeader("Authorization");
-
         if (token == null || !token.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid or missing Authorization header");
+            throw new IllegalArgumentException("인증 방식이 잘못되었거나, 토큰이 없습니다!");
         }
 
         token = token.substring(7); // "Bearer " 부분을 제거
 
         String userId = jwtTokenProvider.getClaimsFromToken(token);
-        UserResponse userRes = userService.findByUserId(userId);
-
-        if (userRes == null) {
-            throw new IllegalArgumentException("Member not found for token: " + token);
+        if(!userService.isUserIdDuplicate(userId)) {
+            throw new IllegalArgumentException("유효하지 않은 로그인 정보입니다!");
         }
 
-        return userRes;
+        return userService.findByUserId(userId);
     }
 }

@@ -62,7 +62,7 @@ public class CategoryService {
      */
     @Transactional
     public void update(Long id, CategoryRequest categoryRequest){
-        Category savedCategory = categoryRepository.findById(id).orElseThrow(NullPointerException::new);
+        Category savedCategory = categoryRepository.findById(id).orElseThrow(NoSuchFieldError::new);
 
         savedCategory.update(categoryRequest.getName());
     }

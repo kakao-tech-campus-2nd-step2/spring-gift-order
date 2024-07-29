@@ -50,7 +50,13 @@
                 backToHome();
             },
             error : function(err){
-                alert("로그인에 실패했습니다!");
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
             }
         })
     });

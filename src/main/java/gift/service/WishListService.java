@@ -63,9 +63,8 @@ public class WishListService {
         Long id = wishProductRequest.getUser().getId();
         Long productId = wishProductRequest.getProduct().getId();
 
-
-        User savedUser = userRepository.findById(id).orElseThrow(NullPointerException::new);
-        Product savedProduct = productRepository.findById(productId).orElseThrow(NullPointerException::new);
+        User savedUser = userRepository.findById(id).orElseThrow(NoSuchFieldError::new);
+        Product savedProduct = productRepository.findById(productId).orElseThrow(NoSuchFieldError::new);
         WishProduct wishProduct = new WishProduct(savedUser, savedProduct);
         if(!wishListRepository.existsByUserIdAndProductId(id, productId))
             wishListRepository.save(wishProduct);

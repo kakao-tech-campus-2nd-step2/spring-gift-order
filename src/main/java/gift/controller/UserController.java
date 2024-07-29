@@ -1,8 +1,11 @@
 package gift.controller;
 
+import gift.exception.AlreadyExistException;
 import gift.DTO.Token;
 import gift.DTO.User.UserRequest;
 import gift.DTO.User.UserResponse;
+import gift.exception.LogicalException;
+import gift.security.AuthenticateMember;
 import gift.security.JwtTokenProvider;
 import gift.service.UserService;
 import org.springframework.data.domain.Page;
@@ -20,33 +23,33 @@ public class UserController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
     /*
-     * 로그인
-     * 입력 받은 user와 DB 내의 user의 email로 생성한 token을 비교
-     * 성공시 : 200 OK 및 User 정보로 만든 Token 반환
+     * 로그인 ( 유저 정보 인증 )
      */
     @PostMapping("/login")
-    public ResponseEntity<Token> giveToken(@RequestBody UserRequest user){
+    public ResponseEntity<Token> giveToken(@RequestBody UserRequest user) throws IllegalAccessException {
         if(!userService.login(user)){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new IllegalArgumentException("아이디나 비밀번호를 다시 확인해주세요!");
         }
 
         Token token = jwtTokenProvider.makeToken(user);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
     /*
-     * 회원가입
-     * 회원가입 성공시 : 201 Created
+     * 회원가입 ( 유저 추가 )
      */
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody UserRequest user){
-        if(userService.isDuplicate(user))
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        if(userService.isUserIdDuplicate(user.getUserId()))
+            throw new AlreadyExistException("이미 존재하는 유저 아이디입니다!");
+
+        if(userService.isEmailDuplicate(user.getEmail()))
+            throw new AlreadyExistException("이미 존재하는 이메일입니다!");
 
         userService.save(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
     /*
-     * 모든 User의 정보 가져오기
+     * 유저 조회
      */
     @GetMapping("/api/users")
     public ResponseEntity<Page<UserResponse>> readUsers(
@@ -64,26 +67,34 @@ public class UserController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     /*
-     * 유저 정보 수정하기
+     * 유저 수정
      */
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<Void> updateUsers(@PathVariable("id") Long id, @RequestBody UserRequest user){
+    public ResponseEntity<Void> updateUsers(
+            @PathVariable("id") Long id,
+            @RequestBody UserRequest user,
+            @AuthenticateMember UserResponse userRes
+    ) throws NoSuchFieldException {
         if(!id.equals(userService.findByUserId(user.getUserId()).getId())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new LogicalException("리소스 접근 URI와 요청 데이터가 다릅니다!");
         }
 
-        if(!userService.isDuplicate(user))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if(!userService.isUserIdDuplicate(user.getUserId())) {
+            throw new NoSuchFieldException("존재하지 않는 유저 정보 접근입니다!");
+        }
 
         userService.update(user);
         return new ResponseEntity<>(HttpStatus.OK);
 
     }
     /*
-     * 유저 정보 삭제하기
+     * 유저 삭제
      */
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<Void> deleteUsers(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deleteUsers(
+            @PathVariable("id") Long id,
+            @AuthenticateMember UserResponse user
+    ){
         userService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
