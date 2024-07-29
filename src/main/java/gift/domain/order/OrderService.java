@@ -2,19 +2,17 @@ package gift.domain.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import gift.domain.cartItem.CartItemService;
 import gift.domain.cartItem.JpaCartItemRepository;
 import gift.domain.option.JpaOptionRepository;
-import gift.domain.option.Option;
 import gift.domain.option.OptionService;
-import gift.domain.product.Product;
 import gift.domain.user.JpaUserRepository;
 import gift.domain.user.User;
 import gift.domain.user.dto.UserInfo;
 import gift.global.exception.BusinessException;
 import gift.global.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -102,6 +100,7 @@ public class OrderService {
         TemplateObject templateObject = new TemplateObject(orderRequestDTO.message());
         String textTemplateJson;
         try {
+            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
             textTemplateJson = objectMapper.writeValueAsString(templateObject);
         } catch (JsonProcessingException e) {
             throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, "json 형식이 올바르지 않습니다.");
