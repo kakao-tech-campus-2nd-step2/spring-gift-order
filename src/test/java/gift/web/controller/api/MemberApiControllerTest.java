@@ -1,20 +1,27 @@
 package gift.web.controller.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import gift.authentication.token.Token;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.authentication.token.JwtProvider;
+import gift.config.RestDocsConfiguration;
 import gift.domain.Member;
-import gift.repository.MemberRepository;
+import gift.domain.Member.Builder;
+import gift.domain.vo.Email;
+import gift.mock.MockLoginMemberArgumentResolver;
 import gift.service.MemberService;
 import gift.service.WishProductService;
-import gift.utils.CategoryDummyDataProvider;
-import gift.utils.DatabaseCleanup;
-import gift.utils.MemberDummyDataProvider;
-import gift.utils.ProductDummyDataProvider;
-import gift.utils.WishProductDummyDataProvider;
 import gift.web.dto.request.LoginRequest;
 import gift.web.dto.request.member.CreateMemberRequest;
 import gift.web.dto.request.wishproduct.UpdateWishProductRequest;
@@ -22,205 +29,240 @@ import gift.web.dto.response.LoginResponse;
 import gift.web.dto.response.member.CreateMemberResponse;
 import gift.web.dto.response.member.ReadMemberResponse;
 import gift.web.dto.response.wishproduct.ReadAllWishProductsResponse;
+import gift.web.dto.response.wishproduct.ReadWishProductResponse;
 import gift.web.dto.response.wishproduct.UpdateWishProductResponse;
-import org.junit.jupiter.api.AfterEach;
+import io.swagger.v3.core.util.Json;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpEntity;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ActiveProfiles("test")
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@Import(RestDocsConfiguration.class)
+@ExtendWith(RestDocumentationExtension.class)
 class MemberApiControllerTest {
 
-    @LocalServerPort
-    private int port;
+    private MockMvc mockMvc;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    protected RestDocumentationResultHandler restDocs;
 
     @Autowired
-    private MemberDummyDataProvider memberDummyDataProvider;
+    protected ObjectMapper objectMapper;
 
     @Autowired
-    private ProductDummyDataProvider productDummyDataProvider;
+    private JwtProvider jwtProvider;
 
-    @Autowired
-    private WishProductDummyDataProvider wishProductDummyDataProvider;
-
-    @Autowired
-    private CategoryDummyDataProvider categoryDummyDataProvider;
-
-    @Autowired
-    private DatabaseCleanup databaseCleanup;
-
-    @Autowired
+    @MockBean
     private MemberService memberService;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
+    @MockBean
     private WishProductService wishProductService;
 
-    //테스트용 회원
-    private Member member;
-    private Token token;
+    private String accessToken;
+
+    private static final String BASE_URL = "/api/members";
 
     @BeforeEach
-    void setUp() {
-        insertDummyData(100);
-        member = getTestMember(1L);
-        token = getAccessToken();
-    }
+    void setUp(
+        final RestDocumentationContextProvider provider
+    ) {
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(new MemberApiController(memberService, wishProductService))
+            .setCustomArgumentResolvers(new MockLoginMemberArgumentResolver(), new PageableHandlerMethodArgumentResolver())
+            .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
+            .alwaysDo(restDocs)
+            .build();
 
-    private Member getTestMember(Long id) {
-        return memberRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("ID: " + id +"인 회원이 존재하지 않습니다."));
-    }
-
-    private Token getAccessToken() {
-        LoginRequest loginRequest = new LoginRequest(
-            member.getEmail().getValue(),
-            member.getPassword().getValue()
-        );
-        LoginResponse loginResponse = memberService.login(loginRequest);
-        return Token.from(loginResponse.getAccessToken());
-    }
-
-    private void insertDummyData(int quantity) {
-        if (quantity < 2) {
-            throw new IllegalArgumentException("quantity는 2 이상이어야 합니다.");
-        }
-        memberDummyDataProvider.run(quantity);
-        productDummyDataProvider.run(quantity);
-        wishProductDummyDataProvider.run(quantity);
-        categoryDummyDataProvider.run(quantity);
-    }
-
-    @AfterEach
-    void tearDown() {
-        databaseCleanup.execute();
+        Member member = new Builder().id(1L).name("회원01").email(Email.from("member01@gmail.com"))
+            .build();
+        accessToken = jwtProvider.generateToken(member).getValue();
     }
 
     @Test
-    @DisplayName("회원 생성 요청에 대한 정상 응답")
-    void createMember() {
-        //given
-        CreateMemberRequest request = new CreateMemberRequest("test@gmail.com", "test1234", "test");
-        String url = "http://localhost:" + port + "/api/members/register";
+    @DisplayName("회원 가입")
+    void createMember() throws Exception {
+        CreateMemberRequest request = new CreateMemberRequest("member01@gmail.com", "password01",
+            "member01");
 
-        //when
-        ResponseEntity<CreateMemberResponse> response = restTemplate.postForEntity(url, request, CreateMemberResponse.class);
+        String content = objectMapper.writeValueAsString(request);
 
-        //then
-        Long newMemberId = response.getBody().getId();
-        ReadMemberResponse findMember = memberService.readMember(newMemberId);
+        given(memberService.createMember(any()))
+            .willReturn(new CreateMemberResponse(1L, "member01@gmail.com", "member01"));
 
-        assertAll(
-            () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-            () -> assertThat(newMemberId).isEqualTo(findMember.getId()),
-            () -> assertThat(request.getEmail()).isEqualTo(findMember.getEmail()),
-            () -> assertThat(request.getName()).isEqualTo(findMember.getName()),
-            () -> assertThat(request.getPassword()).isEqualTo(findMember.getPassword())
-        );
+        mockMvc
+            .perform(
+                post(BASE_URL + "/register")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
+            .andExpect(status().isCreated())
+            .andDo(
+                restDocs.document(
+                    requestFields(
+                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("이름")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("회원 식별자"),
+                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("이름")
+                    )
+                )
+            );
     }
 
     @Test
-    @DisplayName("로그인 요청에 대한 정상 응답")
-    void login() {
-        //given
-        String url = "http://localhost:" + port + "/api/members/login";
-        String email = member.getEmail().getValue();
-        String password = member.getPassword().getValue();
-        LoginRequest request = new LoginRequest(email, password);
+    @DisplayName("로그인")
+    void login() throws Exception {
+        LoginRequest request = new LoginRequest("member01@gmail.com", "password01");
+        String content = objectMapper.writeValueAsString(request);
 
-        //when
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(url, request, LoginResponse.class);
+        given(memberService.login(any()))
+            .willReturn(new LoginResponse(accessToken));
 
-        //then
-        assertAll(
-            () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-            () -> assertThat(response.getBody().getAccessToken()).isNotNull()
-        );
+        mockMvc
+            .perform(
+                post(BASE_URL + "/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    requestFields(
+                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                    ),
+                    responseFields(
+                        fieldWithPath("accessToken").type(JsonFieldType.STRING).description("Bearer Token")
+                    )
+                )
+            );
     }
 
     @Test
-    @DisplayName("위시 리스트 조회 요청에 대한 정상 응답")
-    void readWishProduct() {
-        //given
-        String url = "http://localhost:" + port + "/api/members/wishlist";
-        HttpHeaders httpHeaders = getHttpHeaders();
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+    @DisplayName("회원 조회")
+    void readMember() throws Exception {
+        given(memberService.readMember(any(Long.class)))
+            .willReturn(new ReadMemberResponse(1L, "member01@gmail.com", "password01", "member01"));
 
-        PageRequest defaultPageRequest = PageRequest.of(0, 10);
-        ReadAllWishProductsResponse expectedWishProducts = wishProductService.readAllWishProducts(member.getId(),
-            defaultPageRequest);
-
-        //when
-        ResponseEntity<ReadAllWishProductsResponse> response = restTemplate.exchange(url,
-            HttpMethod.GET, httpEntity, ReadAllWishProductsResponse.class);
-
-        //then
-        assertAll(
-            () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-            () -> assertIterableEquals(response.getBody().getWishlist(), expectedWishProducts.getWishlist())
-        );
+        mockMvc
+            .perform(
+                get(BASE_URL + "/{memberId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("회원 식별자"),
+                        fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
+                        fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("이름")
+                    )
+                )
+            );
     }
 
     @Test
-    @DisplayName("위시 리스트 상품 수정 요청에 대한 정상 응답")
-    void updateWishProduct() {
-        //given
-        Long wishProductId = 1L;
-        String url = "http://localhost:" + port + "/api/members/wishlist/" + wishProductId;
-        HttpHeaders httpHeaders = getHttpHeaders();
-
-        UpdateWishProductRequest request = new UpdateWishProductRequest(3);
-
-        HttpEntity httpEntity = new HttpEntity(request, httpHeaders);
-
-        //when
-        ResponseEntity<UpdateWishProductResponse> response = restTemplate.exchange(url,
-            HttpMethod.PUT, httpEntity, UpdateWishProductResponse.class);
-
-        //then
-        assertAll(
-            () -> assertTrue(response.getStatusCode().is2xxSuccessful()),
-            () -> assertThat(response.getBody().getQuantity()).isEqualTo(request.getQuantity())
+    @DisplayName("위시 상품 조회")
+    void readWishProduct() throws Exception {
+        ReadAllWishProductsResponse response = new ReadAllWishProductsResponse(
+            List.of(new ReadWishProductResponse(1L, 1L, "product01", 1000, 5, "https://via.placeholder.com/150"))
         );
+
+        given(wishProductService.readAllWishProducts(any(Long.class), any()))
+            .willReturn(response);
+
+        mockMvc
+            .perform(
+                get(BASE_URL + "/wishlist")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    queryParameters(
+                        parameterWithName("page").optional().description("페이지 번호"),
+                        parameterWithName("size").optional().description("페이지 크기")
+                    ),
+                    responseFields(
+                        fieldWithPath("wishlist[].id").type(JsonFieldType.NUMBER).description("위시 상품 식별자"),
+                        fieldWithPath("wishlist[].productId").type(JsonFieldType.NUMBER).description("상품 식별자"),
+                        fieldWithPath("wishlist[].name").type(JsonFieldType.STRING).description("상품명"),
+                        fieldWithPath("wishlist[].price").type(JsonFieldType.NUMBER).description("가격"),
+                        fieldWithPath("wishlist[].quantity").type(JsonFieldType.NUMBER).description("재고 수량"),
+                        fieldWithPath("wishlist[].imageUrl").type(JsonFieldType.STRING).description("이미지 URL")
+                    )
+                )
+            );
     }
 
     @Test
-    @DisplayName("위시 리스트 상품 삭제 요청에 대한 정상 응답")
-    void deleteWishProduct() {
-        //given
-        Long wishProductId = 2L;
-        String url = "http://localhost:" + port + "/api/members/wishlist/" + wishProductId;
-        HttpHeaders httpHeaders = getHttpHeaders();
-        HttpEntity httpEntity = new HttpEntity(httpHeaders);
+    @DisplayName("위시 상품 수정")
+    void updateWishProduct() throws Exception {
+        UpdateWishProductRequest request = new UpdateWishProductRequest(5);
+        String content = Json.mapper().writeValueAsString(request);
 
-        //when
-        ResponseEntity<Void> response = restTemplate.exchange(url, HttpMethod.DELETE, httpEntity,
-            Void.class);
+        given(wishProductService.updateWishProduct(any(Long.class), any()))
+            .willReturn(new UpdateWishProductResponse(1L, 1L, "product01", 1000, 5, "https://via.placeholder.com/150"));
 
-        //then
-        assertTrue(response.getStatusCode().is2xxSuccessful());
+        mockMvc
+            .perform(
+                put(BASE_URL + "/wishlist/{wishProductId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(content)
+            )
+            .andExpect(status().isOk())
+            .andDo(
+                restDocs.document(
+                    requestFields(
+                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("수량")
+                    ),
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("위시 상품 식별자"),
+                        fieldWithPath("productId").type(JsonFieldType.NUMBER).description("상품 식별자"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("상품명"),
+                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("가격"),
+                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("재고 수량"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("이미지 URL")
+                    )
+                )
+            );
     }
 
-    private HttpHeaders getHttpHeaders() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setBearerAuth(token.getValue());
-        return httpHeaders;
+    @Test
+    @DisplayName("위시 상품 삭제")
+    void deleteWishProduct() throws Exception {
+        mockMvc
+            .perform(
+                delete(BASE_URL + "/wishlist/{wishProductId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andExpect(status().isNoContent())
+            .andDo(
+                restDocs.document()
+            );
     }
 }
