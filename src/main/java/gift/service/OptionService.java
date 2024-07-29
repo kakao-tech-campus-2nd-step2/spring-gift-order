@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import static gift.exception.ErrorCode.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class OptionService {
     @Autowired
     private ProductSpringDataJpaRepository productRepository;
@@ -39,6 +39,7 @@ public class OptionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public Option addOptionToProduct(Long productId, OptionRequest optionRequest) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND));
@@ -54,6 +55,7 @@ public class OptionService {
         return optionRepository.save(option);
     }
 
+    @Transactional
     public void deleteOption(Long productId, Long optionId) {
         if(!productRepository.existsById(productId)){
             throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
@@ -71,6 +73,7 @@ public class OptionService {
         optionRepository.delete(option);
     }
 
+    @Transactional
     public void subtractOptionQuantity(Long productId, Long optionId, int quantity) {
         if (!productRepository.existsById(productId)) {
             throw new ProductNotFoundException(PRODUCT_NOT_FOUND);

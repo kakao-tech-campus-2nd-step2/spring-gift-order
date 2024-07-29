@@ -17,7 +17,7 @@ import static gift.exception.ErrorCode.UNAUTHORIZED;
 
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class TokenService {
 
     private final TokenSpringDataJpaRepository tokenRepository;
@@ -29,6 +29,7 @@ public class TokenService {
         this.secretKey = secretKey;
     }
 
+    @Transactional
     public String saveToken(Member member) {
         String accessToken = Jwts.builder()
                 .setSubject(member.getId().toString())
@@ -39,6 +40,7 @@ public class TokenService {
        return saveToken(member, accessToken);
     }
 
+    @Transactional
     public String saveToken(Member member, String accessToken) {
         TokenAuth tokenAuth = tokenRepository.findByMember(member)
                 .orElse(new TokenAuth());

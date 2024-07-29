@@ -15,6 +15,10 @@ import java.net.URI;
 @Service
 public class KakaoLoginService {
 
+    private static final String GRANT_TYPE = "authorization_code";
+    private static final String TOKEN_URL_SUFFIX = "/oauth/token";
+    private static final String PROFILE_URL_SUFFIX = "/v2/user/me";
+
     @Value("${kakao.client-id}")
     private String clientId;
 
@@ -25,13 +29,13 @@ public class KakaoLoginService {
     private String kakaoApiUrl;
 
     public KakaoTokenResponse getKakaoToken(String authorizationCode) {
-        String url = kakaoApiUrl + "/oauth/token";
+        String url = kakaoApiUrl + TOKEN_URL_SUFFIX;
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
+        body.add("grant_type", GRANT_TYPE);
         body.add("client_id", clientId);
         body.add("redirect_uri", redirectUri);
         body.add("code", authorizationCode);
@@ -63,7 +67,7 @@ public class KakaoLoginService {
     }
 
     public KakaoProfileResponse getUserProfile(String accessToken) {
-        String url = kakaoApiUrl + "/v2/user/me";
+        String url = kakaoApiUrl + PROFILE_URL_SUFFIX;
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);

@@ -16,7 +16,7 @@ import java.util.Optional;
 import static gift.exception.ErrorCode.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberSpringDataJpaRepository memberRepository;
@@ -26,6 +26,7 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Member register(MemberRequest memberRequest, LoginType loginType) {
         Optional<Member> oldMember = memberRepository.findByEmailAndLoginType(memberRequest.getEmail(), loginType);
 

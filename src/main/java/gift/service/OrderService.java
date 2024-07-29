@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 
 @Service
+@Transactional
 public class OrderService {
 
     private final OrderSpringDataJpaRepository orderRepository;
@@ -28,7 +29,6 @@ public class OrderService {
         this.kakaoMessageService = kakaoMessageService;
     }
 
-    @Transactional
     public OrderResponse createOrder(String token, OrderRequest orderRequest) {
         Long optionId = orderRequest.getOptionId();
         Integer quantity = orderRequest.getQuantity();

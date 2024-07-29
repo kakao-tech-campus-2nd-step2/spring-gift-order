@@ -15,7 +15,7 @@ import static gift.exception.ErrorCode.CATEGORY_NOT_FOUND;
 import static gift.exception.ErrorCode.DUPLICATE_CATEGORY_NAME;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class CategoryService {
 
     private final CategorySpringDataJpaRepository categoryRepository;
@@ -34,6 +34,7 @@ public class CategoryService {
                 .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
     }
 
+    @Transactional
     public Category createCategory(CategoryRequest categoryRequest) {
         if (categoryRepository.existsByName(categoryRequest.getName())) {
             throw new DuplicateCategoryNameException(DUPLICATE_CATEGORY_NAME);
@@ -42,6 +43,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+    @Transactional
     public Category updateCategory(Long id, CategoryRequest categoryRequest) {
         Category existingCategory = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
@@ -52,6 +54,7 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
+    @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
