@@ -12,9 +12,8 @@ public class TokenService {
 
 	private final Map<String, TokenHandler> tokenParsers = new HashMap<>();
 	
-	public TokenService(AuthService authService, KakaoAuthService kakaoAuthService) {
-		tokenParsers.put(authService.getTokenSuffix(), authService);
-		tokenParsers.put(kakaoAuthService.getTokenSuffix(), kakaoAuthService);
+	public void addTokenParser(TokenHandler handler) {
+		tokenParsers.put(handler.getTokenSuffix(), handler);
 	}
 	
 	public String extractionEmail(String tokenWithSuffix) {
