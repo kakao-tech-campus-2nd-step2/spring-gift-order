@@ -55,7 +55,7 @@ class E2ETest {
     @Test
     void 카테고리_상품_등록_후_조회() {
         CategoryRequestDto request = new CategoryRequestDto("예시", "color", "test", "카테고리임");
-        ResponseEntity<ApiResponse> response = restTemplate.postForEntity(baseUrl + "/categories", request, ApiResponse.class);
+        ResponseEntity<SuccessResponse> response = restTemplate.postForEntity(baseUrl + "/categories", request, SuccessResponse.class);
         System.out.println(response.getBody());
         ResponseEntity<List<CategoryResponseDto>> categoryResponse = restTemplate.exchange(
                 baseUrl + "/categories",
@@ -68,7 +68,7 @@ class E2ETest {
         ProductRequestDto productRequestDto = new ProductRequestDto("상품", "test.jpg",
                 10000, 1L,
                 List.of(new OptionRequestDto("옵션", 100)));
-        ResponseEntity<ApiResponse> productPostResponse = restTemplate.postForEntity(baseUrl + "/products", productRequestDto, ApiResponse.class);
+        ResponseEntity<SuccessResponse> productPostResponse = restTemplate.postForEntity(baseUrl + "/products", productRequestDto, SuccessResponse.class);
         assertThat(productPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -87,10 +87,10 @@ class E2ETest {
 
         WishAddRequestDto wishRequest = new WishAddRequestDto(1L, 10);
         HttpEntity<WishAddRequestDto> entity = new HttpEntity<>(wishRequest, headers);
-        ResponseEntity<ApiResponse> wishPostResponse = restTemplate.postForEntity(
+        ResponseEntity<SuccessResponse> wishPostResponse = restTemplate.postForEntity(
                 baseUrl + "/wishes",
                 entity,
-                ApiResponse.class);
+                SuccessResponse.class);
         assertThat(wishPostResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 }
