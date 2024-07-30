@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.domain.member.MemberResponse;
-import gift.domain.product.Product;
+import gift.domain.option.Option;
 import gift.domain.wishlist.WishListRequest;
 import gift.service.WishListService;
 import gift.util.AuthAspect;
@@ -29,7 +29,7 @@ public class WishListController {
 
     @GetMapping
     @AuthenticatedMember
-    public List<Product> readWishList(HttpServletRequest httpServletRequest,
+    public List<Option> readWishList(HttpServletRequest httpServletRequest,
         @RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
         @RequestParam(required = false, defaultValue = "10", value = "size") int pageSize) {
         MemberResponse member = (MemberResponse) httpServletRequest.getAttribute(

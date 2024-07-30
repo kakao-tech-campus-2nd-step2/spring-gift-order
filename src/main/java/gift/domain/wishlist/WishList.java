@@ -1,7 +1,7 @@
 package gift.domain.wishlist;
 
 import gift.domain.member.Member;
-import gift.domain.product.Product;
+import gift.domain.option.Option;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,15 +22,15 @@ public class WishList {
 
     @JoinColumn(nullable = false)
     @ManyToOne
-    private Product product;
+    private Option option;
 
     public WishList() {
 
     }
 
-    public WishList(Member member, Product product) {
+    public WishList(Member member, Option option) {
         this.member = member;
-        this.product = product;
+        this.option = option;
     }
 
     public Long getId() {
@@ -41,7 +41,7 @@ public class WishList {
         return member;
     }
 
-    public Product getProductId() {
-        return product;
+    public Option getOption() {
+        return option;
     }
 }

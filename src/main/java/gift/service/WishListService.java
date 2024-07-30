@@ -1,7 +1,7 @@
 package gift.service;
 
 import gift.domain.member.Member;
-import gift.domain.product.Product;
+import gift.domain.option.Option;
 import gift.domain.wishlist.WishList;
 import gift.domain.wishlist.WishListRequest;
 import gift.repository.WishListRepository;
@@ -22,19 +22,19 @@ public class WishListService {
         this.wishListRepository = wishListRepository;
     }
 
-    public List<Product> findByMemberId(Long memberId) {
+    public List<Option> findByMemberId(Long memberId) {
         return wishListRepository.findByMember(new Member(memberId))
             .stream()
-            .map(WishList::getProductId)
+            .map(WishList::getOption)
             .toList();
     }
 
-    public List<Product> findByMemberId(Long memberId, int pageNo, int pageSize) {
+    public List<Option> findByMemberId(Long memberId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return wishListRepository.findByMember(new Member(memberId), pageable)
             .getContent()
             .stream()
-            .map(WishList::getProductId)
+            .map(WishList::getOption)
             .toList();
     }
 
@@ -45,8 +45,8 @@ public class WishListService {
 
     @Transactional
     public void delete(Long memberId, WishListRequest wishListRequest) {
-        WishList wishList = wishListRepository.findByMemberAndProduct(new Member(memberId),
-            new Product(wishListRequest.productId())).orElseThrow(() -> new ResponseStatusException(
+        WishList wishList = wishListRepository.findByMemberAndOption(new Member(memberId),
+            new Option(wishListRequest.optionId())).orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, "해당 위시 리스트를 찾을 수 없습니다"));
         wishListRepository.delete(wishList);
     }

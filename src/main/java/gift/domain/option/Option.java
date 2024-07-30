@@ -27,6 +27,11 @@ public class Option {
     private Product product;
 
     public Option() {
+
+    }
+
+    public Option(Long id) {
+        this.id = id;
     }
 
     public Option(String name, Long quantity, Product product) {

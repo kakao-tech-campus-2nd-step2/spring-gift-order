@@ -28,8 +28,8 @@ public class KakaoLoginController {
 
     @GetMapping("/code")
     public TokenResponse login(@RequestParam String code) {
-        String token = kakaoLoginService.getToken(code);
-        Long kakaoId = kakaoLoginService.getKakaoId(token);
-        return new TokenResponse(memberService.kakaoLogin(kakaoId));
+        String kakaoToken = kakaoLoginService.getToken(code);
+        Long kakaoId = kakaoLoginService.getKakaoId(kakaoToken);
+        return new TokenResponse(memberService.kakaoLogin(kakaoId, kakaoToken));
     }
 }

@@ -1,7 +1,7 @@
 package gift.repository;
 
 import gift.domain.member.Member;
-import gift.domain.product.Product;
+import gift.domain.option.Option;
 import gift.domain.wishlist.WishList;
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +15,5 @@ public interface WishListRepository extends JpaRepository<WishList, Long> {
 
     Page<WishList> findByMember(Member member, Pageable pageable);
 
-    Optional<WishList> findByMemberAndProduct(Member member, Product product);
+    Optional<WishList> findByMemberAndOption(Member member, Option option);
 }

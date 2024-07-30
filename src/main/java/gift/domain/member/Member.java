@@ -54,4 +54,12 @@ public class Member {
     public String getEmail() {
         return email;
     }
+
+    public String getKakaoToken() {
+        return kakaoToken;
+    }
+
+    public void setKakaoToken(String kakaoToken) {
+        this.kakaoToken = kakaoToken;
+    }
 }

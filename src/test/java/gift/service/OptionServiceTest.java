@@ -123,7 +123,7 @@ public class OptionServiceTest {
         OptionRequest optionRequest = new OptionRequest("옵션 1", 10L);
         Long optionId = optionService.save(productId1, optionRequest).id();
 
-        OptionResponse optionResponse = optionService.subtractQuantity(productId1, optionId, 1L);
+        OptionResponse optionResponse = optionService.subtractQuantity(optionId, 1L);
 
         assertThat(optionResponse.quantity()).isEqualTo(9L);
     }
@@ -136,7 +136,7 @@ public class OptionServiceTest {
         OptionResponse optionResponse = null;
 
         for (int i = 0; i < 500; i++) {
-            optionResponse = optionService.subtractQuantity(productId1, optionId, 1L);
+            optionResponse = optionService.subtractQuantity(optionId, 1L);
         }
 
         assertThat(optionResponse.quantity()).isEqualTo(500L);
@@ -149,7 +149,7 @@ public class OptionServiceTest {
         Long optionId = optionService.save(productId1, optionRequest).id();
 
         assertThrows(ResponseStatusException.class, () ->
-            optionService.subtractQuantity(productId1, optionId, -1L)
+            optionService.subtractQuantity(optionId, -1L)
         );
     }
 
@@ -160,7 +160,7 @@ public class OptionServiceTest {
         Long optionId = optionService.save(productId1, optionRequest).id();
 
         assertThrows(ResponseStatusException.class, () ->
-            optionService.subtractQuantity(productId1, optionId, 11L)
+            optionService.subtractQuantity(optionId, 11L)
         );
     }
 

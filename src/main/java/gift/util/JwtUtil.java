@@ -23,7 +23,6 @@ public class JwtUtil {
 
     public String generateToken(Member member) {
         return Jwts.builder().subject(String.valueOf(member.getId()))
-            .claim("email", member.getEmail())
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + accessExpiration))
             .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
@@ -36,8 +35,7 @@ public class JwtUtil {
                 .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseSignedClaims(token).getPayload();
-            return new MemberResponse(Long.parseLong(claims.getSubject()),
-                claims.get("email", String.class));
+            return new MemberResponse(Long.parseLong(claims.getSubject()));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 정보입니다");
         }

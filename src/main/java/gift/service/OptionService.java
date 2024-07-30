@@ -53,7 +53,7 @@ public class OptionService {
     }
 
     @Transactional
-    public OptionResponse subtractQuantity(Long productId, Long optionId, Long quantity) {
+    public OptionResponse subtractQuantity(Long optionId, Long quantity) {
         Option option = OptionRepository.findById(optionId).orElseThrow(
             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 옵션을 찾을 수 없습니다"));
         if (option.getQuantity() < quantity) {

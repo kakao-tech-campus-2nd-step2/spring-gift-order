@@ -42,10 +42,12 @@ public class MemberService {
         }
     }
 
-    public String kakaoLogin(Long kakaoId) {
+    public String kakaoLogin(Long kakaoId, String kakaoToken) {
         Optional<Member> memberOptional = memberRepository.findByKakaoId(kakaoId);
         Member member = memberOptional.orElseGet(
             () -> memberRepository.save(new Member(MemberType.KAKAO, kakaoId)));
+        member.setKakaoToken(kakaoToken);
+        memberRepository.save(member);
         return jwtUtil.generateToken(member);
     }
 }
