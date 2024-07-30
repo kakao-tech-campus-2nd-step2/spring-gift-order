@@ -7,6 +7,8 @@ import gift.model.Member;
 import gift.service.KakaoService;
 import gift.service.OrderService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/orders/{optionId}")
 public class OrderController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
     private final OrderService orderService;
     private final KakaoService kakaoService;
@@ -43,7 +47,11 @@ public class OrderController {
         OrderResponseDTO orderResponseDTO = orderService.createOrder(orderRequestDTO,
             member.getEmail());
         String accessToken = orderRequestDTO.accessToken();
-        kakaoService.sendKakaoMessage(accessToken, orderResponseDTO);
+        try {
+            kakaoService.sendKakaoMessage(accessToken, orderResponseDTO);
+        } catch (Exception e) {
+            logger.error("카카오톡 메시지 전송 실패");
+        }
         return "redirect:/admin/products";
     }
 
