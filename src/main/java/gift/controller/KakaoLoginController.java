@@ -43,8 +43,6 @@ public class KakaoLoginController {
     public ResponseEntity<String> callback(@RequestParam("code") String code, HttpSession session) throws JsonProcessingException {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
-        System.out.println("token: " + accessToken);
-
         KakaoInfoDto kakaoInfoDto = kakaoService.getUserInfo(accessToken);
         String email = kakaoInfoDto.getKakao_account().getEmail();
         Member kakaoMember = kakaoService.registerOrGetKakaoMember(email);

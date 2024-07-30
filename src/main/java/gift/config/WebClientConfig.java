@@ -28,7 +28,6 @@ public class WebClientConfig {
         this.writeTimeoutSeconds = writeTimeoutSeconds;
     }
 
-
     @Bean
     public WebClient.Builder webClientBuilder() {
         HttpClient httpClient = HttpClient.create()

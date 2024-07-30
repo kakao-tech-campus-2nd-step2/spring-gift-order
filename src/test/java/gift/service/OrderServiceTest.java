@@ -11,9 +11,6 @@ public class OrderServiceTest {
     private KakaoService kakaoService;
 
     @Mock
-    private WebClientUtil webClientUtil;
-
-    @Mock
     private KakaoProperties kakaoProperties;
 
     @Mock

@@ -19,15 +19,14 @@ import java.util.Optional;
 
 @Service
 public class OrderService {
-    @Autowired
-    private OptionRepository optionRepository;
-    @Autowired
-    private WishRepository wishRepository;
-
+    private final OptionRepository optionRepository;
+    private final WishRepository wishRepository;
     private final KakaoUserClinet kakaoUserClinet;
 
     @Autowired
-    public OrderService(KakaoUserClinet kakaoUserClinet) {
+    public OrderService(KakaoUserClinet kakaoUserClinet,OptionRepository optionRepository,WishRepository wishRepository) {
+        this.optionRepository = optionRepository;
+        this.wishRepository = wishRepository;
         this.kakaoUserClinet = kakaoUserClinet;
     }
 

@@ -32,6 +32,7 @@ public class KakaoService {
         KakaoInfoDto kakaoInfoDto = kakaoAuthClient.getUserInfo(accessToken);
         return kakaoInfoDto;
     }
+
     public Member registerOrGetKakaoMember(String email){
         Optional<Member> kakaoMember = memberRepository.findByEmail(email);
         if(kakaoMember.isEmpty()){
