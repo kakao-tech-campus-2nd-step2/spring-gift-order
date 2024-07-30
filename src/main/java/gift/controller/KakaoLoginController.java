@@ -26,6 +26,11 @@ public class KakaoLoginController {
         this.kakaoService = kakaoService;
     }
 
+    /**
+     * 카카오 로그인 시작.
+     *
+     * @return 리디렉션 URL
+     */
     @GetMapping("/kakaoLogin")
     public String oauthLogin() {
         String url = "https://kauth.kakao.com/oauth/authorize?";
@@ -36,6 +41,15 @@ public class KakaoLoginController {
         return "redirect:" + url;
     }
 
+    /**
+     * 카카오 로그인 콜백 처리.
+     *
+     * @param code 인가 코드
+     * @param redirectAttributes 리디렉션 속성
+     * @param session HTTP 세션
+     * @return 리디렉션 뷰
+     * @throws Exception 오류 발생 시
+     */
     @GetMapping("/")
     public RedirectView callback(@RequestParam(name = "code") String code, RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
         String token = kakaoService.login(code);
@@ -45,6 +59,13 @@ public class KakaoLoginController {
         return new RedirectView("/home");
     }
 
+    /**
+     * 홈 페이지.
+     *
+     * @param session HTTP 세션
+     * @param model 모델
+     * @return 홈 페이지
+     */
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         String token = (String) session.getAttribute("token");

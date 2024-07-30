@@ -29,6 +29,13 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    /**
+     * 새로운 주문 생성.
+     *
+     * @param orderDTO 주문 DTO
+     * @param session HTTP 세션
+     * @return 생성된 주문
+     */
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -41,7 +48,11 @@ public class OrderController {
         return ResponseEntity.status(201).body(createdOrder);
     }
 
-
+    /**
+     * 주문 페이지.
+     *
+     * @return 주문 페이지
+     */
     @GetMapping("/order")
     public String showOrderPage() {
         return "order";  // templates/order.html 템플릿을 반환

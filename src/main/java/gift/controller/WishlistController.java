@@ -20,6 +20,13 @@ public class WishlistController {
         this.wishlistService = wishlistService;
     }
 
+    /**
+     * 위시리스트에 제품 추가.
+     *
+     * @param productId 제품 ID
+     * @param session HTTP 세션
+     * @return 응답 엔티티
+     */
     @PostMapping("/{productId}")
     public ResponseEntity<Void> addWishlist(@PathVariable("productId") Long productId, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -27,6 +34,14 @@ public class WishlistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 사용자의 위시리스트 조회.
+     *
+     * @param session HTTP 세션
+     * @param page 페이지 번호
+     * @param size 페이지 크기
+     * @return 제품 목록
+     */
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> getWishlist(HttpSession session,
                                                         @RequestParam(defaultValue = "0") int page,
@@ -36,6 +51,13 @@ public class WishlistController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    /**
+     * 위시리스트에서 제품 삭제.
+     *
+     * @param productId 제품 ID
+     * @param session HTTP 세션
+     * @return 응답 엔티티
+     */
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteWishlist(@PathVariable("productId") Long productId, HttpSession session) {
         User user = (User) session.getAttribute("user");
