@@ -29,15 +29,15 @@ class RestTemplateTest {
 
     @Test
     void test1(){
-        var url = "https://kauth.kakao.com/oauth/token";
-        var code = "MZqnpa_Ch0moTrUURmm4PEi74CgD3sYdPdG1cJU4nnv4ilOioKXq5AAAAAQKPCQfAAABkPMfVqjNsk3jZ7dWzg";
+
         var headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", properties.clientId());
         body.add("redirect_uri", properties.redirectUrl());
-        body.add("code", code);
-        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(url));
+        body.add("code", properties.code());
+        var request = new RequestEntity<>(body, headers, HttpMethod.POST, URI.create(properties.url()));
+
     }
 }
