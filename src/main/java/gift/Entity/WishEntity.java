@@ -17,6 +17,10 @@ public class WishEntity {
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+
     private String productName;
 
     public WishEntity() {}

@@ -17,6 +17,10 @@ public class KakaoUserEntity {
     private String accessToken;
     private String refreshToken;
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     public Long getId() {
         return id;
     }

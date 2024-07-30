@@ -10,4 +10,5 @@ import java.util.List;
 public interface WishRepository extends JpaRepository<WishEntity, Long> {
     List<WishEntity> findByProductId(Long id);
     List<WishEntity> findByUserId(Long id);
+    List<WishEntity> findByProductIdAndUserId(Long productId, Long userId);
 }

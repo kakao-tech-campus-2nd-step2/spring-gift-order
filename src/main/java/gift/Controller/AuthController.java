@@ -29,8 +29,8 @@ public class AuthController {
     // 로그인(토큰 발급)
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> loginUser(@RequestBody AuthRequestDTO authRequest) {
-        String token = userService.loginUser(authRequest);
-        return ResponseEntity.ok(new AuthResponseDTO(token));
+        AuthResponseDTO authResponse = userService.loginUser(authRequest);
+        return ResponseEntity.ok(authResponse);
     }
 
     @GetMapping("/user/{id}")

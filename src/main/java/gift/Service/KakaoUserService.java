@@ -31,4 +31,8 @@ public class KakaoUserService {
     public KakaoUserEntity findByKakaoId(String kakaoId) {
         return kakaoUserRepository.findByKakaoId(kakaoId);
     }
+
+    public KakaoUserEntity findByAccessToken(String accessToken) {
+        return kakaoUserRepository.findByAccessToken(accessToken);
+    }
 }

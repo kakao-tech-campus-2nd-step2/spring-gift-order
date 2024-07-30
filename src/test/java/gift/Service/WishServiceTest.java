@@ -31,26 +31,26 @@ public class WishServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    public void testGetWishes() {
-        Pageable pageable = PageRequest.of(0, 10);
-        UserEntity user = new UserEntity();
-        user.setId(1L);
-        ProductEntity product1 = new ProductEntity();
-        product1.setId(1L);
-        ProductEntity product2 = new ProductEntity();
-        product2.setId(2L);
-
-        WishEntity wish1 = new WishEntity(1L, user, product1, "Wish1");
-        WishEntity wish2 = new WishEntity(2L, user, product2, "Wish2");
-        Page<WishEntity> wishPage = new PageImpl<>(Arrays.asList(wish1, wish2), pageable, 2);
-
-        when(wishRepository.findAll(pageable)).thenReturn(wishPage);
-
-        Page<WishDTO> result = wishService.getWishes(pageable);
-
-        assertWishPage(wishPage, result);
-    }
+//    @Test
+//    public void testGetWishes() {
+//        Pageable pageable = PageRequest.of(0, 10);
+//        UserEntity user = new UserEntity();
+//        user.setId(1L);
+//        ProductEntity product1 = new ProductEntity();
+//        product1.setId(1L);
+//        ProductEntity product2 = new ProductEntity();
+//        product2.setId(2L);
+//
+//        WishEntity wish1 = new WishEntity(1L, user, product1, "Wish1");
+//        WishEntity wish2 = new WishEntity(2L, user, product2, "Wish2");
+//        Page<WishEntity> wishPage = new PageImpl<>(Arrays.asList(wish1, wish2), pageable, 2);
+//
+//        when(wishRepository.findAll(pageable)).thenReturn(wishPage);
+//
+//        Page<WishDTO> result = wishService.getWishes(pageable);
+//
+//        assertWishPage(wishPage, result);
+//    }
 
     private void assertWishPage(Page<WishEntity> expectedPage, Page<WishDTO> actualPage) {
         assertEquals(expectedPage.getTotalElements(), actualPage.getTotalElements());

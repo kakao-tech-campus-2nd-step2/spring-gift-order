@@ -25,6 +25,12 @@ public class OptionDTO {
         this.productId = productId;
     }
 
+    public OptionDTO() {}
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
     public String getName() {
         return name;
     }
@@ -49,4 +55,7 @@ public class OptionDTO {
         this.name = name;
     }
 
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
+    }
 }

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+
 @Entity
 @Table(name = "option", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "product_id"})})
 public class OptionEntity {
@@ -26,6 +28,9 @@ public class OptionEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductEntity product;
+
+    @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderEntity> orders;
 
     public OptionEntity() {}
 
