@@ -1,5 +1,7 @@
 package gift.product.dto.request;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import gift.validation.annotation.RestrictedKeyword;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -9,6 +11,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
+@JsonNaming(SnakeCaseStrategy.class)
 public record CreateProductRequest(
     @NotBlank(message = "상품 이름은 비워둘 수 없습니다.")
     @Size(max = 15, message = "상품 이름은 공백을 포함하여 최대 15자까지 입력할 수 있습니다.")
