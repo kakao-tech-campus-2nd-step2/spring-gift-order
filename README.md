@@ -1,14 +1,14 @@
 # spring-gift-order
 
-## 1단계 구현 사항
+## 5주차 구현 사항
 - 로그인 앤드포인트를 구현하여 카카오 로그인을 하면 엑세스 토큰을 받기
 - login.html 에서 로그인 인가 코드 받기
 - home.html 리디렉션 페이지에 엑세스 토큰 보여주기
 - 테스트 코드
-
-## 2단계 구현 사항
 - 주문하기 mvc 구현
 - 카카오 인증, 나에게 메시지 보내기 서비스 각각 생성
+- 2단계 피드백 반영
+- API 명세 작성
 
 ## 현재 코드 구조
 ```plaintext
@@ -16,6 +16,8 @@
     └── main
         ├── java
         │   └── gift
+        │       ├── client
+        │       │   └── KakaoClient.java
         │       ├── config
         │       │   ├── AppConfig.java
         │       │   └── WebConfig.java
@@ -34,6 +36,7 @@
         │       │   ├── OrderRequest.java
         │       │   ├── OrderResponse.java
         │       │   ├── ProductDto.java
+        │       │   ├── SendMessageRequest.java
         │       │   └── WishRequest.java
         │       ├── entity
         │       │   ├── Catogory.java
@@ -69,7 +72,6 @@
         │       │   ├── TokenService.java
         │       │   └── WishService.java   
         │       ├── value
-        │       │   ├── KakaoString.java
         │       │   ├── OptionName.java
         │       │   ├── OptionQuantity.java
         │       │   └── ProductName.java 

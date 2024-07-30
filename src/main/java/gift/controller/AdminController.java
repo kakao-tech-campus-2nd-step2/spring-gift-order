@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 public class AdminController {
     private final ProductService productService;
 
@@ -18,14 +18,14 @@ public class AdminController {
         this.productService = productService;
     }
 
-    @GetMapping("/products")
+    @GetMapping("/products/list")
     public String listProducts(Model model) {
         List<ProductDto> products = productService.findAll();
         model.addAttribute("products", products);
         return "list"; // list.html 파일 보여주기
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/products/view/{productId}")
     public String viewProduct(@PathVariable("id") Long id, Model model) {
         ProductDto product = productService.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("상품을 찾을 수 없습니다. ID: " + id));
@@ -33,19 +33,13 @@ public class AdminController {
         return "view"; // view.html 파일 보여주기
     }
 
-    @GetMapping("/product/add")
+    @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductDto());
         return "add"; // add.html 파일 보여주기
     }
 
-    @PostMapping("/product/add")
-    public String addProduct(@ModelAttribute("product") ProductDto productDto) {
-        productService.save(productDto);
-        return "redirect:/admin/products";
-    }
-
-    @GetMapping("/product/edit/{id}")
+    @GetMapping("/products/edit/{productId}")
     public String showEditProductForm(@PathVariable("id") Long id, Model model) {
         ProductDto product = productService.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("상품을 찾을 수 없습니다. ID: " + id));
@@ -53,13 +47,7 @@ public class AdminController {
         return "edit"; // edit.html 파일 보여주기
     }
 
-    @PostMapping("/product/edit/{id}")
-    public String editProduct(@PathVariable("id") Long id, @ModelAttribute("product") ProductDto productDto) {
-        productService.update(id, productDto);
-        return "redirect:/admin/products";
-    }
-
-    @PostMapping("/product/delete/{id}")
+    @DeleteMapping("/products/{productId}")
     public String deleteProduct(@PathVariable("id") Long id) {
         productService.delete(id);
         return "redirect:/admin/products";

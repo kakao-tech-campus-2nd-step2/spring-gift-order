@@ -16,8 +16,14 @@ import java.io.IOException;
 @Configuration
 public class AppConfig {
 
+    private final AppConfigProperties appConfigProperties;
+
+    public AppConfig(AppConfigProperties appConfigProperties) {
+        this.appConfigProperties = appConfigProperties;
+    }
+
     @Bean
-    public RestTemplate kakaoRestTemplate() {
+    public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
         restTemplate.setErrorHandler(errorHandler());
         return restTemplate;
@@ -25,8 +31,16 @@ public class AppConfig {
 
     private ClientHttpRequestFactory clientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(5000);  // 연결 타임아웃 5초
-        factory.setReadTimeout(5000);     // 읽기 타임아웃 5초
+
+        // 운영 환경에서는 prod 타임아웃값 사용
+        if (isProduction()) {
+            factory.setConnectTimeout(appConfigProperties.getProdConnectTimeout());
+            factory.setReadTimeout(appConfigProperties.getProdReadTimeout());
+        } else { // 개발 환경에서는 dev 타임아웃값 사용
+            factory.setConnectTimeout(appConfigProperties.getDevConnectTimeout());
+            factory.setReadTimeout(appConfigProperties.getDevReadTimeout());
+        }
+
         return factory;
     }
 
@@ -45,5 +59,10 @@ public class AppConfig {
                 }
             }
         };
+    }
+
+    private boolean isProduction() {
+        // 운영 환경을 식별하는 로직 구현. 예를 들어, 특정 환경 변수를 통해 운영 환경 식별
+        return "prod".equals(System.getenv("ENVIRONMENT"));
     }
 }

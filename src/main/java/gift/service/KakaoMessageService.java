@@ -26,64 +26,106 @@ public class KakaoMessageService {
 
     private final RestTemplate kakaoRestTemplate;
     private final ObjectMapper objectMapper;
-    private final KakaoAuthService kakaoAuthService;
 
-    public KakaoMessageService(RestTemplate kakaoRestTemplate, KakaoAuthService kakaoAuthService) {
+    public KakaoMessageService(RestTemplate kakaoRestTemplate) {
         this.kakaoRestTemplate = kakaoRestTemplate;
         this.objectMapper = new ObjectMapper();
-        this.kakaoAuthService = kakaoAuthService;
     }
 
-    public void sendKakaoMessage(OrderResponse order, String accessToken) {
-        logger.info("Using access token: {}", accessToken);
-
-        kakaoAuthService.validateAccessToken(accessToken);
-
+    public void sendMessage(OrderResponse order, String accessToken) {
         String message = String.format("OptionId: %d\nQuantity: %d\nOrder Date: %s\nMessage: %s",
                 order.getOptionId(), order.getQuantity(), order.getOrderDateTime().toString(), order.getMessage());
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
-        headers.set("Content-Type", "application/json");
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        logger.info("Authorization header: Bearer {}", accessToken);
+        Map<String, String> link = new HashMap<>();
+        link.put("web_url", "http://www.example.com");
+        link.put("mobile_web_url", "http://www.example.com");
 
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", message);
-        templateObject.put("link", new HashMap<String, String>() {{
-            put("web_url", "http://www.example.com");
-            put("mobile_web_url", "http://www.example.com");
-        }});
+        KakaoMessageTemplate templateObject = new KakaoMessageTemplate("text", message, link);
 
-        String templateObjectJson;
         try {
-            templateObjectJson = objectMapper.writeValueAsString(templateObject);
+            String templateObjectJson = objectMapper.writeValueAsString(templateObject);
+            logger.info("Template Object JSON: {}", templateObjectJson);
+
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("template_object", templateObjectJson);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response;
+            try {
+                logger.info("Sending Kakao message with access token: {}", accessToken);
+                response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
+                logger.info("Kakao message response: {}", response);
+            } catch (HttpClientErrorException e) {
+                logger.error("Failed to send Kakao message", e);
+                logger.error("HTTP Status: {}", e.getStatusCode());
+                logger.error("Response Body: {}", e.getResponseBodyAsString());
+                throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
+            }
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                logger.error("Kakao message response body: {}", response.getBody());
+                throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
+            }
         } catch (JsonProcessingException e) {
             logger.error("JSON 처리 중 오류 발생: {}", e.getMessage());
             throw new RuntimeException("template_object를 JSON으로 변환하는 중 오류가 발생했습니다.", e);
+        } catch (Exception e) {
+            logger.error("예상치 못한 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("예상치 못한 오류가 발생했습니다.", e);
         }
+    }
 
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("template_object", templateObjectJson);
+    public void sendMessageWithEmail(OrderResponse order, String email, String jwtToken) {
+        String message = String.format("Order for %s: OptionId: %d, Quantity: %d, Order Date: %s, Message: %s",
+                email, order.getOptionId(), order.getQuantity(), order.getOrderDateTime().toString(), order.getMessage());
+        logger.info("Sending message for order: {}", message);
 
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + jwtToken);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        ResponseEntity<String> response;
+        Map<String, String> link = new HashMap<>();
+        link.put("web_url", "http://www.example.com");
+        link.put("mobile_web_url", "http://www.example.com");
+
+        KakaoMessageTemplate templateObject = new KakaoMessageTemplate("text", message, link);
+
         try {
-            logger.info("Sending Kakao message with access token: {}", accessToken);
-            response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
-            logger.info("Kakao message response: {}", response);
-        } catch (HttpClientErrorException e) {
-            logger.error("Failed to send Kakao message", e);
-            logger.error("HTTP Status: {}", e.getStatusCode());
-            logger.error("Response Body: {}", e.getResponseBodyAsString());
-            throw new RuntimeException("카카오 메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
-        }
+            String templateObjectJson = objectMapper.writeValueAsString(templateObject);
+            logger.info("Template Object JSON: {}", templateObjectJson);
 
-        if (response.getStatusCode() != HttpStatus.OK) {
-            logger.error("Kakao message response body: {}", response.getBody());
-            throw new RuntimeException("카카오 메시지 전송에 실패했습니다.: " + response.getBody());
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("template_object", templateObjectJson);
+
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response;
+            try {
+                logger.info("Sending message with JWT token: {}", jwtToken);
+                response = kakaoRestTemplate.postForEntity(messageUrl, request, String.class);
+                logger.info("Message response: {}", response);
+            } catch (HttpClientErrorException e) {
+                logger.error("Failed to send message", e);
+                logger.error("HTTP Status: {}", e.getStatusCode());
+                logger.error("Response Body: {}", e.getResponseBodyAsString());
+                throw new RuntimeException("메시지 전송 중 예외가 발생했습니다.: " + e.getMessage(), e);
+            }
+
+            if (response.getStatusCode() != HttpStatus.OK) {
+                logger.error("Message response body: {}", response.getBody());
+                throw new RuntimeException("메시지 전송에 실패했습니다.: " + response.getBody());
+            }
+        } catch (JsonProcessingException e) {
+            logger.error("JSON 처리 중 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("template_object를 JSON으로 변환하는 중 오류가 발생했습니다.", e);
+        } catch (Exception e) {
+            logger.error("예상치 못한 오류 발생: {}", e.getMessage());
+            throw new RuntimeException("예상치 못한 오류가 발생했습니다.", e);
         }
     }
 }

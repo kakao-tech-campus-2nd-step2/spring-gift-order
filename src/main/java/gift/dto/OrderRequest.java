@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderRequest {
-    private final Long optionId;
-    private final int quantity;
-    private final String message;
+    private Long optionId;
+    private int quantity;
+    private String message;
 
     @JsonCreator
     public OrderRequest(@JsonProperty("optionId") Long optionId,

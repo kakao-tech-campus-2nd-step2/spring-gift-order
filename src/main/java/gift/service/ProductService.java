@@ -43,7 +43,10 @@ public class ProductService {
                         product.getName(),
                         product.getPrice(),
                         product.getImgUrl(),
-                        product.getCategory().getId()
+                        product.getCategory().getId(),
+                        product.getOptions().stream()
+                                .map(option -> new OptionDto(option.getId(), option.getName(), option.getQuantity()))
+                                .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
     }
@@ -55,7 +58,10 @@ public class ProductService {
                 prod.getName(),
                 prod.getPrice(),
                 prod.getImgUrl(),
-                prod.getCategory().getId()
+                prod.getCategory().getId(),
+                prod.getOptions().stream()
+                        .map(option -> new OptionDto(option.getId(), option.getName(), option.getQuantity()))
+                        .collect(Collectors.toList())
         ));
     }
 
@@ -89,6 +95,15 @@ public class ProductService {
         return product.getOptions().stream()
                 .map(option -> new OptionDto(option.getId(), option.getName(), option.getQuantity()))
                 .collect(Collectors.toList());
+    }
+
+    public void addOptionToProduct(Long productId, OptionDto optionDto) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException("해당 id로 상품이 존재하지 않습니다.: " + productId));
+
+        Option option = new Option(optionDto.getName(), product, optionDto.getQuantity()); // 순서 수정
+        product.addOption(option);
+        optionRepository.save(option);
     }
 
     public void subtractOptionQuantity(Long productId, Long optionId, int quantity) {
