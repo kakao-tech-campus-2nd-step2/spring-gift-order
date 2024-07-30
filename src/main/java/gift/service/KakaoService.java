@@ -65,12 +65,11 @@ public class KakaoService {
                 .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")));
 
         String responseBody = responseSpec.bodyToMono(String.class).block();
+        System.out.println("Response Body: " + responseBody);
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        Long id = jsonNode.get("id").asLong();
-        JsonNode kakaoAccountNode = jsonNode.get("kakao_account");
-        String email = kakaoAccountNode.get("email").asText();
-        return new KakaoInfoDto(id,email);
+        KakaoInfoDto kakaoInfoDto = objectMapper.readValue(responseBody, KakaoInfoDto.class);
+
+        return kakaoInfoDto;
     }
     public Member registerOrGetKakaoMember(String email){
         Optional<Member> kakaoMember = memberRepository.findByEmail(email);

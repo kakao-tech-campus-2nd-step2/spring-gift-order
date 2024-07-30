@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@ResponseBody
 @RequestMapping("/wishlist")
 @Tag(name = "Wish Management", description = "Wish Management API")
 public class WishListController {

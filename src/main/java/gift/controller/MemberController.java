@@ -13,7 +13,6 @@ import java.util.Collections;
 
 @RequestMapping("/members")
 @Controller
-@ResponseBody
 @Tag(name = "Member Management", description = "Member Management API")
 public class MemberController {
     private final MemberService memberService;

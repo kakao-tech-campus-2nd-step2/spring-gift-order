@@ -18,7 +18,6 @@ import gift.service.ProductService;
 @RequestMapping("/api/products")
 @Controller
 @Validated
-@ResponseBody
 @Tag(name = "Product Management", description = "Product Management API")
 public class ProductController {
     private final ProductService productService;

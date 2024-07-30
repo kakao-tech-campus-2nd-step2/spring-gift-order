@@ -5,7 +5,6 @@ import gift.dto.KakaoInfoDto;
 import gift.model.member.KakaoProperties;
 import gift.model.member.Member;
 import gift.service.KakaoService;
-import gift.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
@@ -14,18 +13,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("")
-@ResponseBody
 @Tag(name = "KakaoLogin", description = "KakaoLogin API")
 public class KakaoLoginController {
 
     private final KakaoProperties kakaoProperties;
     private final KakaoService kakaoService;
 
-    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoService kakaoService,MemberService memberService){
+    public KakaoLoginController(KakaoProperties kakaoProperties, KakaoService kakaoService){
         this.kakaoProperties = kakaoProperties;
         this.kakaoService = kakaoService;
     }
@@ -47,7 +44,7 @@ public class KakaoLoginController {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
         KakaoInfoDto kakaoInfoDto = kakaoService.getUserInfo(accessToken);
-        String email = kakaoInfoDto.email();
+        String email = kakaoInfoDto.getKakao_account().getEmail();
         Member kakaoMember = kakaoService.registerOrGetKakaoMember(email);
 
         session.setAttribute("loginMember", kakaoMember);
