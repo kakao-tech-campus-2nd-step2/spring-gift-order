@@ -15,7 +15,8 @@ public class ClientConfig {
     @Bean
     public RestClient restClient() {
         ClientHttpRequestFactorySettings settings = ClientHttpRequestFactorySettings.DEFAULTS
-            .withConnectTimeout(Duration.ofMinutes(1));
+            .withConnectTimeout(Duration.ofMillis(5000))
+            .withReadTimeout(Duration.ofMillis(10000));
         ClientHttpRequestFactory factory = ClientHttpRequestFactories.get(settings);
         return RestClient.builder()
             .requestFactory(factory)
