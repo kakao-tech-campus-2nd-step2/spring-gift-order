@@ -6,7 +6,7 @@
   <script>
     function saveToken() {
       const token = document.getElementById("token").innerText;
-      localStorage.setItem("authToken", token);
+      localStorage.setItem("jwtToken", token);
     }
 
     window.onload = saveToken;
