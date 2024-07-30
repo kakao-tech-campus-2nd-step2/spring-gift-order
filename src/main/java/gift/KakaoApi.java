@@ -59,7 +59,6 @@ public class KakaoApi {
     headers.setBearerAuth(kakaoJwtToken.getAccessToken());
 
     String body = "template_object=" + createTemplateObject(orderDto);
-    System.out.println(body);
     HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
     String response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class)
       .getBody();
