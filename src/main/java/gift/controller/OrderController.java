@@ -3,12 +3,14 @@ package gift.controller;
 import gift.domain.OrderDTO;
 import gift.entity.Order;
 import gift.service.OrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+@Tag(name = "주문", description = "주문 관련 API")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {

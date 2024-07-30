@@ -3,6 +3,7 @@ package gift.controller;
 import gift.entity.Option;
 import gift.service.OptionService;
 import gift.domain.OptionDTO;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@Tag(name = "옵션", description = "상품 옵션 관련 API")
 @RestController
 @RequestMapping("/api/products/{product_id}/options")
 public class OptionController {

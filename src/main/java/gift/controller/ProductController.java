@@ -3,6 +3,7 @@ package gift.controller;
 import gift.entity.Product;
 import gift.domain.ProductDTO;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import java.net.URISyntaxException;
 import java.net.URI;
 import java.util.Optional;
 
+@Tag(name = "상품", description = "상품 관련 API")
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {

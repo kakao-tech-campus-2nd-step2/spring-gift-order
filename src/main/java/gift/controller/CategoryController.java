@@ -3,6 +3,7 @@ package gift.controller;
 import gift.domain.CategoryDTO;
 import gift.entity.Category;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +12,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "카테고리", description = "카테고리 관련 API")
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
