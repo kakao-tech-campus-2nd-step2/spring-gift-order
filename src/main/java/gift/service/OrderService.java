@@ -2,19 +2,17 @@ package gift.service;
 
 import gift.dto.OrderRequest;
 import gift.dto.OrderResponse;
-import gift.entity.Member;
 import gift.entity.Option;
 import gift.entity.Order;
-import gift.repository.MemberRepository;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
+import gift.repository.WishRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -22,61 +20,50 @@ public class OrderService {
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
     private final OptionRepository optionRepository;
-    private final MemberRepository memberRepository;
+    private final WishRepository wishRepository;
+    private final KakaoMessageService kakaoMessageService;
+    private final MemberService memberService;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, MemberRepository memberRepository) {
+    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository, WishRepository wishRepository, KakaoMessageService kakaoMessageService, MemberService memberService) {
         this.orderRepository = orderRepository;
         this.optionRepository = optionRepository;
-        this.memberRepository = memberRepository;
+        this.wishRepository = wishRepository;
+        this.kakaoMessageService = kakaoMessageService;
+        this.memberService = memberService;
     }
 
     @Transactional
-    public OrderResponse createOrder(OrderRequest request, String email) {
-        logger.info("Creating order for email: {}", email);
-
-        Optional<Member> memberOptional = memberRepository.findByEmail(email);
-        Member member = memberOptional.orElseThrow(() -> new RuntimeException("유효하지 않은 회원입니다."));
-
-        logger.info("Member found: {}", member.getEmail());
-
+    public OrderResponse createOrder(OrderRequest request, String token) {
         Option option = optionRepository.findById(request.getOptionId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid option ID"));
 
-        logger.info("Option found: {}", option.getId());
-
+        // 상품 옵션 수량 차감
         option.subtractQuantity(request.getQuantity());
         optionRepository.save(option);
 
+        // 주문내역 만들기
         Order order = new Order(option, request.getQuantity(), LocalDateTime.now(), request.getMessage());
         orderRepository.save(order);
 
-        logger.info("Order saved with ID: {}", order.getId());
+        // 위시리스트에서 해당 상품 삭제
+        wishRepository.deleteByOptionId(request.getOptionId());
 
-        return new OrderResponse(
+        OrderResponse orderResponse = new OrderResponse(
                 order.getId(),
                 option.getId(),
                 order.getQuantity(),
                 order.getOrderDateTime(),
                 order.getMessage()
         );
-    }
 
-    public OrderResponse processOrderAndSendMessage(OrderRequest orderRequest, String email) {
-        // 트랜잭션 내에서 주문을 생성
-        return createOrder(orderRequest, email);
+        // JWT 토큰인지 카카오 엑세스 토큰인지 확인 후 메시지 전송
+        if (TokenService.isJwtToken(token)) {
+            String email = TokenService.extractEmailFromToken(token);
+            kakaoMessageService.sendMessageWithEmail(orderResponse, email, token);
+        } else {
+            kakaoMessageService.sendMessage(orderResponse, token);
+        }
 
-        /** 카카오 메시지 전송 부분은 필요 시 활성화
-        String bearerToken = sendMessageRequest.getBearerToken();
-        OrderRequest orderRequest = sendMessageRequest.getOrderRequest();
-
-        logger.info("Received sendMessageToMe request with Authorization: {}", bearerToken);
-        logger.info("OrderRequest: {}", orderRequest);
-
-        // 트랜잭션 내에서 주문을 생성
-        OrderResponse orderResponse = createOrder(orderRequest);
-
-        // 트랜잭션 외부에서 카카오 메시지 전송
-        String accessToken = sendMessageRequest.getAccessToken();
-        kakaoMessageService.sendMessage(orderResponse, accessToken); **/
+        return orderResponse;
     }
 }

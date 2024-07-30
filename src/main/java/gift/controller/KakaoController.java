@@ -1,7 +1,5 @@
 package gift.controller;
 
-import gift.dto.OrderRequest;
-import gift.dto.SendMessageRequest;
 import gift.service.KakaoAuthService;
 import gift.service.KakaoMessageService;
 import gift.service.OrderService;
@@ -10,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +47,4 @@ public class KakaoController {
         request.getSession().setAttribute("accessToken", accessToken);
         return "redirect:/home";
     }
-
-    /** 프론트엔드와 회의 후 카카오 로그인 사용하지 말자고 정하여 필요시 활성화
-    @PostMapping("/sendmessage")
-    public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String bearerToken, @RequestBody OrderRequest orderRequest) {
-        SendMessageRequest sendMessageRequest = new SendMessageRequest(bearerToken, orderRequest);
-        orderService.processOrderAndSendMessage(sendMessageRequest);
-        return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
-    } **/
 }

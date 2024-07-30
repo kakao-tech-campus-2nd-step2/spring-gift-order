@@ -1,14 +1,13 @@
 package gift.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import gift.dto.OrderRequest;
+import gift.dto.OrderResponse;
+import gift.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import gift.dto.OrderRequest;
-import gift.dto.OrderResponse;
-import gift.service.OrderService;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -22,21 +21,14 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(HttpServletRequest request, @RequestBody OrderRequest orderRequest) {
-        String email = (String) request.getAttribute("email");
-        if (email == null) {
-            logger.error("Email not found in request attributes");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
+    public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String authorizationHeader, @RequestBody OrderRequest request) {
         try {
-            logger.info("Processing order for email: {}", email);
-            OrderResponse orderResponse = orderService.processOrderAndSendMessage(orderRequest, email);
-            logger.info("Order processed with ID: {}", orderResponse.getId());
-            return new ResponseEntity<>(orderResponse, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            logger.error("Error processing order: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            String token = authorizationHeader.replace("Bearer ", "");
+            OrderResponse response = orderService.createOrder(request, token);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            logger.error("Error processing order: {}", e.getMessage(), e);
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
