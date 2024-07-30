@@ -1,5 +1,6 @@
 package gift.wish.repository;
 
+import gift.user.entity.User;
 import gift.wish.entity.Wish;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -12,5 +13,5 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 
     Page<Wish> findByUserId(Long userId, Pageable pageable);
 
-    List<Wish> findByUserId(Long userId);
+    List<Wish> findByUser(User user);
 }

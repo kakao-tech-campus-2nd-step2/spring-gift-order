@@ -26,7 +26,7 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<OrderResponse> createOrder(@LoginUser User user,
         @RequestBody OrderRequest orderRequest) {
-        var response = orderService.createOrder(user.getId(), orderRequest);
+        var response = orderService.createOrder(user, orderRequest);
         URI location = UriComponentsBuilder.fromPath("/api/orders/{id}")
             .buildAndExpand(response.id())
             .toUri();
