@@ -25,6 +25,12 @@ public class Member {
     @NotBlank(message = "비밀번호는 공백이 될 수 없습니다.")
     private String password;
 
+    private String token;
+
+    public String getToken() {
+        return token;
+    }
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<WishList> wishLists = new HashSet<>();
 
@@ -38,6 +44,12 @@ public class Member {
     public Long getId() {
         return id;
     }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+
     public String getEmail() {
         return email;
     }
