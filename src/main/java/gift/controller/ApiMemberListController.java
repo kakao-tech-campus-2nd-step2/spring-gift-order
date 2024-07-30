@@ -2,13 +2,14 @@ package gift.controller;
 
 import gift.dto.MemberResponseDto;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+@Tag(name="member-list",description = "멤버 리스트 API")
 @RestController
 public class ApiMemberListController {
     MemberService memberService;
@@ -17,8 +18,8 @@ public class ApiMemberListController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/user/list")
-    public ResponseEntity<List<MemberResponseDto>> UserList() {
+    @GetMapping("/member/list")
+    public ResponseEntity<List<MemberResponseDto>> MemberList() {
         List<MemberResponseDto> memberResponseDto = memberService.getAllMemberResponseDto();
         return new ResponseEntity<>(memberResponseDto, HttpStatus.OK);
     }

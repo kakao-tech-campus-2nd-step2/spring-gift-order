@@ -4,6 +4,7 @@ import gift.dto.GiftOrderRequestDto;
 import gift.dto.GiftOrderResponseDto;
 import gift.service.BasicTokenService;
 import gift.service.GiftOrderService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-
+@Tag(name="gift-order",description = "선물 주문 API")
 @RequestMapping("/api/orders")
 @RestController
 public class GiftOrderController {
