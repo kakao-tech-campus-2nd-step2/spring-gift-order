@@ -27,8 +27,8 @@ public class ReadProductResponse {
 
     public static ReadProductResponse fromEntity(Product product) {
         List<ReadProductOptionResponse> productOptions = product.getProductOptions().stream()
-            .map(productOption -> ReadProductOptionResponse.fromEntity(productOption))
-            .collect(Collectors.toList());
+            .map(ReadProductOptionResponse::fromEntity)
+            .toList();
 
         ReadCategoryResponse category = ReadCategoryResponse.fromEntity(product.getCategory());
 
