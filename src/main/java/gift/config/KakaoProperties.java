@@ -1,18 +1,31 @@
 package gift.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
-@Component
-@ConfigurationProperties(prefix = "kakao")
+@Configuration
 public class KakaoProperties {
+
+    @Value("${kakao.client-id}")
     private String clientId;
+
+    @Value("${kakao.redirect-uri}")
     private String redirectUri;
-    private String accessTokenInfoUrl;
-    private String messageUrl;
+
+    @Value("${kakao.auth-url}")
     private String authUrl;
+
+    @Value("${kakao.api-key}")
     private String apiKey;
+
+    @Value("${kakao.api-url}")
     private String apiUrl;
+
+    @Value("${kakao.message-url}")
+    private String messageUrl;
+
+    @Value("${kakao.access-token-info-url}")
+    private String accessTokenInfoUrl;
 
     public String getClientId() {
         return clientId;

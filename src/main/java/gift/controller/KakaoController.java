@@ -51,10 +51,11 @@ public class KakaoController {
         return "redirect:/home";
     }
 
+    /** 프론트엔드와 회의 후 카카오 로그인 사용하지 말자고 정하여 필요시 활성화
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String bearerToken, @RequestBody OrderRequest orderRequest) {
         SendMessageRequest sendMessageRequest = new SendMessageRequest(bearerToken, orderRequest);
         orderService.processOrderAndSendMessage(sendMessageRequest);
         return ResponseEntity.ok("메시지가 성공적으로 전송되었습니다.");
-    }
+    } **/
 }

@@ -9,11 +9,12 @@ public class TokenService {
     }
 
     public static String extractEmailFromToken(String token) {
-        if (token != null && token.startsWith("Bearer ")) {
-            String base64Credentials = token.substring(7);
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-            return credentials.split(":")[0];
-        }
-        throw new IllegalArgumentException("잘못된 토큰입니다.");
+        String credentials = new String(Base64.getDecoder().decode(token));
+        return credentials.split(":")[0];
+    }
+
+    public static String[] decodeToken(String token) {
+        String credentials = new String(Base64.getDecoder().decode(token));
+        return credentials.split(":");
     }
 }
