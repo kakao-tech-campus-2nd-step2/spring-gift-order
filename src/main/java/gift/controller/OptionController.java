@@ -7,6 +7,10 @@ import gift.classes.RequestState.RequestStatus;
 import gift.dto.OptionDto;
 import gift.dto.RequestOptionDto;
 import gift.services.OptionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/options")
+@Tag(name = "OptionController", description = "Option API")
 public class OptionController {
 
     private final OptionService optionService;
@@ -30,6 +35,11 @@ public class OptionController {
 
     //    제품 아이디로 Option 조회
     @GetMapping("/{productId}/options")
+    @Operation(summary = "제품 옵션 조회", description = "제품 ID로 해당 제품의 옵션을 조회하는 API")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "옵션 조회 성공"),
+        @ApiResponse(responseCode = "400", description = "옵션 조회 실패(잘못된 요청)")
+    })
     public ResponseEntity<OptionRequestStateDTO> getOptionsByProductId(
         @PathVariable Long productId) {
         List<OptionDto> options = optionService.getOptionsByProductId(productId);
@@ -53,6 +63,12 @@ public class OptionController {
 
     //    Option 수정
     @PutMapping("/{productId}/options/{optionId}")
+    @Operation(summary = "옵션 수정", description = "옵션 ID로 옵션 정보를 수정하는 API")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "옵션 수정 성공"),
+        @ApiResponse(responseCode = "400", description = "옵션 수정 실패"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
+    })
     public ResponseEntity<RequestStateDTO> updateOption(@PathVariable Long optionId,
         @Valid @RequestBody
         RequestOptionDto requestOptionDto) {
@@ -64,8 +80,14 @@ public class OptionController {
     }
 
     //    Option 삭제
-    @DeleteMapping
-    @PutMapping("/{productId}/options/{optionId}")
+    @DeleteMapping("/{productId}/options/{optionId}")
+    @Operation(summary = "옵션 삭제", description = "옵션 ID로 옵션을 삭제하는 API")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "옵션 삭제 성공"),
+        @ApiResponse(responseCode = "400", description = "옵션 삭제 실패(잘못된 요청)"),
+        @ApiResponse(responseCode = "404", description = "옵션을 찾을 수 없음"),
+        @ApiResponse(responseCode = "500", description = "서버 내부 오류 발생")
+    })
     public void deleteOption(@PathVariable Long optionId) {
         optionService.deleteOption(optionId);
     }
