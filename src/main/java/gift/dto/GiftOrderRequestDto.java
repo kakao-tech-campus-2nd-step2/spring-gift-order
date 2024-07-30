@@ -8,7 +8,7 @@ public class GiftOrderRequestDto {
     private Long optionId;
     @Schema(description = "선택한 상품 개수")
     private Long quantity;
-    @Schema(description = "요청 메세지")
+    @Schema(description = "선물과 함께 보낼 메세지")
     private String message;
 
     public GiftOrderRequestDto(Long optionId, Long quantity, String message) {
