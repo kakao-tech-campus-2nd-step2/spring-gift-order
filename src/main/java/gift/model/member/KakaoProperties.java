@@ -7,9 +7,7 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 public class KakaoProperties {
     private final String clientId;
     private final String redirectUri;
-
     private final String kakaoAuthUrl;
-
     private final String userInfoUrl;
 
     @ConstructorBinding
