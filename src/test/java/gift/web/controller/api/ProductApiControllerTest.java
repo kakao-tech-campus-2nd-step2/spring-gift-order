@@ -447,8 +447,8 @@ class ProductApiControllerTest {
         CreateOrderRequest request = new CreateOrderRequest(1L, 1, "message");
         String content = objectMapper.writeValueAsString(request);
 
-        given(orderService.createOrder(any(String.class), any(Long.class), any()))
-            .willReturn(new OrderResponse(1L, 1L, 10, 1, "상품01", "message"));
+        given(orderService.createOrder(any(String.class), any(Long.class), any(Long.class), any()))
+            .willReturn(new OrderResponse(1L, 1L, 10, "message"));
 
         mockMvc
             .perform(
@@ -462,15 +462,13 @@ class ProductApiControllerTest {
                 restDocs.document(
                     requestFields(
                         fieldWithPath("optionId").type(JsonFieldType.NUMBER).description("상품 옵션 ID"),
-                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("수량"),
+                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("주문 수량"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("메시지")
                     ),
                     responseFields(
                         fieldWithPath("productId").type(JsonFieldType.NUMBER).description("상품 ID"),
                         fieldWithPath("optionId").type(JsonFieldType.NUMBER).description("상품 옵션 ID"),
-                        fieldWithPath("optionStock").type(JsonFieldType.NUMBER).description("상품 옵션 재고"),
-                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("수량"),
-                        fieldWithPath("productName").type(JsonFieldType.STRING).description("상품명"),
+                        fieldWithPath("quantity").type(JsonFieldType.NUMBER).description("주문 수량"),
                         fieldWithPath("message").type(JsonFieldType.STRING).description("메시지")
                     )
                 )
