@@ -1,5 +1,7 @@
 package gift.category;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
