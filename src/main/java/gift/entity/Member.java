@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Email;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Schema(description = "멤버")
 @Entity
 @Table(name = "member")

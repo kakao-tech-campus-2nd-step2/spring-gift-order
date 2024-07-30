@@ -54,6 +54,7 @@ public class MemberService {
     public MemberRequestDto fromEntity(Member member) {
         return new MemberRequestDto(member.getId(), member.getEmail());
     }
+
     public MemberResponseDto fromEntity2(Member member) {
         return new MemberResponseDto(member.getId(), member.getEmail());
     }

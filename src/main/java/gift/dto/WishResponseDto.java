@@ -1,6 +1,7 @@
 package gift.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 @Schema(description = "위시 응답 DTO")
 public class WishResponseDto {
     @Schema(description = "위시 고유 id")

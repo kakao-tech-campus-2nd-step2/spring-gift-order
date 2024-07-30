@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+
 @Schema(description = "상품 요청 DTO")
 public class ProductRequestDto {
     @Schema(description = "상품 고유 id")
