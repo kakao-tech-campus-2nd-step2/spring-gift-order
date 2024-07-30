@@ -1,6 +1,5 @@
 package gift.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
 import org.springframework.http.*;
@@ -10,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @Component
 public class KakaoApiClient {
@@ -20,11 +20,6 @@ public class KakaoApiClient {
     public KakaoApiClient(RestTemplate restTemplate, KakaoProperties kakaoProperties) {
         this.restTemplate = restTemplate;
         this.kakaoProperties = kakaoProperties;
-    }
-
-    public ResponseEntity<String> postForEntity(URI uri, HttpHeaders headers, MultiValueMap<String, String> body) {
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        return restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
     }
 
     public KakaoTokenResponse getAccessToken(String code) {
@@ -40,10 +35,16 @@ public class KakaoApiClient {
             body.add("code", code);
             body.add("client_secret", kakaoProperties.getClientSecret());
 
-            ResponseEntity<String> response = postForEntity(new URI(tokenUri), headers, body);
-            return new ObjectMapper().readValue(response.getBody(), KakaoTokenResponse.class);
-        } catch (Exception e) {
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+            ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(new URI(tokenUri), HttpMethod.POST, request, KakaoTokenResponse.class);
+            return response.getBody();
+        } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to get access token", e);
         }
+    }
+
+    public ResponseEntity<String> getForEntity(URI uri, HttpHeaders headers) {
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
     }
 }

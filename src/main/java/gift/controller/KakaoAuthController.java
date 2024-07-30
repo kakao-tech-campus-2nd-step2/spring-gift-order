@@ -25,8 +25,13 @@ public class KakaoAuthController {
     public String kakaoCallback(@RequestParam String code, Model model) {
         try {
             KakaoTokenResponse tokenResponse = kakaoAuthService.getAccessToken(code);
-            model.addAttribute("accessToken", tokenResponse.getAccessToken());
-            return "tokenSuccess";
+            String accessToken = tokenResponse.getAccessToken();
+            String jwtToken = kakaoAuthService.handleKakaoLogin(accessToken);
+
+            model.addAttribute("accessToken", accessToken);
+            model.addAttribute("jwtToken", jwtToken);
+
+            return "loginSuccess";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", e.getMessage());
