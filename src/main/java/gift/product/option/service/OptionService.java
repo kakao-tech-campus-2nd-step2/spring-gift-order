@@ -38,8 +38,8 @@ public class OptionService {
     }
 
     @Transactional
-    public OptionResponse createOption(CreateOptionRequest request) {
-        Product product = productRepository.findById(request.productId())
+    public OptionResponse createOption(Long productId, CreateOptionRequest request) {
+        Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         Option option = new Option(request.name(), request.quantity(), product);
 

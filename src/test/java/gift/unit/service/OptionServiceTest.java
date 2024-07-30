@@ -43,11 +43,11 @@ public class OptionServiceTest {
     void createNameLengthOver50() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a".repeat(51), 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a".repeat(51), 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -56,11 +56,11 @@ public class OptionServiceTest {
     void createOptionQuantityUnder1() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 0);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 0);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -69,11 +69,11 @@ public class OptionServiceTest {
     void createOptionQuantityOver1Million() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 100_000_000);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 100_000_000);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -83,11 +83,11 @@ public class OptionServiceTest {
         // given
         Option option = new Option("a", 2, null);
         Product product = createProductWithOptions(option);
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -96,11 +96,11 @@ public class OptionServiceTest {
     void createOptionSpecialCharacterExceptionTest() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "!@#$", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("!@#$", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
         then(productRepository).should().findById(any());
     }
@@ -110,12 +110,12 @@ public class OptionServiceTest {
     void createOptionTest() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
         given(optionRepository.save(any())).willReturn(new Option("a", 1, product));
 
         // when
-        optionService.createOption(newOption);
+        optionService.createOption(1L, newOption);
 
         // then
         then(productRepository).should().findById(any());

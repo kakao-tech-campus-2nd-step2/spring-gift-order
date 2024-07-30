@@ -63,7 +63,7 @@ public class OptionController {
     })
     public ResponseEntity<OptionResponse> addOption(@PathVariable("product_id") Long productId,
         @RequestBody @Valid CreateOptionRequest request) {
-        OptionResponse response = optionService.createOption(request);
+        OptionResponse response = optionService.createOption(productId, request);
         URI location = UriComponentsBuilder.fromPath("/api/products/{productId}/options/{id}")
             .buildAndExpand(productId, response.id())
             .toUri();

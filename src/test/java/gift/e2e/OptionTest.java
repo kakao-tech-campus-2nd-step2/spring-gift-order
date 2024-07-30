@@ -52,7 +52,7 @@ public class OptionTest {
     void addOptionToProductTest() {
         // given
         var url = "http://localhost:" + port + "/api/products/1/options";
-        var requestBody = new CreateOptionRequest(1L, "new option", 1000);
+        var requestBody = new CreateOptionRequest("new option", 1000);
         var request = new RequestEntity<>(requestBody, HttpMethod.POST, URI.create(url));
 
         // when
@@ -69,7 +69,7 @@ public class OptionTest {
     void addOptionDuplicateNameTest() {
         // given
         var url = "http://localhost:" + port + "/api/products/1/options";
-        var requestBody = new CreateOptionRequest(1L, "Option A1", 1000);
+        var requestBody = new CreateOptionRequest("Option A1", 1000);
         var request = new RequestEntity<>(requestBody, HttpMethod.POST, URI.create(url));
 
         // when
@@ -84,7 +84,7 @@ public class OptionTest {
     void addOptionQuantityOver1Million() {
         // given
         var url = "http://localhost:" + port + "/api/products/1/options";
-        var requestBody = new CreateOptionRequest(1L, "new option", 100_000_000);
+        var requestBody = new CreateOptionRequest("new option", 100_000_000);
         var request = new RequestEntity<>(requestBody, HttpMethod.POST, URI.create(url));
 
         // when
@@ -100,7 +100,7 @@ public class OptionTest {
     void addOptionQuantityUnder1() {
         // given
         var url = "http://localhost:" + port + "/api/products/1/options";
-        var requestBody = new CreateOptionRequest(1L, "new option", 100_000_000);
+        var requestBody = new CreateOptionRequest("new option", 100_000_000);
         var request = new RequestEntity<>(requestBody, HttpMethod.POST, URI.create(url));
 
         // when
