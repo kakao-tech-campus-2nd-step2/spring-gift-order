@@ -1,41 +1,34 @@
 package gift.Service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.DTO.KakaoJwtToken;
-import gift.Exception.UnauthorizedException;
-import gift.KakaoLoginApi;
+import gift.DTO.KakaoJwtTokenDto;
+import gift.KakaoApi;
 import gift.Repository.KakaoJwtTokenRepository;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
 
 @Service
 public class KakaoMemberService {
 
-  private KakaoJwtTokenRepository kakaoJwtTokenRepository;
-  private KakaoLoginApi kakaoLoginApi;
+  private static final String URL = "https://kauth.kakao.com/oauth/token";
   static Dotenv dotenv = Dotenv.configure().load();
   private static final String API_KEY = dotenv.get("API_KEY");
-  private static final String URL = "https://kauth.kakao.com/oauth/token";
+  private final KakaoJwtTokenRepository kakaoJwtTokenRepository;
+  private final KakaoApi kakaoApi;
 
-  public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoLoginApi kakaoLoginApi) {
+  public KakaoMemberService(KakaoJwtTokenRepository kakaoJwtTokenRepository, KakaoApi kakaoApi) {
     this.kakaoJwtTokenRepository = kakaoJwtTokenRepository;
-    this.kakaoLoginApi=kakaoLoginApi;
+    this.kakaoApi = kakaoApi;
+
   }
 
-  public KakaoJwtToken getToken(String autuhorizationKey) {
-    var body = new LinkedMultiValueMap<String, String>();
+  public KakaoJwtTokenDto getToken(String autuhorizationKey) {
+    KakaoJwtTokenDto kakaoJwtTokenDto = kakaoApi.kakaoLoginApiPost(URL, API_KEY, autuhorizationKey);
+    KakaoJwtToken kakaoJwtToken = new KakaoJwtToken(kakaoJwtTokenDto.getAccessToken(),
+      kakaoJwtTokenDto.getRefreshToken());
+    kakaoJwtTokenRepository.save(kakaoJwtToken);
 
-    body.add("grant_type", "authorization_code");
-    body.add("client_id", API_KEY);
-    body.add("redirect_url", "http://localhost:8080");
-    body.add("code", autuhorizationKey);
-
-    KakaoJwtToken kakaoJwtToken = kakaoLoginApi.kakaoLoginApiPost(URL, body);
-    return kakaoJwtToken;
+    return kakaoJwtTokenDto;
 
   }
 }

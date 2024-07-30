@@ -84,4 +84,12 @@ public class Product {
   public Category getCategory() {
     return this.category;
   }
+
+  public List<WishList> getWishlists() {
+    return wishlists;
+  }
+
+  public List<Option> getOptions() {
+    return options;
+  }
 }
