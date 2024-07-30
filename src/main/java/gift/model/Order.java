@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -16,6 +17,7 @@ public class Order {
 
     private int quantity;
 
+    @Column(name = "order_date_time")
     private LocalDateTime orderDateTime;
 
     private String message;
