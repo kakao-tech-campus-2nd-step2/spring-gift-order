@@ -123,8 +123,13 @@ public class ProductApiController {
     }
 
     @PostMapping("/{productId}/order")
-    public ResponseEntity<OrderResponse> orderProduct(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken, @PathVariable Long productId, @Validated @RequestBody CreateOrderRequest request) {
-        OrderResponse response = orderService.createOrder(accessToken, productId, request);
+    public ResponseEntity<OrderResponse> orderProduct(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken,
+        @PathVariable Long productId,
+        @RequestBody @Validated CreateOrderRequest request,
+        @LoginMember MemberDetails memberDetails
+    ) {
+        OrderResponse response = orderService.createOrder(accessToken, productId, memberDetails.getId(), request);
         return ResponseEntity.ok(response);
     }
 
