@@ -1,16 +1,18 @@
 package gift.controller;
 
 import gift.config.KakaoProperties;
-import gift.dto.ApiResponse;
+import gift.dto.SuccessResponse;
 import gift.dto.KakaoToken;
 import gift.dto.TokenResponseDto;
 import gift.service.KakaoOAuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Tag(name = "카카오 로그인 API", description = "카카오 로그인 관련 API")
 @RestController
 @RequestMapping("/oauth/kakao")
 public class KakaoController {
@@ -47,8 +49,8 @@ public class KakaoController {
     }
 
     @PostMapping("/unlink")
-    public ResponseEntity<ApiResponse> logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<SuccessResponse> logout(@RequestHeader("Authorization") String token) {
         kakaoOAuthService.unlink(token);
-        return ResponseEntity.ok(new ApiResponse(HttpStatus.NO_CONTENT, "계정 연결해제 성공적"));
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.NO_CONTENT, "계정 연결해제 성공적"));
     }
 }
