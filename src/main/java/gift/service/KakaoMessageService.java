@@ -40,13 +40,11 @@ public class KakaoMessageService {
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        Map<String, Object> templateObject = new HashMap<>();
-        templateObject.put("object_type", "text");
-        templateObject.put("text", message);
-        templateObject.put("link", new HashMap<String, String>() {{
-            put("web_url", "http://www.example.com");
-            put("mobile_web_url", "http://www.example.com");
-        }});
+        Map<String, String> link = new HashMap<>();
+        link.put("web_url", "http://www.example.com");
+        link.put("mobile_web_url", "http://www.example.com");
+
+        KakaoMessageTemplate templateObject = new KakaoMessageTemplate("text", message, link);
 
         try {
             String templateObjectJson = objectMapper.writeValueAsString(templateObject);
