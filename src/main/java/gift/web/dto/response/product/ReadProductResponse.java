@@ -4,7 +4,6 @@ import gift.domain.Product;
 import gift.web.dto.response.category.ReadCategoryResponse;
 import gift.web.dto.response.productoption.ReadProductOptionResponse;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ReadProductResponse {
 
@@ -26,7 +25,8 @@ public class ReadProductResponse {
     }
 
     public static ReadProductResponse fromEntity(Product product) {
-        List<ReadProductOptionResponse> productOptions = product.getProductOptions().stream()
+        List<ReadProductOptionResponse> productOptions = product.getProductOptions()
+            .stream()
             .map(ReadProductOptionResponse::fromEntity)
             .toList();
 
@@ -34,7 +34,6 @@ public class ReadProductResponse {
 
         return new ReadProductResponse(product.getId(), product.getName(), product.getPrice(), product.getImageUrl().toString(), productOptions, category);
     }
-
 
     public Long getId() {
         return id;
