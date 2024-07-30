@@ -60,3 +60,12 @@
   - OrderController 수정
     - 주문 버튼을 눌렀을 때 메시지 보내도록 수정
 </details>
+
+<details>
+<summary><strong>3단계 - API 문서 만들기</strong></summary>
+
+- Swagger 사용 위해 build.gradle에 추가
+- OpenAPI 설정 파일 추가
+- API 문서 만들기
+  - 컨트롤러에 Tag와 Operation을 사용
+</details>
