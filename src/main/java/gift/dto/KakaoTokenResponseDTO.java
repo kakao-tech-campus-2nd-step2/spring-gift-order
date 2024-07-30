@@ -18,6 +18,10 @@ public class KakaoTokenResponseDTO {
     @JsonProperty("scope")
     private String scope;
 
+    public String getAccessToken() {
+        return accessToken;
+    }
+
     @Override
     public String toString() {
         return "KakaoTokenResponseDTO{" +

@@ -1,14 +1,17 @@
 package gift.controller;
 
 import gift.dto.KakaoTokenResponseDTO;
+import gift.dto.KakaoUserDTO;
+import gift.model.Member;
+import gift.service.KakaoAuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 public class KakaoAuthController {
@@ -19,28 +22,30 @@ public class KakaoAuthController {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private KakaoAuthService kakaoAuthService;
+
+    public KakaoAuthController(KakaoAuthService kakaoAuthService) {
+        this.kakaoAuthService = kakaoAuthService;
+    }
+
+    @GetMapping("/login/kakao")
+    public void redirectKakaoLogin(HttpServletResponse response) throws IOException {
+        String url = kakaoAuthService.getKakaoLoginUrl();
+        response.sendRedirect(url);
+    }
 
     @GetMapping("/oauth/kakao/callback")
-    public ResponseEntity<String> kakaoCallback(@RequestParam String code) {
-        String tokenUrl = "https://kauth.kakao.com/oauth/token";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_uri", redirectUri);
-        body.add("code", code);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<KakaoTokenResponseDTO> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, request, KakaoTokenResponseDTO.class);
-
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseEntity.ok(response.getBody().toString());
-        } else {
-            return ResponseEntity.status(response.getStatusCode()).body("카카오 로그인 실패");
+    public ResponseEntity<String> kakaoCallback(@RequestParam(name = "code") String code) throws IOException {
+        try {
+            KakaoTokenResponseDTO tokenResponse = kakaoAuthService.getKakaoToken(code);
+            KakaoUserDTO kakaoUserDTO = kakaoAuthService.getKakaoUser(
+                tokenResponse.getAccessToken());
+            Member member = kakaoAuthService.registerOrGetMember(kakaoUserDTO);
+            return ResponseEntity.ok(tokenResponse.getAccessToken());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("카카오 로그인 실패: " + e.getMessage());
         }
     }
 }
