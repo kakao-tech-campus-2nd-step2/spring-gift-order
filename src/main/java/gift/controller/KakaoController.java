@@ -51,7 +51,6 @@ public class KakaoController {
         return "redirect:/home";
     }
 
-
     @PostMapping("/sendmessage")
     public ResponseEntity<String> sendMessageToMe(@RequestHeader("Authorization") String bearerToken, @RequestBody OrderRequest orderRequest) {
         SendMessageRequest sendMessageRequest = new SendMessageRequest(bearerToken, orderRequest);

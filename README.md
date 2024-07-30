@@ -72,7 +72,6 @@
         │       │   ├── TokenService.java
         │       │   └── WishService.java   
         │       ├── value
-        │       │   ├── KakaoString.java
         │       │   ├── OptionName.java
         │       │   ├── OptionQuantity.java
         │       │   └── ProductName.java 
