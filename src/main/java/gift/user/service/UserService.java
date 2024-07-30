@@ -87,12 +87,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Long getUserIdByToken(String token) {
+    public User getUserByToken(String token) {
         Long userId = jwtUtil.extractUserId(token);
-        if (userId == null || !userRepository.existsById(userId)) {
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
-        return userId;
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
     }
 
 }

@@ -1,6 +1,6 @@
 package gift.config;
 
-import gift.resolver.LoginUserIdArgumentResolver;
+import gift.resolver.LoginUserArgumentResolver;
 import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -9,14 +9,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final LoginUserIdArgumentResolver loginUserIdArgumentResolver;
+    private final LoginUserArgumentResolver loginUserArgumentResolver;
 
-    public WebConfig(LoginUserIdArgumentResolver loginUserIdArgumentResolver) {
-        this.loginUserIdArgumentResolver = loginUserIdArgumentResolver;
+    public WebConfig(LoginUserArgumentResolver loginUserArgumentResolver) {
+        this.loginUserArgumentResolver = loginUserArgumentResolver;
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserIdArgumentResolver);
+        resolvers.add(loginUserArgumentResolver);
     }
 }

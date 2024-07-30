@@ -1,7 +1,8 @@
 package gift.wish.controller;
 
-import gift.annotation.LoginUserId;
+import gift.annotation.LoginUser;
 import gift.config.PageConfig;
+import gift.user.entity.User;
 import gift.wish.dto.request.CreateWishRequest;
 import gift.wish.dto.request.UpdateWishRequest;
 import gift.wish.dto.response.WishResponse;
@@ -36,21 +37,21 @@ public class WishController {
 
     @GetMapping
     public ResponseEntity<Page<WishResponse>> getWishes(
-        @LoginUserId Long userId,
+        @LoginUser User user,
         @PageableDefault(
             size = PageConfig.PAGE_PER_COUNT,
             sort = PageConfig.SORT_STANDARD,
             direction = Direction.DESC
         ) Pageable pageable
     ) {
-        return ResponseEntity.ok(wishService.getWishes(userId, pageable));
+        return ResponseEntity.ok(wishService.getWishes(user.getId(), pageable));
     }
 
     @PostMapping
     public ResponseEntity<WishResponse> addWish(
-        @LoginUserId Long userId, @RequestBody @Valid CreateWishRequest request
+        @LoginUser User user, @RequestBody @Valid CreateWishRequest request
     ) {
-        WishResponse response = wishService.createWish(userId, request);
+        WishResponse response = wishService.createWish(user.getId(), request);
         URI location = UriComponentsBuilder.fromPath("/api/wishes/{id}")
             .buildAndExpand(response.id())
             .toUri();
@@ -59,7 +60,7 @@ public class WishController {
 
     @PatchMapping
     public ResponseEntity<Void> updateWishes(
-        @LoginUserId Long userId, @RequestBody List<UpdateWishRequest> requests
+        @LoginUser User user, @RequestBody List<UpdateWishRequest> requests
     ) {
         wishService.updateWishes(requests);
         return ResponseEntity.ok().build();
@@ -67,7 +68,7 @@ public class WishController {
 
     @DeleteMapping({"id"})
     public ResponseEntity<Void> deleteWishes(
-        @LoginUserId Long userId, @RequestParam Long id
+        @LoginUser User user, @RequestParam Long id
     ) {
         wishService.deleteWish(id);
         return ResponseEntity.ok().build();

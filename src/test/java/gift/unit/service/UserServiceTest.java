@@ -50,7 +50,8 @@ class UserServiceTest {
     @Transactional
     void registerUserTest() {
         //given
-        UserRegisterRequest request = new UserRegisterRequest("user1@email.com", "1q2w3e4r!", null, null);
+        UserRegisterRequest request = new UserRegisterRequest("user1@email.com", "1q2w3e4r!", null,
+            null);
         given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
         User user1 = new User(
             request.email(),
@@ -77,7 +78,8 @@ class UserServiceTest {
     @Transactional
     void alreadyExistUserRegistrationTest() {
         //given
-        UserRegisterRequest request = new UserRegisterRequest("user1@example.com", "password1", null, null);
+        UserRegisterRequest request = new UserRegisterRequest("user1@example.com", "password1",
+            null, null);
         given(userRepository.findByEmail(request.email())).willReturn(
             Optional.of(new User("user1@example.com", "password1", null, null)));
 
@@ -92,7 +94,8 @@ class UserServiceTest {
     @Transactional
     void userLoginTest() {
         //given
-        UserLoginRequest loginRequest = new UserLoginRequest("user1@example.com", "password1", null);
+        UserLoginRequest loginRequest = new UserLoginRequest("user1@example.com", "password1",
+            null);
         Set<UserRole> roles = new HashSet<>();
         User user1 = new User(
             loginRequest.email(),
@@ -176,19 +179,19 @@ class UserServiceTest {
 
     @Test
     @DisplayName("get user id by token test")
-    void getUserIdByTokenTest() {
+    void getUserByTokenTest() {
         // given
         String token = "token";
+        User user1 = new User("user1@example.com", "password1", null, null);
         given(jwtUtil.extractUserId(token)).willReturn(1L);
-        given(userRepository.existsById(1L)).willReturn(true);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user1));
 
         // when
-        Long userId = userService.getUserIdByToken(token);
+        User user = userService.getUserByToken(token);
 
         // then
-        assertThat(userId).isEqualTo(1L);
         then(jwtUtil).should().extractUserId(token);
-        then(userRepository).should().existsById(1L);
+        then(userRepository).should().findById(1L);
     }
 
     @Test
@@ -199,7 +202,7 @@ class UserServiceTest {
         given(jwtUtil.extractUserId(token)).willReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> userService.getUserIdByToken(token))
+        assertThatThrownBy(() -> userService.getUserByToken(token))
             .isInstanceOf(CustomException.class);
         then(jwtUtil).should().extractUserId(token);
     }
