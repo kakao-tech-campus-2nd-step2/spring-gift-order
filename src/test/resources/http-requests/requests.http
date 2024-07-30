@@ -154,8 +154,9 @@ Content-Type: application/json
 DELETE {{baseUrl}}/api/products/1/options/1
 
 ### 주문 생성 요청
+@token =eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW91bGJpbkBuYXZlci5jb20iLCJpYXQiOjE3MjIzMzIwNTQsImV4cCI6MTcyMjMzNTY1NH0.sPM9Tr5zCF03szHr9N9yDZ6urqM7rZ5nY5mdFezpGa4
 POST http://localhost:8080/api/orders
-Authorization: Bearer FXTKPx6OQI05zCTVStPdPv-_yWCGYYvgAAAAAQo8JJsAAAGRAZmSXoa1Lb_-w10F
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

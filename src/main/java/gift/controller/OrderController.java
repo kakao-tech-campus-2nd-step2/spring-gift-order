@@ -1,7 +1,7 @@
 package gift.controller;
 
 import gift.dto.OrderDTO;
-import gift.model.User;
+import gift.security.JwtTokenProvider;
 import gift.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.logging.Logger;
 
@@ -23,36 +23,35 @@ public class OrderController {
     private static final Logger LOGGER = Logger.getLogger(OrderController.class.getName());
 
     private final OrderService orderService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, JwtTokenProvider jwtTokenProvider) {
         this.orderService = orderService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    /**
-     * 새로운 주문 생성.
-     *
-     * @param orderDTO 주문 DTO
-     * @param session HTTP 세션
-     * @return 생성된 주문
-     */
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            LOGGER.warning("User is null in session");
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            LOGGER.warning("Authorization header is missing or does not start with Bearer");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        LOGGER.info("User from session: " + user.getEmail());
-        OrderDTO createdOrder = orderService.createOrder(orderDTO, user);
+
+        token = token.substring(7); // "Bearer " 제거
+        String userEmail = jwtTokenProvider.getUsernameFromToken(token);
+
+        if (userEmail == null) {
+            LOGGER.warning("Invalid JWT token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        LOGGER.info("User from token: " + userEmail);
+        OrderDTO createdOrder = orderService.createOrder(orderDTO, userEmail);
         return ResponseEntity.status(201).body(createdOrder);
     }
 
-    /**
-     * 주문 페이지.
-     *
-     * @return 주문 페이지
-     */
     @GetMapping("/order")
     public String showOrderPage() {
         return "order";  // templates/order.html 템플릿을 반환

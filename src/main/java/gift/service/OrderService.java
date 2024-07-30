@@ -3,7 +3,6 @@ package gift.service;
 import gift.dto.OrderDTO;
 import gift.model.Option;
 import gift.model.Order;
-import gift.model.User;
 import gift.repository.OptionRepository;
 import gift.repository.OrderRepository;
 import gift.repository.WishlistRepository;
@@ -33,7 +32,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDTO createOrder(OrderDTO orderDTO, User user) {
+    public OrderDTO createOrder(OrderDTO orderDTO, String userEmail) {
         try {
             LOGGER.info("옵션 ID로 옵션 정보 가져오기: " + orderDTO.getOptionId());
             Option option = optionRepository.findById(orderDTO.getOptionId())
@@ -45,14 +44,14 @@ public class OrderService {
             LOGGER.info("업데이트된 옵션 수량: " + option.getQuantity());
             optionRepository.save(option);
 
-            LOGGER.info("사용자의 위시리스트에서 옵션 삭제: " + user.getEmail());
-            wishlistRepository.deleteByUserEmailAndProductId(user.getEmail(), option.getProduct().getId());
+            LOGGER.info("사용자의 위시리스트에서 옵션 삭제: " + userEmail);
+            wishlistRepository.deleteByUserEmailAndProductId(userEmail, option.getProduct().getId());
 
             String message = orderDTO.getMessage() + "\n옵션: " + option.getName() + "\n수량: " + orderDTO.getQuantity();
-            LOGGER.info("사용자에게 메시지 전송: " + user.getEmail());
-            kakaoService.sendMessageToMe(user.getEmail(), message);
+            LOGGER.info("사용자에게 메시지 전송: " + userEmail);
+            kakaoService.sendMessageToMe(userEmail, message);
 
-            Order order = new Order(orderDTO.getOptionId(), orderDTO.getQuantity(), LocalDateTime.now(), user.getEmail(), orderDTO.getMessage());
+            Order order = new Order(orderDTO.getOptionId(), orderDTO.getQuantity(), LocalDateTime.now(), userEmail, orderDTO.getMessage());
             orderRepository.save(order);
 
             orderDTO.setId(order.getId());

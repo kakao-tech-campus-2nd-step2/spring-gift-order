@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.model.User;
+import gift.security.JwtTokenProvider;
 import gift.service.KakaoService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,16 +22,13 @@ public class KakaoLoginController {
     private String redirectUri;
 
     private final KakaoService kakaoService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public KakaoLoginController(KakaoService kakaoService) {
+    public KakaoLoginController(KakaoService kakaoService, JwtTokenProvider jwtTokenProvider) {
         this.kakaoService = kakaoService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    /**
-     * 카카오 로그인 시작.
-     *
-     * @return 리디렉션 URL
-     */
     @GetMapping("/kakaoLogin")
     public String oauthLogin() {
         String url = "https://kauth.kakao.com/oauth/authorize?";
@@ -41,34 +39,17 @@ public class KakaoLoginController {
         return "redirect:" + url;
     }
 
-    /**
-     * 카카오 로그인 콜백 처리.
-     *
-     * @param code 인가 코드
-     * @param redirectAttributes 리디렉션 속성
-     * @param session HTTP 세션
-     * @return 리디렉션 뷰
-     * @throws Exception 오류 발생 시
-     */
     @GetMapping("/")
-    public RedirectView callback(@RequestParam(name = "code") String code, RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
+    public RedirectView callback(@RequestParam(name = "code") String code, RedirectAttributes redirectAttributes) throws Exception {
         String token = kakaoService.login(code);
-        session.setAttribute("token", token);
         User user = kakaoService.getKakaoUserInfo(token);
-        session.setAttribute("user", user); // 사용자 정보를 세션에 저장
+        String jwtToken = jwtTokenProvider.generateToken(user.getEmail());
+        redirectAttributes.addAttribute("token", jwtToken);
         return new RedirectView("/home");
     }
 
-    /**
-     * 홈 페이지.
-     *
-     * @param session HTTP 세션
-     * @param model 모델
-     * @return 홈 페이지
-     */
     @GetMapping("/home")
-    public String home(HttpSession session, Model model) {
-        String token = (String) session.getAttribute("token");
+    public String home(@RequestParam(name = "token", required = false) String token, Model model) {
         model.addAttribute("token", token);
         return "home";
     }

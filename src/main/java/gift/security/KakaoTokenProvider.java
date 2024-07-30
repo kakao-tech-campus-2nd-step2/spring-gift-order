@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class KakaoTokenProvider {
@@ -50,10 +51,19 @@ public class KakaoTokenProvider {
     }
 
     // 카카오 메시지 전송
-    public void sendMessage(String accessToken, String templateObject) throws Exception {
+    public void sendMessage(String accessToken, String message) throws Exception {
         var url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
+        Map<String, Object> templateObject = new HashMap<>();
+        templateObject.put("object_type", "text");
+        templateObject.put("text", message);
+        templateObject.put("link", Map.of("web_url", "http://localhost:8080", "mobile_web_url", "http://localhost:8080"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String templateObjectJson = objectMapper.writeValueAsString(templateObject);
+
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("template_object", templateObject);
+        body.add("template_object", templateObjectJson);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
