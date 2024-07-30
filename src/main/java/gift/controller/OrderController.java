@@ -26,7 +26,7 @@ public class OrderController {
      * 새로운 주문을 생성
      *
      * @param memberDTO 로그인된 회원 정보
-     * @param orderDTO 주문 정보
+     * @param orderDTO  주문 정보
      * @return 생성된 주문 정보를 담은 OrderDTO 객체
      */
     @Operation(summary = "주문 생성", description = "새로운 주문을 생성합니다.")
