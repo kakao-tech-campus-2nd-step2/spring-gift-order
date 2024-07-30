@@ -22,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,8 +50,7 @@ public class WishController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공",
             content = @Content(schema = @Schema(implementation = Page.class))),
-        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음")
     })
     public ResponseEntity<Page<WishResponse>> getWishes(
         @LoginUser User user,
@@ -71,8 +69,7 @@ public class WishController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "성공",
             headers = {@Header(name = "location", description = "위시가 생성된 위치 엔드포인트")}),
-        @ApiResponse(responseCode = "400", description = "Request Body가 잘못됨",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 오류 발생")
     })
     public ResponseEntity<WishResponse> addWish(
         @LoginUser User user, @RequestBody @Valid CreateWishRequest request
@@ -89,8 +86,7 @@ public class WishController {
     @Parameter(name = "Authorization", description = "Bearer jwt 토큰")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음")
     })
     public ResponseEntity<Void> updateWishes(
         @LoginUser User user, @RequestBody List<UpdateWishRequest> requests
@@ -104,8 +100,7 @@ public class WishController {
     @Parameter(name = "Authorization", description = "Bearer jwt 토큰")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "위시리스트가 존재하지 않음")
     })
     public ResponseEntity<Void> deleteWishes(
         @LoginUser User user, @RequestParam Long id

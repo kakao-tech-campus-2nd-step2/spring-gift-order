@@ -53,8 +53,7 @@ public class CategoryController {
     @Operation(summary = "특정 카테고리 조회", description = "id를 통해 특정 카테고리를 조회합니다")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "404", description = "해당 id를 가진 카테고리가 존재하지 않음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "해당 id를 가진 카테고리가 존재하지 않음")
     })
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategory(id));
@@ -65,8 +64,7 @@ public class CategoryController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "성공",
             headers = {@Header(name = "location", description = "카테고리 생성 위치 엔드포인트")}),
-        @ApiResponse(responseCode = "400", description = "Request Body에 잘못된 형식의 값이 존재함",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+        @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 오류 발생")
     })
     public ResponseEntity<CategoryResponse> addCategory(
         @RequestBody @Valid CreateCategoryRequest request) {
@@ -82,10 +80,8 @@ public class CategoryController {
     @Operation(summary = "카테고리 수정", description = "{id}의 카테고리를 수정합니다")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "404", description = "{id}의 상품을 찾을 수 없음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
-        @ApiResponse(responseCode = "400", description = "Request Body에 잘못된 형식의 값이 존재함",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+        @ApiResponse(responseCode = "404", description = "{id}의 상품을 찾을 수 없음"),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청으로 인한 오류 발생")
     })
     public ResponseEntity<Void> updateCategory(@PathVariable Long id,
         @RequestBody @Valid UpdateCategoryRequest request) {
@@ -97,8 +93,7 @@ public class CategoryController {
     @Operation(summary = "카테고리 삭제", description = "{id}의 카테고리를 삭제합니다")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "404", description = "{id}의 상품을 찾을 수 없음",
-            content = @Content(schema = @Schema(implementation = ProblemDetail.class))),
+        @ApiResponse(responseCode = "404", description = "{id}의 상품을 찾을 수 없음")
     })
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
