@@ -18,7 +18,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("카카오톡 선물하기 API")
-                .description("카카오톡 선물하기 API 상세 정보")
+                .description("카카오톡 선물하기 API 상세 명세서")
                 .version("1.0.0");
     }
 }
