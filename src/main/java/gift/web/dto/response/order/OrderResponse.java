@@ -1,27 +1,26 @@
 package gift.web.dto.response.order;
 
+import gift.domain.Order;
+
 public class OrderResponse {
 
     private Long productId;
 
     private Long optionId;
 
-    private Integer optionStock;
-
     private Integer quantity;
-
-    private String productName;
 
     private String message;
 
-    public OrderResponse(Long productId, Long optionId, Integer optionStock, Integer quantity,
-        String productName, String message) {
+    public OrderResponse(Long productId, Long optionId, Integer quantity, String message) {
         this.productId = productId;
         this.optionId = optionId;
-        this.optionStock = optionStock;
         this.quantity = quantity;
-        this.productName = productName;
         this.message = message;
+    }
+
+    public static OrderResponse from(Order order) {
+        return new OrderResponse(order.getProductId(), order.getProductOptionId(), order.getQuantity(), order.getMessage());
     }
 
     public Long getProductId() {
@@ -32,16 +31,8 @@ public class OrderResponse {
         return optionId;
     }
 
-    public Integer getOptionStock() {
-        return optionStock;
-    }
-
     public Integer getQuantity() {
         return quantity;
-    }
-
-    public String getProductName() {
-        return productName;
     }
 
     public String getMessage() {
