@@ -47,6 +47,14 @@ public class Member {
         this.kakaoRefreshToken = kakaoRefreshToken;
     }
 
+    public Member(String email, String password, LoginType loginType) {
+        this.email = email;
+        this.password = password;
+        this.loginType = loginType;
+        this.kakaoAccessToken = null;
+        this.kakaoRefreshToken = null;
+    }
+
     public Member(Long id, String email, String password, LoginType loginType) {
         this.id = id;
         this.email = email;

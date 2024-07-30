@@ -33,7 +33,7 @@ public class AuthService {
     }
 
     public AuthResponse addMember(AuthRequest authRequest) {
-        Member requestMember = new Member(authRequest.email(), authRequest.password(), EMAIL, null, null);
+        Member requestMember = new Member(authRequest.email(), authRequest.password(), EMAIL);
         Member savedMember = memberRepository.save(requestMember);
         return new AuthResponse(jwtUtil.createJWT(savedMember.getId(), savedMember.getLoginType()));
     }
