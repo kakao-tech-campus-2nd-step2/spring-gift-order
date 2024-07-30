@@ -8,7 +8,7 @@
 - 주문하기 mvc 구현
 - 카카오 인증, 나에게 메시지 보내기 서비스 각각 생성
 - 2단계 피드백 반영
-- API 명세 작성 : https://documenter.getpostman.com/view/36737333/2sA3kaDfA7
+- API 명세 작성
 
 ## 현재 코드 구조
 ```plaintext
