@@ -2,15 +2,13 @@ package gift.controller;
 
 import gift.dto.KakaoTokenDto;
 import gift.dto.ProductDto;
-
-import gift.dto.OptionDto;
 import gift.entity.Category;
 import gift.entity.Product;
 import gift.service.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +16,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 
 @Controller
 @RequestMapping("/api/products")
+@Tag(name = "Product API", description = "상품 관련 API")
 public class ProductController {
 
     private final CategoryService categoryService;
@@ -37,7 +31,7 @@ public class ProductController {
     private final KakaoService kakaoService;
 
     @Autowired
-    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService, WishlistService wishlistService,KakaoService kakaoService, KakaoTokenService kakaoTokenService) {
+    public ProductController(CategoryService categoryService, ProductService productService, OptionService optionService, WishlistService wishlistService, KakaoService kakaoService, KakaoTokenService kakaoTokenService) {
         this.categoryService = categoryService;
         this.productService = productService;
         this.optionService = optionService;
@@ -46,13 +40,11 @@ public class ProductController {
         this.kakaoTokenService = kakaoTokenService;
     }
 
-
-
     @PostMapping("/add")
+    @Operation(summary = "상품 추가", description = "새로운 상품을 추가합니다.")
     public String addProduct(@Valid @ModelAttribute("product") ProductDto productDto, BindingResult result, Model model) {
         if (result.hasErrors()) {
             model.addAttribute("product", new ProductDto());
-
             model.addAttribute("categories", categoryService.getAllCategories());
             return "add-product";
         }
@@ -60,17 +52,14 @@ public class ProductController {
         return "redirect:/view/products";
     }
 
-
-
     @PostMapping("/edit/{id}")
+    @Operation(summary = "상품 수정", description = "기존 상품을 수정합니다.")
     public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute("product") ProductDto productDto, BindingResult result, Model model) {
-
         Product product = productService.getProductById(productDto.getId());
         if (result.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategories());
             model.addAttribute("options", optionService.getAllOptions());
             model.addAttribute("product", new ProductDto(product));
-
             return "edit-product";
         }
         if (productDto.getName().contains("카카오")) {
@@ -85,7 +74,8 @@ public class ProductController {
 
     @Transactional
     @PostMapping("/order/{productId}")
-    public ResponseEntity<Void> orderItem( @RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId, @RequestParam("message") String message) {
+    @Operation(summary = "상품 주문", description = "상품을 주문하고 메시지를 보냅니다.")
+    public ResponseEntity<Void> orderItem(@RequestParam("email") String email, @RequestParam("optionId") Long optionId, @RequestParam("quantity") int quantity, @PathVariable Long productId, @RequestParam("message") String message) {
         optionService.subtractOptionQuantity(optionId, quantity);
         wishlistService.deleteWishlistItem(email, productId);
         System.out.println(message);
@@ -94,5 +84,4 @@ public class ProductController {
         kakaoService.sendKakaoMessage(accessToken, message);
         return ResponseEntity.ok().build();
     }
-
 }
