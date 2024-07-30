@@ -34,7 +34,9 @@ public class WishService {
     }
 
     public Wish findByProductIdAndMemberId(Long productId, Long memberId) {
-        Wish wish = wishRepository.findByProductIdAndMemberId(productId, memberId);
+        Product product = productRepository.findById(productId).get();
+        Member member = memberRepository.findById(memberId).get();
+        Wish wish = wishRepository.findByProductAndMember(product, member);
         return wish;
     }
 
@@ -50,7 +52,8 @@ public class WishService {
 
     public List<WishResponseDto> getAll(String tokenValue) {
         Long memberId = translateIdFrom(tokenValue);
-        List<Wish> wishes = wishRepository.findAllByMemberId(memberId);
+        Member member = memberRepository.findById(memberId).get();
+        List<Wish> wishes = wishRepository.findAllByMember(member);
         List<WishResponseDto> wishResponseDtos = wishes.stream().map(this::fromEntity).toList();
         return wishResponseDtos;
     }

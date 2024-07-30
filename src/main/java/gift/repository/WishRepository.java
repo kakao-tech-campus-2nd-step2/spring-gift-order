@@ -1,5 +1,7 @@
 package gift.repository;
 
+import gift.entity.Member;
+import gift.entity.Product;
 import gift.entity.Wish;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +12,10 @@ import java.util.List;
 
 @Repository
 public interface WishRepository extends JpaRepository<Wish, Long> {
-    List<Wish> findAllByMemberId(Long memberId);
+    List<Wish> findAllByMember(Member member);
 
     Page<Wish> findAll(Pageable pageable);
 
-    Wish findByProductIdAndMemberId(Long productId, Long memberId);
+    Wish findByProductAndMember(Product product, Member member);
 }
 

@@ -1,5 +1,21 @@
 # spring-gift-ordergit
 
+# 3단계 기능목록 
+
+## API 문서 만들기 
+* API 사양에 관해 클라이언트와 어떻게 소통할 수 있을까? 어떻게 하면 편하게 소통할 수 있을지 고민해 보고 그 방법을 구현한다.
+
+### 시작전 할일 
+- [ ] 2단계 : 주문내역 카카오톡 메세지 전송
+- [x] 코드리뷰 반영 
+  - [x] Order 네이밍 변경 ( DB예약어임 ) -> GiftOrder 로 변경 
+  - [x] ExternalAPIService 에서 URL 을 상수로 수정
+
+### 3단계 기능구현
+- [ ] Swagger-editor를 통해 api를 문서화하고 명세
+  - [x] Swagger 환경설정 
+  - [ ] Swagger Tag 작성 
+
 # 2단계 기능목록 
 
 ### 시작전 할일
@@ -16,8 +32,7 @@
 - [x] 상품 옵션과 해당 수량을 선택하여 주문하면 해당 상품 옵션의 수량이 차감되는기능 구현 
 - [x] 주문 상품이 위시 리스트에 있는 경우 위시 리스트에서 삭제하는 기능 구현 
 - [ ] 나에게 보내기를 읽고 주문 내역을 카카오톡 메시지로 전송한다.
-
-- [ ] 메시지는 메시지 템플릿의 기본 템플릿, 사용자 정의 템플릿을 사용하여 자유롭게 작성가능
+  - [ ] 메시지는 메시지 템플릿의 기본 템플릿, 사용자 정의 템플릿을 사용하여 자유롭게 작성가능
 
 
 * 참고 * 
@@ -31,7 +46,7 @@ Content-Type: application/json
 {
 "optionId": 1,
 "quantity": 2,
-"message": "Please handle this order with care."
+"message": "Please handle this giftOrder with care."
 }
 
 Response
@@ -43,7 +58,7 @@ Content-Type: application/json
 "optionId": 1,
 "quantity": 2,
 "orderDateTime": "2024-07-21T10:00:00",
-"message": "Please handle this order with care."
+"message": "Please handle this giftOrder with care."
 }
 
 ### 준비사항
