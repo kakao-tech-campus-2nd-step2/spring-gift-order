@@ -1,6 +1,8 @@
 package gift.controller;
 
+import gift.dto.PaginationInfo;
 import gift.dto.ProductDto;
+import gift.dto.ProductResponse;
 import gift.entity.Product;
 import gift.service.CategoryService;
 import gift.service.OptionService;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/view")
@@ -45,28 +48,49 @@ public class HomeController {
         return "products";
     }
 
+//    @GetMapping("/products/data")
+//    @ResponseBody
+//    public Map<String, Object> getProducts(Pageable pageable) {
+//        Page<Product> productPage = productService.getProducts(pageable);
+//        Map<String, Object> response = new HashMap<>();
+//
+//        List<ProductDto> productDtoList = new ArrayList<>();
+//
+//        for (Product product : productPage.getContent()) {
+//            ProductDto dto = new ProductDto(product);
+//            productDtoList.add(dto);
+//        }
+//
+//        response.put("content", productDtoList);
+//
+//        response.put("currentPage", productPage.getNumber());
+//        response.put("totalPages", productPage.getTotalPages());
+//        response.put("hasNext", productPage.hasNext());
+//        response.put("hasPrevious", productPage.hasPrevious());
+//        return response;
+//    }
+
     @GetMapping("/products/data")
     @ResponseBody
-    public Map<String, Object> getProducts(Pageable pageable) {
+    public ProductResponse getProducts(Pageable pageable) {
         Page<Product> productPage = productService.getProducts(pageable);
-        Map<String, Object> response = new HashMap<>();
 
-        List<ProductDto> productDtoList = new ArrayList<>();
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(ProductDto::new)
+                .collect(Collectors.toList());
 
-        for (Product product : productPage.getContent()) {
-            ProductDto dto = new ProductDto(product);
-            productDtoList.add(dto);
-        }
+        PaginationInfo paginationInfo = new PaginationInfo();
+        paginationInfo.setCurrentPage(productPage.getNumber());
+        paginationInfo.setTotalPages(productPage.getTotalPages());
+        paginationInfo.setHasNext(productPage.hasNext());
+        paginationInfo.setHasPrevious(productPage.hasPrevious());
 
-        response.put("content", productDtoList);
+        ProductResponse response = new ProductResponse();
+        response.setContent(productDtoList);
+        response.setPagination(paginationInfo);
 
-        response.put("currentPage", productPage.getNumber());
-        response.put("totalPages", productPage.getTotalPages());
-        response.put("hasNext", productPage.hasNext());
-        response.put("hasPrevious", productPage.hasPrevious());
         return response;
     }
-
     @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductDto());
