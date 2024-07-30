@@ -104,16 +104,6 @@ public class KakaoService {
             .toEntity(String.class);
     }
 
-    private String TemplateObject(Long id, Long optionId, Long quantity, String orderDateTime,
-        String message) {
-        return "{"
-            + "\"object_type\":\"text\","
-            + "\"text\":\"주문 정보:\\n주문 ID: " + id + "\\n옵션 ID: " + optionId + "\\n수량: " + quantity
-            + "\\n주문 시간: " + orderDateTime + "\\n메시지: " + message + "\","
-            + "\"link\":{\"web_url\":\"http://localhost:8080/admin/products\",\"mobile_web_url\":\"http://localhost:8080/admin/products\"}"
-            + "}";
-    }
-
     private String generateRandomPassword() {
         int leftLimit = 48;
         int rightLimit = 122;
