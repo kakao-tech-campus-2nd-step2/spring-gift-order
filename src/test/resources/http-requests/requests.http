@@ -1,5 +1,4 @@
 @baseUrl = http://localhost:8080
-@token =eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE3MjIxNjExNzIsImV4cCI6MTcyMjE2NDc3Mn0.P5_9T0ejgs8EBYNz4W2_XsPYD2xre5zEnBgWbjepsum5n3B0fzvbraDoqDy36xiX9eMcAnZMleYc5lwf4DxFDA
 
 ### 모든 상품 조회
 GET {{baseUrl}}/api/products?page=0&size=10
@@ -154,14 +153,14 @@ Content-Type: application/json
 ### 특정 옵션 삭제
 DELETE {{baseUrl}}/api/products/1/options/1
 
-### 주문 생성 (유효한 데이터)
-POST {{baseUrl}}/api/orders
+### 주문 생성 요청
+POST http://localhost:8080/api/orders
+Authorization: Bearer FXTKPx6OQI05zCTVStPdPv-_yWCGYYvgAAAAAQo8JJsAAAGRAZmSXoa1Lb_-w10F
 Content-Type: application/json
-Authorization: Bearer {{token}}
 
 {
   "optionId": 1,
-  "quantity": 1,
+  "quantity": 2,
   "message": "Please handle this order with care."
 }
 
