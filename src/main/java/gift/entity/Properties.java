@@ -15,7 +15,7 @@ public class Properties {
     private final String redirectUri;
 
     public Properties() {
-        this("3d44ee4fc8fcb28a34c384ab8aa968b8", "http://localhost:8080");
+        this("5c345cd75534a877a4c4e77e6e7bd288", "http://localhost:8080");
     }
 
     public Properties(String clientId, String redirectUri) {

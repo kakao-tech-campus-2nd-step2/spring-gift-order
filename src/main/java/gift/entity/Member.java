@@ -44,10 +44,6 @@ public class Member {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     public List<Wish> getWishes() {
         return wishes;
     }
