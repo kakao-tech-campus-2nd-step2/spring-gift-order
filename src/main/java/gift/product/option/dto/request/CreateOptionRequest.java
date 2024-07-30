@@ -13,7 +13,7 @@ public record CreateOptionRequest(
     String name,
 
     @Min(value = 1)
-    @Max(value = 100_000_000)
+    @Max(value = 100_000_000 - 1)
     Integer quantity
 ) {
 
