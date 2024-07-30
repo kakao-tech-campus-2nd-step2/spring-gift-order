@@ -39,7 +39,7 @@ public class OrderService {
         this.kakaoApiClient = kakaoApiClient;
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public OrderResponse createOrder(User user, OrderRequest request) {
         var option = optionService.subtractOptionQuantity(request.optionId(), request.quantity());
 
