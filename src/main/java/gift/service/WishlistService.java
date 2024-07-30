@@ -46,7 +46,7 @@ public class WishlistService {
         var member_id = memberRepository.searchIdByToken(token);
 
         if(isItem(member_id, product_id)) {
-            wishlistRepository.deleteByMember_idAndMember_id(member_id, product_id);
+            wishlistRepository.deleteByMember_idAndProduct_id(member_id, product_id);
         }
         else {
             throw new NoSuchElementException();
@@ -60,7 +60,7 @@ public class WishlistService {
 
         try {
             if (count == 0) {
-                wishlistRepository.deleteByMember_idAndMember_id(member_id, product_id);
+                wishlistRepository.deleteByMember_idAndProduct_id(member_id, product_id);
             } else {
                 var wishlist = new Wishlist(member, product, count);
                 wishlistRepository.save(wishlist);

@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +84,7 @@ class WishlistServiceTest {
 
         // Then
         verify(memberRepository).searchIdByToken(token);
-        verify(wishlistRepository).deleteByMember_idAndMember_id(memberId, productId);
+        verify(wishlistRepository).deleteByMember_idAndProduct_id(memberId, productId);
     }
 
     @Test
@@ -138,7 +137,7 @@ class WishlistServiceTest {
         assertDoesNotThrow(() -> wishlistService.changeNum(token, productId, count));
 
         // Then
-        verify(wishlistRepository).deleteByMember_idAndMember_id(memberId, productId);
+        verify(wishlistRepository).deleteByMember_idAndProduct_id(memberId, productId);
     }
 
     @Test

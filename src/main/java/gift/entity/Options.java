@@ -55,4 +55,8 @@ public class Options {
     public List<Option> getOptions() {
         return optionList;
     }
+
+    public Product getProduct() {
+        return product;
+    }
 }

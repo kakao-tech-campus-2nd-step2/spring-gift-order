@@ -19,4 +19,16 @@ public class KakaoLoginProperties {
     public String getClientSecret() {
         return clientSecret;
     }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
 }
