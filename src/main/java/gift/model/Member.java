@@ -49,6 +49,7 @@ public class Member {
         this.token = token;
     }
 
+
     public String getEmail() {
         return email;
     }
