@@ -1,7 +1,7 @@
 package gift.client;
 
+import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -15,18 +15,11 @@ import java.net.URISyntaxException;
 public class KakaoApiClient {
 
     private final RestTemplate restTemplate;
-    private final String clientId;
-    private final String redirectUri;
-    private final String clientSecret;
+    private final KakaoProperties kakaoProperties;
 
-    public KakaoApiClient(RestTemplate restTemplate,
-                          @Value("${kakao.client-id}") String clientId,
-                          @Value("${kakao.redirect-uri}") String redirectUri,
-                          @Value("${kakao.client-secret}") String clientSecret) {
+    public KakaoApiClient(RestTemplate restTemplate, KakaoProperties kakaoProperties) {
         this.restTemplate = restTemplate;
-        this.clientId = clientId;
-        this.redirectUri = redirectUri;
-        this.clientSecret = clientSecret;
+        this.kakaoProperties = kakaoProperties;
     }
 
     public KakaoTokenResponse getAccessToken(String code) {
@@ -37,10 +30,10 @@ public class KakaoApiClient {
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("grant_type", "authorization_code");
-            body.add("client_id", clientId);
-            body.add("redirect_uri", redirectUri);
+            body.add("client_id", kakaoProperties.getClientId());
+            body.add("redirect_uri", kakaoProperties.getRedirectUri());
             body.add("code", code);
-            body.add("client_secret", clientSecret);
+            body.add("client_secret", kakaoProperties.getClientSecret());
 
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
             ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(new URI(tokenUri), HttpMethod.POST, request, KakaoTokenResponse.class);
