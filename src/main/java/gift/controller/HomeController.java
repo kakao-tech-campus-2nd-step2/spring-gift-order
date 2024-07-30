@@ -48,28 +48,6 @@ public class HomeController {
         return "products";
     }
 
-//    @GetMapping("/products/data")
-//    @ResponseBody
-//    public Map<String, Object> getProducts(Pageable pageable) {
-//        Page<Product> productPage = productService.getProducts(pageable);
-//        Map<String, Object> response = new HashMap<>();
-//
-//        List<ProductDto> productDtoList = new ArrayList<>();
-//
-//        for (Product product : productPage.getContent()) {
-//            ProductDto dto = new ProductDto(product);
-//            productDtoList.add(dto);
-//        }
-//
-//        response.put("content", productDtoList);
-//
-//        response.put("currentPage", productPage.getNumber());
-//        response.put("totalPages", productPage.getTotalPages());
-//        response.put("hasNext", productPage.hasNext());
-//        response.put("hasPrevious", productPage.hasPrevious());
-//        return response;
-//    }
-
     @GetMapping("/products/data")
     @ResponseBody
     public ProductResponse getProducts(Pageable pageable) {
@@ -91,6 +69,7 @@ public class HomeController {
 
         return response;
     }
+
     @GetMapping("/products/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new ProductDto());
@@ -111,6 +90,7 @@ public class HomeController {
         return "edit-product";
     }
 
+
     @GetMapping("/products/delete/{id}")
     public String deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
@@ -124,23 +104,24 @@ public class HomeController {
 
 
     @GetMapping("/wishlist/data")
-    public ResponseEntity<Map<String, Object>> getWishlistItems(
+    public ResponseEntity<ProductResponse> getWishlistItems(
             @RequestParam("email") String email,
             Pageable pageable) {
         Page<Product> productPage = wishlistService.getWishlistByEmail(email, pageable);
-        Map<String, Object> response = new HashMap<>();
-        List<ProductDto> productDtoList = new ArrayList<>();
+        List<ProductDto> productDtoList = productPage.getContent().stream()
+                .map(ProductDto::new)
+                .collect(Collectors.toList());
 
-        for (Product product : productPage.getContent()) {
-            ProductDto dto = new ProductDto(product);
-            productDtoList.add(dto);
-        }
+        PaginationInfo paginationInfo = new PaginationInfo();
+        paginationInfo.setCurrentPage(productPage.getNumber() + 1);
+        paginationInfo.setTotalPages(productPage.getTotalPages());
+        paginationInfo.setHasNext(productPage.hasNext());
+        paginationInfo.setHasPrevious(productPage.hasPrevious());
 
-        response.put("content", productDtoList);
-        response.put("currentPage", productPage.getNumber() + 1);
-        response.put("totalPages", productPage.getTotalPages());
-        response.put("hasNext", productPage.hasNext());
-        response.put("hasPrevious", productPage.hasPrevious());
+        ProductResponse response = new ProductResponse();
+        response.setContent(productDtoList);
+        response.setPagination(paginationInfo);
+
         return ResponseEntity.ok(response);
     }
 
