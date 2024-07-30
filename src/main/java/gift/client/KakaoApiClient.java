@@ -1,8 +1,7 @@
 package gift.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.config.KakaoProperties;
 import gift.dto.KakaoTokenResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -10,21 +9,24 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 @Component
 public class KakaoApiClient {
 
     private final RestTemplate restTemplate;
-    private final KakaoProperties kakaoProperties;
+    private final String clientId;
+    private final String redirectUri;
+    private final String clientSecret;
 
-    public KakaoApiClient(RestTemplate restTemplate, KakaoProperties kakaoProperties) {
+    public KakaoApiClient(RestTemplate restTemplate,
+                          @Value("${kakao.client-id}") String clientId,
+                          @Value("${kakao.redirect-uri}") String redirectUri,
+                          @Value("${kakao.client-secret}") String clientSecret) {
         this.restTemplate = restTemplate;
-        this.kakaoProperties = kakaoProperties;
-    }
-
-    public ResponseEntity<String> postForEntity(URI uri, HttpHeaders headers, MultiValueMap<String, String> body) {
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        return restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
+        this.clientId = clientId;
+        this.redirectUri = redirectUri;
+        this.clientSecret = clientSecret;
     }
 
     public KakaoTokenResponse getAccessToken(String code) {
@@ -35,15 +37,21 @@ public class KakaoApiClient {
 
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("grant_type", "authorization_code");
-            body.add("client_id", kakaoProperties.getClientId());
-            body.add("redirect_uri", kakaoProperties.getRedirectUri());
+            body.add("client_id", clientId);
+            body.add("redirect_uri", redirectUri);
             body.add("code", code);
-            body.add("client_secret", kakaoProperties.getClientSecret());
+            body.add("client_secret", clientSecret);
 
-            ResponseEntity<String> response = postForEntity(new URI(tokenUri), headers, body);
-            return new ObjectMapper().readValue(response.getBody(), KakaoTokenResponse.class);
-        } catch (Exception e) {
+            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
+            ResponseEntity<KakaoTokenResponse> response = restTemplate.exchange(new URI(tokenUri), HttpMethod.POST, request, KakaoTokenResponse.class);
+            return response.getBody();
+        } catch (URISyntaxException e) {
             throw new RuntimeException("Failed to get access token", e);
         }
+    }
+
+    public ResponseEntity<String> getForEntity(URI uri, HttpHeaders headers) {
+        HttpEntity<String> request = new HttpEntity<>(headers);
+        return restTemplate.exchange(uri, HttpMethod.GET, request, String.class);
     }
 }

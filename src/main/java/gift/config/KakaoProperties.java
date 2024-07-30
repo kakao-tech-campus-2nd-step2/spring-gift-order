@@ -15,6 +15,12 @@ public class KakaoProperties {
     @Value("${kakao.client-secret}")
     private String clientSecret;
 
+    @Value("${kakao.api-url}")
+    private String kakaoApiUrl;
+
+    @Value("${kakao.admin-key}")
+    private String adminKey;
+
     public String getClientId() {
         return clientId;
     }
@@ -25,5 +31,13 @@ public class KakaoProperties {
 
     public String getClientSecret() {
         return clientSecret;
+    }
+
+    public String getKakaoApiUrl() {
+        return kakaoApiUrl;
+    }
+
+    public String getAdminKey() {
+        return adminKey;
     }
 }
