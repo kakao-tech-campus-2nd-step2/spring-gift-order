@@ -5,6 +5,7 @@ import gift.model.Member;
 import gift.service.MemberService;
 import gift.util.JwtUtil;
 import gift.util.LoginMember;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class MemberController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Operation(summary = "회원 가입")
     @PostMapping("/register")
     public ResponseEntity<?> registerMember(@Valid @RequestBody MemberDTO memberDTO) {
         MemberDTO savedMember = memberService.register(memberDTO);
@@ -30,6 +32,7 @@ public class MemberController {
         return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
     }
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody MemberDTO loginDetails) {
         String email = loginDetails.getEmail();
@@ -38,6 +41,7 @@ public class MemberController {
         return ResponseEntity.ok().body("{\"token\":\"" + token + "\"}");
     }
 
+    @Operation(summary = "회원 프로필 조회")
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@LoginMember Member member) {
         MemberDTO memberDTO = new MemberDTO();
