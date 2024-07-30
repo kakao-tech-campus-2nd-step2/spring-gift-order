@@ -44,7 +44,7 @@ public class KakaoLoginController {
         String accessToken = kakaoService.getAccessTokenFromKakao(code);
 
         KakaoInfoDto kakaoInfoDto = kakaoService.getUserInfo(accessToken);
-        String email = kakaoInfoDto.getKakao_account().getEmail();
+        String email = kakaoInfoDto.getId() + "@naver.com";
         Member kakaoMember = kakaoService.registerOrGetKakaoMember(email);
 
         session.setAttribute("loginMember", kakaoMember);

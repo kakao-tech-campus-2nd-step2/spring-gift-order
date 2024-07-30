@@ -2,6 +2,7 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.config.KakaoAuthClient;
+import gift.config.KakaoUserClinet;
 import gift.dto.KakaoInfoDto;
 import gift.dto.KakaoTokenResponseDto;
 import gift.model.member.Member;
@@ -14,13 +15,16 @@ import java.util.Optional;
 @Service
 public class KakaoService {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     private final KakaoAuthClient kakaoAuthClient;
 
-    public KakaoService(KakaoAuthClient kakaoAuthClient,MemberRepository memberRepository) {
+    private final KakaoUserClinet kakaoUserClinet;
+
+    public KakaoService(KakaoAuthClient kakaoAuthClient,MemberRepository memberRepository, KakaoUserClinet kakaoUserClinet) {
         this.kakaoAuthClient = kakaoAuthClient;
         this.memberRepository = memberRepository;
+        this.kakaoUserClinet = kakaoUserClinet;
     }
 
     public String getAccessTokenFromKakao(String code) {
@@ -29,7 +33,7 @@ public class KakaoService {
     }
 
     public KakaoInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
-        KakaoInfoDto kakaoInfoDto = kakaoAuthClient.getUserInfo(accessToken);
+        KakaoInfoDto kakaoInfoDto = kakaoUserClinet.getUserInfo(accessToken);
         return kakaoInfoDto;
     }
 

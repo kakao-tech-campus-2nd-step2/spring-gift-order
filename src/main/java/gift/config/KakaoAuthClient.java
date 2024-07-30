@@ -13,15 +13,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.sql.SQLOutput;
+
 @Component
 public class KakaoAuthClient {
     private final WebClient webClient;
 
-    private final KakaoProperties kakaoProperties;
+    @Autowired
+    private  KakaoProperties kakaoProperties;
 
     @Autowired
     public KakaoAuthClient(WebClient.Builder webClientBuilder, KakaoProperties kakaoProperties) {
-        this.kakaoProperties = kakaoProperties;
         this.webClient = webClientBuilder
                 .baseUrl(kakaoProperties.getKakaoAuthUrl())
                 .build();
@@ -41,24 +43,6 @@ public class KakaoAuthClient {
                 .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
                 .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")))
                 .bodyToMono(KakaoTokenResponseDto.class);
-    }
-
-    public KakaoInfoDto getUserInfo(String accessToken) throws JsonProcessingException {
-        String responseBody = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .scheme("https")
-                        .path("/v2/user/me")
-                        .build(true))
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON.toString())
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, clientResponse -> Mono.error(new RuntimeException("Invalid Parameter")))
-                .onStatus(HttpStatusCode::is5xxServerError, clientResponse -> Mono.error(new RuntimeException("Internal Server Error")))
-                .bodyToMono(String.class).block();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        KakaoInfoDto kakaoInfoDto = objectMapper.readValue(responseBody, KakaoInfoDto.class);
-        return kakaoInfoDto;
     }
 
     public void kakaoDisconnect(String accessToken) {
