@@ -33,6 +33,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     testImplementation 'com.squareup.okhttp3:mockwebserver'
+    testImplementation 'io.projectreactor:reactor-test:3.5.0'
+
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {
