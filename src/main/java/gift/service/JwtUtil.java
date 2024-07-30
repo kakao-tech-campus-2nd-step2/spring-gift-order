@@ -15,10 +15,10 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+    protected final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
     private final Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 
-    // userId와 email을 주체로 하는 토큰 생성
+    // userId와 email, access_Token을 주체로 하는 토큰 생성
     public String generateToken(String email, Long userId, String kakaoToken) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
@@ -95,7 +95,7 @@ public class JwtUtil {
     }
 
     // 토큰 만료 여부 확인
-    private boolean isTokenExpired(Date expiration) {
+    boolean isTokenExpired(Date expiration) {
         return expiration.before(new Date());
     }
 }

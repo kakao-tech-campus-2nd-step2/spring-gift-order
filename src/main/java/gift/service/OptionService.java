@@ -25,13 +25,6 @@ public class OptionService {
         this.productRepository = productRepository;
     }
 
-    // 옵션 ID로 상품 ID를 찾는 메서드
-    public Long getProductIdFromOption(Long optionId) {
-        OptionEntity option = optionRepository.findById(optionId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 옵션이 존재하지 않습니다. ID: " + optionId));
-        return option.getProduct().getId();
-    }
-
     public List<OptionEntity> readProductAllOption(Long productId) {
         ProductEntity product = productRepository.findById(productId)
             .orElseThrow(() -> new EntityNotFoundException("해당 상품이 존재하지 않습니다. ID: " + productId));

@@ -2,7 +2,6 @@ package gift.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gift.dto.OrderDTO;
-import gift.entity.OptionEntity;
 import gift.entity.OrderEntity;
 import gift.repository.OrderRepository;
 import jakarta.transaction.Transactional;
@@ -28,14 +27,6 @@ public class OrderService {
 
     @Transactional
     public void createOrder(OrderDTO order, Long userId, String email, String accessToken) {
-        Long product_id = optionService.getProductIdFromOption(order.getOptionId());
-        OptionEntity option = optionService.readProductOption(product_id, order.getOptionId());
-
-
-        if (option.getQuantity() < order.getQuantity()) {
-            throw new IllegalArgumentException("재고가 부족합니다.");
-        }
-
         optionService.subtractOptionQuantity(order.getOptionId(), order.getQuantity());
 
         wishListService.removeOptionFromWishList(userId, order.getOptionId());
@@ -48,7 +39,6 @@ public class OrderService {
         );
 
         orderRepository.save(orderEntity);
-
 
         try {
             kakaoUserService.sendOrderMessage(accessToken, order);

@@ -1,7 +1,13 @@
 package gift.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class OrderDTO {
+    @NotNull(message = "옵션 id는 필수 입력 사항입니다.")
     private Long optionId;
+
+    @Min(value = 1, message = "수량은 1 이상의 숫자여야 합니다.")
     private int quantity;
     private String message;
 

@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
-    private OrderService orderService;
-    private JwtUtil jwtUtil;
+    private final OrderService orderService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
     public OrderController(OrderService orderService, JwtUtil jwtUtil) {

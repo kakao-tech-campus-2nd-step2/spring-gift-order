@@ -71,8 +71,12 @@ public class KakaoUserService {
     }
 
     public void sendOrderMessage(String accessToken, OrderDTO order) throws JsonProcessingException {
+        HttpEntity<MultiValueMap<String, String>> requestEntity = createRequestEntity(accessToken, order);
+        sendRequest(requestEntity);
+    }
+
+    private HttpEntity<MultiValueMap<String, String>> createRequestEntity(String accessToken, OrderDTO order) throws JsonProcessingException {
         String templateObjectJson = createTemplate(order);
-        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("template_object", templateObjectJson);
@@ -81,14 +85,18 @@ public class KakaoUserService {
         headers.set("Authorization", "Bearer " + accessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        return new HttpEntity<>(body, headers);
+    }
 
+    private void sendRequest(HttpEntity<MultiValueMap<String, String>> requestEntity) {
+        String url = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
         try {
             restTemplate.postForObject(url, requestEntity, String.class);
         } catch (HttpStatusCodeException e) {
             throw new KakaoOAuthException(e.getStatusCode().toString(), e.getStatusCode());
         }
     }
+
 
     private String createTemplate(OrderDTO order) throws JsonProcessingException {
         String orderDetails = String.format("옵션 id: %s, 수량: %d, 메시지: %s",
