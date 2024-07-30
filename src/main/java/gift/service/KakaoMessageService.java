@@ -12,11 +12,14 @@ import java.util.Map;
 @Service
 public class KakaoMessageService {
 
+    private static final String SEND_MESSAGE_SUFFIX = "/v2/api/talk/memo/default/send";
+    private static final String WEB_URL = "http://localhost:8080";
+
     @Value("${kakao.api.url}")
     private String kakaoApiUrl;
 
     public void sendOrderMessage(String token, Order order) {
-        String url = kakaoApiUrl + "/v2/api/talk/memo/default/send";
+        String url = kakaoApiUrl + SEND_MESSAGE_SUFFIX;
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -31,8 +34,8 @@ public class KakaoMessageService {
                 "\n수량: " + order.getQuantity() +
                 "\n메시지: " + order.getMessage());
         templateObject.put("link", new HashMap<>() {{
-            put("web_url", "http://localhost:8080");
-            put("mobile_web_url", "http://localhost:8080");
+            put("web_url", WEB_URL);
+            put("mobile_web_url", WEB_URL);
         }});
         templateObject.put("button_title", "주문 확인");
 

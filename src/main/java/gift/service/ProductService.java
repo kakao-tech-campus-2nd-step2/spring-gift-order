@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static gift.exception.ErrorCode.*;
 
 @Service
-@Transactional()
+@Transactional(readOnly = true)
 public class ProductService {
     private final ProductSpringDataJpaRepository productRepository;
     private final CategorySpringDataJpaRepository categoryRepository;
@@ -32,6 +32,7 @@ public class ProductService {
         this.optionService = optionService;
     }
 
+    @Transactional
     public Product register(ProductRequest productRequest, OptionRequest optionRequest) {
         Category category = categoryRepository.findByName(productRequest.getCategoryName()).
                 orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
@@ -55,6 +56,7 @@ public class ProductService {
         return productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND));
     }
 
+    @Transactional
     public Product update(Long productId, ProductRequest productRequest) {
         Product product = productRepository.findById(productId).
                 orElseThrow(() -> new ProductNotFoundException(PRODUCT_NOT_FOUND));

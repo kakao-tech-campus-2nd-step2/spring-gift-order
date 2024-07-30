@@ -20,7 +20,7 @@ import java.util.List;
 import static gift.exception.ErrorCode.*;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class WishlistService {
 
     private final WishlistSpringDataJpaRepository wishlistRepository;
@@ -34,6 +34,7 @@ public class WishlistService {
         this.productRepository = productRepository;
     }
 
+    @Transactional
     public void addItemToWishlist(WishlistRequest wishlistRequest, String token) {
         TokenAuth tokenAuth = tokenService.findToken(token);
         Member member = tokenAuth.getMember();
@@ -44,6 +45,7 @@ public class WishlistService {
         wishlistRepository.save(item);
     }
 
+    @Transactional
     public void deleteItemFromWishlist(Long productId, String token) {
         TokenAuth tokenAuth = tokenService.findToken(token);
         Member member = tokenAuth.getMember();
