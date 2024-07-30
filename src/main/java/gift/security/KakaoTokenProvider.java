@@ -3,12 +3,13 @@ package gift.security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 
@@ -21,7 +22,7 @@ public class KakaoTokenProvider {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    private final RestClient client = RestClient.builder().build();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     // 새로운 액세스 토큰을 발급받는 메소드
     public String getToken(String code) throws Exception {
@@ -32,12 +33,10 @@ public class KakaoTokenProvider {
         body.add("redirect_uri", redirectUri);
         body.add("code", code);
 
-        ResponseEntity<String> entity = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .toEntity(String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        ResponseEntity<String> entity = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
 
         String resBody = entity.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -56,13 +55,11 @@ public class KakaoTokenProvider {
         var body = new LinkedMultiValueMap<String, String>();
         body.add("template_object", templateObject);
 
-        ResponseEntity<String> entity = client.post()
-                .uri(URI.create(url))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .body(body)
-                .retrieve()
-                .toEntity(String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+
+        ResponseEntity<String> entity = restTemplate.postForEntity(url, new HttpEntity<>(body, headers), String.class);
 
         if (entity.getStatusCode().isError()) {
             throw new RuntimeException("카카오 메시지 전송 실패: " + entity.getBody());

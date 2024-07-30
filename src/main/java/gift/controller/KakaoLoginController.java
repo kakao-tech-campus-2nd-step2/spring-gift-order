@@ -1,6 +1,8 @@
 package gift.controller;
 
+import gift.model.User;
 import gift.service.KakaoService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,14 +37,18 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/")
-    public RedirectView callback(@RequestParam(name = "code") String code, RedirectAttributes redirectAttributes) throws Exception {
+    public RedirectView callback(@RequestParam(name = "code") String code, RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
         String token = kakaoService.login(code);
-        redirectAttributes.addFlashAttribute("token", token);
+        session.setAttribute("token", token);
+        User user = kakaoService.getKakaoUserInfo(token);
+        session.setAttribute("user", user); // 사용자 정보를 세션에 저장
         return new RedirectView("/home");
     }
 
     @GetMapping("/home")
-    public String home(Model model) {
+    public String home(HttpSession session, Model model) {
+        String token = (String) session.getAttribute("token");
+        model.addAttribute("token", token);
         return "home";
     }
 }
