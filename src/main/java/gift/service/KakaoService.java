@@ -1,10 +1,13 @@
 package gift.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gift.config.KakaoProperties;
 import gift.dto.KakaoAccessTokenDTO;
 import gift.dto.KakaoUserInfoDTO;
 import gift.dto.MemberDTO;
 import gift.dto.OrderResponseDTO;
+import gift.dto.TemplateObjectDTO;
 import gift.model.Member;
 import gift.repository.MemberRepository;
 import gift.util.JwtUtil;
@@ -91,10 +94,9 @@ public class KakaoService {
 
     public void sendKakaoMessage(String accessToken, OrderResponseDTO orderResponseDTO) {
         String url = kakaoProperties.sendMessageUrl();
+        String templateObjectJson = getTemplateObjectJson(orderResponseDTO);
         final LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("template_object", TemplateObject(orderResponseDTO.id(),
-            orderResponseDTO.optionId(), orderResponseDTO.quantity(),
-            orderResponseDTO.orderDateTime().toString(), orderResponseDTO.message()));
+        body.add("template_object", templateObjectJson);
         ResponseEntity<String> response = restClient.post()
             .uri(URI.create(url))
             .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -102,6 +104,24 @@ public class KakaoService {
             .body(body)
             .retrieve()
             .toEntity(String.class);
+    }
+
+    private static String getTemplateObjectJson(OrderResponseDTO orderResponseDTO) {
+        TemplateObjectDTO templateObjectDTO = new TemplateObjectDTO(
+            orderResponseDTO.id(),
+            orderResponseDTO.optionId(),
+            orderResponseDTO.quantity(),
+            orderResponseDTO.orderDateTime().toString(),
+            orderResponseDTO.message()
+        );
+        ObjectMapper objectMapper = new ObjectMapper();
+        String templateObjectJson;
+        try {
+            templateObjectJson = objectMapper.writeValueAsString(templateObjectDTO);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON으로 변환에 실패했습니다.");
+        }
+        return templateObjectJson;
     }
 
     private String generateRandomPassword() {
