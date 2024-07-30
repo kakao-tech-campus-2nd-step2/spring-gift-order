@@ -3,6 +3,7 @@ package gift.controller;
 import gift.DTO.MemberDTO;
 import gift.auth.DTO.TokenDTO;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/login")
+@Tag(name = "직접 회원 가입을 하는 방식", description = "권장되지 않습니다. 카카오 로그인을 이용해 주세요")
 public class LoginController {
 
     @Autowired
