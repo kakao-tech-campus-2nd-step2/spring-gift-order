@@ -48,9 +48,9 @@ public class KaKaoService {
     public String getKakaoAccountEmail(String accessToken) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ResponseEntity<String> response = client.get()
+        ResponseEntity<String> response = clientWithAuthHeader(accessToken)
+                .get()
                 .uri(URI.create(getUserInfoUrl))
-                .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .toEntity(String.class);
 
@@ -101,9 +101,9 @@ public class KaKaoService {
     public void sendMessage(String message, String accessToken) {
         LinkedMultiValueMap<String, String> body = createSendMsgBody(message);
 
-        ResponseEntity<String> response = client.post()
+        ResponseEntity<String> response = clientWithAuthHeader(accessToken)
+                .post()
                 .uri(URI.create(sendMessageUrl))
-                .header("Authorization", "Bearer " + accessToken)
                 .body(body)
                 .retrieve()
                 .toEntity(String.class);
@@ -127,6 +127,10 @@ public class KaKaoService {
         }
 
         return templateObject;
+    }
+
+    private RestClient clientWithAuthHeader(String accessToken) {
+        return RestClient.builder().defaultHeader("Authorization", "Bearer " + accessToken).build();
     }
 
 }
