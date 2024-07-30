@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.dto.SendMessageRequest;
+import gift.value.AuthorizationHeader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,16 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String accessToken, @RequestBody OrderRequest orderRequest) {
-        if (accessToken == null || !accessToken.startsWith("Bearer ")) {
+    public ResponseEntity<OrderResponse> createOrder(@RequestHeader("Authorization") String authorizationHeader, @RequestBody OrderRequest orderRequest) {
+        AuthorizationHeader authHeader;
+        try {
+            authHeader = new AuthorizationHeader(authorizationHeader);
+        } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        String token = accessToken.substring(7); // "Bearer " 이후의 실제 토큰 값
 
         // SendMessageRequest 생성
-        SendMessageRequest sendMessageRequest = new SendMessageRequest(accessToken, orderRequest);
+        SendMessageRequest sendMessageRequest = new SendMessageRequest(authorizationHeader, orderRequest);
 
         // 주문 생성 및 메시지 전송 처리
         orderService.processOrderAndSendMessage(sendMessageRequest);
