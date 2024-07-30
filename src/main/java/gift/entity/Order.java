@@ -12,8 +12,6 @@ import java.util.List;
 @Entity
 @Table(name = "orders")
 public class Order extends BaseEntity {
-//    @Column(name = "order_number", nullable = false)
-//    private String orderNumber;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
