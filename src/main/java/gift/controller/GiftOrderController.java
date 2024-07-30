@@ -4,6 +4,7 @@ import gift.dto.GiftOrderRequestDto;
 import gift.dto.GiftOrderResponseDto;
 import gift.service.BasicTokenService;
 import gift.service.GiftOrderService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class GiftOrderController {
     }
 
     @PostMapping
+    @Operation(summary = "메세지와 함께 주문하기", description = "주문과 입력받은 메세지로 주문을 실행합니다.")
     public ResponseEntity<GiftOrderResponseDto> placeOrderWithMessage(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader,
             @RequestBody GiftOrderRequestDto giftOrderRequestDto

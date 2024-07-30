@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.dto.MemberResponseDto;
 import gift.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class ApiMemberListController {
     }
 
     @GetMapping("/member/list")
+    @Operation(summary = "멤버 목록 조회", description = "멤버 목록을 조회합니다.")
     public ResponseEntity<List<MemberResponseDto>> MemberList() {
         List<MemberResponseDto> memberResponseDto = memberService.getAllMemberResponseDto();
         return new ResponseEntity<>(memberResponseDto, HttpStatus.OK);

@@ -1,6 +1,7 @@
 package gift.controller;
 
 import gift.service.BasicTokenService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +17,10 @@ public class TokenController {
         this.basicTokenService = basicTokenService;
     }
 
-    @GetMapping("/{userId}")
-    public String makeTokenFrom(@RequestParam("userId") Long userId) {
-        return basicTokenService.makeTokenFrom(userId.toString());
+    @GetMapping("/{memberId}")
+    @Operation(summary = "멤버 id로 토큰 생성", description = "멤버 id로 토큰을 생성합니다.")
+    public String makeTokenFrom(@RequestParam("memberId") Long memberId) {
+        return basicTokenService.makeTokenFrom(memberId.toString());
     }
 
 }
