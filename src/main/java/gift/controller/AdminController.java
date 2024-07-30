@@ -4,6 +4,8 @@ import gift.dto.ProductDTO;
 import gift.model.Product;
 import gift.service.CategoryService;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/admin/products")
+@Tag(name = "상품 관리 API", description = "상품 관리를 위한 API")
 public class AdminController {
 
     private final ProductService productService;
@@ -32,6 +35,7 @@ public class AdminController {
     }
 
     @GetMapping
+    @Operation(summary = "상품 목록 얻기", description = "모든 상품을 페이지로 조회합니다.")
     public String getProducts(Model model, @PageableDefault(size = 5) Pageable pageable) {
         Page<Product> products = productService.findAllProducts(pageable);
         model.addAttribute("products", products);
@@ -39,6 +43,7 @@ public class AdminController {
     }
 
     @GetMapping("/new")
+    @Operation(summary = "상품 추가 폼 보기", description = "상품을 추가할 수 있는 폼으로 이동합니다.")
     public String showAddProductForm(Model model) {
         model.addAttribute("productDTO", new ProductDTO("", "0", null, ""));
         model.addAttribute("categories", categoryService.findAllCategories());
@@ -46,6 +51,7 @@ public class AdminController {
     }
 
     @PostMapping
+    @Operation(summary = "상품 추가", description = "새로운 상품을 추가합니다.")
     public String addProduct(@ModelAttribute @Valid ProductDTO productDTO, BindingResult result,
         Model model) {
         if (result.hasErrors()) {
@@ -58,6 +64,7 @@ public class AdminController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "상품 수정 폼 보기", description = "상품을 수정할 수 있는 폼으로 이동합니다.")
     public String showEditProductForm(@PathVariable("id") long id, Model model) {
         Product product = productService.findProductsById(id);
         model.addAttribute("productDTO", ProductService.toDTO(product));
@@ -67,6 +74,7 @@ public class AdminController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "상품 수정", description = "상품을 수정합니다.")
     public String editProduct(@PathVariable("id") long id,
         @ModelAttribute @Valid ProductDTO updatedProductDTO,
         BindingResult result, Model model) {
@@ -80,6 +88,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "상품 삭제", description = "상품을 삭제합니다.")
     public String deleteProduct(@PathVariable("id") long id) {
         productService.deleteProductAndWishlistAndOptions(id);
         return "redirect:/admin/products";

@@ -4,6 +4,8 @@ package gift.controller;
 import gift.config.KakaoProperties;
 import gift.model.Member;
 import gift.service.KakaoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping
+@Tag(name = "카카오 로그인 API", description = "카카오 로그인을 위한 API")
 public class KakaoLoginController {
 
     private final KakaoProperties kakaoProperties;
@@ -24,12 +27,14 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/kakao/auth")
+    @Operation(summary = "카카오 로그인 페이지로 이동", description = "카카오 로그인 페이지로 이동합니다.")
     public String kakaoLogin(Model model) {
         String loginUrl = kakaoService.generateKakaoLoginUrl();
         return "redirect:" + loginUrl;
     }
 
     @GetMapping
+    @Operation(summary = "카카오 액세스 토큰 획득", description = "카카오 액세스 토큰을 획득합니다.")
     public String kakaoAccessToken(@RequestParam(value = "code") String authorizationCode,
         RedirectAttributes redirectAttributes) {
         if (authorizationCode != null) {
@@ -47,6 +52,7 @@ public class KakaoLoginController {
     }
 
     @GetMapping("/kakao/success")
+    @Operation(summary = "카카오 로그인 성공 페이지로 이동", description = "카카오 로그인 성공 페이지로 이동합니다.")
     public String kakaoAcessSuccess(Model model) {
         return "kakao_access_token";
     }

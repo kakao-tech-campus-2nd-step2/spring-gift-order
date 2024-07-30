@@ -3,6 +3,8 @@ package gift.controller;
 import gift.dto.CategoryDTO;
 import gift.model.Category;
 import gift.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/admin/categories")
+@Tag(name = "카테고리 관리 API", description = "카테고리 관리를 위한 API")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -27,6 +30,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @Operation(summary = "카테고리 목록 얻기", description = "모든 카테고리를 조회합니다.")
     public String getCategories(Model model) {
         List<Category> categories = categoryService.findAllCategories();
         model.addAttribute("categories", categories);
@@ -34,12 +38,14 @@ public class CategoryController {
     }
 
     @GetMapping("/new")
+    @Operation(summary = "카테고리 추가 폼 보기", description = "카테고리를 추가할 수 있는 폼으로 이동합니다.")
     public String showAddCategoryForm(Model model) {
         model.addAttribute("categoryDTO", new CategoryDTO(""));
         return "add_category_form";
     }
 
     @PostMapping
+    @Operation(summary = "카테고리 추가", description = "새로운 카테고리를 추가합니다.")
     public String addCategory(@ModelAttribute @Valid CategoryDTO categoryDTO,
         BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
@@ -56,6 +62,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "카테고리 수정 폼 보기", description = "카테고리를 수정할 수 있는 폼으로 이동합니다.")
     public String showEditCategoryForm(@PathVariable("id") long id, Model model) {
         Category category = categoryService.findCategoryById(id);
         model.addAttribute("categoryDTO", CategoryService.toDTO(category));
@@ -64,6 +71,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "카테고리 수정", description = "카테고리를 수정합니다.")
     public String editCategory(@PathVariable("id") long id,
         @ModelAttribute @Valid CategoryDTO categoryDTO,
         BindingResult bindingResult, Model model) {
@@ -82,6 +90,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "카테고리 삭제", description = "카테고리를 삭제합니다.")
     public String deleteCategory(@PathVariable("id") long id) {
         categoryService.deleteCategory(id);
         return "redirect:/admin/categories";
