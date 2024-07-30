@@ -62,7 +62,7 @@ public class OrderService {
 
         return responseDto;
     }
-    public int sendOrderConfirmationMessage(OrderRequestDto orderRequestDto, String accessToken){
+    private int sendOrderConfirmationMessage(OrderRequestDto orderRequestDto, String accessToken){
         WebClient webClient = webClientUtil.createWebClient(kakaoProperties.getUserInfoUrl());
 
         WebClient.ResponseSpec responseSpec = webClient.post()
