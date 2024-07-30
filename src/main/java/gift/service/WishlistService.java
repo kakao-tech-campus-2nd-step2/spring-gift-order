@@ -45,4 +45,8 @@ public class WishlistService {
         Product product = productService.findProductsById(productId);
         wishlistRepository.deleteByMemberAndProduct(member, product);
     }
+
+    public boolean isProductInWishlist(String email, Long productId) {
+        return wishlistRepository.existsByEmailAndProductId(email, productId);
+    }
 }
