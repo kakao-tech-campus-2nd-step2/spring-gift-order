@@ -38,9 +38,7 @@ public class OrderService {
         Order order = new Order(null, option, quantity, LocalDateTime.now(),
             orderRequestDTO.message(), member);
         orderRepository.save(order);
-        if (wishlistService.isProductInWishlist(member.getEmail(), option.getProduct().getId())) {
-            wishlistService.removeWishlist(member.getEmail(), option.getProduct().getId());
-        }
+        wishlistService.removeWishlist(member.getEmail(), option.getProduct().getId());
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(order.getId(),
             order.getOption().getId(), order.getQuantity(), order.getOrderDateTime(),
             order.getMessage());
