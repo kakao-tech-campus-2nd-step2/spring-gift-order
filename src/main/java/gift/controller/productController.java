@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.CategoryResponseDto;
 import gift.dto.ProductRequestDto;
 import gift.dto.ProductResponseDto;
 import gift.service.ProductService;
@@ -9,6 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +38,9 @@ public class productController {
 
     @PostMapping("")
     @Operation(summary = "상품 응답 DTO 생성", description = "상품요청 DTO를 보내면, 상품응답 DTO를 만들어줍니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 생성 성공", content = @Content(schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     public ResponseEntity<ProductResponseDto> createProductDto(@RequestBody ProductRequestDto productRequestDto) {
         ProductResponseDto productResponseDto = productService.createProductDto(
                 productRequestDto.getName(),
@@ -43,12 +52,18 @@ public class productController {
 
     @GetMapping("")
     @Operation(summary = "상품 목록 조회", description = "모든 상품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공", content = @Content(schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     public ResponseEntity<List<ProductResponseDto>> getAllProduct() {
         return new ResponseEntity<>(productService.getAllAndMakeProductResponseDto(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "상품 id로 상품 조회", description = "상품 id로 상품을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 조회 성공", content = @Content(schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     public ResponseEntity<ProductResponseDto> getOneById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(productService.getProductResponseDtoById(id), HttpStatus.OK);
     }
@@ -71,12 +86,18 @@ public class productController {
 
     @GetMapping("/{name}")
     @Operation(summary = "상품 이름으로 상품 조회", description = "상품 이름으로 상품을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 조회 성공", content = @Content(schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     public ResponseEntity<ProductResponseDto> getOneByName(@PathVariable("name") String name) {
         return new ResponseEntity<>(productService.findProductByName(name), HttpStatus.OK);
     }
 
     @GetMapping("/products")
     @Operation(summary = "페이지네이션을 적용하여 모든 상품 조회", description = "모든 상품을 조회하되, 페이지네이션을 적용하여 가져옵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "페이지네이션으로 상품 목록 조회 성공", content = @Content(schema = @Schema(implementation = ProductResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 리소스 접근", content = @Content(schema = @Schema(implementation = ErrorResponse.class))) })
     public ResponseEntity<Page<ProductResponseDto>> getProducts(Pageable pageable) {
         return new ResponseEntity<>(productService.getProducts(pageable), HttpStatus.OK);
     }
