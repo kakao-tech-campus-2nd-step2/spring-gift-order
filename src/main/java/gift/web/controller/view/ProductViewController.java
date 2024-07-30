@@ -1,6 +1,7 @@
 package gift.web.controller.view;
 
 import gift.authentication.annotation.LoginMember;
+import gift.config.KakaoProperties;
 import gift.service.ProductService;
 import gift.web.dto.MemberDetails;
 import gift.web.dto.form.CreateProductForm;
@@ -19,8 +20,11 @@ public class ProductViewController {
 
     private final ProductService productService;
 
-    public ProductViewController(ProductService productService) {
+    private final KakaoProperties kakaoProperties;
+
+    public ProductViewController(ProductService productService, KakaoProperties kakaoProperties) {
         this.productService = productService;
+        this.kakaoProperties = kakaoProperties;
     }
 
     @GetMapping("/products")
@@ -45,7 +49,9 @@ public class ProductViewController {
     }
 
     @GetMapping("/login")
-    public String loginForm() {
+    public String loginForm(Model model) {
+        model.addAttribute("clientId", kakaoProperties.getClientId());
+        model.addAttribute("redirectUri", kakaoProperties.getRedirectUri());
         return "form/login-form";
     }
 

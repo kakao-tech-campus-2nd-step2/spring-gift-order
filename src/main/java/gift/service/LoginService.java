@@ -9,9 +9,6 @@ import gift.web.client.KakaoClient;
 import gift.web.client.dto.KakaoAccount;
 import gift.web.client.dto.KakaoInfo;
 import gift.web.dto.response.LoginResponse;
-import gift.web.validation.exception.client.InvalidCredentialsException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,30 +44,22 @@ public class LoginService {
         return new LoginResponse(accessToken.getValue());
     }
 
-    private KakaoToken getToken(String authorizationCode) {
-        try {
-            return kakaoClient.getToken(
-                new URI(kakaoProperties.getTokenUrl()),
-                authorizationCode,
-                kakaoProperties.getClientId(),
-                kakaoProperties.getRedirectUri(),
-                kakaoProperties.getGrantType());
-        } catch (URISyntaxException e) {
-            throw new InvalidCredentialsException(e);
-        }
+    private KakaoToken getToken(final String authorizationCode) {
+        return kakaoClient.getToken(
+            kakaoProperties.getTokenUrlAsUri(),
+            authorizationCode,
+            kakaoProperties.getClientId(),
+            kakaoProperties.getRedirectUri(),
+            kakaoProperties.getGrantType());
     }
 
-    private KakaoInfo getInfo(KakaoToken kakaoToken) {
-        try {
-            return kakaoClient.getKakaoInfo(
-                new URI(kakaoProperties.getUserInfoUrl()),
-                getBearerToken(kakaoToken));
-        } catch (URISyntaxException e) {
-            throw new InvalidCredentialsException(e);
-        }
+    private KakaoInfo getInfo(final KakaoToken kakaoToken) {
+        return kakaoClient.getKakaoInfo(
+            kakaoProperties.getUserInfoUrlAsUri(),
+            getBearerToken(kakaoToken));
     }
 
-    private String getBearerToken(KakaoToken kakaoToken) {
+    private String getBearerToken(final KakaoToken kakaoToken) {
         return kakaoToken.getTokenType() + " " + kakaoToken.getAccessToken();
     }
 }
