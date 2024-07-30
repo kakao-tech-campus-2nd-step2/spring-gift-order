@@ -72,8 +72,6 @@ public class OrderService {
 
         Order saved = orderRepository.save(order);
 
-        System.out.println(user.getAccessToken());
-
         kakaoApiClient.sendMessage(user.getAccessToken(), kakaoMessageRequest);
 
         return OrderResponse.from(saved);
