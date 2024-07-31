@@ -20,23 +20,22 @@ public class WishList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long wishListId;
 
-    private long userId;
+    private String userId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-//    @Column(name = "")
     private Product product;
 
     protected WishList() {
     }
 
-    public WishList(Long wishListId, long userId, Product product) {
+    public WishList(Long wishListId, String userId, Product product) {
         this.wishListId = wishListId;
         this.userId = userId;
         this.product = product;
     }
 
-    public WishList(long userId, Product product) {
+    public WishList(String userId, Product product) {
         this(null, userId, product);
     }
 
@@ -44,7 +43,7 @@ public class WishList {
         return wishListId;
     }
 
-    public long getUserId() {
+    public String getUserId() {
         return userId;
     }
 

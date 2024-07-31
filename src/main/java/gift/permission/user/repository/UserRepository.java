@@ -1,15 +1,10 @@
-package gift.permission.server.repository;
+package gift.permission.user.repository;
 
-import gift.permission.server.entity.User;
+import gift.permission.user.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PermissionRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
 
-    // JPA가 메서드 이름으로 쿼리를 유추
-    Optional<User> findByEmail(String email);
-
-    boolean existsByEmail(String email);
-
-    boolean existsByPassword(String password);
+    Optional<User> findByRefreshToken(String refreshToken);
 }
