@@ -75,13 +75,13 @@
                 url: `/view/products/data?page=${page - 1}&size=${size}`, // Spring Data JPA는 페이지 번호가 0부터 시작
                 method: 'GET',
                 success: function(response) {
-                    const products = response.content || response; // response.content가 있는 경우 처리
+                    const products = response.content;
                     const productList = $('#product-list');
                     productList.empty(); // 기존 제품 목록을 지웁니다.
 
                     if (products.length === 0 && page > 1) {
                         currentPage--;
-                        updatePagination(currentPage, response.totalPages);
+                        updatePagination(currentPage, response.pagination.totalPages);
                         return;
                     }
 
@@ -183,7 +183,7 @@
                     });
 
                     // Pagination 상태 업데이트
-                    updatePagination(page, response.totalPages);
+                    updatePagination(page, response.pagination.totalPages);
                 },
                 error: function() {
                     alert('Failed to fetch products.');
@@ -213,6 +213,7 @@
             fetchProducts(currentPage, pageSize);
         });
     });
+
 </script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
