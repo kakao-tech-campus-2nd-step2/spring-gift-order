@@ -2,7 +2,6 @@ package gift.service.order;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.domain.oAuthToken.OAuthToken;
 import gift.domain.oAuthToken.OAuthTokenRepository;
 import gift.domain.order.Order;
 import gift.domain.order.OrderRepository;
