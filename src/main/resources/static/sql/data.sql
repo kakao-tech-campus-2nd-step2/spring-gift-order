@@ -21,8 +21,3 @@ insert into products (product_id, name, price, image_url, category_id)
 values (default, 'dummy2', 20000, 'dummy2.png', 2);
 insert into products (product_id, name, price, image_url, category_id)
 values (default, 'dummy3', 30000, 'dummy3.png', 1);
-
-insert into users (user_id, email, password, is_admin)
-values (default, 'luckyrkd@naver.com', 'aaaaa11111', true);
-insert into users (user_id, email, password, is_admin)
-values (default, 'kangji0615@gmail.com', 'aaaaa11111', false);
