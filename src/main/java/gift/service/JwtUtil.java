@@ -15,20 +15,20 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    private final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+    protected final String secretKey = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
     private final Key key = new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName());
 
-    // userId와 email을 주체로 하는 토큰 생성
-    public String generateToken(String email, Long userId) {
+    // userId와 email, access_Token을 주체로 하는 토큰 생성
+    public String generateToken(String email, Long userId, String kakaoToken) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", email);
         claims.put("userId", userId);
-
+        claims.put("kakaoToken", kakaoToken);
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(email)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
+            .setExpiration(new Date(System.currentTimeMillis() + 18000)) // 1 day
             .signWith(key)
             .compact();
     }
@@ -63,6 +63,21 @@ public class JwtUtil {
         }
     }
 
+    // 액세스 토큰 추출
+    public String extractKakaoToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+            return claims.get("kakaoToken", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            return null; // 카카오 토큰 추출 실패
+        }
+    }
+
     public boolean validateToken(String token, String email) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
@@ -80,7 +95,7 @@ public class JwtUtil {
     }
 
     // 토큰 만료 여부 확인
-    private boolean isTokenExpired(Date expiration) {
+    boolean isTokenExpired(Date expiration) {
         return expiration.before(new Date());
     }
 }

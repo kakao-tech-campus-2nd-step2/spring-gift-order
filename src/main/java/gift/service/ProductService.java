@@ -70,7 +70,8 @@ public class ProductService {
             productDTO.getName(),
             productDTO.getPrice(),
             productDTO.getImageUrl(),
-            categoryEntity
+            categoryEntity,
+            existingProductEntity.getOptions() // 기존 옵션 유지
         );
         productRepository.save(updatedProductEntity);
     }

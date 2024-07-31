@@ -3,6 +3,7 @@ package gift.service;
 import gift.entity.MemberEntity;
 import gift.dto.MemberDTO;
 import gift.repository.MemberRepository;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,10 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private KakaoUserService kakaoUserService;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, KakaoUserService kakaoUserService) {
         this.memberRepository = memberRepository;
+        this.kakaoUserService = kakaoUserService;
     }
 
     public MemberEntity authenticateToken(MemberDTO memberDTO) {
@@ -25,6 +28,28 @@ public class MemberService {
         }
 
         return foundMember;
+    }
+
+    @Transactional
+    public MemberEntity registerOrLoginKakaoUser(String accessToken) {
+        Map<String, Object> userInfo = kakaoUserService.getKakaoUserInfo(accessToken);
+
+        Long kakaoId = ((Number) userInfo.get("id")).longValue();
+
+        Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
+        String email = (String) kakaoAccount.get("email");
+
+        if (email == null) {
+            email = kakaoId + "@kakao.com";
+        }
+
+        String password = "randomPassword";
+
+        if (!existsByEmail(email)) {
+            save(new MemberDTO(email, password));
+        }
+
+        return memberRepository.findByEmail(email);
     }
 
     @Transactional

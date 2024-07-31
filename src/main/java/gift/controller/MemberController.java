@@ -1,5 +1,6 @@
 package gift.controller;
 
+import gift.dto.KakaoDTO;
 import gift.entity.MemberEntity;
 import gift.dto.MemberDTO;
 import gift.service.JwtUtil;
@@ -34,7 +35,15 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody MemberDTO memberDTO) {
         MemberEntity authenticatedMember = memberService.authenticateToken(memberDTO);
-        String token = jwtUtil.generateToken(authenticatedMember.getEmail(), authenticatedMember.getId());
+        String token = jwtUtil.generateToken(authenticatedMember.getEmail(), authenticatedMember.getId(),"");
+        Map<String, String> response = Collections.singletonMap("token", token);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/login/kakao")
+    public ResponseEntity<?> loginKakaoUser(@RequestBody KakaoDTO kakaoDTO) {
+        MemberEntity authenticatedMember = memberService.registerOrLoginKakaoUser(kakaoDTO.getAccess_token());
+        String token = jwtUtil.generateToken(authenticatedMember.getEmail(), authenticatedMember.getId(), kakaoDTO.getAccess_token());
         Map<String, String> response = Collections.singletonMap("token", token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
