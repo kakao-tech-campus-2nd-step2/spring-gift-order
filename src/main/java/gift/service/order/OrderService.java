@@ -70,11 +70,11 @@ public class OrderService {
 
         Order order = orderRepository.save(orderMapper.toEntity(orderDto, optionService.getOptionEntityByOptionId(orderDto.optionId())));
 
-        OAuthToken oAuthToken = oAuthTokenRepository.findByMemberEmail(memberDto.email());
 
-        String token = oAuthToken.getToken();
-
-        sendOrderKakaoMessage(productDto, categoryDto, order, token);
+        oAuthTokenRepository.findByMemberEmail(memberDto.email())
+            .ifPresent(token -> {
+                sendOrderKakaoMessage(productDto, categoryDto, order, token.getToken());
+            });
 
         return orderMapper.toDto(order);
     }
