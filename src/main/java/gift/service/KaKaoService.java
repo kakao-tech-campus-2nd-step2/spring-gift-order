@@ -139,4 +139,12 @@ public class KaKaoService {
         this.sendMessageUrl = sendMessageUrl;
     }
 
+    public void setGetTokenUrl(String getTokenUrl) {
+        this.getTokenUrl = getTokenUrl;
+    }
+
+    public void setGetUserInfoUrl(String getUserInfoUrl) {
+        this.getUserInfoUrl = getUserInfoUrl;
+    }
+
 }
