@@ -28,14 +28,17 @@ public class OrderService {
     private final OptionRepository optionRepository;
     private final WishRepository wishRepository;
     private final MemberRepository memberRepository;
+    private final RestClient restClient;
     private final Logger log = LoggerFactory.getLogger(getClass());
+
 
     private final static String ORDER_URI = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
 
-    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, MemberRepository memberRepository) {
+    public OrderService(OptionRepository optionRepository, WishRepository wishRepository, MemberRepository memberRepository, RestClient.Builder builder) {
         this.optionRepository = optionRepository;
         this.wishRepository = wishRepository;
         this.memberRepository = memberRepository;
+        this.restClient = builder.build();
     }
 
     @Transactional
@@ -60,7 +63,6 @@ public class OrderService {
         TemplateObject templateObject = new TemplateObject("text", "상품 주문",
                 new TemplateObject.Link("https://gift.kakao.com/home", "https://gift.kakao.com/home"));
         String templateObjectJson = JsonUtil.toJson(templateObject);
-        RestClient restClient = RestClient.builder().build();
         var body = new LinkedMultiValueMap<String, String>();
         body.add("template_object", templateObjectJson);
         var response = restClient.post()

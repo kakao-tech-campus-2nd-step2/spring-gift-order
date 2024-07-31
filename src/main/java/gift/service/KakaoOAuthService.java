@@ -28,23 +28,23 @@ public class KakaoOAuthService {
     private final MemberRepository memberRepository;
     private final KakaoProperties kakaoProperties;
     private final JwtUtil jwtUtil;
+    private final RestClient restClient;
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public KakaoOAuthService(MemberRepository memberRepository, KakaoProperties kakaoProperties, JwtUtil jwtUtil) {
+    public KakaoOAuthService(MemberRepository memberRepository, KakaoProperties kakaoProperties, JwtUtil jwtUtil, RestClient.Builder builder) {
         this.memberRepository = memberRepository;
         this.kakaoProperties = kakaoProperties;
         this.jwtUtil = jwtUtil;
+        this.restClient = builder.build();
     }
 
     public KakaoToken getKakaoToken(String code) {
-        RestClient client = RestClient.builder().build();
         var body = new LinkedMultiValueMap<String, String>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoProperties.clientId());
         body.add("redirect_uri", kakaoProperties.redirectURL());
         body.add("code", code);
-
-        var response = client.post()
+        var response = restClient.post()
                 .uri(URI.create(KAKAO_TOKEN_URI))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(body)
@@ -59,8 +59,7 @@ public class KakaoOAuthService {
     }
 
     public TokenResponseDto kakaoMemberRegister(KakaoToken token) {
-        RestClient client = RestClient.builder().build();
-        var response = client.post()
+        var response = restClient.post()
                 .uri(URI.create(KAKAO_USER_INFO))
                 .header("Authorization", "Bearer " + token.accessToken())
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -92,8 +91,7 @@ public class KakaoOAuthService {
 
     public void unlink(String token) {
         String logoutUri = "https://kapi.kakao.com/v1/user/unlink";
-        RestClient client = RestClient.builder().build();
-        var response = client.post()
+        var response = restClient.post()
                 .uri(URI.create(logoutUri))
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
