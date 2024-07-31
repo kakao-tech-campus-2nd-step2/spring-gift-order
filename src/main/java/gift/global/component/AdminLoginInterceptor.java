@@ -1,6 +1,6 @@
 package gift.global.component;
 
-import gift.token.component.TokenComponent;
+import gift.token.component.TokenInfoComponent;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +13,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AdminLoginInterceptor implements HandlerInterceptor {
 
-    private final TokenComponent tokenComponent;
+    private final TokenInfoComponent tokenInfoComponent;
 
     @Autowired
-    private AdminLoginInterceptor(TokenComponent tokenComponent) {
-        this.tokenComponent = tokenComponent;
+    private AdminLoginInterceptor(TokenInfoComponent tokenInfoComponent) {
+        this.tokenInfoComponent = tokenInfoComponent;
     }
 
     // 토큰 검증을 마치고 왔으므로 admin인지만 검증
@@ -25,7 +25,7 @@ public class AdminLoginInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
         Object handler) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!tokenComponent.getIsAdmin(token)) {
+        if (!tokenInfoComponent.getIsAdmin(token)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "어드민 권한이 없습니다.");
         }
 

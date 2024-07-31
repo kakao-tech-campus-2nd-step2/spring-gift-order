@@ -48,7 +48,8 @@ public class ProductApiController {
 
     // 페이지 내의 제품을 조회하는 핸들러.
     @GetMapping("/users/products")
-    public ApiResponseDto<List<ProductResponseDto>> readUserProducts(@ModelAttribute PageInfoDto pageInfoDto) {
+    public ApiResponseDto<List<ProductResponseDto>> readUserProducts(
+        @ModelAttribute PageInfoDto pageInfoDto) {
         return SUCCESS(productService.selectProducts(pageInfoDto));
     }
 

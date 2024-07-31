@@ -1,8 +1,5 @@
 package gift.token.model;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
 import org.springframework.http.HttpStatus;
@@ -25,22 +22,6 @@ public class TokenManager {
     // 기본 생성자를 통해 미리 특정 알고리즘으로 인코딩한 키를 생성
     public TokenManager() {
         secretKey = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
-    }
-
-    // token으로부터 isAdmin 추출.
-    public boolean getIsAdmin(String token) {
-        String onlyToken = getOnlyToken(token);
-
-        try {
-            Jws<Claims> claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(onlyToken);
-
-            return claims.getBody().get("isAdmin", Boolean.class);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
-        }
     }
 
     // 인증 방식 + 토큰의 문자열에서 토큰만 추출하는 메서드
