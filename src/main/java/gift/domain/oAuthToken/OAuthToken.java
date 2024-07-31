@@ -1,7 +1,6 @@
 package gift.domain.oAuthToken;
 
 import gift.domain.member.Member;
-import gift.web.dto.MemberDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,4 +31,9 @@ public class OAuthToken {
         this.member = member;
         this.token = token;
     }
+
+    public String getToken() {
+        return token;
+    }
+
 }
