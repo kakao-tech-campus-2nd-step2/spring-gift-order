@@ -24,7 +24,6 @@ public class Orders {
   @JoinColumn(name = "orders_id")
   private Option option;
   private int quantity;
-
   private String orderDateTime;
   private String message;
 
