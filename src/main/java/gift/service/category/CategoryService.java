@@ -26,6 +26,10 @@ public class CategoryService {
             .toList();
     }
 
+    public CategoryDto getCategory(Long id) {
+        return categoryMapper.toDto(categoryRepository.getOne(id));
+    }
+
     @Transactional
     public CategoryDto createCategory(CategoryDto categoryDto) {
         Category category = categoryRepository.save(categoryMapper.toEntity(categoryDto));
