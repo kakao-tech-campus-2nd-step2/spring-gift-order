@@ -18,3 +18,12 @@ spring:
     show-sql: true
     ddl-auto: create
     defer-datasource-initialization: true
+
+auth:
+  kakao:
+    client-id: ${CLIENT_ID}
+    redirect-uri: ${REDIRECT_URL}
+    response-type: "code"
+    grant-type: "authorization_code"
+  admin:
+    kakao-admin-id: ${ADMIN_ID}

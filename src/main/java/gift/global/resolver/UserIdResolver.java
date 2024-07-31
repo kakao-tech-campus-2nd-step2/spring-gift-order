@@ -41,19 +41,5 @@ public class UserIdResolver extends TokenManager implements HandlerMethodArgumen
         return getUserId(token);
     }
 
-    // token으로부터 id를 다시 추출
-    private long getUserId(String token) {
-        String onlyToken = getOnlyToken(token);
 
-        try {
-            Jws<Claims> claims = Jwts.parser()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(onlyToken);
-
-            return Long.parseLong(claims.getBody().getSubject());
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
-        }
-    }
 }
