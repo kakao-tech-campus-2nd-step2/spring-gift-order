@@ -32,6 +32,11 @@ public class MemberService {
             .toList();
     }
 
+    public Member getMemberEntityByEmail(String email) {
+        return memberRepository.findByEmail(email)
+            .orElseThrow(() -> new MemberNotFoundException("멤버가 엄슴다"));
+    }
+
     public MemberDto getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
             .map(memberMapper::toDto)
