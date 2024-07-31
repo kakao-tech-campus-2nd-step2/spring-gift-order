@@ -1,12 +1,15 @@
 package gift.service.kakaoAuth;
 
+import gift.domain.member.Member;
+import gift.domain.member.MemberRepository;
+import gift.domain.oAuthToken.OAuthToken;
+import gift.domain.oAuthToken.OAuthTokenRepository;
+import gift.mapper.MemberMapper;
 import gift.service.member.MemberService;
 import gift.web.dto.MemberDto;
 import gift.web.dto.Token;
-import gift.web.exception.MemberNotFoundException;
 import java.net.URI;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +19,29 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoAuthService {
 
+    private final OAuthTokenRepository oAuthTokenRepository;
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
     private final MemberService memberService;
+    private final MemberMapper memberMapper;
+    private final MemberRepository memberRepository;
 
     public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties,
-        MemberService memberService) {
+        MemberService memberService, OAuthTokenRepository oAuthTokenRepository,
+        MemberMapper memberMapper, MemberRepository memberRepository) {
         this.restClient = restClient;
         this.kakaoProperties = kakaoProperties;
         this.memberService = memberService;
+        this.oAuthTokenRepository = oAuthTokenRepository;
+        this.memberMapper = memberMapper;
+        this.memberRepository = memberRepository;
+    }
+
+    public void createMemberAndToken(MemberDto memberDto, String token) {
+        Member member = memberMapper.toEntity(memberDto);
+        memberRepository.save(member);
+
+        oAuthTokenRepository.save(new OAuthToken(member, token));
     }
 
     public boolean isSignedUp(KakaoInfo kakaoInfo) {
