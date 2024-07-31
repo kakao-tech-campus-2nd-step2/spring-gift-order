@@ -27,14 +27,11 @@ public class OrderService {
 
   @Transactional
   public OrderResponse placeOrder(OrderRequest orderRequest, String accessToken) {
-    // Reduce the quantity of the ordered item
     Order order = new Order(orderRequest.getOptionId(), orderRequest.getQuantity(), orderRequest.getMessage());
     orderRepository.save(order);
 
-    // Remove from wishlist if exists
     wishlistRepository.deleteByOptionId(orderRequest.getOptionId());
 
-    // Send KakaoTalk message
     try {
       kakaoService.sendMessage(orderRequest.getMessage(), accessToken);
     } catch (ResponseStatusException e) {

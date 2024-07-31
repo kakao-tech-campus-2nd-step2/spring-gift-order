@@ -15,7 +15,6 @@ public class Order {
   private Integer quantity;
   private LocalDateTime orderDateTime;
 
-  // 생성자
   public Order(Long optionId, Integer quantity, String message) {
     this.optionId = optionId;
     this.quantity = quantity;
@@ -23,7 +22,10 @@ public class Order {
     this.orderDateTime = LocalDateTime.now();
   }
 
-  // Getter 메서드
+  public Order() {
+
+  }
+
   public Long getId() {
     return id;
   }
@@ -44,7 +46,6 @@ public class Order {
     return orderDateTime;
   }
 
-  // 필요한 경우 필드 값을 변경할 수 있는 메서드 추가
   public void updateMessage(String message) {
     this.message = message;
   }
