@@ -98,7 +98,7 @@ public class KaKaoService {
     }
 
 
-    public void sendMessage(String message, String accessToken) {
+    public ResponseEntity<String> sendMessage(String message, String accessToken) {
         LinkedMultiValueMap<String, String> body = createSendMsgBody(message);
 
         ResponseEntity<String> response = clientWithAuthHeader(accessToken)
@@ -111,6 +111,8 @@ public class KaKaoService {
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new CustomException(SEND_MSG_FAILED_ERROR);
         }
+
+        return response;
     }
 
     private LinkedMultiValueMap<String, String> createSendMsgBody(String message) {
@@ -131,6 +133,10 @@ public class KaKaoService {
 
     private RestClient clientWithAuthHeader(String accessToken) {
         return RestClient.builder().defaultHeader("Authorization", "Bearer " + accessToken).build();
+    }
+
+    public void setSendMessageUrl(String sendMessageUrl) {
+        this.sendMessageUrl = sendMessageUrl;
     }
 
 }
