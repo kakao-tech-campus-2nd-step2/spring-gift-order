@@ -31,6 +31,7 @@ class KaKaoServiceTest {
 
         kaKaoService.setSendMessageUrl(mockWebServer.url("/").toString());
         kaKaoService.setGetTokenUrl(mockWebServer.url("/").toString());
+        kaKaoService.setGetUserInfoUrl(mockWebServer.url("/").toString());
     }
 
     @AfterEach
@@ -82,6 +83,20 @@ class KaKaoServiceTest {
 
     @Test
     void getKakaoAccountEmailTest() {
+        // given
+        String accessToken = "test_accessToken";
+        String getKakaoAccountEmailResponse = "{\"id\":3636172101,\"connected_at\":\"2024-07-24T14:39:41Z\",\"kakao_account\":{\"has_email\":true,\"email_needs_agreement\":false,\"is_email_valid\":true,\"is_email_verified\":true,\"email\":\"trichat26@naver.com\"}}";
+
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
+                .setHeader("Content-Type", "application/json;charset=UTF-8")
+                .setBody(getKakaoAccountEmailResponse));
+
+        // when
+        String actualEmail = kaKaoService.getKakaoAccountEmail(accessToken);
+
+        // then
+        Assertions.assertThat("trichat26@naver.com").isEqualTo(actualEmail);
     }
 
 }
