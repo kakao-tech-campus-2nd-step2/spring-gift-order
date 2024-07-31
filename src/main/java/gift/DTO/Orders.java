@@ -20,17 +20,17 @@ public class Orders {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToMany
-  @JoinTable(name = "option_orders")
-  private List<Option> options;
+  @ManyToOne
+  @JoinColumn(name = "orders_id")
+  private Option option;
   private int quantity;
 
   private String orderDateTime;
   private String message;
 
-  public Orders(Long id, List<Option> options, int quantity, String orderDateTime, String message) {
+  public Orders(Long id, Option option, int quantity, String orderDateTime, String message) {
     this.id = id;
-    this.options = options;
+    this.option = option;
     this.quantity = quantity;
     this.orderDateTime = orderDateTime;
     this.message = message;
@@ -43,8 +43,8 @@ public class Orders {
     return id;
   }
 
-  public List<Option> getOptions() {
-    return options;
+  public Option getOption() {
+    return option;
   }
 
   public int getQuantity() {

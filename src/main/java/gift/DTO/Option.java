@@ -37,7 +37,7 @@ public class Option {
   @JoinColumn(name = "product_id", nullable = false)
   private Product product;
 
-  @ManyToMany(mappedBy = "option")
+  @OneToMany(mappedBy = "option")
   private List<Orders> orders;
 
   protected Option() {
