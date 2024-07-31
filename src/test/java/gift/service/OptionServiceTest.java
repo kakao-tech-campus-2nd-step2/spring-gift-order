@@ -35,9 +35,9 @@ public class OptionServiceTest {
         Category category = categoryService.save(
             new CategoryRequest("카테고리 1", "#123456", "ImageUrl", "description"));
         productId1 = productService.save(
-            new ProductRequest("상품 1", 10000L, "imageUrl", category.getId())).getId();
+            new ProductRequest("상품 1", 10000L, "imageUrl", category.getId(), null)).getId();
         productId2 = productService.save(
-            new ProductRequest("상품 1", 10000L, "imageUrl", category.getId())).getId();
+            new ProductRequest("상품 1", 10000L, "imageUrl", category.getId(), null)).getId();
     }
 
     @Test
