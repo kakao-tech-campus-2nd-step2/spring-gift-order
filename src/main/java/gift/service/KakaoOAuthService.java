@@ -54,7 +54,7 @@ public class KakaoOAuthService {
                     throw new CustomException(ErrorCode.UNAUTHORIZED_KAKAO);
                 })
                 .toEntity(KakaoToken.class);
-        log.info(response.getBody().accessToken());
+        log.info(response.toString());
         return new KakaoToken(response.getBody().accessToken(), response.getBody().refreshToken());
     }
 
@@ -69,7 +69,7 @@ public class KakaoOAuthService {
                     throw new IllegalArgumentException("사용자 정보 조회 오류");
                 })
                 .toEntity(KakaoUser.class);
-        System.out.println(response.getBody());
+        log.info(response.toString());
         Member member = registerMember(response.getBody(), token);
         String jwtToken = jwtUtil.generateToken(member.getId(), member.getEmail());
         return new TokenResponseDto(jwtToken);
@@ -78,7 +78,6 @@ public class KakaoOAuthService {
     private Member registerMember(KakaoUser memberInfo, KakaoToken token) {
         String email = memberInfo.kakaoAccount().email();
         String name = memberInfo.kakaoAccount().profile().nickName();
-        log.info(email + name);
         Optional<Member> member = memberRepository.findByEmail(email);
         if (member.isEmpty()) {
             Member signupMember = new Member(email, name, UUID.randomUUID().toString(),
