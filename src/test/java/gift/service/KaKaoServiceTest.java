@@ -1,11 +1,6 @@
 package gift.service;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import gift.dto.TemplateObject;
+import gift.dto.KakaoTokenInfo;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.assertj.core.api.Assertions;
@@ -14,41 +9,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.web.client.MockServerRestClientCustomizer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @RestClientTest(KaKaoService.class)
 class KaKaoServiceTest {
 
     @Autowired
-    private KaKaoService client;
+    private KaKaoService kaKaoService;
     private MockWebServer mockWebServer;
 
     @BeforeEach
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        client.setSendMessageUrl(mockWebServer.url("/").toString());  // MockWebServer URL 설정
+
+        kaKaoService.setSendMessageUrl(mockWebServer.url("/").toString());
+        kaKaoService.setGetTokenUrl(mockWebServer.url("/").toString());
     }
 
     @AfterEach
@@ -57,34 +39,49 @@ class KaKaoServiceTest {
     }
 
     @Test
-    void sendMessageTest(){
+    void sendMessageTest() {
         // given
         String message = "test_message";
         String token = "test_token";
         String sendMessageResponse = "{\"result_code\": 0}";
 
         mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
                 .setBody(sendMessageResponse)
-                .addHeader("Content-Type", "application/json"));
-
+                .setHeader("Content-Type", "application/json;charset=UTF-8"));
 
         // when
-        ResponseEntity<String> response = client.sendMessage(message, token);
+        ResponseEntity<String> response = kaKaoService.sendMessage(message, token);
 
         // then
         System.out.println(response.getBody());
         Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    }
-
-
-    @Test
-    void getKakaoAccountEmailTest() {
     }
 
     @Test
     void getKakaoTokenInfoTest() {
+        // given
+        String code = "test_code";
+        String getKakaoTokenInfoResponse = "{\"token_type\":\"bearer\",\"access_token\":\"test_access_token\",\"expires_in\":43199,\"refresh_token\":\"test_refresh_token\",\"refresh_token_expires_in\":5184000}";
 
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.OK.value())
+                .setHeader("Content-Type", "application/json;charset=UTF-8")
+                .setBody(getKakaoTokenInfoResponse));
+
+        // when
+        KakaoTokenInfo kakaoTokenInfo = kaKaoService.getKakaoTokenInfo(code);
+
+        // then
+        Assertions.assertThat(kakaoTokenInfo.token_type()).isEqualTo("bearer");
+        Assertions.assertThat(kakaoTokenInfo.access_token()).isEqualTo("test_access_token");
+        Assertions.assertThat(kakaoTokenInfo.expires_in()).isEqualTo(43199);
+        Assertions.assertThat(kakaoTokenInfo.refresh_token()).isEqualTo("test_refresh_token");
+        Assertions.assertThat(kakaoTokenInfo.refresh_token_expires_in()).isEqualTo(5184000);
+    }
+
+    @Test
+    void getKakaoAccountEmailTest() {
     }
 
 }
