@@ -1,11 +1,13 @@
 package gift.domain.product;
 
 import gift.domain.category.Category;
+import gift.domain.option.OptionRequest;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 
 public record ProductRequest(
     @NotBlank(message = "상품명이 입력되지 않았습니다")
@@ -15,14 +17,17 @@ public record ProductRequest(
     String name,
 
     @Min(value = 0, message = "상품 가격은 0 보다 작을 수 없습니다")
-    long price,
+    Long price,
 
     @NotBlank(message = "상품 이미지가 입력되지 않았습니다")
     String imageUrl,
 
     @NotNull
     @Min(value = 0, message = "카테고리 번호가 올바르지 않습니다")
-    long categoryId
+    Long categoryId,
+
+    @NotNull
+    List<OptionRequest> options
 ) {
 
     public Product toProduct() {

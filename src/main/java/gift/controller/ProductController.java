@@ -1,8 +1,10 @@
 package gift.controller;
 
+import gift.domain.option.OptionRequest;
 import gift.domain.product.Product;
 import gift.domain.product.ProductRequest;
 import gift.domain.product.ProductResponse;
+import gift.service.OptionService;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -23,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
 
     private final ProductService productService;
+    private final OptionService optionService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, OptionService optionService) {
         this.productService = productService;
+        this.optionService = optionService;
     }
 
     @GetMapping
@@ -44,6 +48,8 @@ public class ProductController {
     public ResponseEntity<ProductResponse> createProduct(
         @Valid @RequestBody ProductRequest productRequest) {
         ProductResponse productResponse = new ProductResponse(productService.save(productRequest));
+        List<OptionRequest> options = productRequest.options();
+        options.forEach(optionRequest -> optionService.save(productResponse.id(), optionRequest));
         return ResponseEntity.created(URI.create("/api/products/" + productResponse.id()))
             .body(productResponse);
     }
