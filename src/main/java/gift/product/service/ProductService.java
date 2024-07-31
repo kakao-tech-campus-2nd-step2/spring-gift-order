@@ -59,9 +59,9 @@ public class ProductService {
         Product saved = productRepository.save(product);
 
         for (NewOption option : request.options()) {
-            CreateOptionRequest optionRequest = new CreateOptionRequest(saved.getId(),
-                option.name(), option.quantity());
-            optionService.createOption(optionRequest);
+            CreateOptionRequest optionRequest = new CreateOptionRequest(option.name(),
+                option.quantity());
+            optionService.createOption(saved.getId(), optionRequest);
         }
 
         return ProductResponse.from(saved);

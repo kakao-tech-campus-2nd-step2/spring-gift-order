@@ -14,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
@@ -51,7 +53,8 @@ class WishRepositoryTest {
         );
 
         // when
-        final List<Wish> actual = wishRepository.findByUserId(1L);
+        final Page<Wish> response = wishRepository.findByUserId(1L, Pageable.unpaged());
+        List<Wish> actual = response.getContent();
 
         // then
         assertThat(actual).isNotEmpty();
@@ -112,7 +115,7 @@ class WishRepositoryTest {
     @DisplayName("삭제 테스트")
     void deleteTest() {
         // given
-        final Wish actual = wishRepository.findByUserId(1L).getFirst();
+        final Wish actual = wishRepository.findByUserId(1L, Pageable.unpaged()).getContent().getFirst();
         Long actualId = actual.getId();
 
         // when

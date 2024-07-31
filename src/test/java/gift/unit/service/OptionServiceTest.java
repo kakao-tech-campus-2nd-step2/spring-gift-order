@@ -16,6 +16,7 @@ import gift.product.option.entity.Option;
 import gift.product.option.repository.OptionJpaRepository;
 import gift.product.option.service.OptionService;
 import gift.product.repository.ProductJpaRepository;
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
@@ -42,11 +43,11 @@ public class OptionServiceTest {
     void createNameLengthOver50() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a".repeat(51), 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a".repeat(51), 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -55,11 +56,11 @@ public class OptionServiceTest {
     void createOptionQuantityUnder1() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 0);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 0);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -68,11 +69,11 @@ public class OptionServiceTest {
     void createOptionQuantityOver1Million() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 100_000_000);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 100_000_000);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -82,11 +83,11 @@ public class OptionServiceTest {
         // given
         Option option = new Option("a", 2, null);
         Product product = createProductWithOptions(option);
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
     }
 
@@ -95,11 +96,11 @@ public class OptionServiceTest {
     void createOptionSpecialCharacterExceptionTest() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "!@#$", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("!@#$", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
 
         // when & then
-        assertThatThrownBy(() -> optionService.createOption(newOption)).isInstanceOf(
+        assertThatThrownBy(() -> optionService.createOption(1L, newOption)).isInstanceOf(
             CustomException.class);
         then(productRepository).should().findById(any());
     }
@@ -109,12 +110,12 @@ public class OptionServiceTest {
     void createOptionTest() {
         // given
         Product product = createProduct();
-        CreateOptionRequest newOption = new CreateOptionRequest(1L, "a", 1);
+        CreateOptionRequest newOption = new CreateOptionRequest("a", 1);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
         given(optionRepository.save(any())).willReturn(new Option("a", 1, product));
 
         // when
-        optionService.createOption(newOption);
+        optionService.createOption(1L, newOption);
 
         // then
         then(productRepository).should().findById(any());
@@ -142,16 +143,16 @@ public class OptionServiceTest {
     void updateOptionQuantityUnder1() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("a", 0);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
-        then(optionRepository).should().findById(any());
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -159,16 +160,17 @@ public class OptionServiceTest {
     void updateOptionQuantityOver1Million() {
         // given
         Option option = new Option("a", 1000, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
+        setIdUsingReflection(product, 1L);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("a", 100_000_000);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
-        then(optionRepository).should().findById(any());
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -176,10 +178,12 @@ public class OptionServiceTest {
     void updateOptionIfNameDuplicate() {
         // given
         Option option1 = new Option("a", 100, null);
+        setIdUsingReflection(option1, 1L);
         Option option2 = new Option("b", 100, null);
+        setIdUsingReflection(option2, 2L);
         Product product = createProductWithOptions(option1, option2);
+        setIdUsingReflection(product, 1L);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option1));
 
         UpdateOptionRequest newOption = new UpdateOptionRequest("b", 1000);
 
@@ -187,6 +191,7 @@ public class OptionServiceTest {
         assertThatThrownBy(
             () -> optionService.updateOption(1L, 1L, newOption))
             .isInstanceOf(CustomException.class);
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -194,15 +199,16 @@ public class OptionServiceTest {
     void updateOptionSpecialCharacterException() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("!@#$", 100);
 
         // when & then
         assertThatThrownBy(() -> optionService.updateOption(1L, 1L, request))
             .isInstanceOf(CustomException.class);
+        then(productRepository).should().findById(any());
     }
 
     @Test
@@ -210,9 +216,9 @@ public class OptionServiceTest {
     void updateOptionTest() {
         // given
         Option option = new Option("a", 100, null);
+        setIdUsingReflection(option, 1L);
         Product product = createProductWithOptions(option);
         given(productRepository.findById(any())).willReturn(Optional.of(product));
-        given(optionRepository.findById(any())).willReturn(Optional.of(option));
 
         UpdateOptionRequest request = new UpdateOptionRequest("updated", 1000);
 
@@ -220,6 +226,7 @@ public class OptionServiceTest {
         optionService.updateOption(1L, 1L, request);
 
         // then
+        then(productRepository).should().findById(any());
         assertThat(option.getName()).isEqualTo("updated");
         assertThat(option.getQuantity()).isEqualTo(1000);
     }
@@ -321,6 +328,16 @@ public class OptionServiceTest {
             new Category("category"),
             Set.of(option)
         );
+    }
+
+    private void setIdUsingReflection(Object entity, Long id) {
+        try {
+            Field idField = entity.getClass().getDeclaredField("id");
+            idField.setAccessible(true);
+            idField.set(entity, id);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 }

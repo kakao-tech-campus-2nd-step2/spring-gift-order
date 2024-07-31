@@ -133,7 +133,7 @@ class ProductServiceTest {
             "http://example.com/images/product_a.jpg", category);
         given(productRepository.save(any(Product.class))).willReturn(savedProduct);
         given(categoryRepository.findById(any(Long.class))).willReturn(Optional.of(category));
-        given(optionService.createOption(any())).willReturn(
+        given(optionService.createOption(any(), any())).willReturn(
             new OptionResponse(1L, "option 1", 100));
 
         // when

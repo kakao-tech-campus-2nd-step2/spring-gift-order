@@ -3,6 +3,7 @@ package gift.wish.entity;
 import gift.exception.CustomException;
 import gift.exception.ErrorCode;
 import gift.product.entity.Product;
+import gift.product.option.entity.Option;
 import gift.user.entity.User;
 import gift.wish.dto.request.UpdateWishRequest;
 import jakarta.persistence.Column;
@@ -64,6 +65,10 @@ public class Wish {
 
     public Product getProduct() {
         return product;
+    }
+
+    public boolean existsProduct(Option option) {
+        return this.product.equals(option.getProduct());
     }
 
     public void changeQuantity(UpdateWishRequest request) {

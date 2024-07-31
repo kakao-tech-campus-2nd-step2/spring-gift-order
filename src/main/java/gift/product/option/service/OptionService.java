@@ -38,8 +38,8 @@ public class OptionService {
     }
 
     @Transactional
-    public OptionResponse createOption(CreateOptionRequest request) {
-        Product product = productRepository.findById(request.productId())
+    public OptionResponse createOption(Long productId, CreateOptionRequest request) {
+        Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
         Option option = new Option(request.name(), request.quantity(), product);
 
@@ -69,10 +69,11 @@ public class OptionService {
     }
 
     @Transactional
-    public void subtractOptionQuantity(Long id, Integer subtractionQuantity) {
+    public Option subtractOptionQuantity(Long id, Integer subtractionQuantity) {
         Option option = optionRepository.findByIdWithPessimisticLocking(id)
             .orElseThrow(() -> new CustomException(ErrorCode.OPTION_NOT_FOUND));
 
         option.subtract(subtractionQuantity);
+        return option;
     }
 }
