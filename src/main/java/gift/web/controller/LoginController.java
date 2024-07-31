@@ -2,7 +2,6 @@ package gift.web.controller;
 
 import gift.service.kakaoAuth.KakaoAuthService;
 import gift.service.kakaoAuth.KakaoInfo;
-import gift.service.member.MemberService;
 import gift.web.dto.MemberDto;
 import gift.web.dto.Token;
 import gift.web.jwt.JwtUtils;
@@ -19,14 +18,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LoginController {
 
     private final KakaoAuthService kakaoAuthService;
-    private final MemberService memberService;
     private final JwtUtils jwtUtils;
     private final TemporaryTokenStore temporaryTokenStore;
 
-    public LoginController(KakaoAuthService kakaoAuthService, MemberService memberService,
+    public LoginController(KakaoAuthService kakaoAuthService,
         JwtUtils jwtUtils, TemporaryTokenStore temporaryTokenStore) {
         this.kakaoAuthService = kakaoAuthService;
-        this.memberService = memberService;
         this.jwtUtils = jwtUtils;
         this.temporaryTokenStore = temporaryTokenStore;
     }
