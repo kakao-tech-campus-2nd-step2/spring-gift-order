@@ -11,8 +11,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
+@Tag(name = "Kakao Authentication System", description = "Operations related to Kakao authentication")
 public class KakaoController {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String BEARER_PREFIX = "Bearer ";
@@ -26,23 +33,36 @@ public class KakaoController {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
+    @Value("${kakao.auth-base-url}")
+    private String authBaseUrl;
+
+    @Value("${kakao.scope}")
+    private String scope;
+
     @Autowired
     public KakaoController(KakaoService kakaoService) {
         this.kakaoService = kakaoService;
     }
 
     @GetMapping("/login")
+    @Operation(summary = "Redirect to Kakao login", description = "Redirects the user to Kakao login page", tags = { "Kakao Authentication System" })
     public void redirectKakaoLogin(HttpServletResponse response) throws IOException {
-        String scope = "profile_nickname,profile_image";
-        String kakaoLoginUrl = String.format(
-                "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=%s&redirect_uri=%s&scope=%s",
-                clientId, redirectUri, scope
-        );
-        response.sendRedirect(kakaoLoginUrl);
+        String encodedRedirectUri = URLEncoder.encode(redirectUri, StandardCharsets.UTF_8.toString());
+        String encodedScope = URLEncoder.encode(scope, StandardCharsets.UTF_8.toString());
+        StringBuilder kakaoLoginUrl = new StringBuilder(authBaseUrl)
+                .append("?response_type=code")
+                .append("&client_id=").append(clientId)
+                .append("&redirect_uri=").append(encodedRedirectUri)
+                .append("&scope=").append(encodedScope);
+
+        response.sendRedirect(kakaoLoginUrl.toString());
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<String> callback(@RequestParam(required = false) String code) {
+    @Operation(summary = "Kakao login callback", description = "Handles the callback after Kakao login", tags = { "Kakao Authentication System" })
+    public ResponseEntity<String> callback(
+            @Parameter(description = "Authorization code from Kakao", required = false)
+            @RequestParam(required = false) String code) {
         if (code == null || code.isEmpty()) {
             return ResponseEntity.badRequest().body("Authorization code is missing");
         }
@@ -51,7 +71,10 @@ public class KakaoController {
     }
 
     @GetMapping("/member")
-    public ResponseEntity<String> getMember(@RequestHeader(value = AUTHORIZATION_HEADER) String authorizationHeader) {
+    @Operation(summary = "Get Kakao member information", description = "Fetches the Kakao member information using the authorization token", tags = { "Kakao Authentication System" })
+    public ResponseEntity<String> getMember(
+            @Parameter(description = "Authorization token", required = true)
+            @RequestHeader(value = AUTHORIZATION_HEADER) String authorizationHeader) {
         String accessToken = authorizationHeader.replace(BEARER_PREFIX, "");
         return ResponseEntity.ok(kakaoService.getMember(accessToken).toString());
     }
