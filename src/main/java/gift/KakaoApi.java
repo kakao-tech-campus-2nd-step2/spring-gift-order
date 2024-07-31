@@ -66,11 +66,9 @@ public class KakaoApi {
 
   public String createTemplateObject(OrderDto orderDto) {
     StringBuilder itemsBuilder = new StringBuilder();
-
-    for (OptionDto optionDto : orderDto.getOptionDtos()) {
-      itemsBuilder.append("""
-        {"item":"%s","item_op":"%d개"},""".formatted(optionDto.getName(), optionDto.getQuantity()));
-    }
+    OptionDto optionDto = orderDto.getOptionDto();
+    itemsBuilder.append("""
+      {"item":"%s","item_op":"%d개"},""".formatted(optionDto.getName(), optionDto.getQuantity()));
 
     if (itemsBuilder.length() > 0) {
       itemsBuilder.setLength(itemsBuilder.length() - 1);

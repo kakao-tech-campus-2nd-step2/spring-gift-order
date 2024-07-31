@@ -156,9 +156,8 @@ public class ProductControllerTest {
       "https://example.com/coffee.jpg", categoryDto);
     productController.addProduct(productDto);
 
-    ResponseEntity<ProductDto> responseDto = productController.deleteProduct(1L);
 
-    assertEquals(HttpStatus.OK, responseDto.getStatusCode());
+    assertEquals(HttpStatus.NO_CONTENT, productController.deleteProduct(1L).getStatusCode());
 
   }
 

@@ -5,15 +5,15 @@ import java.util.List;
 public class OrderDto {
 
   private final Long id;
-  private final List<OptionDto> optionDtos;
+  private final OptionDto optionDto;
   private final int quantity;
   private final String orderDateTime;
   private final String message;
 
-  public OrderDto(Long id, List<OptionDto> optionDtos, int quantity, String orderDateTime,
+  public OrderDto(Long id, OptionDto optionDto, int quantity, String orderDateTime,
     String message) {
     this.id = id;
-    this.optionDtos = optionDtos;
+    this.optionDto = optionDto;
     this.quantity = quantity;
     this.orderDateTime = orderDateTime;
     this.message = message;
@@ -23,8 +23,8 @@ public class OrderDto {
     return id;
   }
 
-  public List<OptionDto> getOptionDtos() {
-    return optionDtos;
+  public OptionDto getOptionDto() {
+    return this.optionDto;
   }
 
   public int getQuantity() {
