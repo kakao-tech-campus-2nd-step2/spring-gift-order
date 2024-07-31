@@ -6,7 +6,9 @@ import gift.domain.option.Options;
 import gift.domain.product.Product;
 import gift.domain.product.ProductRepository;
 import gift.mapper.OptionMappper;
+import gift.mapper.ProductMapper;
 import gift.web.dto.OptionDto;
+import gift.web.dto.ProductDto;
 import gift.web.exception.OptionNotFoundException;
 import gift.web.exception.ProductNotFoundException;
 import java.util.List;
@@ -19,12 +21,14 @@ public class OptionService {
     private final ProductRepository productRepository;
     private final OptionRepository optionRepository;
     private final OptionMappper optionMapper;
+    private final ProductMapper productMapper;
 
     public OptionService(OptionRepository optionRepository, OptionMappper optionMapper,
-        ProductRepository productRepository) {
+        ProductRepository productRepository, ProductMapper productMapper) {
         this.optionRepository = optionRepository;
         this.optionMapper = optionMapper;
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
     @Transactional
@@ -39,6 +43,20 @@ public class OptionService {
 
         optionRepository.save(optionMapper.toEntity(optionDto, product));
         return optionMapper.toDto(option);
+    }
+
+    public Option getOptionEntityByOptionId(Long optionId) {
+        Option option = optionRepository.findById(optionId)
+            .orElseThrow(() -> new OptionNotFoundException("옵션이 없슴다."));
+
+        return option;
+    }
+
+    public ProductDto getProduct(Long optionId) {
+        Option option = optionRepository.findById(optionId)
+            .orElseThrow(() -> new OptionNotFoundException("옵션이 없슴다."));
+
+        return productMapper.toDto(option.getProduct());
     }
 
     public List<OptionDto> getOptionsByProductId(Long productId) {
