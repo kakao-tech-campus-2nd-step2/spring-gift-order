@@ -1,5 +1,6 @@
 package gift.DTO;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -7,8 +8,10 @@ import jakarta.validation.constraints.Size;
 
 public class ProductDto {
 
+  @Schema(description = "PK 값")
   private Long id;
 
+  @Schema(description = "상품 이름", example = "아이스 아메리카노")
   @Size(min = 1, max = 15, message = "가능한 글자 수는 1~15입니다.")
   @Pattern.List({
     @Pattern(regexp = "^[가-힣a-zA-Z0-9()\\[\\]+\\-&/_]*$", message = "유효한 이름이 아닙니다"),
@@ -17,12 +20,14 @@ public class ProductDto {
   @NotBlank
   private String name;
 
+  @Schema(description = "상품 가격", example = "4500")
   @Min(value = 1)
   private int price;
 
   @NotBlank
   private String imageUrl;
 
+  @Schema(description = "상품의 카테고리", example = "카페인")
   private CategoryDto categoryDto;
 
   public ProductDto() {
