@@ -1,7 +1,7 @@
 package gift.util;
 
 import gift.domain.member.Member;
-import gift.domain.member.MemberResponse;
+import gift.domain.member.MemberId;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -29,13 +29,13 @@ public class JwtUtil {
             .compact();
     }
 
-    public MemberResponse getMemberFromToken(String token) {
+    public MemberId getMemberFromToken(String token) {
         try {
             Claims claims = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
                 .build()
                 .parseSignedClaims(token).getPayload();
-            return new MemberResponse(Long.parseLong(claims.getSubject()));
+            return new MemberId(Long.parseLong(claims.getSubject()));
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 인증 정보입니다");
         }

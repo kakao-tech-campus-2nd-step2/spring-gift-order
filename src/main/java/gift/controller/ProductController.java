@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.domain.product.Product;
 import gift.domain.product.ProductRequest;
+import gift.domain.product.ProductResponse;
 import gift.service.ProductService;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -40,16 +41,17 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(
+    public ResponseEntity<ProductResponse> createProduct(
         @Valid @RequestBody ProductRequest productRequest) {
-        Product product = productService.save(productRequest);
-        return ResponseEntity.created(URI.create("/api/products/" + product.getId())).body(product);
+        ProductResponse productResponse = new ProductResponse(productService.save(productRequest));
+        return ResponseEntity.created(URI.create("/api/products/" + productResponse.id()))
+            .body(productResponse);
     }
 
     @PutMapping("/{id}")
-    public Product updateProduct(@PathVariable Long id,
+    public ProductResponse updateProduct(@PathVariable Long id,
         @Valid @RequestBody ProductRequest productRequest) {
-        return productService.update(id, productRequest);
+        return new ProductResponse(productService.update(id, productRequest));
     }
 
     @DeleteMapping("/{id}")

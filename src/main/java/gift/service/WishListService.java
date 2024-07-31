@@ -4,6 +4,7 @@ import gift.domain.member.Member;
 import gift.domain.option.Option;
 import gift.domain.wishlist.WishList;
 import gift.domain.wishlist.WishListRequest;
+import gift.domain.wishlist.WishListResponse;
 import gift.repository.WishListRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -29,18 +30,18 @@ public class WishListService {
             .toList();
     }
 
-    public List<Option> findByMemberId(Long memberId, int pageNo, int pageSize) {
+    public List<WishListResponse> findByMemberId(Long memberId, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         return wishListRepository.findByMember(new Member(memberId), pageable)
             .getContent()
             .stream()
-            .map(WishList::getOption)
+            .map(WishListResponse::new)
             .toList();
     }
 
     @Transactional
-    public void save(Long memberId, WishListRequest wishListRequest) {
-        wishListRepository.save(wishListRequest.toWishList(memberId));
+    public WishList save(Long memberId, WishListRequest wishListRequest) {
+        return wishListRepository.save(wishListRequest.toWishList(memberId));
     }
 
     @Transactional

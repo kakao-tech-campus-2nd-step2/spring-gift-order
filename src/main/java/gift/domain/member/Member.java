@@ -55,6 +55,10 @@ public class Member {
         return email;
     }
 
+    public MemberType getMemberType() {
+        return memberType;
+    }
+
     public String getKakaoToken() {
         return kakaoToken;
     }

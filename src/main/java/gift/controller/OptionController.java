@@ -30,17 +30,17 @@ public class OptionController {
     }
 
     @PostMapping
-    public void createOption(@PathVariable Long productId,
+    public OptionResponse createOption(@PathVariable Long productId,
         @Valid @RequestBody OptionRequest optionRequest
     ) {
-        optionService.save(productId, optionRequest);
+        return optionService.save(productId, optionRequest);
     }
 
     @PutMapping("/{optionId}")
-    public void updateOption(@PathVariable Long productId, @PathVariable Long optionId,
+    public OptionResponse updateOption(@PathVariable Long productId, @PathVariable Long optionId,
         @Valid @RequestBody OptionRequest optionRequest
     ) {
-        optionService.update(productId, optionId, optionRequest);
+        return optionService.update(productId, optionId, optionRequest);
     }
 
     @DeleteMapping("/{optionId}")

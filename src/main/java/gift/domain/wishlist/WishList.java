@@ -37,7 +37,7 @@ public class WishList {
         return id;
     }
 
-    public Member getMemberId() {
+    public Member getMember() {
         return member;
     }
 
