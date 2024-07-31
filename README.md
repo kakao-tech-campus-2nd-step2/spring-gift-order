@@ -36,6 +36,8 @@ API 사양에 관해 클라이언트와 어떻게 소통하기 위한 API 문서
 
 * API 정보를 확인할 수 있는 API 문서 페이지를 구현한다.
 
+API 명세: https://fuchsia-tabletop-6fc.notion.site/22-438e773c1c0d475da1e87b4ef4ef42d8?pvs=74
+
 ---
 
 ## (선택) 4단계 - Circuit Breaker
