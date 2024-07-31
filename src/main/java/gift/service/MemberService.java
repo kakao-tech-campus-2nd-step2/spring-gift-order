@@ -23,11 +23,12 @@ public class MemberService {
     }
 
     @Transactional
-    public Member register(MemberRequest memberRequest) {
+    public String register(MemberRequest memberRequest) {
         if (memberRepository.findByEmail(memberRequest.email()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "이미 가입된 이메일입니다");
         }
-        return memberRepository.save(memberRequest.toMember());
+        Member member = memberRepository.save(memberRequest.toMember());
+        return jwtUtil.generateToken(member);
     }
 
     public String login(MemberRequest memberRequest) {

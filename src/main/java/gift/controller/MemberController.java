@@ -1,7 +1,6 @@
 package gift.controller;
 
 import gift.domain.member.MemberRequest;
-import gift.domain.member.MemberResponse;
 import gift.domain.member.TokenResponse;
 import gift.service.MemberService;
 import jakarta.validation.Valid;
@@ -21,8 +20,8 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public MemberResponse register(@Valid @RequestBody MemberRequest memberRequest) {
-        return new MemberResponse(memberService.register(memberRequest));
+    public TokenResponse register(@Valid @RequestBody MemberRequest memberRequest) {
+        return new TokenResponse(memberService.register(memberRequest));
     }
 
     @PostMapping("/login")
