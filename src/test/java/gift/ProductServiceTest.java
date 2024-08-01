@@ -310,11 +310,13 @@ public class ProductServiceTest {
             .isInstanceOf(NoSuchElementException.class);
 
         // 수량이 0개
-        Assertions.assertThatThrownBy(() -> productService.subtractOption(productId, zeroOptionId, 1))
+        Assertions.assertThatThrownBy(
+                () -> productService.subtractOption(productId, zeroOptionId, 1))
             .isInstanceOf(NoSuchElementException.class);
 
         // 차감하려는 수량이 더 많음
-        Assertions.assertThatThrownBy(() -> productService.subtractOption(productId, zeroOptionId, 1000000))
+        Assertions.assertThatThrownBy(
+                () -> productService.subtractOption(productId, zeroOptionId, 1000000))
             .isInstanceOf(IllegalArgumentException.class);
 
         // 정상, 수량이 0개, 차감하려는 수량이 더 많음

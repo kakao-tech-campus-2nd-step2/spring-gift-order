@@ -1,7 +1,6 @@
 package gift.wishlist.service;
 
 import gift.global.dto.PageInfoDto;
-import gift.option.dto.OptionResponseDto;
 import gift.product.dto.ProductResponseDto;
 import gift.product.entity.Product;
 import gift.product.service.ProductService;
@@ -65,7 +64,8 @@ public class WishListService {
     // 이렇게 사용하는 것이 맞는지, 아니면 existence만 만들어서 호출하고 delete를 호출하는 것이 맞는지 궁금합니다.
     @Transactional
     public void orderWishProduct(ProductResponseDto productResponseDto, long userId) {
-        var wishList = wishListRepository.findByUserIdAndProduct(userId, productResponseDto.toProduct());
+        var wishList = wishListRepository.findByUserIdAndProduct(userId,
+            productResponseDto.toProduct());
 
         // 위시리스트에 없다면 바로 반환
         if (wishList.isEmpty()) {

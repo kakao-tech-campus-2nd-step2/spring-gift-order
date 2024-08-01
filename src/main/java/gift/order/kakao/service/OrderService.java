@@ -1,5 +1,6 @@
 package gift.order.kakao.service;
 
+import gift.message.kakao.service.KakaoMessageService;
 import gift.option.service.OptionService;
 import gift.order.kakao.dto.OrderRequestDto;
 import gift.product.service.ProductService;
@@ -14,13 +15,15 @@ public class OrderService {
     private final ProductService productService;
     private final WishListService wishListService;
     private final OptionService optionService;
+    private final KakaoMessageService kakaoMessageService;
 
     @Autowired
     public OrderService(ProductService productService, WishListService wishListService,
-        OptionService optionService) {
+        OptionService optionService, KakaoMessageService kakaoMessageService) {
         this.productService = productService;
         this.wishListService = wishListService;
         this.optionService = optionService;
+        this.kakaoMessageService = kakaoMessageService;
     }
 
     // 주문용 service
@@ -33,5 +36,8 @@ public class OrderService {
         // 위시리스트 제거
         var productResponseDto = productService.selectProduct(actualOption.productId());
         wishListService.orderWishProduct(productResponseDto, userId);
+
+        // 카카오 메시지 보내기.
+        kakaoMessageService.sendTextMessageForMe(userId, orderRequestDto.message());
     }
 }

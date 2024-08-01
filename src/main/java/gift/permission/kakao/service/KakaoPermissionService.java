@@ -1,5 +1,7 @@
 package gift.permission.kakao.service;
 
+import static gift.global.utility.MultiValueMapConverter.bodyConvert;
+import static gift.global.utility.MultiValueMapConverter.paramConvert;
 import static gift.permission.util.PlatformCodeUtil.KAKAO_CODE;
 
 import gift.global.client.ServerClient;
@@ -37,7 +39,7 @@ public class KakaoPermissionService {
 
     // 카카오 로그인 step1에 해당하는 메서드
     public String kakaoAuthorize() {
-        var params = MultiValueMapConverter.convert(KakaoAuthRequestDto.of(kakaoProperties));
+        var params = paramConvert(KakaoAuthRequestDto.of(kakaoProperties));
 
         return serverClient.getPage(GET_AUTHORIZATION_CODE_URL, params);
     }
@@ -49,13 +51,13 @@ public class KakaoPermissionService {
 
         // step3
         var platformUniqueId = getPlatformUniqueId(token);
-        return userService.login(platformUniqueId, KAKAO_CODE, token.refreshToken(),
-            token.refreshTokenExpiresIn());
+        return userService.login(platformUniqueId, KAKAO_CODE, token.accessToken(),
+            token.expiresIn());
     }
 
     // 카카오 로그인 step2에 해당하는 메서드
     private KakaoTokenResponseDto getKakaoToken(String code) {
-        var body = MultiValueMapConverter.convert(
+        var body = paramConvert(
             KaKaoTokenRequestBodyDto.of(kakaoProperties, code));
         Consumer<HttpHeaders> headersConsumer = headers -> {
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

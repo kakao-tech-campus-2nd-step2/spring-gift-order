@@ -1,5 +1,6 @@
 package gift.order.kakao.dto;
 
+import gift.global.model.MultiValueMapConvertibleDto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -15,8 +16,8 @@ public record OrderRequestDto(
     @NotNull(message = "구매 수량이 누락되었습니다.")
     int quantity,
 
-    @Size(max = 300, message = "메시지는 300자를 초과할 수 없습니다.")
+    @Size(max = 200, message = "메시지는 200자를 초과할 수 없습니다.")
     String message
-) {
+) implements MultiValueMapConvertibleDto {
 
 }

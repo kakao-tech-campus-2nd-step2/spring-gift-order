@@ -6,6 +6,7 @@ import gift.permission.user.entity.User;
 import gift.permission.user.repository.UserRepository;
 import gift.token.component.TokenComponent;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,6 +76,14 @@ public class UserService {
         // 멀쩡하다면 액세스 토큰 재발급
         return tokenComponent.getToken(actualUser.getId(), actualUser.getPlatformUniqueId(),
             actualUser.getIsAdmin());
+    }
+
+    // 유저의 refresh token을 반환하는 메서드
+    public String getRefreshToken(long id) {
+        System.out.println(id);
+        var actualUser = userRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."));
+        return actualUser.getRefreshToken();
     }
 
     // 플랫폼 별로 고유한 id를 제공하지만, 플랫폼이 다르다면 고유하지 않을 수도 있으므로 다음과 같이 새로운 id를 생성.

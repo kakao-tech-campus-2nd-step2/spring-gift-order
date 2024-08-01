@@ -46,6 +46,8 @@ public class Options {
 
     // 요소 검색
     public Option getOption(long optionId) {
+        System.out.println(optionId);
+        System.out.println(options.get(0));
         return options.stream().filter(option -> option.getOptionId() == optionId).findFirst()
             .orElseThrow(() -> new NoSuchElementException("존재하지 않는 옵션입니다."));
     }

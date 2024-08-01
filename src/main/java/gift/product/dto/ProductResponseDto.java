@@ -1,7 +1,5 @@
 package gift.product.dto;
 
-import static java.util.stream.Collectors.toList;
-
 import gift.category.dto.CategoryResponseDto;
 import gift.option.entity.Option;
 import gift.product.entity.Options;
