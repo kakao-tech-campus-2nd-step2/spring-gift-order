@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "orders")
 public class Order {
 
-    @Column
-    private final LocalDateTime orderDateTime = LocalDateTime.now();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +29,8 @@ public class Order {
     private Long quantity;
     @Column
     private String message;
-
+    @Column
+    private final LocalDateTime orderDateTime = LocalDateTime.now();
 
     public Order() {
 
