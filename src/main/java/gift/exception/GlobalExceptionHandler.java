@@ -1,13 +1,15 @@
 package gift.exception;
 
+import gift.constants.ResponseMsgConstants;
 import gift.dto.betweenClient.ResponseDTO;
-import gift.exception.BadRequestExceptions.UserNotFoundException;
-import gift.exception.InternalServerExceptions.InternalServerException;
+import gift.exception.BadRequestExceptions.BadRequestException;
+import gift.exception.BadRequestExceptions.EmailAlreadyHereException;
 import gift.util.ResponseEntityUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -58,20 +60,31 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ResponseDTO> handleValidationExceptions(
             MethodArgumentTypeMismatchException ex) {
-        return new ResponseEntity<>(new ResponseDTO(true, "가격이나 개수는 숫자로 입력해야 합니다."),
-                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseDTO(true, "가격이나 개수는 숫자로 입력해야 합니다."), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler(EmailAlreadyHereException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ResponseDTO> handleValidationExceptions(EmailAlreadyHereException ex) {
+        return new ResponseEntity<>(new ResponseDTO(true, ex.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ResponseDTO> handleValidationExceptions(UserNotFoundException ex) {
+    public ResponseEntity<ResponseDTO> handleValidationExceptions(EmptyResultDataAccessException ex) {
+        return new ResponseEntity<>(new ResponseDTO(true, "그러한 ID를 가진 상품을 찾지 못하였습니다."), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ResponseDTO> handleValidationExceptions(BadRequestException ex) {
         return new ResponseEntity<>(new ResponseDTO(true, ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InternalServerException.class)
+    @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ResponseDTO> handleValidationExceptions(InternalServerException ex) {
+    public ResponseEntity<ResponseDTO> handleValidationExceptions(RuntimeException ex) {
         logger.error(ex.getMessage(), ex);
-        return new ResponseEntity<>(new ResponseDTO(true, "예상치 못한 에러입니다. 관리자에게 연락 주시기 바랍니다."), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ResponseDTO(true, ResponseMsgConstants.CRITICAL_ERROR_MESSAGE), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

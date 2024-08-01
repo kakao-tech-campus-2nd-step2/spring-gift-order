@@ -1,13 +1,17 @@
 package gift.controller;
 
-import static gift.util.ResponseEntityUtil.responseError;
-
 import gift.constants.ResponseMsgConstants;
 import gift.dto.betweenClient.product.ProductPostRequestDTO;
 import gift.dto.betweenClient.product.ProductResponseDTO;
 import gift.dto.betweenClient.product.ProductRequestDTO;
 import gift.dto.betweenClient.ResponseDTO;
 import gift.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -40,6 +44,12 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(description = "서버가 클라이언트에게 제품 목록 페이지를 제공합니다.", tags = "Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상적으로 제품 목록 페이지를 제공합니다.",
+                    content = @Content(mediaType = "text/html", schema = @Schema(type = "String"))),
+            @ApiResponse(responseCode = "500", description = "서버에 의한 오류입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))})
     public String getProducts(Model model, Pageable pageable) {
         Page<ProductResponseDTO> productPage = productService.getProductList(pageable);
         model.addAttribute("productPage", productPage);
@@ -47,41 +57,52 @@ public class ProductController {
     }
 
     @PostMapping
+    @Operation(description = "서버가 클라이언트가 제출한 제품을 추가합니다.", tags = "Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "제품 추가에 성공하였습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class),
+                    examples = @ExampleObject(value = "{\"isError\": false, \"message\": \"success\"}")
+                    )),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 보통 요청의 양식이 잘못된 경우입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버에 의한 오류입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))})
     public ResponseEntity<ResponseDTO> addProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
-        try {
-            productService.addProduct(productPostRequestDTO);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.CREATED);
+        productService.addProduct(productPostRequestDTO);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.CREATED);
     }
 
 
     @DeleteMapping("/{id}")
+    @Operation(description = "서버가 클라이언트가 제출한 제품 아이디로 제품을 삭제합니다.", tags = "Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "제품 삭제에 성공하였습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class),
+                    examples = @ExampleObject(value = "{\"isError\": false, \"message\": \"success\"}")
+                    )),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 보통 존재하지 않는 id를 입력한 경우입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버에 의한 오류입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))})
     public ResponseEntity<ResponseDTO> deleteProduct(@PathVariable @Min(1) @NotNull Long id) {
-        try {
-            productService.deleteProduct(id);
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.NO_CONTENT);
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.NO_CONTENT);
     }
 
 
     @PutMapping("/{id}")
+    @Operation(description = "서버가 클라이언트가 요청한 제품 아이디인 상품을 요청의 본문으로 수정합니다.", tags = "Product")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "제품 수정에 성공하였습니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class),
+                    examples = @ExampleObject(value = "{\"isError\": false, \"message\": \"success\"}"))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다. 보통 요청의 양식이 잘못된 경우입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class))),
+            @ApiResponse(responseCode = "500", description = "서버에 의한 오류입니다.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseDTO.class)))})
     public ResponseEntity<ResponseDTO> updateProduct(@PathVariable @Min(1) @NotNull Long id,
             @RequestBody @Valid ProductRequestDTO productRequestDTO) {
-        try {
-            productService.updateProduct(id, productRequestDTO);
-
-        } catch (RuntimeException e) {
-            return responseError(e);
-        }
-        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE),
-                HttpStatus.OK);
+        productService.updateProduct(id, productRequestDTO);
+        return new ResponseEntity<>(new ResponseDTO(false, ResponseMsgConstants.WELL_DONE_MESSAGE), HttpStatus.OK);
     }
-
-
 }
