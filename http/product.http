@@ -17,7 +17,7 @@ Content-Type: application/json
       "quantity" : "10"
     },
     {
-      "name" : "파란색",
+      "name" : "빨간색",
       "quantity" : "10"
     }
   ]

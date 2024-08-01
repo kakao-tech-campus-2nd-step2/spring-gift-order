@@ -24,7 +24,7 @@ public class Option {
     protected Option() {
     }
 
-    public Option(String name,int quantity) {
+    public Option(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
     }
@@ -39,6 +39,10 @@ public class Option {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public void addProduct(Product product) {
