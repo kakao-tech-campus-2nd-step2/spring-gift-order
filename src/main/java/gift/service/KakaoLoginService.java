@@ -25,11 +25,14 @@ public class KakaoLoginService {
     }
 
     public String getLoginUrl() {
-        return "https://kauth.kakao.com/oauth/authorize?response_type=code&redirect_uri="
-            + redirectUri + "&client_id=" + clientId;
+        final String kakaoOauthPageUri = "https://kauth.kakao.com/oauth/authorize?response_type=code";
+
+        return kakaoOauthPageUri + "&redirect_uri=" + redirectUri + "&client_id=" + clientId;
     }
 
     public String getToken(String code) {
+        final String kakaoOauthTokenApiUri = "https://kauth.kakao.com/oauth/token";
+
         LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", clientId);
@@ -38,7 +41,7 @@ public class KakaoLoginService {
 
         return Objects.requireNonNull(restClient
                 .post()
-                .uri("https://kauth.kakao.com/oauth/token")
+                .uri(kakaoOauthTokenApiUri)
                 .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .body(body)
                 .retrieve()
@@ -47,9 +50,11 @@ public class KakaoLoginService {
     }
 
     public Long getKakaoId(String accessToken) {
+        final String kakaoUserInfoApiUri = "https://kapi.kakao.com/v2/user/me";
+
         return Objects.requireNonNull(restClient
                 .post()
-                .uri("https://kapi.kakao.com/v2/user/me")
+                .uri(kakaoUserInfoApiUri)
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()

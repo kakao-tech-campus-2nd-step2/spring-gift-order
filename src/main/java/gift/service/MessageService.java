@@ -16,8 +16,10 @@ public class MessageService {
     }
 
     public void kakaoTalk(String accessToken, KakaoMessageTemplate messageTemplate) {
+        final String kakaoMemoApiUri = "https://kapi.kakao.com/v2/api/talk/memo/default/send";
+
         restClient.post()
-            .uri("https://kapi.kakao.com/v2/api/talk/memo/default/send")
+            .uri(kakaoMemoApiUri)
             .header("Authorization", "Bearer " + accessToken)
             .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
             .body(
