@@ -2,6 +2,7 @@ package gift.controller;
 
 import gift.dto.KakaoTokenResponse;
 import gift.service.KakaoAuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +17,13 @@ public class KakaoAuthController {
         this.kakaoAuthService = kakaoAuthService;
     }
 
+    @Operation(summary = "카카오 로그인 리다이렉트")
     @GetMapping("/oauth/kakao")
     public String kakaoLogin() {
         return "redirect:" + kakaoAuthService.getAuthorizationUri();
     }
 
+    @Operation(summary = "카카오 로그인 콜백 처리")
     @GetMapping("/oauth/kakao/callback")
     public String kakaoCallback(@RequestParam String code, Model model) {
         try {
