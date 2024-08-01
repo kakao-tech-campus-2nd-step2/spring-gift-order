@@ -1,14 +1,15 @@
 package gift.controller;
 
-import gift.entity.Product;
 import gift.entity.Wishlist;
 import gift.service.WishlistService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "위시리스트", description = "위시리스트 관련 API")
 @RestController
 @RequestMapping("/api/wishlist")
 public class WishlistController {
