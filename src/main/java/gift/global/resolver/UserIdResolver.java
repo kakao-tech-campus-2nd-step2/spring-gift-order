@@ -23,13 +23,13 @@ public class UserIdResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         boolean isUserAnnotation = parameter.hasParameterAnnotation(UserId.class);
-        boolean isString = parameter.getParameterType().equals(String.class);
+        boolean isLong = parameter.getParameterType().equals(Long.class);
 
-        return isUserAnnotation && isString;
+        return isUserAnnotation && isLong;
     }
 
     @Override
-    public String resolveArgument(MethodParameter parameter,
+    public Long resolveArgument(MethodParameter parameter,
         ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String token = webRequest.getHeader(HttpHeaders.AUTHORIZATION);

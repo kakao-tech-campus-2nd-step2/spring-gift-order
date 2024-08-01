@@ -18,9 +18,9 @@ public class WishList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long wishListId;
+    private Long id;
 
-    private String userId;
+    private long userId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -29,21 +29,21 @@ public class WishList {
     protected WishList() {
     }
 
-    public WishList(Long wishListId, String userId, Product product) {
-        this.wishListId = wishListId;
+    public WishList(Long id, long userId, Product product) {
+        this.id = id;
         this.userId = userId;
         this.product = product;
     }
 
-    public WishList(String userId, Product product) {
+    public WishList(long userId, Product product) {
         this(null, userId, product);
     }
 
-    public Long getWishListId() {
-        return wishListId;
+    public Long getId() {
+        return id;
     }
 
-    public String getUserId() {
+    public long getUserId() {
         return userId;
     }
 

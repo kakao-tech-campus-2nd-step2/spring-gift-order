@@ -27,7 +27,7 @@ public class WishListService {
 
     // 위시리스트 추가하는 핸들러
     @Transactional
-    public void insertWishProduct(long productId, String userId) {
+    public void insertWishProduct(long productId, long userId) {
         var product = productService.selectFullOptionProduct(productId).toProduct();
 
         // 검증하기 (내부 id로 검증하면 쓸 데 없는 조인이 일어나서 객체로 확인)
@@ -40,7 +40,7 @@ public class WishListService {
 
     // 위시리스트를 읽어오는 핸들러
     @Transactional(readOnly = true)
-    public List<WishListResponseDto> readWishProducts(String userId, PageInfoDto pageInfoDto) {
+    public List<WishListResponseDto> readWishProducts(long userId, PageInfoDto pageInfoDto) {
         Pageable pageable = pageInfoDto.toPageInfo().toPageRequest();
 
         // 특정 userId를 갖는 위시리스트 페이지 불러오기
@@ -51,24 +51,24 @@ public class WishListService {
     // 위시리스트에서 제품을 삭제하는 핸들러
     // 자신의 위시리스트인지 검증하는 로직을 추가하였습니다.
     @Transactional
-    public void deleteWishProduct(long wishListId, String userId) {
-        WishList actualWishList = wishListRepository.findById(wishListId)
+    public void deleteWishProduct(long id, long userId) {
+        WishList actualWishList = wishListRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("위시 리스트에 존재하지 않는 제품입니다."));
         verifyDeleteOwnWishProduct(actualWishList, userId);
 
-        wishListRepository.deleteById(wishListId);
+        wishListRepository.deleteById(id);
     }
 
     // 위시리스트에 제품이 존재하는지 검증
-    private void verifyWishProductAlreadyExistence(Product product, String userId) {
+    private void verifyWishProductAlreadyExistence(Product product, long userId) {
         if (wishListRepository.existsByUserIdAndProduct(userId, product)) {
             throw new IllegalArgumentException("이미 찜한 상품입니다.");
         }
     }
 
     // 삭제하려는 제품이 자신의 것이 맞는지 확인
-    private void verifyDeleteOwnWishProduct(WishList wishProduct, String userId) {
-        if (!wishProduct.getUserId().equals(userId)) {
+    private void verifyDeleteOwnWishProduct(WishList wishProduct, long userId) {
+        if (wishProduct.getUserId() != userId) {
             throw new IllegalArgumentException("타인의 위시 리스트는 조작할 수 없습니다.");
         }
     }

@@ -37,14 +37,14 @@ public class WishListApiController {
     // 전체 목록에서 제품 추가 시
     @PostMapping("/wishlist")
     public ApiResponseDto<Void> addWishProduct(@RequestParam(name = "product-id") Long productId,
-        @UserId String userId) {
+        @UserId Long userId) {
         wishListService.insertWishProduct(productId, userId);
         return SUCCESS();
     }
 
     // 나의 위시 페이지 가져오기
     @GetMapping("/wishlist")
-    public ApiResponseDto<List<WishListResponseDto>> getWishProducts(@UserId String userId,
+    public ApiResponseDto<List<WishListResponseDto>> getWishProducts(@UserId Long userId,
         @ModelAttribute PageInfoDto pageInfoDto) {
         return SUCCESS(wishListService.readWishProducts(userId, pageInfoDto));
     }
@@ -53,7 +53,7 @@ public class WishListApiController {
     @DeleteMapping("/wishlist/{wishlist-id}")
     public ApiResponseDto<Void> deleteWishProduct(
         @PathVariable(name = "wishlist-id") Long wishListId,
-        @UserId String userId) {
+        @UserId Long userId) {
         wishListService.deleteWishProduct(wishListId, userId);
         return SUCCESS();
     }

@@ -17,7 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ApiResponseDto<Void> handler(MethodArgumentNotValidException methodArgumentNotValidException) {
+    public ApiResponseDto<Void> handler(
+        MethodArgumentNotValidException methodArgumentNotValidException) {
         String message = methodArgumentNotValidException.getFieldError().getDefaultMessage();
 
         return FAILURE(message);
@@ -51,7 +52,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ApiResponseDto<Void> handler(DataIntegrityViolationException dataIntegrityViolationException) {
+    public ApiResponseDto<Void> handler(
+        DataIntegrityViolationException dataIntegrityViolationException) {
         String message = "제약 조건에 위배됩니다.";
         return FAILURE(message);
     }
@@ -64,7 +66,8 @@ public class GlobalExceptionHandler {
 
     // 헤더가 유실된 경우인데, 보통은 조작을 빨리 해서 토큰이 누락된 경우 예외가 발생합니다.
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ApiResponseDto<Void> handler(MissingRequestHeaderException missingRequestHeaderException) {
+    public ApiResponseDto<Void> handler(
+        MissingRequestHeaderException missingRequestHeaderException) {
         String message = "조작이 너무 빠릅니다.";
         return FAILURE(message);
     }

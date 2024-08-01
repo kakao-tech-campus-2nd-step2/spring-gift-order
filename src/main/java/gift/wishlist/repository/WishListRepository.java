@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WishListRepository extends JpaRepository<WishList, Long> {
 
-    boolean existsByUserIdAndProduct(String userId, Product product);
+    boolean existsByUserIdAndProduct(long userId, Product product);
 
-    Page<WishList> findByUserId(String userId, Pageable pageable);
+    Page<WishList> findByUserId(long userId, Pageable pageable);
 }

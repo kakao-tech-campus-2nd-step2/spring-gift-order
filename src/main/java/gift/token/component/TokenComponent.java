@@ -1,5 +1,7 @@
 package gift.token.component;
 
+import static gift.global.utility.TimeConvertUtil.minuteToMillis;
+
 import gift.token.model.TokenManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -20,7 +22,7 @@ public class TokenComponent extends TokenManager {
     }
 
     // 입력한 정보를 토대로 access 토큰을 반환하는 함수 (클래스끼리의 이동이므로 dto로 전달)
-    public String getToken(String userId, boolean isAdmin) {
+    public String getToken(Long id, String platformUniqueId, boolean isAdmin) {
         long currentTime = System.currentTimeMillis();
         // 유효기간은 30분
         long expirationTime = minuteToMillis(30);
@@ -28,8 +30,9 @@ public class TokenComponent extends TokenManager {
         Date expirationDate = new Date(currentTime + expirationTime);
 
         String onlyAccessToken = Jwts.builder()
-            .subject(userId)
+            .subject(String.valueOf(id))
             .claim("isAdmin", isAdmin)
+            .claim("platformUniqueId", platformUniqueId)
             .issuedAt(currentDate)
             .expiration(expirationDate)
             .signWith(secretKey)
@@ -39,7 +42,7 @@ public class TokenComponent extends TokenManager {
         return getFullToken(onlyAccessToken);
     }
 
-    // accessToken을 디코딩해서 유효기간이 지났다면 false 반환
+    // accessToken을 디코딩해서 유효기간이 지났는지 확인
     public void verifyAccessTokenExpiry(String accessToken) {
         String onlyAccessToken = getOnlyToken(accessToken);
         boolean isExpired = true;
@@ -69,8 +72,5 @@ public class TokenComponent extends TokenManager {
         return BEARER + tokenOnly;
     }
 
-    // minute을 넣으면 밀리초로 반환하는 메서드
-    private long minuteToMillis(int minute) {
-        return minute * 60L * 1000;
-    }
+
 }

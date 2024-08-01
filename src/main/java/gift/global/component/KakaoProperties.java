@@ -1,4 +1,4 @@
-package gift.permission.kakao.component;
+package gift.global.component;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

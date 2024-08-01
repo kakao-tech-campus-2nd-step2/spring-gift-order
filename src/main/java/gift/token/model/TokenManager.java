@@ -27,13 +27,16 @@ public class TokenManager {
     // 인증 방식 + 토큰의 문자열에서 토큰만 추출하는 메서드
     protected String getOnlyToken(String token) {
         // 일단 주기 전에 검증
+        if (token == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다.");
+        }
         verifyBearer(token);
         return token.substring(BEARER.length());
     }
 
     protected void verifyBearer(String token) {
         if (!token.startsWith(BEARER)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 인증 방식입니다.");
         }
     }
 }
