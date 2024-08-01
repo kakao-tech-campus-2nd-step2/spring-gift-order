@@ -39,9 +39,9 @@ public class ProductController {
         return productService.findAll(pageNo, pageSize);
     }
 
-    @GetMapping("/{id}")
-    public Product readProduct(@PathVariable Long id) {
-        return productService.findById(id);
+    @GetMapping("/{productId}")
+    public Product readProduct(@PathVariable Long productId) {
+        return productService.findById(productId);
     }
 
     @PostMapping
@@ -54,15 +54,15 @@ public class ProductController {
             .body(productResponse);
     }
 
-    @PutMapping("/{id}")
-    public ProductResponse updateProduct(@PathVariable Long id,
+    @PutMapping("/{productId}")
+    public ProductResponse updateProduct(@PathVariable Long productId,
         @Valid @RequestBody ProductRequest productRequest) {
-        return new ProductResponse(productService.update(id, productRequest));
+        return new ProductResponse(productService.update(productId, productRequest));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.delete(id);
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+        productService.delete(productId);
         return ResponseEntity.noContent().build();
     }
 }

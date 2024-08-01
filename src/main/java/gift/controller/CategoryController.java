@@ -32,9 +32,9 @@ public class CategoryController {
         return categoryService.findAll(pageNo, pageSize);
     }
 
-    @GetMapping("/{id}")
-    public Category readCategory(@PathVariable("id") Long id) {
-        return categoryService.findById(id);
+    @GetMapping("/{categoryId}")
+    public Category readCategory(@PathVariable Long categoryId) {
+        return categoryService.findById(categoryId);
     }
 
     @PostMapping
@@ -43,14 +43,14 @@ public class CategoryController {
         return categoryService.save(categoryRequest);
     }
 
-    @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable("id") Long id,
+    @PutMapping("/{categoryId}")
+    public Category updateCategory(@PathVariable Long categoryId,
         @Valid @RequestBody CategoryRequest categoryRequest) {
-        return categoryService.update(id, categoryRequest);
+        return categoryService.update(categoryId, categoryRequest);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable("id") Long id) {
-        categoryService.delete(id);
+    @DeleteMapping("/{categoryId}")
+    public void deleteCategory(@PathVariable Long categoryId) {
+        categoryService.delete(categoryId);
     }
 }
