@@ -300,21 +300,25 @@ public class ProductServiceTest {
 
         // when, then
         // 정상
-        productService.subtractOption(productId, optionId);
+        productService.subtractOption(productId, optionId, 1);
         Assertions.assertThat(product.getOptions().getOption(optionId).getQuantity())
             .isEqualTo(optionQuantity - 1);
 
         // 존재하지 않는 제품
         Assertions.assertThatThrownBy(
-                () -> productService.subtractOption(invalidProductId, optionId))
+                () -> productService.subtractOption(invalidProductId, optionId, 1))
             .isInstanceOf(NoSuchElementException.class);
 
         // 수량이 0개
-        Assertions.assertThatThrownBy(() -> productService.subtractOption(productId, zeroOptionId))
+        Assertions.assertThatThrownBy(() -> productService.subtractOption(productId, zeroOptionId, 1))
+            .isInstanceOf(NoSuchElementException.class);
+
+        // 차감하려는 수량이 더 많음
+        Assertions.assertThatThrownBy(() -> productService.subtractOption(productId, zeroOptionId, 1000000))
             .isInstanceOf(IllegalArgumentException.class);
 
-        // 정상, 수량이 0개
-        then(productRepository).should(times(2)).findById(1L);
+        // 정상, 수량이 0개, 차감하려는 수량이 더 많음
+        then(productRepository).should(times(3)).findById(1L);
         // 존재하지 않는 제품
         then(productRepository).should().findById(2L);
     }

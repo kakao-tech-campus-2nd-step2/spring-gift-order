@@ -3,8 +3,9 @@ package gift.order.kakao.controller;
 import gift.global.annotation.UserId;
 import gift.order.kakao.dto.OrderRequestDto;
 import gift.order.kakao.service.OrderService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,11 @@ public class OrderApiController {
     }
 
     @PostMapping("/api/order")
-    public ResponseEntity<String> order(@RequestBody OrderRequestDto orderRequestDto,
+    public ResponseEntity<String> order(@RequestBody @Valid OrderRequestDto orderRequestDto,
         @UserId Long userId) {
+        System.out.println(userId);
+        System.out.println();
+        orderService.order(orderRequestDto, userId);
 
         return ResponseEntity.ok("");
     }
