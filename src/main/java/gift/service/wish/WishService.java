@@ -30,6 +30,12 @@ public class WishService {
         this.productRepository = productRepository;
     }
 
+
+    public boolean existsByMemberEmailAndProductId(String memberEmail, Long productId) {
+        return wishRepository.existsByMemberEmailAndProductId(memberEmail, productId);
+    }
+
+
     public Page<WishDto> getWishes(Pageable pageable) {
         return wishRepository.findAll(pageable)
             .map(wishMapper::toDto);

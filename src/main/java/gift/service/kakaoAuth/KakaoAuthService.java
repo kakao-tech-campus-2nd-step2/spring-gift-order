@@ -1,12 +1,13 @@
 package gift.service.kakaoAuth;
 
+import gift.domain.member.Member;
+import gift.domain.oAuthToken.OAuthToken;
+import gift.domain.oAuthToken.OAuthTokenRepository;
 import gift.service.member.MemberService;
 import gift.web.dto.MemberDto;
 import gift.web.dto.Token;
-import gift.web.exception.MemberNotFoundException;
 import java.net.URI;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,33 +17,28 @@ import org.springframework.web.client.RestClient;
 @Service
 public class KakaoAuthService {
 
+    private final OAuthTokenRepository oAuthTokenRepository;
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
     private final MemberService memberService;
 
-    @Value("${kakao.token-post-url}")
-    private String kakaoTokenPostUrl;
-
-    @Value("${kakao.member-info-post-url}")
-    private String kakaoMemberInfoPostUrl;
-
-    @Value("${kakao.auth-setting-url}")
-    private String kakaoAuthSettingUrl;
-
     public KakaoAuthService(RestClient restClient, KakaoProperties kakaoProperties,
-        MemberService memberService) {
+        MemberService memberService, OAuthTokenRepository oAuthTokenRepository) {
         this.restClient = restClient;
         this.kakaoProperties = kakaoProperties;
         this.memberService = memberService;
+        this.oAuthTokenRepository = oAuthTokenRepository;
+    }
+
+    public void createMemberAndToken(MemberDto memberDto, String token) {
+        memberService.createMember(memberDto);
+        Member member = memberService.getMemberEntityByEmail(memberDto.email());
+
+        oAuthTokenRepository.save(new OAuthToken(member, token));
     }
 
     public boolean isSignedUp(KakaoInfo kakaoInfo) {
-        try {
-            MemberDto memberDto = memberService.getMemberByEmail(kakaoInfo.email());
-        } catch (MemberNotFoundException e) {
-            return false;
-        }
-        return true;
+        return memberService.existsByEmail(kakaoInfo.email());
     }
 
     public MemberDto getMemberInfo(KakaoInfo kakaoInfo) {
@@ -51,7 +47,7 @@ public class KakaoAuthService {
 
     public String getKakaoAuthUrl() {
         StringBuffer str = new StringBuffer();
-        str.append(kakaoAuthSettingUrl);
+        str.append(kakaoProperties.authSettingUrl());
         str.append("&redirect_uri=" + kakaoProperties.redirectUri());
         str.append("&client_id=" + kakaoProperties.clientId());
 
@@ -62,7 +58,7 @@ public class KakaoAuthService {
         var body = kakaoProperties.createBody(code);
 
         var response = restClient.post()
-            .uri(URI.create(kakaoTokenPostUrl))
+            .uri(URI.create(kakaoProperties.tokenPostUrl()))
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
@@ -74,7 +70,7 @@ public class KakaoAuthService {
     public KakaoInfo getMemberInfoFromKakaoServer(Token accessToken) {
 
         ResponseEntity<Map<String, Object>> response = restClient.post()
-            .uri(URI.create(kakaoMemberInfoPostUrl))
+            .uri(URI.create(kakaoProperties.memberInfoPostUrl()))
             .header("Authorization", "Bearer " + accessToken.token())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .retrieve()

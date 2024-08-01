@@ -60,6 +60,10 @@ public class Option {
         return name;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+
     public Long getQuantity() {
         return quantity;
     }

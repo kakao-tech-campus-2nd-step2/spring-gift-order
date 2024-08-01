@@ -2,11 +2,10 @@ package gift.web.controller;
 
 import gift.service.kakaoAuth.KakaoAuthService;
 import gift.service.kakaoAuth.KakaoInfo;
-import gift.service.member.MemberService;
 import gift.web.dto.MemberDto;
 import gift.web.dto.Token;
-import gift.web.exception.MemberNotFoundException;
 import gift.web.jwt.JwtUtils;
+import gift.web.util.TemporaryTokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,14 +18,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class LoginController {
 
     private final KakaoAuthService kakaoAuthService;
-    private final MemberService memberService;
     private final JwtUtils jwtUtils;
+    private final TemporaryTokenStore temporaryTokenStore;
 
-    public LoginController(KakaoAuthService kakaoAuthService, MemberService memberService,
-        JwtUtils jwtUtils) {
+    public LoginController(KakaoAuthService kakaoAuthService,
+        JwtUtils jwtUtils, TemporaryTokenStore temporaryTokenStore) {
         this.kakaoAuthService = kakaoAuthService;
-        this.memberService = memberService;
         this.jwtUtils = jwtUtils;
+        this.temporaryTokenStore = temporaryTokenStore;
     }
 
     @GetMapping("/login")
@@ -49,6 +48,8 @@ public class LoginController {
         if(kakaoAuthService.isSignedUp(kakaoInfo)) {
             rttr.addAttribute("token", new Token(jwtUtils.createJWT(kakaoAuthService.getMemberInfo(kakaoInfo))));
         }
+
+        temporaryTokenStore.storeToken(kakaoInfo.email(), token.token());
         rttr.addFlashAttribute("kakaoInfo", kakaoInfo);
         return "redirect:/register-social";
     }
@@ -60,10 +61,10 @@ public class LoginController {
 
     @PostMapping("/register-social")
     public String registerSocial(@ModelAttribute MemberDto memberDto, RedirectAttributes rttr) {
-        memberService.createMember(memberDto);
+        String token = temporaryTokenStore.getAndRemoveToken(memberDto.email());
+        kakaoAuthService.createMemberAndToken(memberDto, token);
         rttr.addAttribute("token", new Token(jwtUtils.createJWT(memberDto)));
         return "redirect:/";
     }
-
 
 }

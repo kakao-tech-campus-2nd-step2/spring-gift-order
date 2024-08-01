@@ -21,11 +21,20 @@ public class MemberService {
         this.memberMapper = memberMapper;
     }
 
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
     public List<MemberDto> getMembers() {
         return memberRepository.findAll()
             .stream()
             .map(memberMapper::toDto)
             .toList();
+    }
+
+    public Member getMemberEntityByEmail(String email) {
+        return memberRepository.findByEmail(email)
+            .orElseThrow(() -> new MemberNotFoundException("멤버가 엄슴다"));
     }
 
     public MemberDto getMemberByEmail(String email) {

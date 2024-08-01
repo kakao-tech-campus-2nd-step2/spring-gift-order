@@ -35,6 +35,26 @@ public class WishRepositoryTest {
 
     private Pageable pageable = PageRequest.of(0, 10);
 
+    @Test
+    public void exists() {
+        Member member = new Member("wjdghtjd06@kakao.com", "1234");
+        members.save(member);
+
+        Category category = new Category("교환권", "#6c95d1", "", "https://www.kakao.com");
+        categories.save(category);
+
+        Product product = new Product("물건1", 1000L, "image.url", category);
+        products.save(product);
+
+        Wish expected = new Wish(member, product, 1L);
+
+
+        wishes.save(expected);
+        System.out.println(product.getId());
+        boolean actual = wishes.existsByMemberEmailAndProductId("wjdghtjd06@kakao.com", 1L);
+
+        Assertions.assertThat(actual).isTrue();
+    }
 
     @Test
     public void save() {

@@ -1,96 +1,110 @@
 package gift.service.order;
 
-import gift.domain.member.Member;
-import gift.domain.member.MemberRepository;
-import gift.domain.option.Option;
-import gift.domain.option.OptionRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gift.domain.oAuthToken.OAuthTokenRepository;
 import gift.domain.order.Order;
 import gift.domain.order.OrderRepository;
-import gift.domain.product.Product;
-import gift.domain.product.ProductRepository;
-import gift.domain.wish.WishRepository;
 import gift.mapper.OrderMapper;
+import gift.service.category.CategoryService;
 import gift.service.option.OptionService;
+import gift.service.wish.WishService;
+import gift.web.dto.CategoryDto;
 import gift.web.dto.MemberDto;
 import gift.web.dto.OrderDto;
-import gift.web.dto.Token;
-import gift.web.exception.MemberNotFoundException;
-import gift.web.exception.OptionNotFoundException;
-import gift.web.exception.ProductNotFoundException;
+import gift.web.dto.ProductDto;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OptionRepository optionRepository;
-    private final WishRepository wishRepository;
     private final OptionService optionService;
     private final OrderMapper orderMapper;
-    private final MemberRepository memberRepository;
     private final RestClient restClient;
-    private final ProductRepository productRepository;
+    private final WishService wishService;
+    private final CategoryService categoryService;
+    private final OAuthTokenRepository oAuthTokenRepository;
 
     @Value("${kakao.send-message-template-url}")
     private String kakaoSendMessageTemplateUrl;
 
-    public OrderService(OrderRepository orderRepository, OptionRepository optionRepository,
-        WishRepository wishRepository, OptionService optionService, OrderMapper orderMapper,
-        MemberRepository memberRepository, RestClient restClient,
-        ProductRepository productRepository) {
+    public OrderService(
+        OrderRepository orderRepository,
+        OAuthTokenRepository oAuthTokenRepository,
+        OptionService optionService,
+        OrderMapper orderMapper,
+        RestClient restClient,
+        WishService wishService,
+        CategoryService categoryService) {
         this.orderRepository = orderRepository;
-        this.optionRepository = optionRepository;
-        this.wishRepository = wishRepository;
+        this.oAuthTokenRepository = oAuthTokenRepository;
         this.optionService = optionService;
         this.orderMapper = orderMapper;
-        this.memberRepository = memberRepository;
         this.restClient = restClient;
-        this.productRepository = productRepository;
+        this.wishService = wishService;
+        this.categoryService = categoryService;
     }
 
     @Transactional
-    public OrderDto createOrder(Token token, MemberDto memberDto, Long productId, OrderDto orderDto) {
-        Option option = optionRepository.findByIdAndProductId(orderDto.optionId(), productId)
-            .orElseThrow(() -> new OptionNotFoundException("옵션이 없슴다."));
+    public OrderDto createOrder(MemberDto memberDto, OrderDto orderDto) {
 
-        Member member = memberRepository.findByEmail(memberDto.email())
-            .orElseThrow(() -> new MemberNotFoundException("회원이 없습니다."));
+        ProductDto productDto = optionService.getProduct(orderDto.optionId());
+        CategoryDto categoryDto = categoryService.getCategory(productDto.categoryId());
 
-        wishRepository.findByMemberIdAndProductId(member.getId(), productId)
-            .ifPresent(wishRepository::delete);
+        if (wishService.existsByMemberEmailAndProductId(memberDto.email(), productDto.id())) {
+            wishService.deleteWish(memberDto.email(), productDto.id());
+        }
 
-        optionService.subtractOptionQuantity(orderDto.optionId(),productId, orderDto.quantity());
+        optionService.subtractOptionQuantity(orderDto.optionId(), productDto.id(), orderDto.quantity());
 
-        Order order = orderRepository.save(orderMapper.toEntity(orderDto, option));
+        Order order = orderRepository.save(orderMapper.toEntity(orderDto, optionService.getOptionEntityByOptionId(orderDto.optionId())));
 
-        sendOrderKakaoMessage(productId, order, token);
+
+        oAuthTokenRepository.findByMemberEmail(memberDto.email())
+            .ifPresent(token -> {
+                sendOrderKakaoMessage(productDto, categoryDto, order, token.getToken());
+            });
+
         return orderMapper.toDto(order);
     }
 
-    public void sendOrderKakaoMessage(Long productId, Order order, Token token) {
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotFoundException("상품이 없습니다."));
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void sendOrderKakaoMessage(ProductDto productDto, CategoryDto categoryDto, Order order, String token) {
 
-        LinkedMultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         Map<String, String> templateArgs = new HashMap<>();
-        templateArgs.put("product_name", product.getName());
-        templateArgs.put("category_name", product.getCategory().getName());
-        templateArgs.put("price", product.getPrice().toString());
+        templateArgs.put("product_name", productDto.name());
+        templateArgs.put("category_name", categoryDto.name());
+        templateArgs.put("price", productDto.price().toString());
         templateArgs.put("quantity", order.getQuantity().toString());
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        String templateArgsJson = "";
+
+        try {
+            templateArgsJson = objectMapper.writeValueAsString(templateArgs);
+        } catch (JsonProcessingException e) {
+            new RuntimeException("메시지 생성 에러 발생");
+        }
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("template_id", "110540");
-        body.add("template_args", templateArgs);
+        body.add("template_args", templateArgsJson);
 
         restClient.post()
             .uri(URI.create(kakaoSendMessageTemplateUrl))
-            .header("Authorization", "Bearer " + token.token())
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(body)
             .retrieve()
             .toEntity(String.class);
