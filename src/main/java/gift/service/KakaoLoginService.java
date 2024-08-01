@@ -43,7 +43,7 @@ public class KakaoLoginService {
                 .body(body)
                 .retrieve()
                 .body(KakaoTokenResponse.class))
-            .access_token();
+            .accessToken();
     }
 
     public Long getKakaoId(String accessToken) {

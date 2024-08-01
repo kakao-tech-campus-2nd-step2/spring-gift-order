@@ -21,11 +21,11 @@ public class MessageService {
             .header("Authorization", "Bearer " + accessToken)
             .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
             .body(
-                "template_object={\"object_type\": \"" + messageTemplate.object_type()
+                "template_object={\"object_type\": \"" + messageTemplate.objectType()
                     + "\", \"text\": \"" + messageTemplate.text()
-                    + "\", \"link\": {\"web_url\": \"" + messageTemplate.link().web_url()
-                    + "\", \"mobile_web_url\": \"" + messageTemplate.link().mobile_web_url()
-                    + "\"}, \"button_title\": \"" + messageTemplate.button_title() + "\"}")
+                    + "\", \"link\": {\"web_url\": \"" + messageTemplate.link().webUrl()
+                    + "\", \"mobile_web_url\": \"" + messageTemplate.link().mobileWebUrl()
+                    + "\"}, \"button_title\": \"" + messageTemplate.buttonTitle() + "\"}")
             .retrieve();
     }
 }

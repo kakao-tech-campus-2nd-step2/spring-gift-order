@@ -1,10 +1,16 @@
 package gift.domain.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record KakaoMessageTemplate(
-    String object_type,
+    @JsonProperty("object_type")
+    String objectType,
+    @JsonProperty("text")
     String text,
+    @JsonProperty("link")
     KakakoMessageLink link,
-    String button_title
+    @JsonProperty("button_title")
+    String buttonTitle
 ) {
 
 }
