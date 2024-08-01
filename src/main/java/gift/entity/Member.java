@@ -56,4 +56,10 @@ public class Member extends BaseEntity {
         }
         this.wishlist.add(wishlist);
     }
+
+    public boolean containsWish(Long productId) {
+        return wishlist.stream().anyMatch(product ->
+            product.getId().equals(productId)
+        );
+    }
 }

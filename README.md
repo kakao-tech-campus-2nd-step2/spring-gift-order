@@ -38,6 +38,10 @@
         3. 옵션명은 영문, 한글, 숫자, (, ), [, ], +, -, &, /, _ 만 입력 가능.
         4. 옵션 수량은 1개 이상 1억개 미만.
     - 구매 개수 만큼 옵션을 차감시키는 기능을 제공한다.
+- 상품 주문을 통해 나에게 카카오톡 메시지 보내기 기능을 제공한다.
+    - 주문한 상품 옵션에 대한 정보가 카카오톡 API를 통해 나에게 메시지로 전송된다.
+    - 구매한 상품 옵션의 개수만큼 차감한다.
+- 모든 회원의 주문 내역을 조회하는 페이지네이션 API를 제공한다.
 
 ---
 
@@ -227,3 +231,24 @@ PUT /api/products/product/{productId}/options
 DELETE /api/products/product/{productId}/options/{optionId}
 ```
 
+## Order API
+
+### 주문
+
+```
+POST /api/orders HTTP/1.1
+Authorization: Bearer {token}
+Content-Type: application/json
+{
+    "productId": 1,
+    "optionId": 1,
+    "quantity": 5,
+    "message": "상품 메시지"
+}
+```
+
+### 모든 주문 내역 조회
+
+```
+GET /api/orders/list
+```

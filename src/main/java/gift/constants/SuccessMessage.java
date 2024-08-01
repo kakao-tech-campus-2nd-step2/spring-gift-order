@@ -19,4 +19,6 @@ public class SuccessMessage {
     public static final String ADD_OPTION_SUCCESS_MSG = "옵션이 추가되었습니다.";
     public static final String EDIT_OPTION_SUCCESS_MSG = "옵션이 수정되었습니다.";
     public static final String DELETE_OPTION_SUCCESS_MSG = "옵션이 삭제되었습니다.";
+
+    public static final String KAKAO_SEND_MESSAGE_SUCCESS_MSG = "메시지 전송이 완료되었습니다!";
 }

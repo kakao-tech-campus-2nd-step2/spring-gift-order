@@ -4,6 +4,7 @@ import gift.constants.ErrorMessage;
 import gift.jwt.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,19 +28,25 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
+            System.out.println("token = " + token);
+        } else {
+            unauthorizedResponse(response);
+            return false;
         }
 
-        if (token != null) {
-            try {
-                String email = jwtUtil.getEmail(token);
-                request.setAttribute("email", email);
-            } catch (Exception e) {
-                response.setCharacterEncoding("UTF-8");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().write(ErrorMessage.NOT_LOGGED_IN_MSG);
-                return false;
-            }
+        try {
+            String email = jwtUtil.getEmail(token);
+            request.setAttribute("email", email);
+        } catch (Exception e) {
+            unauthorizedResponse(response);
+            return false;
         }
         return true;
+    }
+
+    private void unauthorizedResponse(HttpServletResponse response) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.getWriter().write(ErrorMessage.NOT_LOGGED_IN_MSG);
     }
 }

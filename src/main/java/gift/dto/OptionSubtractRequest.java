@@ -23,6 +23,10 @@ public class OptionSubtractRequest {
         this.productId = productId;
     }
 
+    public OptionSubtractRequest(OrderRequest orderRequest) {
+        this(orderRequest.getOptionId(), orderRequest.getQuantity(), orderRequest.getProductId());
+    }
+
     public Long getId() {
         return id;
     }
