@@ -60,6 +60,19 @@
         }
     }
 
+    function getAuthHeaders() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You need to log in first.');
+            return null;
+        }
+
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        };
+    }
+
     function fetchWishlist(page, size) {
         const email = getEmailFromToken();
         if (!email) {
@@ -68,7 +81,8 @@
         }
 
         fetch(`/view/wishlist/data?email=${email}&page=${page - 1}&size=${size}`, {
-        method: 'GET'
+        method: 'GET',
+        headers: getAuthHeaders()
         })
         .then(response => {
             if (!response.ok) {
@@ -130,10 +144,7 @@
 
         fetch(`/api/wishlist/${productId}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+            headers: getAuthHeaders()
         })
         .then(() => {
             fetchWishlist(currentPage, pageSize);  // Reload wishlist after removal

@@ -14,3 +14,8 @@ const authSetup = {
         localStorage.setItem('token', token);
     }
 }
+
+// 페이지 로드 시 setAuthorizationHeader 호출
+$(document).ready(function() {
+    authSetup.setAuthorizationHeader();
+});

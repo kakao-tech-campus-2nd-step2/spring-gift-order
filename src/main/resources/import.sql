@@ -67,7 +67,7 @@ INSERT INTO Wishlist (id, member_id, product_id) VALUES (7, 4, 7);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (8, 4, 8);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (9, 5, 9);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (10, 5, 10);
-INSERT INTO Wishlist (id, member_id, product_id) VALUES (11, 1, 1);
+INSERT INTO Wishlist (id, member_id, product_id) VALUES (11, 1, 5);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (12, 2, 2);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (13, 3, 3);
 INSERT INTO Wishlist (id, member_id, product_id) VALUES (14, 4, 4);

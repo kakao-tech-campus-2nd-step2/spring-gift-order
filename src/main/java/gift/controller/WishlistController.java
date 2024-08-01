@@ -16,15 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class WishlistController {
 
     private final WishlistService wishlistService;
-    private final MemberService memberService;
-    private final ProductService productService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public WishlistController(WishlistService wishlistService, ProductService productService, MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+    public WishlistController(WishlistService wishlistService,JwtTokenProvider jwtTokenProvider) {
         this.wishlistService = wishlistService;
-        this.productService = productService;
-        this.memberService = memberService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
@@ -33,7 +29,7 @@ public class WishlistController {
     public ResponseEntity<Void> deleteWishlistItem(@RequestHeader("Authorization") String token, @PathVariable Long productId) {
         String email = jwtTokenProvider.getEmail(token.substring(7));
         wishlistService.deleteWishlistItem(email, productId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{productId}")

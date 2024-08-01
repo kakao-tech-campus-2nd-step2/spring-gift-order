@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/view")
-@Tag(name = "Home API", description = "홈 컨트롤러 API")
+@Tag(name = "View API", description = "뷰 컨트롤러")
 public class HomeController {
 
     private final ProductService productService;
@@ -59,11 +59,7 @@ public class HomeController {
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
 
-        PaginationInfo paginationInfo = new PaginationInfo();
-        paginationInfo.setCurrentPage(productPage.getNumber());
-        paginationInfo.setTotalPages(productPage.getTotalPages());
-        paginationInfo.setHasNext(productPage.hasNext());
-        paginationInfo.setHasPrevious(productPage.hasPrevious());
+        PaginationInfo paginationInfo = new PaginationInfo(productPage);
 
         ProductResponse response = new ProductResponse();
         response.setContent(productDtoList);
@@ -118,11 +114,8 @@ public class HomeController {
                 .map(ProductDto::new)
                 .collect(Collectors.toList());
 
-        PaginationInfo paginationInfo = new PaginationInfo();
-        paginationInfo.setCurrentPage(productPage.getNumber() + 1);
-        paginationInfo.setTotalPages(productPage.getTotalPages());
-        paginationInfo.setHasNext(productPage.hasNext());
-        paginationInfo.setHasPrevious(productPage.hasPrevious());
+        PaginationInfo paginationInfo = new PaginationInfo(productPage);
+
 
         ProductResponse response = new ProductResponse();
         response.setContent(productDtoList);

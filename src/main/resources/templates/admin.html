@@ -30,7 +30,8 @@
 <script type="text/javascript">
     function deleteMember(id) {
         fetch(`/admin/members/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:
         })
         .then(response => {
             if (response.ok) {
