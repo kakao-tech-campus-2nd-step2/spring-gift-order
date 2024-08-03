@@ -52,7 +52,7 @@ public class WishListServiceTest {
         var optionResponseDto = new OptionResponseDto(1L, "화이트초콜릿", 10000, productId);
         var fullOptionsProductResponseDto = new FullOptionsProductResponseDto(productId, name,
             price, imageUrl, categoryResponseDto, List.of(optionResponseDto));
-        var userId = "K1";
+        var userId = 1;
         var invalidProductId = 2L;
         var invalidFullOptionsProductResponseDto = new FullOptionsProductResponseDto(
             invalidProductId, name, price, imageUrl, categoryResponseDto,
@@ -65,7 +65,7 @@ public class WishListServiceTest {
             fullOptionsProductResponseDto);
         given(productService.selectFullOptionProduct(invalidProductId)).willReturn(
             invalidFullOptionsProductResponseDto);
-        given(wishListRepository.existsByUserIdAndProduct(any(String.class),
+        given(wishListRepository.existsByUserIdAndProduct(any(Long.class),
             any(Product.class))).willAnswer(invocation -> {
             Product actualProduct = invocation.getArgument(1);
             if (actualProduct.getProductId() == productId) {
@@ -94,7 +94,7 @@ public class WishListServiceTest {
 
         // 정상, 이미 담은 상품
         then(wishListRepository).should(times(2))
-            .existsByUserIdAndProduct(any(String.class), any(Product.class));
+            .existsByUserIdAndProduct(any(Long.class), any(Product.class));
     }
 
     /*
@@ -118,7 +118,7 @@ public class WishListServiceTest {
             price, imageUrl, categoryResponseDto, List.of(optionResponseDto2));
         var product = fullOptionsProductResponseDto.toProduct();
         var product2 = fullOptionsProductResponseDto2.toProduct();
-        var userId = "K1";
+        var userId = 1;
         var wishList = new WishList(1L, userId, product);
         var wishList2 = new WishList(2L, userId, product2);
         var wishListList = List.of(wishList, wishList2);
@@ -130,7 +130,7 @@ public class WishListServiceTest {
         var pageRequest = pageInfoDto.toPageInfo().toPageRequest();
         var wishListPage = new PageImpl<>(wishListList, pageRequest, wishListList.size());
 
-        given(wishListRepository.findByUserId(any(String.class), any(PageRequest.class))).willReturn(
+        given(wishListRepository.findByUserId(any(Long.class), any(PageRequest.class))).willReturn(
             wishListPage);
 
         // when, then
@@ -139,7 +139,7 @@ public class WishListServiceTest {
                 WishListResponseDto::fromWishList).toList());
 
         // 정상적인 경우
-        then(wishListRepository).should().findByUserId(any(String.class), any(PageRequest.class));
+        then(wishListRepository).should().findByUserId(any(Long.class), any(PageRequest.class));
     }
 
     /*
@@ -159,8 +159,8 @@ public class WishListServiceTest {
         var fullOptionsProductResponseDto = new FullOptionsProductResponseDto(productId, name,
             price, imageUrl, categoryResponseDto, List.of(optionResponseDto));
         var product = fullOptionsProductResponseDto.toProduct();
-        var userId = "K1";
-        var invalidUserId = "K2";
+        var userId = 1L;
+        var invalidUserId = 2;
         var wishListId = 1L;
         var invalidWishListId = 2L;
         var wishList = new WishList(wishListId, userId, product);

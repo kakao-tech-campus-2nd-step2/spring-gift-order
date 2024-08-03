@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.NoSuchElementException;
 
 @Entity
 @Table(name = "options")
@@ -40,12 +41,11 @@ public class Option {
     }
 
     // 수량 차감 메서드
-    public void subtractQuantity() {
-        if (quantity < 1) {
-            throw new IllegalArgumentException("품절된 상품입니다.");
-        }
+    public void subtractQuantity(int quantity) {
+        verifyQuantity(quantity);
 
-        quantity--;
+        // 개수 검증을 마쳤다면 수량 차감하기
+        this.quantity -= quantity;
     }
 
     // 아직은 쓰진 않지만, 언젠간 필요할 것 같아서 만든 물량 채우기 메서드
@@ -67,5 +67,15 @@ public class Option {
 
     public long getproductId() {
         return productId;
+    }
+
+    private void verifyQuantity(int quantity) {
+        if (this.quantity < 1) {
+            throw new NoSuchElementException("품절된 상품입니다.");
+        }
+
+        if (this.quantity < quantity) {
+            throw new IllegalArgumentException("수량이 부족합니다. (남은 수량: " + this.quantity + ")");
+        }
     }
 }

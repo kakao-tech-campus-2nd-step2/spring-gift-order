@@ -35,7 +35,7 @@ public class WishListController {
     // 로그인 직후에 메인 화면(wishlist)을 보여주는 핸들러
     @GetMapping("/wishlist")
     @Operation
-    public String loadUserWishList(@UserId String userId,
+    public String loadUserWishList(@UserId Long userId,
         PageInfoDto pageInfoDto, Model model) {
         // 특정 id를 갖는 사람이 추가한 위시 리스트 페이지를 가져와서 thymeleaf를 통해 html로 전송
         List<WishListResponseDto> wishListResponseDtoList = wishListService.readWishProducts(
@@ -51,7 +51,7 @@ public class WishListController {
     // 모든 제품을 추가하는 화면을 보여주는 핸들러
     @GetMapping("/products")
     @Operation
-    public String loadAddingPage(@PathVariable(name = "user-id") String userId,
+    public String loadAddingPage(@PathVariable(name = "user-id") Long userId,
         @RequestHeader(name = HttpHeaders.AUTHORIZATION) String token,
         List<ProductResponseDto> products, Model model) {
         model.addAttribute("userId", userId);

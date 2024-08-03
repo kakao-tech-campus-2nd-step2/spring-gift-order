@@ -1,6 +1,10 @@
 package gift.permission.user.entity;
 
+import static gift.global.utility.TimeConvertUtil.secondToMillis;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.util.Date;
@@ -9,10 +13,12 @@ import java.util.Date;
 @Table(name = "users")
 public class User {
 
-    // kakao login을 도입한 후 userId만으로 식별. 이외의 정보는 다른 서비스가 보관
-    // 만약 id가 123456이고, kakao에게서 받았다면 id = "K123456"처럼 지정할 것.
     @Id
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // 만약 id가 123456이고, kakao에게서 받았다면 id = "K123456"처럼 지정할 것.
+    private String platformUniqueId;
 
     private boolean isAdmin;
 
@@ -28,11 +34,17 @@ public class User {
 
     }
 
-    public User(String userId, boolean isAdmin, String refreshToken, int expiry) {
-        this.userId = userId;
+    public User(Long id, String platformUniqueId, boolean isAdmin, String refreshToken,
+        int expiry) {
+        this.id = id;
+        this.platformUniqueId = platformUniqueId;
         this.isAdmin = isAdmin;
         this.refreshToken = refreshToken;
         this.refreshTokenExpiry = new Date(System.currentTimeMillis() + secondToMillis(expiry));
+    }
+
+    public User(String platformUniqueId, boolean isAdmin, String refreshToken, int expiry) {
+        this(null, platformUniqueId, isAdmin, refreshToken, expiry);
     }
 
     // 언젠간 쓸 메서드들
@@ -50,8 +62,12 @@ public class User {
         this.refreshTokenExpiry = new Date(System.currentTimeMillis() + secondToMillis(expiry));
     }
 
-    public String getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
+    }
+
+    public String getPlatformUniqueId() {
+        return platformUniqueId;
     }
 
     public boolean getIsAdmin() {
@@ -64,9 +80,5 @@ public class User {
 
     public Date getRefreshTokenExpiry() {
         return refreshTokenExpiry;
-    }
-
-    private long secondToMillis(int second) {
-        return second * 1000L;
     }
 }

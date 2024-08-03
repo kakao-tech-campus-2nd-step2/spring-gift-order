@@ -13,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TokenInfoComponent extends TokenManager {
 
     // token으로부터 id를 다시 추출
-    public String getUserId(String token) {
+    public long getUserId(String token) {
         String onlyToken = getOnlyToken(token);
 
         try {
@@ -22,7 +22,7 @@ public class TokenInfoComponent extends TokenManager {
                 .build()
                 .parseClaimsJws(onlyToken);
 
-            return claims.getBody().getSubject();
+            return Long.parseLong(claims.getBody().getSubject());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근입니다.");
         }
