@@ -1,11 +1,11 @@
 package gift.service;
 
+import gift.domain.member.kakao.KakaoTokenRequest;
 import gift.domain.member.kakao.KakaoTokenResponse;
 import gift.domain.member.kakao.KakaoUserInfoResponse;
 import java.util.Objects;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Service
@@ -32,18 +32,14 @@ public class KakaoLoginService {
 
     public String getToken(String code) {
         final String kakaoOauthTokenApiUri = "https://kauth.kakao.com/oauth/token";
-
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "authorization_code");
-        body.add("client_id", clientId);
-        body.add("redirect_url", redirectUri);
-        body.add("code", code);
+        KakaoTokenRequest kakaoTokenRequest = new KakaoTokenRequest("authorization_code", clientId,
+            redirectUri, code);
 
         return Objects.requireNonNull(restClient
                 .post()
                 .uri(kakaoOauthTokenApiUri)
                 .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                .body(body)
+                .body(kakaoTokenRequest.toMap())
                 .retrieve()
                 .body(KakaoTokenResponse.class))
             .accessToken();
