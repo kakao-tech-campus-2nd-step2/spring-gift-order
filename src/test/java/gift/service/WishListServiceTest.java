@@ -28,7 +28,7 @@ class WishListServiceTest {
     @DisplayName("새로운 상품 목록 추가")
     void addProduct(){
         //given
-        Member member = new Member(null,"hah@ha","1234", MemberRole.COMMON_MEMBER);
+        Member member = new Member(null,"hah@ha","1234", MemberRole.COMMON_MEMBER,0);
         Product product = new Product(null,"tuna",4000, "test");
 
         member = jpaMemberRepository.save(member);
@@ -49,7 +49,7 @@ class WishListServiceTest {
     @DisplayName("새로운 상품 여러개 추가")
     void addMultiProduct(){
         //given
-        Member member = new Member(null,"hah@ha","1234", MemberRole.COMMON_MEMBER);
+        Member member = new Member(null,"hah@ha","1234", MemberRole.COMMON_MEMBER,0);
         Product product = new Product(null,"tuna",4000, "test");
         Product product2 = new Product(null,"tuna2",5000, "test2");
         Product product3 = new Product(null,"tuna3",6000, "test3");

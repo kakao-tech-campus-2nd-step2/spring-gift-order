@@ -30,7 +30,7 @@ public class MemberService{
             throw new GiftUnauthorizedException("사용할 수 없는 이메일입니다.");
         }
         Member member = new Member(null, memberRequest.getEmail(), memberRequest.getPassword(),
-            memberRequest.getRole());
+            memberRequest.getRole(), 0);
         jpaMemberRepository.save(member);
     }
 
