@@ -1,6 +1,4 @@
-### 환경 설정
 @baseUrl = http://localhost:8080
-@token = eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW9sYmluQGV4YW1wbGUuY29tIn0.5H5vKV5TqY2PepHu3b7rP2rA7E52Qnw3mxsKiPybD8o
 
 ### 모든 상품 조회
 GET {{baseUrl}}/api/products?page=0&size=10
@@ -93,9 +91,7 @@ POST {{baseUrl}}/api/wishlist/1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{
-  "userId": "seolbin@example.com"
-}
+{}
 
 ### 위시리스트 조회
 GET {{baseUrl}}/api/wishlist
@@ -156,3 +152,26 @@ Content-Type: application/json
 
 ### 특정 옵션 삭제
 DELETE {{baseUrl}}/api/products/1/options/1
+
+### 주문 생성 요청
+@token =eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW91bGJpbkBuYXZlci5jb20iLCJpYXQiOjE3MjIzMzIwNTQsImV4cCI6MTcyMjMzNTY1NH0.sPM9Tr5zCF03szHr9N9yDZ6urqM7rZ5nY5mdFezpGa4
+POST http://localhost:8080/api/orders
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "optionId": 1,
+  "quantity": 2,
+  "message": "Please handle this order with care."
+}
+
+### 주문 생성 (유효하지 않은 데이터 - 옵션 수량 부족)
+POST {{baseUrl}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "optionId": 1,
+  "quantity": 1000,
+  "message": ""
+}

@@ -1,3 +1,4 @@
+/*
 package gift.security;
 
 import gift.model.User;
@@ -48,3 +49,5 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         return user;
     }
 }
+
+ */
