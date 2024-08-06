@@ -1,7 +1,11 @@
 package gift.admin.controller;
 
+import gift.admin.dto.LeafMemberDTO;
 import gift.admin.dto.LeafProductDTO;
+import gift.auth.argumentResolver.KakaoMember;
+import gift.member.dto.MemberRequest;
 import gift.product.dto.ProductRequest;
+import gift.product.entity.Product;
 import gift.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -69,10 +73,20 @@ public class AdminProductController {
         return "redirect:/admin/products";
     }
 
+    @PostMapping("/member")
+    public String addPoint(@PathVariable Long id, @KakaoMember String token,@ModelAttribute("leafMemberDTO") LeafMemberDTO leafMemberDTO) {
+        MemberRequest memberRequest = toRestRequest(leafMemberDTO);
+        return "redirect:/admin/products";
+    }
+
     private ProductRequest toRestRequest(LeafProductDTO leafProductDTO) {
         return new ProductRequest(leafProductDTO.getId(), leafProductDTO.getName(),
             leafProductDTO.getPrice(), leafProductDTO.getImageUrl(), leafProductDTO.getCategoryId(),
             leafProductDTO.getGiftOptionName(), leafProductDTO.getGiftOptionQuantity());
+    }
+
+    private MemberRequest toRestRequest(LeafMemberDTO leafMemberDTO) {
+        return new MemberRequest(leafMemberDTO.getId(), leafMemberDTO.getEmail(), leafMemberDTO.getPoint());
     }
 
 }

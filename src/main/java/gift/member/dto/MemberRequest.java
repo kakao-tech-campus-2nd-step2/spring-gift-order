@@ -11,6 +11,7 @@ public class MemberRequest {
     @NotBlank(message = "비밀번호를 입력해주세요")
     private String password;
     private MemberRole role;
+    private Integer point;
 
     public MemberRequest() {
     }
@@ -29,6 +30,12 @@ public class MemberRequest {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public MemberRequest(Long id, String email, Integer point) {
+        this.id = id;
+        this.email = email;
+        this.point = point;
     }
 
     public Long getId() {
